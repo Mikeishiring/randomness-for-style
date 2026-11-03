@@ -23,16 +23,19 @@
   <h1 class="sr-only">Randomness for Style</h1>
   <div class="workbench">
    <div class="ingredient-sidebar">
+   <div class="experiment-actions">
+   <button id="play-refinements" type="button" class="play-refinements" aria-label="Play experiment" title="Play experiment" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="play-symbol" d="m7 4 9 6-9 6Z"/><path class="pause-symbol" d="M6 4h3v12H6zm6 0h3v12h-3z"/></svg><span id="play-word" class="play-word">Play experiment</span><span class="pause-word">Pause</span></button>
    <button type="button" id="compare" class="compare-toggle" aria-pressed="false" aria-controls="report-view compare-target"><span id="compare-label">Compare without ingredients</span><span class="toggle-track" aria-hidden="true"></span></button>
+   </div>
    <select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">Brief only</option><option value="other" id="compare-other">Original prompt</option></select>
    <section id="dice-deck" class="dice-deck" aria-label="Choose ingredients" aria-describedby="dice-hint">
     <div class="dice">
      <div class="die"><div class="die-top"><span>Ingredient 1</span></div><strong id="ingredient-a"></strong></div>
      <div class="die"><div class="die-top"><span>Ingredient 2</span></div><strong id="ingredient-b"></strong></div>
     </div>
-    <p id="dice-hint">Click to roll · drag to choose</p>
     <span id="dice-gesture-help" class="sr-only">Click or press Enter to roll. Drag slowly to choose the upper face; release quickly to throw. Arrow keys turn the die. Escape cancels a drag.</span>
    </section>
+   <p id="dice-hint">Click to roll · drag to choose</p>
    <section id="dice-controls" class="controls" aria-label="Refinement and prompt">
 
     <p id="attempt-note" hidden></p>
@@ -51,7 +54,6 @@
       <div class="rail-stop"><button type="button" id="stage-4" aria-label="Refinement 3" aria-describedby="stage-help-4" aria-pressed="false"><b>+3</b><span>refinements</span></button><span id="stage-help-4" class="stage-help" role="tooltip">A third refinement with the same prompt. Judge what changed.</span></div>
      </div>
     </div>
-    <button id="play-refinements" type="button" class="play-refinements" aria-label="Play walkthrough" title="Play walkthrough" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="play-symbol" d="m7 4 9 6-9 6Z"/><path class="pause-symbol" d="M6 4h3v12H6zm6 0h3v12h-3z"/></svg><span id="play-word" class="play-word">Play</span><span class="pause-word">Pause</span></button>
    </section>
    <section id="dice-lab" class="result" aria-labelledby="pair-title"><h2 id="pair-title" class="sr-only" tabindex="-1"></h2>
     <aside id="walkthrough-note" class="walkthrough-note" aria-label="Saved walkthrough" hidden>
