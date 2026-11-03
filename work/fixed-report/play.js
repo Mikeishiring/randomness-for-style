@@ -31,7 +31,7 @@ function guideRefinement(token){
 }
 function settlePresentation(){stopGuidance();settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
 const walkthroughBeats=[
- ['Start with the brief','One prompt, no ingredients. This is the starting point.'],
+ ['Brief only','One prompt, no ingredients. This is the starting point.'],
  ['Add ingredients','Same brief and data. Two ingredients change the visual direction.'],
  ['Refine once','Critique this result. Lean into both ingredients. Keep it simple.'],
  ['Refine again','Repeat the same refinement prompt on the previous result.'],
@@ -70,8 +70,8 @@ const playback=createRefinementPlayback({
   if(phase==='idle'){
    $('#walkthrough-note').hidden=true;cancelDiceRoll();syncDice3D();
   }
-  const button=$('#play-refinements'),label=playing?'Pause walkthrough':phase==='paused'?'Resume walkthrough':phase==='complete'?'Replay walkthrough':'Play walkthrough';
-  $('#play-word').textContent=phase==='paused'?'Resume':phase==='complete'?'Replay':'Play';
+  const button=$('#play-refinements'),label=playing?'Pause experiment':phase==='paused'?'Resume experiment':phase==='complete'?'Replay experiment':'Play experiment';
+  $('#play-word').textContent=phase==='paused'?'Resume':phase==='complete'?'Replay experiment':'Play experiment';
   button.setAttribute('aria-pressed',String(playing));button.setAttribute('aria-label',label);button.title=label;
  }
 });
@@ -112,8 +112,9 @@ function renderStepper(prefix,value,total){
 }
 function renderRail(){
  $('#refinement-rail').style.setProperty('--progress',String((stage-1)/3));
- const range=$('#refinement-range');range.value=String(stage);range.setAttribute('aria-valuetext',attemptName(stage));
+ const range=$('#refinement-range');range.value=String(stage);range.setAttribute('aria-valuetext',introMode?'Brief only':attemptName(stage));
  range.disabled=introMode;
+ $('#stage-1').textContent=introMode?'Brief only':'One-shot';$('#stage-1').setAttribute('aria-label',introMode?'Brief only':'One-shot');
  $('#stage-help-1').textContent=introMode?'One prompt with just the brief and data. No ingredients or refinement yet.':'One prompt with the brief, data and two ingredients. No refinement yet.';
  for(let value=1;value<=4;value++){const button=$('#stage-'+value);button.setAttribute('aria-pressed',String(stage===value));button.disabled=introMode;}
  $('#play-refinements').hidden=false;
@@ -131,17 +132,18 @@ function renderResult(){
  if(introMode)entries=[{item:current,label:''}];
  container.classList.toggle('comparing',entries.length>1);
  showReports(container,entries);
- $('#pair-title').textContent=introMode?'Original one-shot':selected.label;
+ $('#pair-title').textContent=introMode?'Brief only':selected.label;
+ $('#compare').hidden=introMode;
  if(introMode)$('#compare').removeAttribute('aria-pressed');else $('#compare').setAttribute('aria-pressed',String(comparing));
- $('#compare-label').textContent=introMode?'Roll ingredients':comparing&&comparison==='other'?'Compare prompts':'Compare without ingredients';
+ $('#compare-label').textContent=comparing&&comparison==='other'?'Compare prompts':'Compare brief only';
  $('#compare-target').hidden=introMode||!comparing;$('#compare-target').value=comparison;$('#compare-other').textContent=otherLabel;
- $('#view-plain').disabled=introMode;$('#view-plain').textContent=introMode?'Original one-shot':'Brief only →';
+ $('#view-plain').disabled=introMode;$('#view-plain').textContent=introMode?'Brief only':'Brief only →';
  $('#copy-link').textContent=introMode?'Share example ↗':'Share this roll ↗';
  $('#method-original').setAttribute('aria-pressed',String(method==='original'));$('#method-stronger').setAttribute('aria-pressed',String(method==='stronger'));
  $('#method-note').hidden=stage!==1;
  renderRail();
  showPrompt($('#current-prompt'),current.prompt,!introMode&&stage===1?`Combine ${INGREDIENTS_A[a]} and ${INGREDIENTS_B[b]} into a distinct visual identity.`:'');
- $('#prompt-title').textContent=stage===1?'One-shot prompt':'Refinement prompt';
+ $('#prompt-title').textContent=introMode?'Brief only':stage===1?'One-shot prompt':'Refinement prompt';
  $('#copy-prompt').textContent=stage===1?'Copy with data':'Copy prompt';
  $('#current-critique').textContent=current.critique||'';$('#critique').hidden=!current.critique;
  $('#copy-status').textContent='';$('#share-status').textContent='';
@@ -175,7 +177,7 @@ function render(sync=true){
  });
  $('#atlas-ingredient').value=String(a);
  renderResult();if(sync)syncDice3D();updateURL();
- $('#status').textContent=introMode?'Original one-shot. Roll either die to add two ingredients.':selected.label+'. '+attemptName(stage)+'.';
+ $('#status').textContent=introMode?'Brief only. Play the experiment or roll either die to add two ingredients.':selected.label+'. '+attemptName(stage)+'.';
 }
 function selectPair(run){playback.stop();settlePresentation();const introducing=introMode;introMode=false;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();if(introducing)guideRefinement(guideToken);}
 function chooseDieFace(index,value){
