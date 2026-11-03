@@ -7,7 +7,6 @@ const checks = [
   'work/fixed-report/check-dice.mjs',
   'work/fixed-report/check-dice-interaction.mjs',
   'work/fixed-report/check-prompt-peek.mjs',
-  'work/fixed-report/check-refinement-playback.mjs',
   'work/fixed-report/check-report-handoff.mjs',
   'scripts/security.mjs'
 ];

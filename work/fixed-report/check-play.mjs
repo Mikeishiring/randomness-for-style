@@ -39,13 +39,13 @@ document={documentElement:{dataset:{}},events:{},addEventListener(k,v){(this.eve
 const observers=[],copies=[],downloads=[],rollout={defer:false,complete:null};
 const context=vm.createContext({assert,console,reduced:false,document,window:{addEventListener(){}},history:{replaceState(){}},navigator:{clipboard:{async writeText(text){copies.push(text)}}},URLSearchParams,location:{search:'?stage=4',pathname:'/index.html',href:'https://randomness-for-style.vercel.app/?pair=0-2&stage=2&prompt=stronger'},crypto:webcrypto,EXPERIMENT:experiment,BASELINE:baseline,STRONGER_EXPERIMENT:stronger.experiment,STRONGER_BASELINE:stronger.baseline,INGREDIENTS_A:ingredientsA,INGREDIENTS_B:ingredientsB,IntersectionObserver:function(){this.observe=()=>{}},ResizeObserver:function(callback){this.callback=callback;this.observed=[];this.observe=e=>this.observed.push(e);this.disconnect=()=>{this.observed=[]};observers.push(this)},inviteDice(){},bindPromptPeek(){return {close(){}}},showPrompt(pre,text){pre.textContent=text},matchMedia(query){return {matches:query.includes('prefers-reduced-motion')&&context.reduced,addEventListener(){}}},initDice3D(){},syncDice3D(){},cancelDiceRoll(){rollout.complete=null;},tumbleDice(indices,values,complete,gesture){rollout.indices=indices;rollout.values=values;rollout.gesture=gesture;if(rollout.defer)rollout.complete=complete;else complete();},Blob,URL:{createObjectURL(blob){downloads.push(blob);return 'blob:html'},revokeObjectURL(){}},setTimeout(){},clearTimeout(){},nodes,visibleFrames,rollout});
 context.settleDieGrab=()=>{};
-vm.runInContext(read('refinement-playback.js')+'\n'+read('report-handoff.js')+'\n'+read('play.js'),context);
+vm.runInContext(read('report-handoff.js')+'\n'+read('play.js'),context);
 vm.runInContext(`
 assert.equal(introMode,false);assert.equal(method,'stronger');changeMethod('original');assert.equal(selected.id,'0-2');assert.equal(stage,4);assert.equal(view,'dice');assert.equal(nodes.get('#dice-deck').hidden,false);assert.equal(nodes.get('#plain-controls').hidden,true);
 assert.equal(nodes.get('#matrix').querySelectorAll('button').length,EXPERIMENT.runs.length);
 for(const run of EXPERIMENT.runs){
- selectPair(run);assert.equal(run.steps.length,4);for(let pass=1;pass<=4;pass++){stage=pass;render();assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,run.steps[pass-1].html);assert.equal(nodes.get('#current-prompt').textContent,run.steps[pass-1].prompt);}assert.equal(a,run.a);assert.equal(b,run.b);assert.ok(stage<=run.steps.length);assert.equal(nodes.get('#refinement-range').attrs['aria-valuetext'],stage===1?'One-shot':'Refinement '+(stage-1));
- assert.equal(nodes.get('#refinement-range').value,String(stage));assert.equal(nodes.get('#stage-'+stage).attrs['aria-pressed'],'true');
+ selectPair(run);assert.equal(run.steps.length,4);for(let pass=1;pass<=4;pass++){stage=pass;render();assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,run.steps[pass-1].html);assert.equal(nodes.get('#current-prompt').textContent,run.steps[pass-1].prompt);}assert.equal(a,run.a);assert.equal(b,run.b);assert.ok(stage<=run.steps.length);
+ assert.equal(nodes.get('#stage-'+stage).attrs['aria-pressed'],'true');
  const frame=visibleFrames(nodes.get('#report-view'))[0];assert.equal(frame.srcdoc,run.steps[stage-1].html);
  assert.equal([...matrixCells.values()].filter(cell=>!cell.hidden).length,6);assert.equal(nodes.get('#atlas-ingredient').value,String(a));
  assert.equal(nodes.get('#matrix').querySelectorAll('button').filter(button=>button.attrs['aria-pressed']==='true').length,1);
@@ -80,14 +80,14 @@ nodes.get('#compare').click();assert.equal(visibleFrames(nodes.get('#report-view
 selectPair(EXPERIMENT.runs[2]);assert.equal(stage,1);setAttempt(stage-1);assert.equal(stage,1);
 nodes.get('#compare').click();
 for(let n=2;n<=4;n++){
- setAttempt(stage+1);assert.equal(stage,n);assert.equal(nodes.get('#refinement-range').attrs['aria-valuetext'],'Refinement '+(n-1));
+ setAttempt(stage+1);assert.equal(stage,n);assert.equal(nodes.get('#stage-'+n).attrs['aria-pressed'],'true');
  assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===BASELINE.steps[n-1].html));
  assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===selected.steps[n-1].html));
 }
-assert.equal(nodes.get('#critique').hidden,false);assert.equal(nodes.get('#refinement-range').value,'4');setAttempt(stage+1);assert.equal(stage,4);
+assert.equal(nodes.get('#critique').hidden,false);assert.equal(nodes.get('#stage-4').attrs['aria-pressed'],'true');setAttempt(stage+1);assert.equal(stage,4);
 for(let n=3;n>=1;n--){setAttempt(stage-1);assert.equal(stage,n);}
-assert.equal(nodes.get('#refinement-range').value,'1');setAttempt(stage-1);assert.equal(stage,1);nodes.get('#compare').click();
-selectPair(EXPERIMENT.runs[0]);assert.equal(stage,1);assert.equal(nodes.get('#critique').hidden,true);setAttempt(stage+1);assert.equal(stage,2);assert.equal(nodes.get('#refinement-range').value,'2');setAttempt(stage-1);assert.equal(stage,1);
+assert.equal(nodes.get('#stage-1').attrs['aria-pressed'],'true');setAttempt(stage-1);assert.equal(stage,1);nodes.get('#compare').click();
+selectPair(EXPERIMENT.runs[0]);assert.equal(stage,1);assert.equal(nodes.get('#critique').hidden,true);setAttempt(stage+1);assert.equal(stage,2);assert.equal(nodes.get('#stage-2').attrs['aria-pressed'],'true');setAttempt(stage-1);assert.equal(stage,1);
 const cached=visibleFrames(nodes.get('#report-view'))[0];selectPair(EXPERIMENT.runs[1]);selectPair(EXPERIMENT.runs[0]);assert.equal(visibleFrames(nodes.get('#report-view'))[0],cached);
 `,context);
 await nodes.get('#copy-prompt').click();assert.equal(copies.at(-1),experiment.runs[0].steps[0].fullPrompt);
@@ -123,28 +123,28 @@ for(const track of ['stronger','original']){
  stage=3;render();const pair=selected.id;changeMethod(track==='original'?'stronger':'original');assert.equal(stage,3);assert.equal(selected.id,pair);roll(0);assert.equal(stage,3);assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[2].html);
 }
 changeMethod('stronger');comparing=false;stage=2;render();
-reduced=true;stage=2;roll(0);assert.equal(playback.running,false);assert.equal(stage,2);reduced=false;
-stage=1;roll(0);assert.equal(playback.running,false);assert.equal(stage,1);
-setAttempt(3);assert.equal(playback.running,false);roll(1);assert.equal(stage,3);assert.equal(playback.running,false);
-nodes.get('#stage-1').click();assert.equal(stage,1);nodes.get('#refinement-range').events.input({target:{value:'4'}});assert.equal(stage,4);
-nodes.get('#play-refinements').click();assert.equal(playback.running,true);assert.equal(stage,1);
-assert.equal(introMode,true);assert.equal(comparing,false);assert.equal(nodes.get('#walkthrough-note').hidden,false);assert.equal(nodes.get('#walkthrough-title').textContent,'Brief only');
-assert.equal(nodes.get('#stage-1').textContent,'Brief only');assert.equal(nodes.get('#compare').hidden,true);
+// The main action is reader-paced, and every state can be revisited.
+reduced=true;stage=2;roll(0);assert.equal(stage,2);reduced=false;
+nodes.get('#stage-0').click();assert.equal(introMode,true);assert.equal(stage,1);
+assert.equal(nodes.get('#stage-0').attrs['aria-pressed'],'true');assert.equal(nodes.get('#compare').disabled,true);
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,currentBaseline().steps[0].html);
-nodes.get('#play-refinements').click();assert.equal(playback.phase,'paused');assert.equal(nodes.get('#walkthrough-note').hidden,false);assert.equal(nodes.get('#play-word').textContent,'Resume');
-nodes.get('#walkthrough-close').click();assert.equal(playback.phase,'idle');assert.equal(nodes.get('#walkthrough-note').hidden,true);assert.equal(document.activeElement,nodes.get('#play-refinements'));
-nodes.get('#play-refinements').click();
-const beforeTour=selected;playback.advance();assert.equal(introMode,true);assert.equal(nodes.get('#walkthrough-note').hidden,false);assert.equal(nodes.get('#walkthrough-title').textContent,'Roll two ingredients');assert.equal(nodes.get('#walkthrough-next').disabled,true);assert.equal(nodes.get('#walkthrough-prompt').disabled,true);assert.deepEqual(rollout.indices,[0,1]);assert.notEqual(selected.a,beforeTour.a);assert.notEqual(selected.b,beforeTour.b);
-rollout.complete();const tourPair=selected;assert.equal(introMode,false);assert.equal(stage,1);assert.equal(nodes.get('#stage-1').textContent,'One-shot');assert.equal(nodes.get('#compare').hidden,false);assert.equal(nodes.get('#walkthrough-title').textContent,'Add ingredients');assert.equal(nodes.get('#walkthrough-next').disabled,false);assert.equal(nodes.get('#walkthrough-prompt').disabled,false);
-assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,tourPair.steps[0].html);
-nodes.get('#walkthrough-next').click();assert.equal(stage,2);assert.equal(playback.phase,'paused');assert.equal(selected,tourPair);
-nodes.get('#walkthrough-next').click();assert.equal(stage,3);nodes.get('#walkthrough-next').click();assert.equal(stage,4);assert.equal(selected,tourPair);
-nodes.get('#walkthrough-next').click();assert.equal(playback.phase,'idle');assert.equal(nodes.get('#walkthrough-note').hidden,true);
-nodes.get('#play-refinements').click();selectPair(currentExperiment().runs[0]);assert.equal(playback.running,false);assert.equal(nodes.get('#walkthrough-note').hidden,true);
+const rememberedPair=selected;
+nodes.get('#experiment-next').click();assert.equal(introMode,false);assert.equal(selected,rememberedPair);assert.equal(stage,1);
+nodes.get('#guide-toggle').click();assert.equal(hintsOpen,true);assert.equal(nodes.get('#walkthrough-title').textContent,'Dice added');
+for(let next=2;next<=4;next++){
+ nodes.get('#experiment-next').click();assert.equal(stage,next);assert.equal(selected,rememberedPair);
+ assert.equal(nodes.get('#walkthrough-count').textContent,(next+1)+' / 5');
+ assert.equal(nodes.get('#stage-'+next).attrs['aria-pressed'],'true');
+}
+const finishedPair=selected;nodes.get('#experiment-next').click();assert.equal(stage,1);assert.notEqual(selected,finishedPair);
+nodes.get('#walkthrough-close').click();assert.equal(hintsOpen,false);assert.equal(document.activeElement,nodes.get('#guide-toggle'));
+const closedPair=selected;nodes.get('#guide-toggle').click();assert.equal(hintsOpen,true);assert.equal(selected,closedPair);assert.equal(stage,1);
+nodes.get('#stage-3').click();assert.equal(stage,3);assert.equal(nodes.get('#walkthrough-title').textContent,'Refinement 2');
+nodes.get('#stage-0').click();nodes.get('#stage-1').click();assert.equal(selected,closedPair);assert.equal(stage,1);
 const priorMethod=method,priorPair=selected;method='original';
 const repeated=EXPERIMENT.runs.find(run=>run.steps.some((step,i)=>i>0&&step.html===run.steps[i-1].html));
-if(repeated){selected=repeated;const sameStage=repeated.steps.findIndex((step,i)=>i>0&&step.html===repeated.steps[i-1].html)+1;showWalkthrough(sameStage);assert.equal(nodes.get('#walkthrough-title').textContent,'No change this pass');}
-method=priorMethod;selected=priorPair;nodes.get('#walkthrough-note').hidden=true;
+if(repeated){selected=repeated;stage=repeated.steps.findIndex((step,i)=>i>0&&step.html===repeated.steps[i-1].html)+1;showWalkthrough();assert.equal(nodes.get('#walkthrough-title').textContent,'No change this pass');}
+method=priorMethod;selected=priorPair;setHints(false);
 stage=3;render();matrixButtons.get('0-4').click();assert.equal(stage,3);assert.equal(selected.id,'0-4');
 nodes.get('#atlas-ingredient').events.change({target:{value:'5'}});assert.equal(stage,3);assert.equal(selected.id,'5-4');
 stage=2;render();
@@ -169,20 +169,19 @@ const homeNodes=new Map([...read('play.html').matchAll(/\bid="([^"]+)"/g)].map(m
 const homeDocument={...document,documentElement:{dataset:{}},events:{},querySelector:s=>homeNodes.get(s)};
 const guideTasks=new Map();let guideID=0;
 const home=vm.createContext({...context,document:homeDocument,nodes:homeNodes,location:{search:'',pathname:'/',href:'https://randomness-for-style.vercel.app/'},history:{replaceState(_a,_b,url){this.url=url}},setTimeout(fn,delay){const id=++guideID;guideTasks.set(id,{fn,delay});return id},clearTimeout(id){guideTasks.delete(id)}});
-vm.runInContext(read('refinement-playback.js')+'\n'+read('report-handoff.js')+'\n'+read('play.js'),home);
+vm.runInContext(read('report-handoff.js')+'\n'+read('play.js'),home);
 vm.runInContext(`
-assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#refinement-range').disabled,true);
+assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#stage-2').disabled,true);assert.equal(hintsOpen,true);
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,STRONGER_BASELINE.steps[0].html);
 assert.equal(nodes.get('#current-prompt').textContent,STRONGER_BASELINE.steps[0].prompt);
 assert.ok(history.url.includes('start=original'));assert.ok([...matrixButtons.values()].every(button=>button.attrs['aria-pressed']==='false'));
 setAttempt(4);assert.equal(stage,1);rollout.defer=false;const initial=selected;roll(0);
-assert.equal(introMode,false);assert.equal(stage,1);assert.equal(playback.running,false);assert.deepEqual(rollout.indices,[0,1]);
-assert.equal(nodes.get('#refinement-range').disabled,false);
+assert.equal(introMode,false);assert.equal(stage,1);assert.deepEqual(rollout.indices,[0,1]);
+assert.equal(nodes.get('#stage-2').disabled,false);
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);assert.ok(!history.url.includes('start=original'));
 `,home);
-const cue=[...guideTasks.entries()].find(([,task])=>task.delay===650);assert.ok(cue);guideTasks.delete(cue[0]);cue[1].fn();assert.equal(homeNodes.get('#refinement-rail').dataset.guide,'refine');
-vm.runInContext(`setAttempt(2);assert.equal(stage,2);const before=selected;roll(1);assert.equal(stage,2);assert.equal(selected.a,before.a);assert.notEqual(selected.b,before.b);assert.equal(playback.running,false);`,home);
-assert.equal(guideTasks.size,0);
+assert.equal(guideTasks.size,0,'The guided path must not schedule automatic progression');
+vm.runInContext(`setAttempt(2);assert.equal(stage,2);const before=selected;roll(1);assert.equal(stage,2);assert.equal(selected.a,before.a);assert.notEqual(selected.b,before.b);`,home);
 vm.runInContext(`introMode=true;stage=1;render();selectPair(currentExperiment().runs[5]);assert.equal(introMode,false);assert.equal(selected.id,'0-5');assert.equal(stage,1);`,home);
 vm.runInContext(`
 const secureDraw=randomIndex;
@@ -191,12 +190,12 @@ for(let left=0;left<6;left++)for(let right=0;right<6;right++){
 }
 randomIndex=secureDraw;
 `,home);
-console.log('PASS: plain-first home, shared later-stage bypass, original prompt identity, first two-die reveal, finite +1 cue without auto-advancing, subsequent independent rolls and gallery bypass.');
+console.log('PASS: plain-first home, shared later-stage bypass, original prompt identity, first two-die reveal, self-paced five-step hints without timers, subsequent independent rolls and gallery bypass.');
 vm.runInContext(`
 introMode=true;stage=1;selected=currentExperiment().runs[2];render();chooseDieFace(0,5);
 assert.equal(introMode,false);assert.equal(selected.id,'5-2');assert.equal(stage,1);
 setAttempt(4);chooseDieFace(1,0);assert.equal(selected.id,'5-0');assert.equal(stage,4);
-assert.equal(nodes.get('#refinement-rail').style['--progress'],'1');
+assert.equal(nodes.get('#refinement-rail').style['--step'],'4');
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[3].html);
 `,home);
 console.log('PASS: deliberate face choice preserves the other ingredient and refinement, bypasses the intro and updates the report and rail together.');

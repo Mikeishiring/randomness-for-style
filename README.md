@@ -38,8 +38,8 @@ The recorded reports here use no personal design skills or supplied visual refer
 
 - New visitors start with the plain one-shot. The first roll reveals two ingredients and their result.
 - Click a die to roll, drag slowly to choose its upper face, or flick to throw. Arrow keys turn it; Escape cancels a drag.
-- Play starts with the plain one-shot, rolls both dice, then walks through the ingredient one-shot and three refinements. Pause or step through at your own pace; opening the exact prompt pauses the tour.
-- Choose One-shot, +1, +2 or +3, or drag the refinement control. Hover or focus a step to see what it means. A manual choice ends the tour.
+- Follow the five steps beneath the dice: Brief only, Dice added, then +1, +2 and +3 refinements. The next-action button advances one step at a time; nothing advances on a timer.
+- Jump to any available step, or return to Brief only and back without losing your pair. Optional floating hints explain the current step without resizing the result.
 - Compare with the brief-only result, inspect the exact prompt and critique, browse all 36 combinations, or share a selected state.
 
 These are saved results, not live model calls. The original and stronger refinement sequences are both preserved. The stronger sequence restarts from the same one-shot in a fresh context. Generated reports were not manually restyled; unchanged passes and rough edges remain visible. The exact prompts and critiques are available so someone else can repeat the procedure.
@@ -70,7 +70,7 @@ The protocol files document the generation method and its limitations. To repeat
 
 ## Checks and deployment
 
-`npm test` checks report and prompt integrity, all 36 combinations and their stages, dice geometry, gestures, playback, disclosures and bundled JavaScript. `npm run check:security` scans tracked or staged files for credential patterns, local paths and forbidden account/configuration files. CI runs a checksum-pinned Gitleaks scan across the repository history, rebuilds the public files and checks for differences.
+`npm test` checks report and prompt integrity, all 36 combinations and their stages, dice geometry, gestures, the guided path, disclosures and bundled JavaScript. `npm run check:security` scans tracked or staged files for credential patterns, local paths and forbidden account/configuration files. CI runs a checksum-pinned Gitleaks scan across the repository history, rebuilds the public files and checks for differences.
 
 Deploy `site` as the Vercel project root; `site/vercel.json` serves `dist` without a build command. The existing public site is deployed separately; pushing this repository does not change its deployment connection.
 

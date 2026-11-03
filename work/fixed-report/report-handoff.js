@@ -26,7 +26,7 @@ function handoffReport(container,previous,incoming){
   if(reportHandoffs.get(container)!==active||active.animation)return;
   frame.dataset.loaded='true';frame.removeEventListener('load',active.reveal);
   if(active.immediate||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches){releaseReportHandoff(container);return;}
-  active.animation=previous.animate([{opacity:1},{opacity:0}],{duration:360,easing:'cubic-bezier(.4,0,.2,1)'});
+  active.animation=previous.animate([{opacity:1},{opacity:0}],{duration:180,easing:'cubic-bezier(.4,0,.2,1)'});
   active.animation.onfinish=()=>{if(reportHandoffs.get(container)===active)settleReportHandoff(container);};
  };
  if(frame.dataset.loaded==='true')active.reveal();

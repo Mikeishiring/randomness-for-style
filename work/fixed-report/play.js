@@ -20,61 +20,39 @@ const previewCaches=new WeakMap();
 const matrixButtons=new Map();
 const matrixCells=new Map();
 const promptPeeks=[$('#prompt'),$('#plain-prompt-details')].map(bindPromptPeek);
-let railVisible=true,guideTimer=null,guideToken=0;
-function stopGuidance(){clearTimeout(guideTimer);guideToken++;$('#refinement-rail').removeAttribute('data-guide');}
-function guideRefinement(token){
- if(token!==guideToken||stage!==1||introMode||comparing||view!=='dice'||document.hidden||!railVisible||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
- guideTimer=setTimeout(()=>{
-  if(token!==guideToken)return;
-  $('#refinement-rail').dataset.guide='refine';guideTimer=setTimeout(stopGuidance,1600);
- },650);
-}
-function settlePresentation(){stopGuidance();settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
+let hintsOpen=introMode,ingredientsChosen=!introMode;
+function settlePresentation(){settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
 const walkthroughBeats=[
- ['Brief only','One prompt, no ingredients. This is the starting point.'],
- ['Add ingredients','Same brief and data. Two ingredients change the visual direction.'],
- ['Refine once','Critique this result. Lean into both ingredients. Keep it simple.'],
- ['Refine again','Repeat the same refinement prompt on the previous result.'],
- ['Third refinement','Same prompt, one more pass. More distinct—or just more?']
+ ['Brief only','One prompt, no added ingredients. The brief and data stay fixed.'],
+ ['Dice added','The same prompt, now with these two ingredients. Still one shot.'],
+ ['Refinement 1','Prompt again: critique the result, lean into both ingredients, keep it simple.'],
+ ['Refinement 2','The same refinement prompt, applied to the previous result.'],
+ ['Refinement 3','One more pass of that same prompt. More distinct—or just more?']
 ];
-function showWalkthrough(value){
- const note=$('#walkthrough-note'),wasHidden=note.hidden;
- const rolling=value==='roll',beat=rolling?1:value;
- note.dataset.rolling=String(rolling);
+function showWalkthrough(){
+ const value=introMode?0:stage,note=$('#walkthrough-note');
  const unchanged=value>1&&selected.steps[value-1].html===selected.steps[value-2].html;
- const [title,text]=rolling?['Roll two ingredients','Keep the brief. Add a random visual direction.']:unchanged?['No change this pass','The same refinement prompt was repeated. This result stayed unchanged.']:walkthroughBeats[beat];
- $('#walkthrough-count').textContent=(beat+1)+' / 5';
- $('#walkthrough-count').setAttribute('aria-label','Step '+(beat+1)+' of 5');
- $('#walkthrough-title').textContent=title;$('#walkthrough-text').textContent=text;note.hidden=false;
- $('#walkthrough-next').disabled=rolling;$('#walkthrough-prompt').disabled=rolling;
- $('#walkthrough-next').textContent=rolling?'Rolling…':value===0?'Roll dice →':value===4?'Explore →':'Refine →';
- const copy=wasHidden?note:$('#walkthrough-copy');
- if(!matchMedia('(prefers-reduced-motion: reduce)').matches)copy.animate?.([{opacity:0,transform:'translateY(5px)'},{opacity:1,transform:'translateY(0)'}],{duration:170,easing:'cubic-bezier(.23,1,.32,1)'});
+ const [title,text]=unchanged?['No change this pass','The refinement prompt was repeated, but this result stayed unchanged.']:walkthroughBeats[value];
+ const changed=$('#walkthrough-title').textContent!==title;
+ $('#walkthrough-count').textContent=(value+1)+' / 5';
+ $('#walkthrough-count').setAttribute('aria-label','Step '+(value+1)+' of 5');
+ $('#walkthrough-title').textContent=title;$('#walkthrough-text').textContent=text;
+ note.hidden=!hintsOpen;$('#guide-toggle').setAttribute('aria-expanded',String(hintsOpen));
+ $('#refinement-rail').style.setProperty('--step',String(value));
+ if(changed&&hintsOpen&&!matchMedia('(prefers-reduced-motion: reduce)').matches)$('#walkthrough-copy').animate?.([{opacity:.25,transform:'translateY(3px)'},{opacity:1,transform:'translateY(0)'}],{duration:160,easing:'ease-out'});
 }
-function rollWalkthrough(complete){
- const values=[nextIngredient(0,selected.a),nextIngredient(1,selected.b)];
- selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
- render(false);
- tumbleDice([0,1],values,complete);
+function setHints(open){hintsOpen=open;showWalkthrough();}
+function showBrief(){settlePresentation();cancelDiceRoll();introMode=true;stage=1;comparing=false;render();}
+function showIngredients(){
+ if(!ingredientsChosen){roll();return;}
+ settlePresentation();introMode=false;stage=1;render();
 }
-const playback=createRefinementPlayback({
- showPlain:()=>{cancelDiceRoll();introMode=true;stage=1;comparing=false;render();},
- rollIngredients:rollWalkthrough,
- setStage:value=>{introMode=false;stage=value;render(false);syncDice3D();},
- canPlay:()=>view==='dice'&&!document.hidden&&railVisible,
- onBeat:showWalkthrough,
- onPlaying:(playing,phase)=>{
-  $('#refinement-rail').dataset.playing=String(playing);
-  $('#refinement-rail').dataset.touring=String(phase!=='idle');
-  document.documentElement.dataset.touring=String(phase!=='idle');
-  if(phase==='idle'){
-   $('#walkthrough-note').hidden=true;cancelDiceRoll();syncDice3D();
-  }
-  const button=$('#play-refinements'),label=playing?'Pause experiment':phase==='paused'?'Resume experiment':phase==='complete'?'Replay experiment':'Play experiment';
-  $('#play-word').textContent=phase==='paused'?'Resume':phase==='complete'?'Replay experiment':'Play experiment';
-  button.setAttribute('aria-pressed',String(playing));button.setAttribute('aria-label',label);button.title=label;
- }
-});
+function nextExperimentStep(){
+ promptPeeks.forEach(peek=>peek.close());
+ if(introMode){showIngredients();}
+ else if(stage<4){setAttempt(stage+1);}
+ else{stage=1;comparing=false;roll();}
+}
 function updateURL(){
  const query=new URLSearchParams({view,pair:selected.id,stage:String(stage),plainStage:String(plainStage),prompt:method});
  if(comparing)query.set('compare','1');
@@ -111,13 +89,13 @@ function renderStepper(prefix,value,total){
  next.title=next.disabled?(total===1?'No refinements saved for this pair':'Last saved refinement'):'Refine more';
 }
 function renderRail(){
- $('#refinement-rail').style.setProperty('--progress',String((stage-1)/3));
- const range=$('#refinement-range');range.value=String(stage);range.setAttribute('aria-valuetext',introMode?'Brief only':attemptName(stage));
- range.disabled=introMode;
- $('#stage-1').textContent=introMode?'Brief only':'One-shot';$('#stage-1').setAttribute('aria-label',introMode?'Brief only':'One-shot');
- $('#stage-help-1').textContent=introMode?'One prompt with just the brief and data. No ingredients or refinement yet.':'One prompt with the brief, data and two ingredients. No refinement yet.';
- for(let value=1;value<=4;value++){const button=$('#stage-'+value);button.setAttribute('aria-pressed',String(stage===value));button.disabled=introMode;}
- $('#play-refinements').hidden=false;
+ const value=introMode?0:stage;
+ for(let n=0;n<=4;n++){
+  const button=$('#stage-'+n);button.setAttribute('aria-pressed',String(n===value));
+  button.disabled=introMode&&n>1;
+ }
+ $('#next-label').textContent=introMode?(ingredientsChosen?'Back to ingredients':'Roll ingredients'):stage===1?'Refine once':stage<4?'Refine again':'Roll a new pair';
+ showWalkthrough();
 }
 function renderResult(){
  const container=$('#report-view');container.classList.toggle('comparing',comparing);
@@ -133,11 +111,11 @@ function renderResult(){
  container.classList.toggle('comparing',entries.length>1);
  showReports(container,entries);
  $('#pair-title').textContent=introMode?'Brief only':selected.label;
- $('#compare').hidden=introMode;
- if(introMode)$('#compare').removeAttribute('aria-pressed');else $('#compare').setAttribute('aria-pressed',String(comparing));
- $('#compare-label').textContent=comparing&&comparison==='other'?'Compare prompts':'Compare brief only';
+ $('#compare').disabled=introMode;
+ $('#compare').setAttribute('aria-pressed',String(comparing));
+ $('#compare').setAttribute('aria-label',comparing&&comparison==='other'?'Compare refinement prompts':'Compare with brief only');
  $('#compare-target').hidden=introMode||!comparing;$('#compare-target').value=comparison;$('#compare-other').textContent=otherLabel;
- $('#view-plain').disabled=introMode;$('#view-plain').textContent=introMode?'Brief only':'Brief only →';
+ $('#view-plain').disabled=false;$('#view-plain').textContent='Refine brief alone →';
  $('#copy-link').textContent=introMode?'Share example ↗':'Share this roll ↗';
  $('#method-original').setAttribute('aria-pressed',String(method==='original'));$('#method-stronger').setAttribute('aria-pressed',String(method==='stronger'));
  $('#method-note').hidden=stage!==1;
@@ -177,17 +155,16 @@ function render(sync=true){
  });
  $('#atlas-ingredient').value=String(a);
  renderResult();if(sync)syncDice3D();updateURL();
- $('#status').textContent=introMode?'Brief only. Play the experiment or roll either die to add two ingredients.':selected.label+'. '+attemptName(stage)+'.';
+ $('#status').textContent=introMode?'Brief only. Roll the dice to add two ingredients.':selected.label+'. '+attemptName(stage)+'.';
 }
-function selectPair(run){playback.stop();settlePresentation();const introducing=introMode;introMode=false;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();if(introducing)guideRefinement(guideToken);}
+function selectPair(run){settlePresentation();hintsOpen=false;introMode=false;ingredientsChosen=true;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();}
 function chooseDieFace(index,value){
- playback.stop();settlePresentation();const introducing=introMode;introMode=false;
+ settlePresentation();const introducing=introMode;introMode=false;ingredientsChosen=true;
  if(introducing){stage=1;comparing=false;}
  const values=[selected.a,selected.b];values[index]=value;
  // A deliberate choice keeps the other face, even on the first interaction.
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  render(false);settleDieGrab(index,true);syncDice3D();
- if(introducing)guideRefinement(guideToken);
 }
 $('#atlas-ingredient').addEventListener('change',event=>selectPair(currentExperiment().runs.find(run=>run.a===Number(event.target.value)&&run.b===b)));
 function randomIndex(length){
@@ -202,62 +179,37 @@ function nextIngredient(index,current){
  return bag.splice(position,1)[0];
 }
 function roll(index,gesture=null){
- playback.stop();settlePresentation();
- const introduce=introMode,token=guideToken;introMode=false;
+ settlePresentation();
+ const introduce=introMode;introMode=false;ingredientsChosen=true;
  if(introduce){stage=1;comparing=false;}
  const before=selected,indices=introduce?[0,1]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
  indices.forEach(i=>{values[i]=introduce?randomIndex(i?INGREDIENTS_B.length:INGREDIENTS_A.length):nextIngredient(i,values[i]);});
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  // Selection is immediate. The dice acknowledge it without gating the report.
  render(false);
- tumbleDice(indices,values,()=>{syncDice3D();if(introduce)guideRefinement(token);},gesture);
+ tumbleDice(indices,values,()=>{syncDice3D();},gesture);
 }
 async function copyText(text,pre,status){
  try{await navigator.clipboard.writeText(text);status.textContent='Copied.';}catch{pre.hidden=false;pre.textContent=text;const details=pre.closest?.('details');if(details)details.open=true;const range=document.createRange();range.selectNodeContents(pre);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);status.textContent='Text selected. Press Ctrl+C or use Copy.';}
 }
-$('#compare').addEventListener('click',()=>{if(introMode){roll();return;}comparing=!comparing;renderResult();updateURL();});
+$('#compare').addEventListener('click',()=>{if(introMode)return;comparing=!comparing;setHints(false);renderResult();updateURL();});
 $('#compare-target').addEventListener('change',event=>{comparison=event.target.value==='other'?'other':'plain';renderResult();updateURL();});
-function changeMethod(next){playback.stop();settlePresentation();method=next;promptPeeks.forEach(peek=>peek.close());selected=currentExperiment().runs.find(run=>run.id===selected.id);render();if(view==='plain')renderPlain();}
+function changeMethod(next){settlePresentation();method=next;promptPeeks.forEach(peek=>peek.close());selected=currentExperiment().runs.find(run=>run.id===selected.id);render();if(view==='plain')renderPlain();}
 $('#method-original').addEventListener('click',()=>changeMethod('original'));
 $('#method-stronger').addEventListener('click',()=>changeMethod('stronger'));
 $('#plain-method').addEventListener('change',event=>changeMethod(event.target.value==='original'?'original':'stronger'));
-function setAttempt(value){if(introMode)return;playback.stop();settlePresentation();const next=Math.round(Number(value));if(selected.steps[next-1]){stage=next;render(false);}}
-$('#refinement-range').addEventListener('input',event=>setAttempt(event.target.value));
-for(let value=1;value<=4;value++){
- const button=$('#stage-'+value);
- button.addEventListener('click',()=>setAttempt(value));
- button.addEventListener('pointerenter',()=>button.removeAttribute('data-help-dismissed'));
- button.addEventListener('focus',()=>button.removeAttribute('data-help-dismissed'));
- button.addEventListener('keydown',event=>{if(event.key==='Escape')button.dataset.helpDismissed='true';});
-}
-$('#play-refinements').addEventListener('click',()=>{
- stopGuidance();promptPeeks.forEach(peek=>peek.close());
- if(!playback.running&&playback.phase!=='paused'&&$('#play').getBoundingClientRect?.().top<0)$('#play').scrollIntoView({block:'start',behavior:'instant'});
- playback.toggle();
+function setAttempt(value){if(introMode)return;settlePresentation();const next=Math.round(Number(value));if(selected.steps[next-1]){stage=next;render(false);}}
+$('#stage-0').addEventListener('click',showBrief);
+for(let value=1;value<=4;value++)$('#stage-'+value).addEventListener('click',()=>{
+ if(introMode){if(value===1)showIngredients();}
+ else setAttempt(value);
 });
-$('#walkthrough-close').addEventListener('click',()=>{playback.stop();$('#play-refinements').focus({preventScroll:true});});
-$('#walkthrough-next').addEventListener('click',()=>{
- if(playback.beat===4){playback.stop();$('#stage-4').focus({preventScroll:true});}
- else{playback.pause();playback.advance();}
-});
-$('#walkthrough-prompt').addEventListener('click',()=>{
- playback.pause();promptPeeks[0].open();$('#prompt-trigger').focus({preventScroll:true});
-});
-// Direct intent takes over immediately. Background/offscreen playback holds its stage.
-for(const type of ['pointerdown','focusin','keydown'])document.addEventListener(type,event=>{
- if(event.key==='Escape'){const touring=playback.phase!=='idle';playback.stop();settlePresentation();if(touring)$('#play-refinements').focus({preventScroll:true});}
- else if(event.target.closest('#prompt')){playback.pause();}
- else if(!event.target.closest('#play-refinements,#walkthrough-note')){playback.stop();settlePresentation();}
-},true);
-$('#prompt').addEventListener('pointerenter',()=>playback.pause());
-document.addEventListener('visibilitychange',()=>{if(document.hidden){playback.pause();settlePresentation();}});
-window.addEventListener('blur',()=>{playback.pause();settlePresentation();});
-matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',()=>{playback.pause();settlePresentation();});
-const railObserver=new IntersectionObserver(entries=>{railVisible=entries[0].isIntersecting;if(!railVisible){playback.pause();stopGuidance();}});
-railObserver.observe($('#refinement-rail'));
-const horizontalRail=matchMedia('(max-width:700px)');
-function orientRail(){$('#refinement-range').setAttribute('aria-orientation',horizontalRail.matches?'horizontal':'vertical');}
-horizontalRail.addEventListener('change',orientRail);orientRail();
+$('#experiment-next').addEventListener('click',nextExperimentStep);
+$('#guide-toggle').addEventListener('click',()=>setHints(!hintsOpen));
+$('#walkthrough-close').addEventListener('click',()=>{setHints(false);$('#guide-toggle').focus({preventScroll:true});});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&hintsOpen){setHints(false);$('#guide-toggle').focus({preventScroll:true});}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)settlePresentation();});
+matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',settlePresentation);
 $('#copy-prompt').addEventListener('click',()=>copyText((introMode?currentBaseline().steps[0]:selected.steps[stage-1]).fullPrompt,$('#current-prompt'),$('#copy-status')));
 $('#refinement-prompt').textContent=EXPERIMENT.refinementPrompt;
 const exportPrompt=document.createElement('pre');exportPrompt.hidden=true;$('#export-status').after(exportPrompt);
@@ -274,7 +226,8 @@ function renderPlain(){
  $('#plain-copy-status').textContent='';updateURL();
 }
 function selectView(next,focus=false){
- playback.stop();settlePresentation();
+ settlePresentation();
+ if(next==='plain')setHints(false);
  promptPeeks.forEach(peek=>peek.close());
  cancelDiceRoll();view=next==='dice'?'dice':'plain';document.documentElement.dataset.view=view;
  ['#dice-lab','#dice-controls','#dice-deck','#atlas','#refinement-rail'].forEach(id=>$(id).hidden=view!=='dice');

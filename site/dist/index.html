@@ -35,18 +35,16 @@
 
 /* Keep the ingredients beside the result, within the opening viewport. */
 .shell{max-width:1600px;padding:24px 32px}
-.workbench{display:grid;grid-template-columns:192px 132px minmax(0,1fr);grid-template-areas:"sidebar rail result";gap:20px;align-items:start}
+.workbench{display:grid;grid-template-columns:300px minmax(0,1fr);grid-template-areas:"sidebar result";gap:32px;align-items:start}
 .ingredient-sidebar{grid-area:sidebar;min-width:0;position:sticky;top:24px;z-index:3}
-.experiment-actions{display:grid;gap:8px;margin-bottom:8px}
-.experiment-actions .compare-toggle{margin:0}
 .controls{min-width:0;padding:0;position:static}
 .dice-deck{width:100%}
-.dice{grid-template-columns:1fr;gap:8px;margin:0;padding:0}
+.dice{grid-template-columns:1fr 1fr;gap:16px;margin:0;padding:0}
 .die-top{height:0;overflow:hidden}
-.die-object{--size:94px;height:184px;border-radius:12px;user-select:none;touch-action:none;cursor:grab;--touch-x:0deg;--touch-z:0deg}
+.die-object{--size:78px;height:146px;border-radius:12px;user-select:none;touch-action:none;cursor:grab;--touch-x:0deg;--touch-z:0deg}
 .die-object:focus-visible{outline-offset:0}.die-object:active .cube-face{border-color:currentColor}
-.die>strong{font-size:20px;line-height:1.2;height:2.6em;min-height:0;padding:0 8px;display:grid;place-content:start center;text-wrap:balance;overflow-wrap:anywhere;letter-spacing:-.5px}
-#dice-hint{text-align:center;font-size:12px;line-height:1.5;color:var(--muted);margin:4px 0 16px;text-wrap:balance}
+.die>strong{font-size:18px;line-height:1.2;height:3.6em;min-height:0;padding:0 8px;display:grid;place-content:start center;text-wrap:balance;overflow-wrap:anywhere;letter-spacing:-.5px}
+#dice-hint{text-align:center;font-size:12px;line-height:1.5;color:var(--muted);margin:0 0 20px;text-wrap:balance}
 #dice-lab{grid-area:result}
 .refinement{padding-top:0;border-top:0}
 #attempt-note,#plain-attempt-note{font-size:11px;color:var(--muted);margin:10px 0 12px;line-height:1.4}
@@ -57,7 +55,7 @@
 .report-frame{height:clamp(520px,calc(100dvh - 82px),930px);background:#fff;border:1px solid var(--line)}
 #report-view,#plain-report{position:relative;isolation:isolate}
 .frame-section.report-outgoing{position:absolute;inset:0;z-index:2;pointer-events:none}
-.result-actions{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:5px}.result-actions .text-button{font-size:11px;min-height:40px}
+.result-actions{display:flex;align-items:center;justify-content:flex-end;gap:20px;margin-top:5px}.result-actions .text-button{font-size:11px;min-height:40px}
 .result-actions{position:relative}.result-actions #share-status{position:absolute;right:0;top:36px;font-size:11px;color:var(--muted)}#share-status:empty{display:none}
 #report-view.comparing{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .frame-section h3{font-size:12px;margin-bottom:10px;min-height:16px}
@@ -92,22 +90,16 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 .die-object[data-dragging]{cursor:grabbing}
 .die-shadow{top:calc(50% + var(--size)*.48);height:calc(var(--size)*.21);filter:blur(5px);background:#2e3b2b38}
 @media(hover:hover) and (pointer:fine){.die-object:hover .cube-face{border-color:currentColor}.matrix-cell:hover{border-color:var(--accent)}summary:hover,.result-actions .text-button:hover,.return-to-dice:hover{color:var(--accent)}}
-@media(max-width:1100px){.shell{padding-inline:24px}.workbench{column-gap:16px;grid-template-columns:164px 126px minmax(0,1fr)}}
+@media(max-width:1100px){.shell{padding-inline:24px}.workbench{column-gap:16px;grid-template-columns:280px minmax(0,1fr)}}
 @media(max-width:1000px){#report-view.comparing{grid-template-columns:1fr}}
 @media(min-width:701px) and (max-width:820px){.controls{width:100%;max-width:none;margin:0}.result{border-top:0;padding-top:0}}
 @media(max-width:700px){
- .shell{padding:16px 18px}
- .workbench,[data-view=plain] .workbench{grid-template-columns:minmax(0,1fr);grid-template-areas:"sidebar" "rail" "result";gap:8px}
- [data-view=plain] .workbench{grid-template-areas:"sidebar" "result"}
- .ingredient-sidebar,.plain-controls{position:static}
- .ingredient-sidebar{display:grid;grid-template-columns:minmax(0,1fr) 64px;grid-template-areas:"actions actions" "comparison comparison" "dice dice" "hint prompt" "note note";align-items:center}
- .experiment-actions{grid-area:actions;grid-template-columns:1fr 1fr;margin-bottom:4px}
- .experiment-actions:has(#compare[hidden]){grid-template-columns:1fr}
- #compare-target{grid-area:comparison}
- #dice-deck{grid-area:dice}#dice-hint{grid-area:hint}#dice-controls{grid-area:prompt}
- .dice-deck{max-width:420px;margin:auto}.dice{grid-template-columns:1fr 1fr;gap:20px}
- .die-object{--size:62px;height:104px}.die>strong{font-size:16px;height:2.6em;padding-inline:2px}
- #dice-hint{margin:0 0 12px}
+ .shell{padding:12px 16px}
+ .workbench,[data-view=plain] .workbench{grid-template-columns:minmax(0,1fr);grid-template-areas:"sidebar" "result";gap:12px}
+ .ingredient-sidebar,.plain-controls{position:relative;top:0}
+ .dice-deck{max-width:420px;margin:auto}.dice{gap:20px}
+ .die-object{--size:60px;height:100px}.die>strong{font-size:15px;height:2.6em;padding-inline:2px}
+ #dice-hint{font-size:11px;margin:0 0 10px}
  .controls{position:static;max-width:none;width:100%;margin:0}.result{border-top:0;padding-top:0}.report-frame{height:560px}
  .matrix{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
  #report-view.comparing{grid-template-columns:1fr;gap:18px}
@@ -146,6 +138,7 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 @media(prefers-reduced-motion:reduce){.compare-toggle,.toggle-track,.toggle-track:after,.attempt-stepper button{transition:none}}
 .prompt-peek{position:relative;margin-top:5px;border-bottom:1px solid var(--line)}
 .ingredient-sidebar:has(.prompt-panel:not([hidden])){z-index:6}
+.ingredient-sidebar:has(.prompt-panel:not([hidden])) .walkthrough-note{visibility:hidden}
 .prompt-trigger{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;padding:10px 1px;border:0;background:none;text-align:left;font-size:12px}
 .prompt-trigger span{font-size:16px;color:var(--muted)}
 .prompt-trigger[aria-expanded=true]{color:var(--accent)}
@@ -165,117 +158,52 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 @media(max-width:700px){.prompt-panel{position:fixed;left:16px;right:16px;bottom:16px;width:auto;max-height:65dvh}.prompt-panel:before{display:none}.prompt-panel pre{font-size:11px}.controls{display:grid;grid-template-columns:minmax(0,1fr) 76px;column-gap:18px;align-items:start}.prompt-peek{margin-top:0}.controls>.notes{grid-column:1/-1}.plain-controls{display:block}.plain-controls .prompt-peek{margin-top:8px}.prompt-trigger{min-height:40px}}
 @media(max-width:400px){.atlas>header{display:block}#atlas-ingredient{display:block;width:100%;max-width:none;margin-top:12px}}
 .method-options{max-width:320px;margin:18px 0}.method-options .method-note{margin-bottom:0}
-/* The arrow is both a sequence and a directly draggable instrument. */
-.refinement-rail{grid-area:rail;position:sticky;top:90px;padding-top:60px;min-width:0;--progress:0;z-index:4}
-/* Guidance belongs to the report frame, never on top of the dice or the example. */
-.walkthrough-note{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px 18px;flex:none;min-height:112px;padding:12px 44px 12px 16px;margin-bottom:12px;box-sizing:border-box;border:1px solid #c5cbbb;border-radius:8px;background:#eeeee5;text-align:left;align-content:center}
-.walkthrough-meta{display:flex;align-items:center;gap:12px;grid-column:1/-1;color:var(--muted);font:10px/1.3 Arial,sans-serif}
-#walkthrough-count{font-weight:600;color:var(--ink);white-space:nowrap;font-variant-numeric:tabular-nums}
-.walkthrough-note h3{font:600 15px/1.2 Arial,sans-serif;letter-spacing:-.3px;margin:0 0 5px;color:var(--ink)}
-.walkthrough-note p{font:12px/1.45 Arial,sans-serif;margin:0;color:#53604c;text-wrap:pretty}
-.walkthrough-actions{display:flex;align-items:center;gap:10px;align-self:center}
-.walkthrough-actions button{min-height:36px;padding:7px 4px;border:0;border-radius:5px;background:none;font:12px Arial,sans-serif;color:var(--ink);white-space:nowrap}
-#walkthrough-next{min-width:90px;padding-inline:12px;background:var(--ink);color:var(--paper)}
-.walkthrough-actions button:disabled{cursor:default;opacity:.55}
-.walkthrough-actions button:not(:disabled):hover{background:#dfe5d6}
-#walkthrough-next:not(:disabled):hover{background:#435039}
-.walkthrough-actions button:focus-visible,#walkthrough-close:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-#walkthrough-close{position:absolute;top:7px;right:6px;display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:5px;background:transparent;color:var(--muted);font:20px/1 Arial}
-#walkthrough-close:hover{color:var(--ink);background:#dfe5d6}
-[data-touring=true] #dice-lab{display:flex;flex-direction:column;height:clamp(560px,calc(100dvh - 24px),980px)}
-[data-touring=true] #report-view{flex:1;min-height:0}
-[data-touring=true] #report-view .frame-section,[data-touring=true] #report-view .report-frame{height:100%}
-[data-touring=true] .result-actions{flex:none}
-@media(min-width:701px) and (max-width:1100px){
- .walkthrough-note{grid-template-columns:minmax(0,1fr);gap:6px;min-height:148px}
- .walkthrough-actions{justify-content:flex-end}
-}
+
+/* One control surface. Hints float; opening them never reflows the report. */
+.refinement-rail{position:relative;min-width:0;--step:0}
+.rail-headings,.rail-stops{display:grid;grid-template-columns:1.3fr 1.3fr 1fr 1fr 1fr;gap:4px}
+.rail-headings{font:11px/1.3 Arial,sans-serif;color:var(--muted);margin-bottom:8px}
+.rail-headings span:first-child{grid-column:1/3}.rail-headings span:last-child{grid-column:3/-1;padding-left:8px}
+.rail-stops{position:relative;padding-bottom:12px}
+.rail-stops:after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--line)}
+.rail-stops button{position:relative;min-width:0;min-height:46px;border:1px solid transparent;border-radius:5px;background:#e9ebdf;color:#59644f;font:12px/1.2 Arial,sans-serif;padding:6px 3px;transition:background 150ms ease-out,color 150ms ease-out;}
+.rail-stops button:nth-child(3){margin-left:6px}
+.rail-stops button[aria-pressed=true]{background:var(--ink);color:var(--paper);box-shadow:0 2px 3px #29352215}
+.rail-stops button[aria-pressed=true]:after{content:'';position:absolute;bottom:-13px;height:3px;left:0;right:0;background:var(--accent);border-radius:2px;z-index:1}
+.rail-stops button:disabled{opacity:.38}
+.experiment-next{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:12px 14px;margin-top:14px;border:1px solid #bec6b5;border-radius:6px;background:transparent;font:600 13px/1.2 Arial,sans-serif;transition:background 150ms ease-out}
+.experiment-next span:last-child{font-size:20px;font-weight:400;transition:transform 150ms ease-out}
+.experiment-next:active span:last-child{transform:translateX(3px)}
+.experiment-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:4px;margin-top:8px}
+.experiment-tools #dice-controls{display:block}
+.experiment-tools .prompt-peek{margin:0;border:0}
+.experiment-tools button:not(.prompt-panel button){min-height:40px;padding:8px 3px;border:0;background:transparent;font:12px/1.2 Arial,sans-serif;text-align:center;border-radius:4px}
+.experiment-tools .prompt-trigger{display:block}
+.experiment-tools #compare[aria-pressed=true],.experiment-tools #guide-toggle[aria-expanded=true]{background:#e2e7d8;color:var(--ink);font-weight:500;text-decoration:none}
+.experiment-tools #compare:disabled{opacity:.4}
+#compare-target{max-width:none;margin:4px 0 0}
+.walkthrough-note{position:absolute;left:0;right:0;top:calc(100% + 66px);padding:14px 16px 16px;border:1px solid #b8c1ac;border-radius:8px;background:#fcfbf6;box-shadow:0 8px 24px #25301c18,0 2px 4px #25301c09;z-index:5}
+.walkthrough-note:before{content:'';position:absolute;right:44px;top:-6px;width:10px;height:10px;border-top:1px solid #b8c1ac;border-left:1px solid #b8c1ac;transform:rotate(45deg);background:#fcfbf6}
+.walkthrough-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;color:var(--muted);font:11px/1.3 Arial,sans-serif}
+#walkthrough-count{font-variant-numeric:tabular-nums}
+#walkthrough-close{width:30px;height:30px;margin:-8px -9px -4px 0;border:0;border-radius:4px;background:none;font:21px/1 Arial;color:var(--muted)}
+.walkthrough-note h3{font:600 14px/1.3 Arial,sans-serif;margin:0 0 6px}
+.walkthrough-note p{font:12px/1.5 Arial,sans-serif;margin:0;color:#53604c;text-wrap:pretty}
+.prompt-panel{bottom:auto;top:0;width:min(450px,calc(100vw - 370px));left:calc(300% + 24px)}
+.prompt-panel:before{left:-26px;width:26px}
+.plain-controls .prompt-panel{left:calc(100% + 16px)}
+@media(hover:hover) and (pointer:fine){.rail-stops button:not(:disabled):not([aria-pressed=true]):hover{background:#dce3d2}.experiment-next:hover{background:#e3e8d9}.experiment-next:hover span:last-child{transform:translateX(2px)}.experiment-tools>button:not(:disabled):hover,#walkthrough-close:hover{background:#e5e9dd}}
 @media(max-width:700px){
- .walkthrough-note{grid-template-columns:minmax(0,1fr);padding:10px 12px;min-height:140px;gap:6px}
- .walkthrough-meta{padding-right:32px}.walkthrough-actions{justify-content:space-between;gap:12px}
- .walkthrough-actions button{min-height:36px}
- #walkthrough-close{width:36px;height:36px;top:3px;right:3px}
- [data-touring=true] #dice-lab{height:auto}
- [data-touring=true] #report-view .report-frame{height:520px}
+ .rail-headings{margin-bottom:5px;font-size:10px}
+ .rail-stops{padding-bottom:9px}.rail-stops button{min-height:44px}.rail-stops button[aria-pressed=true]:after{bottom:-10px}
+ .experiment-next{min-height:42px;margin-top:10px;padding:9px 12px}
+ .experiment-tools{margin-top:2px}.experiment-tools button:not(.prompt-panel button){min-height:36px}
+ .walkthrough-note{position:fixed;top:auto;bottom:16px;left:16px;right:16px;max-width:420px;margin:auto;padding:12px 16px;z-index:8}
+ .walkthrough-note:before{display:none}
+ .prompt-panel{position:fixed;left:16px;right:16px;top:auto;bottom:16px;width:auto;max-height:65dvh}
+ .plain-controls .prompt-panel{left:16px}
 }
-.refinement-rail h2{font:500 12px/1.3 Arial,sans-serif;margin:0 0 18px;padding-left:38px;color:var(--muted)}
-.rail-body{position:relative;height:300px}
-.rail-arrow{position:absolute;left:13px;top:24px;bottom:24px;width:3px;border-radius:2px;background:#c0c7b8;transform-origin:top;transition:transform 340ms cubic-bezier(.23,1,.32,1),opacity 160ms ease-out}
-.rail-arrow:after{content:'';position:absolute;left:-4px;bottom:-7px;width:9px;height:9px;border-right:2px solid #7d8971;border-bottom:2px solid #7d8971;transform:rotate(45deg)}
-.rail-progress{position:absolute;inset:0 0 auto;height:calc(100% * var(--progress));background:var(--ink);border-radius:2px;transition:height 360ms cubic-bezier(.4,0,.2,1),width 360ms cubic-bezier(.4,0,.2,1)}
-.rail-stops{height:100%;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end}
-.rail-stop{position:relative;width:calc(100% - 38px)}
-.rail-stops button{position:relative;flex:none;min-height:48px;width:100%;padding:6px;border:1px solid #b6bfab;border-radius:6px;background:#efefe7;text-align:center;font:13px/1.3 Arial,sans-serif;color:#53604c;white-space:nowrap;transition:background 200ms ease-out,color 200ms ease-out,border-color 200ms ease-out,opacity 160ms ease-out}
-.rail-stops button span{display:block;font-size:10px;font-weight:400;margin-top:2px}
-.stage-help{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%) translateX(-4px);width:224px;padding:12px 14px;border:1px solid #c5cbbb;border-radius:7px;background:#fcfbf6;box-shadow:0 5px 20px #25301c16;color:var(--ink);font:12px/1.5 Arial,sans-serif;opacity:0;visibility:hidden;transition:opacity 120ms ease-out,transform 120ms ease-out,visibility 120ms;z-index:5}
-.stage-help:before{content:'';position:absolute;right:100%;top:0;width:12px;height:100%}
-.rail-stop:has(button:focus-visible:not([data-help-dismissed])) .stage-help{opacity:1;visibility:visible;transform:translateY(-50%)}
-@media(hover:hover) and (pointer:fine){.rail-stop:has(button:not([disabled]):not([data-help-dismissed])):hover .stage-help{opacity:1;visibility:visible;transform:translateY(-50%)}}
-.refinement-rail[data-touring=true] .stage-help{display:none}
-.rail-stops b{font-weight:600;font-variant-numeric:tabular-nums}
-.rail-stops button:before{content:'';position:absolute;width:15px;height:1px;left:-25px;top:50%;background:#bcc5b0}
-.rail-stops button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:600;box-shadow:0 2px 3px #29352215}
-.rail-stops button[aria-pressed=true]:before{background:var(--ink)}
-.rail-stops button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-#refinement-range{appearance:none;-webkit-appearance:none;position:absolute;left:0;top:10px;margin:0;width:29px;height:calc(100% - 20px);writing-mode:vertical-lr;direction:ltr;background:transparent;cursor:ns-resize;z-index:1;touch-action:none;outline:none}
-#refinement-range::-webkit-slider-runnable-track{width:3px;background:transparent;border:0}
-#refinement-range::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:22px;height:28px;margin-left:-9.5px;border:2px solid var(--paper);border-radius:5px;background:linear-gradient(var(--paper),var(--paper)) center 9px/8px 1px no-repeat,linear-gradient(var(--paper),var(--paper)) center 14px/8px 1px no-repeat,var(--ink);box-shadow:0 0 0 1px var(--ink)}
-#refinement-range::-moz-range-track{width:3px;background:transparent;border:0}
-#refinement-range::-moz-range-thumb{width:18px;height:24px;border:2px solid var(--paper);border-radius:5px;background:var(--ink);box-shadow:0 0 0 1px var(--ink)}
-.rail-body:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:5px;border-radius:5px}
-.play-refinements{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:44px;padding:10px 8px;margin:0;border:1px solid var(--ink);border-radius:6px;background:var(--ink);color:var(--paper);font:600 12px Arial,sans-serif;box-shadow:0 2px 3px #29352215;transition:background 140ms ease-out}
-.play-refinements svg{width:16px;height:16px;fill:currentColor;transition:transform 150ms cubic-bezier(.23,1,.32,1)}
-.pause-symbol,.pause-word{display:none}
-.play-refinements[aria-pressed=true]{color:var(--paper);background:#435039}
-.play-refinements[aria-pressed=true] .pause-symbol,.play-refinements[aria-pressed=true] .pause-word{display:block}
-.play-refinements[aria-pressed=true] .play-symbol,.play-refinements[aria-pressed=true] .play-word{display:none}
-@media(hover:hover) and (pointer:fine){.rail-stops button:not([aria-pressed=true]):hover{color:var(--ink);border-color:#7b8b6b;background:#e4e9dc}.play-refinements:hover{background:#435039}.play-refinements:not([aria-pressed=true]):hover svg{transform:translateX(2px)}}
-.play-refinements:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.play-refinements:active svg{transform:scale(.9)}
-[data-journey=original] .refinement-rail h2,[data-journey=original] .rail-stops button:not(#stage-1){visibility:hidden;opacity:0}
-[data-journey=original] .rail-arrow{transform:scaleY(0);opacity:0}
-[data-journey=original] #refinement-range{visibility:hidden}
-[data-journey=original] #stage-1:before{display:none}
-[data-journey=original] #stage-1{background:#e7ebdf;border-color:#c1c8b8;color:var(--ink);box-shadow:none}
-[data-journey=original] .die>strong{color:var(--muted);font-size:17px;letter-spacing:-.2px}
-[data-journey=original] .toggle-track{background:transparent;border-radius:0}
-[data-journey=original] .toggle-track:after{content:'↗';position:static;display:block;width:100%;height:auto;background:transparent;font:19px/16px Arial;transition:transform 160ms ease-out}
-[data-journey=original] .result-actions #view-plain{color:var(--muted);cursor:default;text-decoration:none}
-@media(hover:hover) and (pointer:fine){[data-journey=original] #compare:hover .toggle-track:after{transform:translate(2px,-2px)}}
-.refinement-rail[data-guide=refine] #stage-2{animation:refine-invitation 1400ms ease-out both}
-@keyframes refine-invitation{0%,100%{box-shadow:0 0 0 0 #aa3d2800}28%{box-shadow:0 0 0 4px #aa3d2826;border-color:var(--accent)}65%{box-shadow:0 0 0 2px #aa3d2814;border-color:var(--accent)}}
-@media(max-width:700px){
- .refinement-rail{position:static;padding:0;display:block}
- .refinement-rail h2{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);padding:0;margin:-1px}
- .rail-body{height:44px;margin:0}
- .rail-arrow{left:12.5%;right:12.5%;top:72px;bottom:auto;height:3px;width:auto;transform-origin:left}
- .rail-arrow:after{left:auto;right:-7px;bottom:-3px;transform:rotate(-45deg)}
- .rail-progress{inset:0 auto 0 0;width:calc(100% * var(--progress));height:auto}
- [data-journey=original] .rail-arrow{transform:scaleX(0)}
- .rail-stops{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;align-items:start}
- .rail-arrow,#refinement-range,.rail-stops button:before{display:none}
- .rail-stop{width:100%;position:static}
- .stage-help{left:0;top:54px;width:100%;transform:translateY(4px);box-sizing:border-box}
- .rail-stop:has(button:focus-visible:not([data-help-dismissed])) .stage-help{transform:none}
- @media(hover:hover) and (pointer:fine){.rail-stop:has(button:not([disabled]):not([data-help-dismissed])):hover .stage-help{transform:none}}
- .rail-stops button{width:100%;height:44px;min-height:44px;padding:4px 2px;font-size:12px;white-space:normal;line-height:1.2}
- .rail-stops button span{display:block;font-size:10px;font-weight:400;margin-top:2px}
- .rail-stops button:before{width:1px;height:12px;left:50%;top:auto;bottom:-13px}
- #refinement-range{writing-mode:horizontal-tb;direction:ltr;left:calc(12.5% - 14px);top:59px;width:calc(75% + 28px);height:29px;cursor:ew-resize}
- #refinement-range::-webkit-slider-runnable-track{height:3px;width:auto}
- #refinement-range::-webkit-slider-thumb{width:28px;height:22px;margin-top:-9.5px;margin-left:0;background:linear-gradient(var(--paper),var(--paper)) 9px center/1px 8px no-repeat,linear-gradient(var(--paper),var(--paper)) 14px center/1px 8px no-repeat,var(--ink)}
- #refinement-range::-moz-range-track{height:3px;width:auto}
- #refinement-range::-moz-range-thumb{width:24px;height:18px}
- #dice-controls{display:contents}#prompt{grid-area:prompt}.prompt-peek{border-bottom:0}.prompt-trigger{width:100%;min-height:38px}#dice-hint{margin:0;text-align:left;font-size:11px}
- #attempt-note{grid-area:note;margin:4px 0 0}
- .compare-toggle{max-width:none}.dice-deck{max-width:420px}.controls .notes{border-bottom:0}.controls .notes summary{min-height:36px;padding:10px 0}
- [data-journey=original] .rail-body{height:44px}
- [data-journey=original] .rail-stops{grid-template-columns:1fr}
- [data-journey=original] .rail-stop:not(:first-child){display:none}
- [data-journey=original] .die>strong{font-size:16px}
- [data-journey=original] .refinement-rail h2{display:none}
-}
-@media(prefers-reduced-motion:reduce){.rail-arrow,.rail-progress,.stage-help,.rail-stops button,.refinement-rail h2,.play-refinements svg,[data-journey=original] .toggle-track:after{transition:none}.refinement-rail[data-guide=refine] #stage-2{animation:none}.play-refinements svg{transform:none!important}}
+@media(prefers-reduced-motion:reduce){.rail-stops button,.experiment-next,.experiment-next span,.walkthrough-note:before{transition:none}}
 </style></head>
 <body>
 <noscript>Enable JavaScript to roll the dice and compare reports.</noscript>
@@ -284,11 +212,6 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
   <h1 class="sr-only">Randomness for Style</h1>
   <div class="workbench">
    <div class="ingredient-sidebar">
-   <div class="experiment-actions">
-   <button id="play-refinements" type="button" class="play-refinements" aria-label="Play experiment" title="Play experiment" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="play-symbol" d="m7 4 9 6-9 6Z"/><path class="pause-symbol" d="M6 4h3v12H6zm6 0h3v12h-3z"/></svg><span id="play-word" class="play-word">Play experiment</span><span class="pause-word">Pause</span></button>
-   <button type="button" id="compare" class="compare-toggle" aria-pressed="false" aria-controls="report-view compare-target"><span id="compare-label">Compare without ingredients</span><span class="toggle-track" aria-hidden="true"></span></button>
-   </div>
-   <select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">Brief only</option><option value="other" id="compare-other">Original prompt</option></select>
    <section id="dice-deck" class="dice-deck" aria-label="Choose ingredients" aria-describedby="dice-hint">
     <div class="dice">
      <div class="die"><div class="die-top"><span>Ingredient 1</span></div><strong id="ingredient-a"></strong></div>
@@ -297,33 +220,33 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
     <span id="dice-gesture-help" class="sr-only">Click or press Enter to roll. Drag slowly to choose the upper face; release quickly to throw. Arrow keys turn the die. Escape cancels a drag.</span>
    </section>
    <p id="dice-hint">Click to roll · drag to choose</p>
+   <section id="refinement-rail" class="refinement-rail" aria-label="Experiment steps">
+    <div class="rail-headings" aria-hidden="true"><span>One-shot</span><span>Refinements</span></div>
+    <div class="rail-stops">
+     <button type="button" id="stage-0" aria-pressed="true" aria-label="Brief only, no ingredients">Brief only</button>
+     <button type="button" id="stage-1" aria-pressed="false" aria-label="Dice added, one-shot">Dice added</button>
+     <button type="button" id="stage-2" aria-pressed="false" aria-label="Refinement 1">+1</button>
+     <button type="button" id="stage-3" aria-pressed="false" aria-label="Refinement 2">+2</button>
+     <button type="button" id="stage-4" aria-pressed="false" aria-label="Refinement 3">+3</button>
+    </div>
+    <button type="button" id="experiment-next" class="experiment-next"><span id="next-label">Roll ingredients</span><span aria-hidden="true">→</span></button>
+    <aside id="walkthrough-note" class="walkthrough-note" aria-label="Step hint" hidden>
+     <div class="walkthrough-meta"><span id="walkthrough-count"></span><button id="walkthrough-close" type="button" aria-label="Close hint">×</button></div>
+     <div id="walkthrough-copy" aria-live="polite" aria-atomic="true"><h3 id="walkthrough-title"></h3><p id="walkthrough-text"></p></div>
+    </aside>
+   </section>
+   <div class="experiment-tools">
    <section id="dice-controls" class="controls" aria-label="Refinement and prompt">
 
-    <p id="attempt-note" hidden></p>
-    <div id="prompt" class="prompt-peek"><button id="prompt-trigger" type="button" class="prompt-trigger" aria-expanded="false" aria-controls="prompt-panel">Prompt <span aria-hidden="true">↗</span></button><section id="prompt-panel" class="prompt-panel" aria-labelledby="prompt-title" hidden><header><h3 id="prompt-title">One-shot prompt</h3><button type="button" class="prompt-pin" aria-pressed="false">Pin</button><button type="button" class="prompt-close" aria-label="Close prompt">×</button></header><pre id="current-prompt"></pre><details id="critique" class="notes" hidden><summary>Critique</summary><pre id="current-critique"></pre></details><footer><button id="copy-prompt" type="button" class="text-button">Copy with data</button><p id="copy-status" role="status"></p></footer></section></div>
+    <div id="prompt" class="prompt-peek"><button id="prompt-trigger" type="button" class="prompt-trigger" aria-expanded="false" aria-controls="prompt-panel">Prompt ↗</button><section id="prompt-panel" class="prompt-panel" aria-labelledby="prompt-title" hidden><header><h3 id="prompt-title">One-shot prompt</h3><button type="button" class="prompt-pin" aria-pressed="false">Pin</button><button type="button" class="prompt-close" aria-label="Close prompt">×</button></header><pre id="current-prompt"></pre><details id="critique" class="notes" hidden><summary>Critique</summary><pre id="current-critique"></pre></details><footer><button id="copy-prompt" type="button" class="text-button">Copy with data</button><p id="copy-status" role="status"></p></footer></section></div>
    </section>
+    <button type="button" id="compare" title="Compare with brief only" aria-pressed="false" aria-label="Compare with brief only" aria-controls="report-view compare-target">Compare</button>
+    <button type="button" id="guide-toggle" aria-expanded="false" aria-controls="walkthrough-note">Hints</button>
    </div>
-   <section id="refinement-rail" class="refinement-rail" aria-label="Refinement stages">
-    <h2 id="refinement-label">Refinement</h2>
-    <div class="rail-body">
-     <span class="rail-arrow" aria-hidden="true"><span class="rail-progress"></span></span>
-     <input id="refinement-range" type="range" min="1" max="4" step="1" value="1" aria-labelledby="refinement-label" aria-valuetext="One-shot" aria-controls="report-view">
-     <div class="rail-stops">
-      <div class="rail-stop"><button type="button" id="stage-1" aria-label="One-shot" aria-describedby="stage-help-1" aria-pressed="true">One-shot</button><span id="stage-help-1" class="stage-help" role="tooltip">One prompt with the brief, data and two ingredients. No refinement yet.</span></div>
-      <div class="rail-stop"><button type="button" id="stage-2" aria-label="Refinement 1" aria-describedby="stage-help-2" aria-pressed="false"><b>+1</b><span>refinement</span></button><span id="stage-help-2" class="stage-help" role="tooltip">Prompt again: critique the one-shot and lean into both ingredients.</span></div>
-      <div class="rail-stop"><button type="button" id="stage-3" aria-label="Refinement 2" aria-describedby="stage-help-3" aria-pressed="false"><b>+2</b><span>refinements</span></button><span id="stage-help-3" class="stage-help" role="tooltip">Apply the same refinement prompt to the previous result again.</span></div>
-      <div class="rail-stop"><button type="button" id="stage-4" aria-label="Refinement 3" aria-describedby="stage-help-4" aria-pressed="false"><b>+3</b><span>refinements</span></button><span id="stage-help-4" class="stage-help" role="tooltip">A third refinement with the same prompt. Judge what changed.</span></div>
-     </div>
-    </div>
-   </section>
+   <p id="attempt-note" hidden></p>
+   </div>
    <section id="dice-lab" class="result" aria-labelledby="pair-title"><h2 id="pair-title" class="sr-only" tabindex="-1"></h2>
-    <aside id="walkthrough-note" class="walkthrough-note" aria-label="Saved walkthrough" hidden>
-     <div class="walkthrough-meta"><span>Saved walkthrough</span><span id="walkthrough-count"></span></div>
-     <div id="walkthrough-copy" aria-live="polite" aria-atomic="true"><h3 id="walkthrough-title"></h3><p id="walkthrough-text"></p></div>
-     <div class="walkthrough-actions"><button id="walkthrough-prompt" type="button">Prompt ↗</button><button id="walkthrough-next" type="button">Roll dice →</button></div>
-     <button id="walkthrough-close" type="button" aria-label="Close walkthrough">×</button>
-    </aside>
-    <div id="report-view"></div><div class="result-actions"><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Brief only →</button><button type="button" id="copy-link" class="text-button">Share this roll ↗</button><span id="share-status" role="status"></span></div>
+    <div id="report-view"></div><div class="result-actions"><button type="button" id="copy-link" class="text-button">Share this roll ↗</button><span id="share-status" role="status"></span></div>
    </section>
    <section id="plain-controls" class="controls plain-controls" aria-label="Plain prompt and refinement" hidden>
     <select id="plain-method" class="comparison-target" aria-label="Plain refinement prompt"><option value="original">Original prompt</option><option value="stronger" selected>Stronger prompt</option></select>
@@ -335,7 +258,7 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
   </div>
   <section id="atlas" class="atlas" aria-labelledby="atlas-title"><header><h2 id="atlas-title">36 combinations</h2><select id="atlas-ingredient" aria-label="Browse pairings for the first ingredient"></select></header><div id="matrix" class="matrix" role="group" aria-label="Choose one of 36 ingredient combinations"></div></section>
   <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>What we call AI slop is often recognition of familiar design patterns. This experiment explores how randomness can help break them: the same brief and data, two unexpected ingredients, then three refinements with the same prompt.</p><p>These are saved examples, not live generations. The stronger sequence restarts from the same one-shot in a fresh context. More refinement does not guarantee a better result.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Refinement prompt"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button></div>
-    <p id="method-note" class="method-note">Both start from this one-shot.</p></div><div class="export-actions"><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
+    <p id="method-note" class="method-note">Both start from this one-shot.</p></div><select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">Brief only</option><option value="other" id="compare-other">Original prompt</option></select><div class="export-actions"><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Refine brief alone →</button><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
  </main>
 </div>
 <p id="status" class="sr-only" role="status"></p>
@@ -644,45 +567,6 @@ function showPrompt(pre,text,addition=''){
  }
 }
 
-// A saved walkthrough: brief alone → roll → ingredient one-shot → three refinements.
-// The roll is real; the reports are recorded. Manual input invalidates pending work.
-function createRefinementPlayback({showPlain,rollIngredients,setStage,onPlaying,onBeat,canPlay,delay=2200,schedule=setTimeout,unschedule=clearTimeout}){
- let timer=null,phase='idle',beat=0,rolling=false,run=0,ticket=0;
- function clear(){ticket++;if(timer!==null)unschedule(timer);timer=null;}
- function state(next){phase=next;onPlaying(phase==='playing',phase);}
- function stop(){clear();run++;rolling=false;if(phase!=='idle')state('idle');}
- function pause(){if(phase==='playing'){clear();state('paused');}}
- function queue(){
-  if(phase!=='playing'||rolling)return;
-  const token=ticket;
-  timer=schedule(()=>{
-   if(token!==ticket||phase!=='playing')return;
-   timer=null;
-   if(!canPlay()){pause();return;}
-   advance();
-  },delay);
- }
- function advance(){
-  if(rolling||phase==='idle')return;
-  clear();
-  if(beat===4){state('complete');return;}
-  beat++;
-  if(beat===1){
-   rolling=true;const token=run;onBeat('roll');
-   rollIngredients(()=>{
-    if(token!==run||phase==='idle')return;
-    rolling=false;setStage(1);onBeat(1);queue();
-   });
-  }else{setStage(beat);onBeat(beat);queue();}
- }
- function start({restart=true}={}){
-  clear();if(!canPlay()){stop();return;}
-  if(restart){run++;beat=0;rolling=false;showPlain();}
-  state('playing');onBeat(rolling?'roll':beat);queue();
- }
- return {start,stop,pause,advance,get running(){return phase==='playing';},get phase(){return phase;},get beat(){return beat;},toggle(){if(phase==='playing')pause();else start({restart:phase!=='paused'});}};
-}
-
 // Keep the previous saved page visible while its replacement paints in the same frame.
 // This is presentation only: selection, controls and the new document update immediately.
 const reportHandoffs=new WeakMap();
@@ -711,7 +595,7 @@ function handoffReport(container,previous,incoming){
   if(reportHandoffs.get(container)!==active||active.animation)return;
   frame.dataset.loaded='true';frame.removeEventListener('load',active.reveal);
   if(active.immediate||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches){releaseReportHandoff(container);return;}
-  active.animation=previous.animate([{opacity:1},{opacity:0}],{duration:360,easing:'cubic-bezier(.4,0,.2,1)'});
+  active.animation=previous.animate([{opacity:1},{opacity:0}],{duration:180,easing:'cubic-bezier(.4,0,.2,1)'});
   active.animation.onfinish=()=>{if(reportHandoffs.get(container)===active)settleReportHandoff(container);};
  };
  if(frame.dataset.loaded==='true')active.reveal();
@@ -740,61 +624,39 @@ const previewCaches=new WeakMap();
 const matrixButtons=new Map();
 const matrixCells=new Map();
 const promptPeeks=[$('#prompt'),$('#plain-prompt-details')].map(bindPromptPeek);
-let railVisible=true,guideTimer=null,guideToken=0;
-function stopGuidance(){clearTimeout(guideTimer);guideToken++;$('#refinement-rail').removeAttribute('data-guide');}
-function guideRefinement(token){
- if(token!==guideToken||stage!==1||introMode||comparing||view!=='dice'||document.hidden||!railVisible||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
- guideTimer=setTimeout(()=>{
-  if(token!==guideToken)return;
-  $('#refinement-rail').dataset.guide='refine';guideTimer=setTimeout(stopGuidance,1600);
- },650);
-}
-function settlePresentation(){stopGuidance();settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
+let hintsOpen=introMode,ingredientsChosen=!introMode;
+function settlePresentation(){settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
 const walkthroughBeats=[
- ['Brief only','One prompt, no ingredients. This is the starting point.'],
- ['Add ingredients','Same brief and data. Two ingredients change the visual direction.'],
- ['Refine once','Critique this result. Lean into both ingredients. Keep it simple.'],
- ['Refine again','Repeat the same refinement prompt on the previous result.'],
- ['Third refinement','Same prompt, one more pass. More distinct—or just more?']
+ ['Brief only','One prompt, no added ingredients. The brief and data stay fixed.'],
+ ['Dice added','The same prompt, now with these two ingredients. Still one shot.'],
+ ['Refinement 1','Prompt again: critique the result, lean into both ingredients, keep it simple.'],
+ ['Refinement 2','The same refinement prompt, applied to the previous result.'],
+ ['Refinement 3','One more pass of that same prompt. More distinct—or just more?']
 ];
-function showWalkthrough(value){
- const note=$('#walkthrough-note'),wasHidden=note.hidden;
- const rolling=value==='roll',beat=rolling?1:value;
- note.dataset.rolling=String(rolling);
+function showWalkthrough(){
+ const value=introMode?0:stage,note=$('#walkthrough-note');
  const unchanged=value>1&&selected.steps[value-1].html===selected.steps[value-2].html;
- const [title,text]=rolling?['Roll two ingredients','Keep the brief. Add a random visual direction.']:unchanged?['No change this pass','The same refinement prompt was repeated. This result stayed unchanged.']:walkthroughBeats[beat];
- $('#walkthrough-count').textContent=(beat+1)+' / 5';
- $('#walkthrough-count').setAttribute('aria-label','Step '+(beat+1)+' of 5');
- $('#walkthrough-title').textContent=title;$('#walkthrough-text').textContent=text;note.hidden=false;
- $('#walkthrough-next').disabled=rolling;$('#walkthrough-prompt').disabled=rolling;
- $('#walkthrough-next').textContent=rolling?'Rolling…':value===0?'Roll dice →':value===4?'Explore →':'Refine →';
- const copy=wasHidden?note:$('#walkthrough-copy');
- if(!matchMedia('(prefers-reduced-motion: reduce)').matches)copy.animate?.([{opacity:0,transform:'translateY(5px)'},{opacity:1,transform:'translateY(0)'}],{duration:170,easing:'cubic-bezier(.23,1,.32,1)'});
+ const [title,text]=unchanged?['No change this pass','The refinement prompt was repeated, but this result stayed unchanged.']:walkthroughBeats[value];
+ const changed=$('#walkthrough-title').textContent!==title;
+ $('#walkthrough-count').textContent=(value+1)+' / 5';
+ $('#walkthrough-count').setAttribute('aria-label','Step '+(value+1)+' of 5');
+ $('#walkthrough-title').textContent=title;$('#walkthrough-text').textContent=text;
+ note.hidden=!hintsOpen;$('#guide-toggle').setAttribute('aria-expanded',String(hintsOpen));
+ $('#refinement-rail').style.setProperty('--step',String(value));
+ if(changed&&hintsOpen&&!matchMedia('(prefers-reduced-motion: reduce)').matches)$('#walkthrough-copy').animate?.([{opacity:.25,transform:'translateY(3px)'},{opacity:1,transform:'translateY(0)'}],{duration:160,easing:'ease-out'});
 }
-function rollWalkthrough(complete){
- const values=[nextIngredient(0,selected.a),nextIngredient(1,selected.b)];
- selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
- render(false);
- tumbleDice([0,1],values,complete);
+function setHints(open){hintsOpen=open;showWalkthrough();}
+function showBrief(){settlePresentation();cancelDiceRoll();introMode=true;stage=1;comparing=false;render();}
+function showIngredients(){
+ if(!ingredientsChosen){roll();return;}
+ settlePresentation();introMode=false;stage=1;render();
 }
-const playback=createRefinementPlayback({
- showPlain:()=>{cancelDiceRoll();introMode=true;stage=1;comparing=false;render();},
- rollIngredients:rollWalkthrough,
- setStage:value=>{introMode=false;stage=value;render(false);syncDice3D();},
- canPlay:()=>view==='dice'&&!document.hidden&&railVisible,
- onBeat:showWalkthrough,
- onPlaying:(playing,phase)=>{
-  $('#refinement-rail').dataset.playing=String(playing);
-  $('#refinement-rail').dataset.touring=String(phase!=='idle');
-  document.documentElement.dataset.touring=String(phase!=='idle');
-  if(phase==='idle'){
-   $('#walkthrough-note').hidden=true;cancelDiceRoll();syncDice3D();
-  }
-  const button=$('#play-refinements'),label=playing?'Pause experiment':phase==='paused'?'Resume experiment':phase==='complete'?'Replay experiment':'Play experiment';
-  $('#play-word').textContent=phase==='paused'?'Resume':phase==='complete'?'Replay experiment':'Play experiment';
-  button.setAttribute('aria-pressed',String(playing));button.setAttribute('aria-label',label);button.title=label;
- }
-});
+function nextExperimentStep(){
+ promptPeeks.forEach(peek=>peek.close());
+ if(introMode){showIngredients();}
+ else if(stage<4){setAttempt(stage+1);}
+ else{stage=1;comparing=false;roll();}
+}
 function updateURL(){
  const query=new URLSearchParams({view,pair:selected.id,stage:String(stage),plainStage:String(plainStage),prompt:method});
  if(comparing)query.set('compare','1');
@@ -831,13 +693,13 @@ function renderStepper(prefix,value,total){
  next.title=next.disabled?(total===1?'No refinements saved for this pair':'Last saved refinement'):'Refine more';
 }
 function renderRail(){
- $('#refinement-rail').style.setProperty('--progress',String((stage-1)/3));
- const range=$('#refinement-range');range.value=String(stage);range.setAttribute('aria-valuetext',introMode?'Brief only':attemptName(stage));
- range.disabled=introMode;
- $('#stage-1').textContent=introMode?'Brief only':'One-shot';$('#stage-1').setAttribute('aria-label',introMode?'Brief only':'One-shot');
- $('#stage-help-1').textContent=introMode?'One prompt with just the brief and data. No ingredients or refinement yet.':'One prompt with the brief, data and two ingredients. No refinement yet.';
- for(let value=1;value<=4;value++){const button=$('#stage-'+value);button.setAttribute('aria-pressed',String(stage===value));button.disabled=introMode;}
- $('#play-refinements').hidden=false;
+ const value=introMode?0:stage;
+ for(let n=0;n<=4;n++){
+  const button=$('#stage-'+n);button.setAttribute('aria-pressed',String(n===value));
+  button.disabled=introMode&&n>1;
+ }
+ $('#next-label').textContent=introMode?(ingredientsChosen?'Back to ingredients':'Roll ingredients'):stage===1?'Refine once':stage<4?'Refine again':'Roll a new pair';
+ showWalkthrough();
 }
 function renderResult(){
  const container=$('#report-view');container.classList.toggle('comparing',comparing);
@@ -853,11 +715,11 @@ function renderResult(){
  container.classList.toggle('comparing',entries.length>1);
  showReports(container,entries);
  $('#pair-title').textContent=introMode?'Brief only':selected.label;
- $('#compare').hidden=introMode;
- if(introMode)$('#compare').removeAttribute('aria-pressed');else $('#compare').setAttribute('aria-pressed',String(comparing));
- $('#compare-label').textContent=comparing&&comparison==='other'?'Compare prompts':'Compare brief only';
+ $('#compare').disabled=introMode;
+ $('#compare').setAttribute('aria-pressed',String(comparing));
+ $('#compare').setAttribute('aria-label',comparing&&comparison==='other'?'Compare refinement prompts':'Compare with brief only');
  $('#compare-target').hidden=introMode||!comparing;$('#compare-target').value=comparison;$('#compare-other').textContent=otherLabel;
- $('#view-plain').disabled=introMode;$('#view-plain').textContent=introMode?'Brief only':'Brief only →';
+ $('#view-plain').disabled=false;$('#view-plain').textContent='Refine brief alone →';
  $('#copy-link').textContent=introMode?'Share example ↗':'Share this roll ↗';
  $('#method-original').setAttribute('aria-pressed',String(method==='original'));$('#method-stronger').setAttribute('aria-pressed',String(method==='stronger'));
  $('#method-note').hidden=stage!==1;
@@ -897,17 +759,16 @@ function render(sync=true){
  });
  $('#atlas-ingredient').value=String(a);
  renderResult();if(sync)syncDice3D();updateURL();
- $('#status').textContent=introMode?'Brief only. Play the experiment or roll either die to add two ingredients.':selected.label+'. '+attemptName(stage)+'.';
+ $('#status').textContent=introMode?'Brief only. Roll the dice to add two ingredients.':selected.label+'. '+attemptName(stage)+'.';
 }
-function selectPair(run){playback.stop();settlePresentation();const introducing=introMode;introMode=false;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();if(introducing)guideRefinement(guideToken);}
+function selectPair(run){settlePresentation();hintsOpen=false;introMode=false;ingredientsChosen=true;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();}
 function chooseDieFace(index,value){
- playback.stop();settlePresentation();const introducing=introMode;introMode=false;
+ settlePresentation();const introducing=introMode;introMode=false;ingredientsChosen=true;
  if(introducing){stage=1;comparing=false;}
  const values=[selected.a,selected.b];values[index]=value;
  // A deliberate choice keeps the other face, even on the first interaction.
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  render(false);settleDieGrab(index,true);syncDice3D();
- if(introducing)guideRefinement(guideToken);
 }
 $('#atlas-ingredient').addEventListener('change',event=>selectPair(currentExperiment().runs.find(run=>run.a===Number(event.target.value)&&run.b===b)));
 function randomIndex(length){
@@ -922,62 +783,37 @@ function nextIngredient(index,current){
  return bag.splice(position,1)[0];
 }
 function roll(index,gesture=null){
- playback.stop();settlePresentation();
- const introduce=introMode,token=guideToken;introMode=false;
+ settlePresentation();
+ const introduce=introMode;introMode=false;ingredientsChosen=true;
  if(introduce){stage=1;comparing=false;}
  const before=selected,indices=introduce?[0,1]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
  indices.forEach(i=>{values[i]=introduce?randomIndex(i?INGREDIENTS_B.length:INGREDIENTS_A.length):nextIngredient(i,values[i]);});
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  // Selection is immediate. The dice acknowledge it without gating the report.
  render(false);
- tumbleDice(indices,values,()=>{syncDice3D();if(introduce)guideRefinement(token);},gesture);
+ tumbleDice(indices,values,()=>{syncDice3D();},gesture);
 }
 async function copyText(text,pre,status){
  try{await navigator.clipboard.writeText(text);status.textContent='Copied.';}catch{pre.hidden=false;pre.textContent=text;const details=pre.closest?.('details');if(details)details.open=true;const range=document.createRange();range.selectNodeContents(pre);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);status.textContent='Text selected. Press Ctrl+C or use Copy.';}
 }
-$('#compare').addEventListener('click',()=>{if(introMode){roll();return;}comparing=!comparing;renderResult();updateURL();});
+$('#compare').addEventListener('click',()=>{if(introMode)return;comparing=!comparing;setHints(false);renderResult();updateURL();});
 $('#compare-target').addEventListener('change',event=>{comparison=event.target.value==='other'?'other':'plain';renderResult();updateURL();});
-function changeMethod(next){playback.stop();settlePresentation();method=next;promptPeeks.forEach(peek=>peek.close());selected=currentExperiment().runs.find(run=>run.id===selected.id);render();if(view==='plain')renderPlain();}
+function changeMethod(next){settlePresentation();method=next;promptPeeks.forEach(peek=>peek.close());selected=currentExperiment().runs.find(run=>run.id===selected.id);render();if(view==='plain')renderPlain();}
 $('#method-original').addEventListener('click',()=>changeMethod('original'));
 $('#method-stronger').addEventListener('click',()=>changeMethod('stronger'));
 $('#plain-method').addEventListener('change',event=>changeMethod(event.target.value==='original'?'original':'stronger'));
-function setAttempt(value){if(introMode)return;playback.stop();settlePresentation();const next=Math.round(Number(value));if(selected.steps[next-1]){stage=next;render(false);}}
-$('#refinement-range').addEventListener('input',event=>setAttempt(event.target.value));
-for(let value=1;value<=4;value++){
- const button=$('#stage-'+value);
- button.addEventListener('click',()=>setAttempt(value));
- button.addEventListener('pointerenter',()=>button.removeAttribute('data-help-dismissed'));
- button.addEventListener('focus',()=>button.removeAttribute('data-help-dismissed'));
- button.addEventListener('keydown',event=>{if(event.key==='Escape')button.dataset.helpDismissed='true';});
-}
-$('#play-refinements').addEventListener('click',()=>{
- stopGuidance();promptPeeks.forEach(peek=>peek.close());
- if(!playback.running&&playback.phase!=='paused'&&$('#play').getBoundingClientRect?.().top<0)$('#play').scrollIntoView({block:'start',behavior:'instant'});
- playback.toggle();
+function setAttempt(value){if(introMode)return;settlePresentation();const next=Math.round(Number(value));if(selected.steps[next-1]){stage=next;render(false);}}
+$('#stage-0').addEventListener('click',showBrief);
+for(let value=1;value<=4;value++)$('#stage-'+value).addEventListener('click',()=>{
+ if(introMode){if(value===1)showIngredients();}
+ else setAttempt(value);
 });
-$('#walkthrough-close').addEventListener('click',()=>{playback.stop();$('#play-refinements').focus({preventScroll:true});});
-$('#walkthrough-next').addEventListener('click',()=>{
- if(playback.beat===4){playback.stop();$('#stage-4').focus({preventScroll:true});}
- else{playback.pause();playback.advance();}
-});
-$('#walkthrough-prompt').addEventListener('click',()=>{
- playback.pause();promptPeeks[0].open();$('#prompt-trigger').focus({preventScroll:true});
-});
-// Direct intent takes over immediately. Background/offscreen playback holds its stage.
-for(const type of ['pointerdown','focusin','keydown'])document.addEventListener(type,event=>{
- if(event.key==='Escape'){const touring=playback.phase!=='idle';playback.stop();settlePresentation();if(touring)$('#play-refinements').focus({preventScroll:true});}
- else if(event.target.closest('#prompt')){playback.pause();}
- else if(!event.target.closest('#play-refinements,#walkthrough-note')){playback.stop();settlePresentation();}
-},true);
-$('#prompt').addEventListener('pointerenter',()=>playback.pause());
-document.addEventListener('visibilitychange',()=>{if(document.hidden){playback.pause();settlePresentation();}});
-window.addEventListener('blur',()=>{playback.pause();settlePresentation();});
-matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',()=>{playback.pause();settlePresentation();});
-const railObserver=new IntersectionObserver(entries=>{railVisible=entries[0].isIntersecting;if(!railVisible){playback.pause();stopGuidance();}});
-railObserver.observe($('#refinement-rail'));
-const horizontalRail=matchMedia('(max-width:700px)');
-function orientRail(){$('#refinement-range').setAttribute('aria-orientation',horizontalRail.matches?'horizontal':'vertical');}
-horizontalRail.addEventListener('change',orientRail);orientRail();
+$('#experiment-next').addEventListener('click',nextExperimentStep);
+$('#guide-toggle').addEventListener('click',()=>setHints(!hintsOpen));
+$('#walkthrough-close').addEventListener('click',()=>{setHints(false);$('#guide-toggle').focus({preventScroll:true});});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&hintsOpen){setHints(false);$('#guide-toggle').focus({preventScroll:true});}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)settlePresentation();});
+matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',settlePresentation);
 $('#copy-prompt').addEventListener('click',()=>copyText((introMode?currentBaseline().steps[0]:selected.steps[stage-1]).fullPrompt,$('#current-prompt'),$('#copy-status')));
 $('#refinement-prompt').textContent=EXPERIMENT.refinementPrompt;
 const exportPrompt=document.createElement('pre');exportPrompt.hidden=true;$('#export-status').after(exportPrompt);
@@ -994,7 +830,8 @@ function renderPlain(){
  $('#plain-copy-status').textContent='';updateURL();
 }
 function selectView(next,focus=false){
- playback.stop();settlePresentation();
+ settlePresentation();
+ if(next==='plain')setHints(false);
  promptPeeks.forEach(peek=>peek.close());
  cancelDiceRoll();view=next==='dice'?'dice':'plain';document.documentElement.dataset.view=view;
  ['#dice-lab','#dice-controls','#dice-deck','#atlas','#refinement-rail'].forEach(id=>$(id).hidden=view!=='dice');
