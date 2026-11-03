@@ -26,7 +26,7 @@
    <button type="button" id="compare" class="compare-toggle" aria-pressed="false" aria-controls="report-view compare-target"><span id="compare-label">Compare without ingredients</span><span class="toggle-track" aria-hidden="true"></span></button>
    <select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">Brief only</option><option value="other" id="compare-other">Original prompt</option></select>
    <section id="dice-deck" class="dice-deck" aria-label="Choose ingredients" aria-describedby="dice-hint">
-    <aside id="walkthrough-note" class="walkthrough-note" aria-label="Saved walkthrough" hidden><div class="walkthrough-meta"><span>Saved walkthrough</span><span id="walkthrough-count"></span></div><div id="walkthrough-copy" aria-live="polite" aria-atomic="true"><h3 id="walkthrough-title"></h3><p id="walkthrough-text"></p></div><button id="walkthrough-close" type="button" aria-label="Close walkthrough">×</button></aside>
+    <aside id="walkthrough-note" class="walkthrough-note" aria-label="Saved walkthrough" hidden><div class="walkthrough-meta"><span>Saved walkthrough</span><span id="walkthrough-count"></span></div><div id="walkthrough-copy" aria-live="polite" aria-atomic="true"><h3 id="walkthrough-title"></h3><p id="walkthrough-text"></p></div><div class="walkthrough-actions"><button id="walkthrough-prompt" type="button">Prompt ↗</button><button id="walkthrough-next" type="button">Roll dice →</button></div><button id="walkthrough-close" type="button" aria-label="Close walkthrough">×</button></aside>
     <div class="dice">
      <div class="die"><div class="die-top"><span>Ingredient 1</span></div><strong id="ingredient-a"></strong></div>
      <div class="die"><div class="die-top"><span>Ingredient 2</span></div><strong id="ingredient-b"></strong></div>
@@ -45,7 +45,12 @@
     <div class="rail-body">
      <span class="rail-arrow" aria-hidden="true"><span class="rail-progress"></span></span>
      <input id="refinement-range" type="range" min="1" max="4" step="1" value="1" aria-labelledby="refinement-label" aria-valuetext="One-shot" aria-controls="report-view">
-     <div class="rail-stops"><button type="button" id="stage-1" aria-label="One-shot" aria-pressed="true">One-shot</button><button type="button" id="stage-2" aria-label="Refinement 1" aria-pressed="false"><b>+1</b> <span>pass</span></button><button type="button" id="stage-3" aria-label="Refinement 2" aria-pressed="false"><b>+2</b> <span>passes</span></button><button type="button" id="stage-4" aria-label="Refinement 3" aria-pressed="false"><b>+3</b> <span>passes</span></button></div>
+     <div class="rail-stops">
+      <div class="rail-stop"><button type="button" id="stage-1" aria-label="One-shot" aria-describedby="stage-help-1" aria-pressed="true">One-shot</button><span id="stage-help-1" class="stage-help" role="tooltip">One prompt with the brief, data and two ingredients. No refinement yet.</span></div>
+      <div class="rail-stop"><button type="button" id="stage-2" aria-label="Refinement 1" aria-describedby="stage-help-2" aria-pressed="false"><b>+1</b><span>refinement</span></button><span id="stage-help-2" class="stage-help" role="tooltip">Prompt again: critique the one-shot and lean into both ingredients.</span></div>
+      <div class="rail-stop"><button type="button" id="stage-3" aria-label="Refinement 2" aria-describedby="stage-help-3" aria-pressed="false"><b>+2</b><span>refinements</span></button><span id="stage-help-3" class="stage-help" role="tooltip">Apply the same refinement prompt to the previous result again.</span></div>
+      <div class="rail-stop"><button type="button" id="stage-4" aria-label="Refinement 3" aria-describedby="stage-help-4" aria-pressed="false"><b>+3</b><span>refinements</span></button><span id="stage-help-4" class="stage-help" role="tooltip">A third refinement with the same prompt. Judge what changed.</span></div>
+     </div>
     </div>
     <button id="play-refinements" type="button" class="play-refinements" aria-label="Play walkthrough" title="Play walkthrough" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="play-symbol" d="m7 4 9 6-9 6Z"/><path class="pause-symbol" d="M6 4h3v12H6zm6 0h3v12h-3z"/></svg><span id="play-word" class="play-word">Play</span><span class="pause-word">Pause</span></button>
    </section>
