@@ -125,27 +125,40 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 .method-options{max-width:320px;margin:18px 0}.method-options .method-note{margin-bottom:0}
 /* The arrow is both a sequence and a directly draggable instrument. */
 .refinement-rail{grid-area:rail;position:sticky;top:90px;padding-top:60px;min-width:0;--progress:0;z-index:4}
-#dice-deck{position:relative}
-.walkthrough-note{position:absolute;left:0;top:0;z-index:4;width:100%;padding:13px 12px 7px;box-sizing:border-box;border:1px solid #c5cbbb;border-radius:9px;background:#fcfbf6;box-shadow:0 8px 26px #25301c1a,0 2px 4px #25301c0a;text-align:left}
-.walkthrough-meta{display:flex;align-items:center;justify-content:space-between;gap:5px;padding-right:18px;color:var(--muted);font:10px/1.3 Arial,sans-serif;margin-bottom:8px}
-#walkthrough-count{white-space:nowrap;font-variant-numeric:tabular-nums}
-.walkthrough-note h3{font:600 15px/1.2 Arial,sans-serif;letter-spacing:-.3px;margin:0 0 7px;color:var(--ink)}
-.walkthrough-note p{font:12px/1.45 Arial,sans-serif;margin:0;min-height:4.35em;color:#53604c;text-wrap:pretty}
-.walkthrough-actions{display:flex;justify-content:space-between;gap:5px;margin-top:5px}
-.walkthrough-actions button{min-height:32px;padding:4px 0;border:0;background:none;font:11px Arial,sans-serif;color:var(--ink);white-space:nowrap}
-.walkthrough-actions button:hover{text-decoration:underline;text-underline-offset:3px}
-#walkthrough-close{position:absolute;top:4px;right:2px;display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:5px;background:transparent;color:var(--muted);font:19px/1 Arial}
-#walkthrough-close:hover{color:var(--ink);background:#e9ecdf}
-#dice-deck .die-object{transition:opacity 160ms ease-out}
-#dice-deck[data-touring=true]:not([data-beat=roll]) .die-object{opacity:.35}
-@media(max-width:1100px) and (min-width:701px){.walkthrough-meta{font-size:9px;gap:3px}.walkthrough-note h3{font-size:14px}}
-@media(max-width:700px){
- .walkthrough-note{padding:10px 14px 4px}
- .walkthrough-meta{font-size:10px;justify-content:flex-start;gap:12px;margin-bottom:5px}.walkthrough-note p{min-height:2.9em}
- .walkthrough-actions{margin-top:2px}.walkthrough-actions button{min-height:34px}
- #walkthrough-close{width:40px;height:40px;top:1px;right:3px}
+/* Guidance belongs to the report frame, never on top of the dice or the example. */
+.walkthrough-note{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px 18px;flex:none;min-height:112px;padding:12px 44px 12px 16px;margin-bottom:12px;box-sizing:border-box;border:1px solid #c5cbbb;border-radius:8px;background:#eeeee5;text-align:left;align-content:center}
+.walkthrough-meta{display:flex;align-items:center;gap:12px;grid-column:1/-1;color:var(--muted);font:10px/1.3 Arial,sans-serif}
+#walkthrough-count{font-weight:600;color:var(--ink);white-space:nowrap;font-variant-numeric:tabular-nums}
+.walkthrough-note h3{font:600 15px/1.2 Arial,sans-serif;letter-spacing:-.3px;margin:0 0 5px;color:var(--ink)}
+.walkthrough-note p{font:12px/1.45 Arial,sans-serif;margin:0;color:#53604c;text-wrap:pretty}
+.walkthrough-actions{display:flex;align-items:center;gap:10px;align-self:center}
+.walkthrough-actions button{min-height:36px;padding:7px 4px;border:0;border-radius:5px;background:none;font:12px Arial,sans-serif;color:var(--ink);white-space:nowrap}
+#walkthrough-next{min-width:90px;padding-inline:12px;background:var(--ink);color:var(--paper)}
+.walkthrough-actions button:disabled{cursor:default;opacity:.55}
+.walkthrough-actions button:not(:disabled):hover{background:#dfe5d6}
+#walkthrough-next:not(:disabled):hover{background:#435039}
+.walkthrough-actions button:focus-visible,#walkthrough-close:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+#walkthrough-close{position:absolute;top:7px;right:6px;display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:5px;background:transparent;color:var(--muted);font:20px/1 Arial}
+#walkthrough-close:hover{color:var(--ink);background:#dfe5d6}
+[data-touring=true] #dice-lab{display:flex;flex-direction:column;height:clamp(560px,calc(100dvh - 24px),980px)}
+[data-touring=true] #report-view{flex:1;min-height:0}
+[data-touring=true] #report-view .frame-section,[data-touring=true] #report-view .report-frame{height:100%}
+[data-touring=true] .result-actions{flex:none}
+@media(min-width:701px) and (max-width:1100px){
+ .walkthrough-note{grid-template-columns:minmax(0,1fr);gap:6px;min-height:148px}
+ .walkthrough-actions{justify-content:flex-end}
 }
-@media(prefers-reduced-motion:reduce){.walkthrough-note,.walkthrough-note:after,#dice-deck .die-object{transition:none}}
+@media(max-width:700px){
+ .walkthrough-note{grid-template-columns:minmax(0,1fr);padding:10px 12px;min-height:140px;gap:6px}
+ .walkthrough-meta{padding-right:32px}.walkthrough-actions{justify-content:space-between;gap:12px}
+ .walkthrough-actions button{min-height:36px}
+ #walkthrough-close{width:36px;height:36px;top:3px;right:3px}
+ [data-touring=true] #dice-lab{height:auto}
+ [data-touring=true] #report-view .report-frame{height:520px}
+ [data-touring=true] .die-object{--size:66px;height:112px}
+ [data-touring=true] .die>strong{font-size:16px;height:2.6em}
+ [data-touring=true] #dice-hint{display:none}
+}
 .refinement-rail h2{font:500 12px/1.3 Arial,sans-serif;margin:0 0 18px;padding-left:38px;color:var(--muted)}
 .rail-body{position:relative;height:300px}
 .rail-arrow{position:absolute;left:13px;top:24px;bottom:24px;width:3px;border-radius:2px;background:#c0c7b8;transform-origin:top;transition:transform 340ms cubic-bezier(.23,1,.32,1),opacity 160ms ease-out}

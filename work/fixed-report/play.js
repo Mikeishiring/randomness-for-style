@@ -39,14 +39,15 @@ const walkthroughBeats=[
 ];
 function showWalkthrough(value){
  const note=$('#walkthrough-note'),wasHidden=note.hidden;
- $('#dice-deck').dataset.beat=String(value);
- $('#dice-hint').textContent=value==='roll'?'Rolling two ingredients…':'Drag to choose · flick to roll';
- if(value==='roll'){note.hidden=true;return;}
+ const rolling=value==='roll',beat=rolling?1:value;
+ note.dataset.rolling=String(rolling);
  const unchanged=value>1&&selected.steps[value-1].html===selected.steps[value-2].html;
- const [title,text]=unchanged?['No change this pass','The same refinement prompt was repeated. This result stayed unchanged.']:walkthroughBeats[value];
- $('#walkthrough-count').textContent=(value+1)+' / 5';
+ const [title,text]=rolling?['Roll two ingredients','Keep the brief. Add a random visual direction.']:unchanged?['No change this pass','The same refinement prompt was repeated. This result stayed unchanged.']:walkthroughBeats[beat];
+ $('#walkthrough-count').textContent=(beat+1)+' / 5';
+ $('#walkthrough-count').setAttribute('aria-label','Step '+(beat+1)+' of 5');
  $('#walkthrough-title').textContent=title;$('#walkthrough-text').textContent=text;note.hidden=false;
- $('#walkthrough-next').textContent=value===0?'Roll dice →':value===4?'Explore →':'Refine →';
+ $('#walkthrough-next').disabled=rolling;$('#walkthrough-prompt').disabled=rolling;
+ $('#walkthrough-next').textContent=rolling?'Rolling…':value===0?'Roll dice →':value===4?'Explore →':'Refine →';
  const copy=wasHidden?note:$('#walkthrough-copy');
  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)copy.animate?.([{opacity:0,transform:'translateY(5px)'},{opacity:1,transform:'translateY(0)'}],{duration:170,easing:'cubic-bezier(.23,1,.32,1)'});
 }
@@ -65,10 +66,9 @@ const playback=createRefinementPlayback({
  onPlaying:(playing,phase)=>{
   $('#refinement-rail').dataset.playing=String(playing);
   $('#refinement-rail').dataset.touring=String(phase!=='idle');
-  $('#dice-deck').dataset.touring=String(phase!=='idle');
+  document.documentElement.dataset.touring=String(phase!=='idle');
   if(phase==='idle'){
-   $('#walkthrough-note').hidden=true;$('#dice-deck').removeAttribute('data-beat');
-   $('#dice-hint').textContent='Drag to choose · flick to roll';cancelDiceRoll();syncDice3D();
+   $('#walkthrough-note').hidden=true;cancelDiceRoll();syncDice3D();
   }
   const button=$('#play-refinements'),label=playing?'Pause walkthrough':phase==='paused'?'Resume walkthrough':phase==='complete'?'Replay walkthrough':'Play walkthrough';
   $('#play-word').textContent=phase==='paused'?'Resume':phase==='complete'?'Replay':'Play';
@@ -230,7 +230,7 @@ for(let value=1;value<=4;value++){
 }
 $('#play-refinements').addEventListener('click',()=>{
  stopGuidance();promptPeeks.forEach(peek=>peek.close());
- if(!playback.running)$('#play').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+ if(!playback.running&&playback.phase!=='paused'&&$('#play').getBoundingClientRect?.().top<0)$('#play').scrollIntoView({block:'start',behavior:'instant'});
  playback.toggle();
 });
 $('#walkthrough-close').addEventListener('click',()=>{playback.stop();$('#play-refinements').focus({preventScroll:true});});

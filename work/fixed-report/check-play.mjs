@@ -133,8 +133,8 @@ assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,currentBaseline(
 nodes.get('#play-refinements').click();assert.equal(playback.phase,'paused');assert.equal(nodes.get('#walkthrough-note').hidden,false);assert.equal(nodes.get('#play-word').textContent,'Resume');
 nodes.get('#walkthrough-close').click();assert.equal(playback.phase,'idle');assert.equal(nodes.get('#walkthrough-note').hidden,true);assert.equal(document.activeElement,nodes.get('#play-refinements'));
 nodes.get('#play-refinements').click();
-const beforeTour=selected;playback.advance();assert.equal(introMode,true);assert.equal(nodes.get('#walkthrough-note').hidden,true);assert.deepEqual(rollout.indices,[0,1]);assert.notEqual(selected.a,beforeTour.a);assert.notEqual(selected.b,beforeTour.b);
-rollout.complete();const tourPair=selected;assert.equal(introMode,false);assert.equal(stage,1);assert.equal(nodes.get('#walkthrough-title').textContent,'Add ingredients');
+const beforeTour=selected;playback.advance();assert.equal(introMode,true);assert.equal(nodes.get('#walkthrough-note').hidden,false);assert.equal(nodes.get('#walkthrough-title').textContent,'Roll two ingredients');assert.equal(nodes.get('#walkthrough-next').disabled,true);assert.equal(nodes.get('#walkthrough-prompt').disabled,true);assert.deepEqual(rollout.indices,[0,1]);assert.notEqual(selected.a,beforeTour.a);assert.notEqual(selected.b,beforeTour.b);
+rollout.complete();const tourPair=selected;assert.equal(introMode,false);assert.equal(stage,1);assert.equal(nodes.get('#walkthrough-title').textContent,'Add ingredients');assert.equal(nodes.get('#walkthrough-next').disabled,false);assert.equal(nodes.get('#walkthrough-prompt').disabled,false);
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,tourPair.steps[0].html);
 nodes.get('#walkthrough-next').click();assert.equal(stage,2);assert.equal(playback.phase,'paused');assert.equal(selected,tourPair);
 nodes.get('#walkthrough-next').click();assert.equal(stage,3);nodes.get('#walkthrough-next').click();assert.equal(stage,4);assert.equal(selected,tourPair);
