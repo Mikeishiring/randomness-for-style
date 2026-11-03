@@ -2,7 +2,7 @@
   "name": "randomness-for-style",
   "version": "1.0.0",
   "private": true,
-  "description": "A visual experiment in combining random ingredients and refining the same website brief.",
+  "description": "Explore how randomness can help you avoid AI slop—the familiar patterns we recognize in AI-generated design. Roll two ingredients, then refine.",
   "engines": { "node": ">=24" },
   "scripts": {
     "build": "node scripts/build.mjs",

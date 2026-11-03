@@ -1,6 +1,6 @@
 # Randomness for Style
 
-A small, playable experiment in making AI-generated design more original: combine two unexpected ingredients, then refine the result while keeping the brief fixed.
+A playable experiment in how randomness can help you avoid AI slop—the familiar patterns we recognize in AI-generated design. Combine two unexpected ingredients, then refine the result while keeping the brief fixed.
 
 [Try the live site](https://randomness-for-style.vercel.app/)
 

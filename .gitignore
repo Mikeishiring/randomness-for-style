@@ -18,6 +18,7 @@
 !/site/.gitignore
 !/site/.vercelignore
 !/site/vercel.json
+!/site/redirect-worker.mjs
 !/site/dist/
 /site/dist/*
 !/site/dist/index.html
