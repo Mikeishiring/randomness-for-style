@@ -206,7 +206,11 @@ $('#plain-method').addEventListener('change',event=>changeMethod(event.target.va
 function setAttempt(value){if(introMode)return;playback.stop();settlePresentation();const next=Math.round(Number(value));if(selected.steps[next-1]){stage=next;render(false);}}
 $('#refinement-range').addEventListener('input',event=>setAttempt(event.target.value));
 for(let value=1;value<=4;value++)$('#stage-'+value).addEventListener('click',()=>setAttempt(value));
-$('#play-refinements').addEventListener('click',()=>{stopGuidance();promptPeeks.forEach(peek=>peek.close());playback.toggle();});
+$('#play-refinements').addEventListener('click',()=>{
+ stopGuidance();promptPeeks.forEach(peek=>peek.close());
+ if(!playback.running)$('#play').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+ playback.toggle();
+});
 $('#walkthrough-close').addEventListener('click',()=>{playback.stop();$('#play-refinements').focus({preventScroll:true});});
 // Direct intent takes over immediately. Background/offscreen playback holds its stage.
 for(const type of ['pointerdown','focusin','keydown'])document.addEventListener(type,event=>{
