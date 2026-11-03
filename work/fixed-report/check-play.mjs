@@ -127,7 +127,15 @@ reduced=true;stage=2;roll(0);assert.equal(playback.running,false);assert.equal(s
 stage=1;roll(0);assert.equal(playback.running,false);assert.equal(stage,1);
 setAttempt(3);assert.equal(playback.running,false);roll(1);assert.equal(stage,3);assert.equal(playback.running,false);
 nodes.get('#stage-1').click();assert.equal(stage,1);nodes.get('#refinement-range').events.input({target:{value:'4'}});assert.equal(stage,4);
-nodes.get('#play-refinements').click();assert.equal(playback.running,true);assert.equal(stage,1);selectPair(currentExperiment().runs[0]);assert.equal(playback.running,false);
+nodes.get('#play-refinements').click();assert.equal(playback.running,true);assert.equal(stage,1);
+assert.equal(nodes.get('#walkthrough-note').hidden,false);assert.equal(nodes.get('#walkthrough-title').textContent,'Add two ingredients');
+nodes.get('#play-refinements').click();assert.equal(playback.phase,'paused');assert.equal(nodes.get('#walkthrough-note').hidden,false);assert.equal(nodes.get('#play-word').textContent,'Resume');
+nodes.get('#walkthrough-close').click();assert.equal(playback.phase,'idle');assert.equal(nodes.get('#walkthrough-note').hidden,true);assert.equal(document.activeElement,nodes.get('#play-refinements'));
+nodes.get('#play-refinements').click();selectPair(currentExperiment().runs[0]);assert.equal(playback.running,false);assert.equal(nodes.get('#walkthrough-note').hidden,true);
+const priorMethod=method,priorPair=selected;method='original';
+const repeated=EXPERIMENT.runs.find(run=>run.steps.some((step,i)=>i>0&&step.html===run.steps[i-1].html));
+if(repeated){selected=repeated;const sameStage=repeated.steps.findIndex((step,i)=>i>0&&step.html===repeated.steps[i-1].html)+1;showWalkthrough(sameStage);assert.equal(nodes.get('#walkthrough-title').textContent,'No change this pass');}
+method=priorMethod;selected=priorPair;nodes.get('#walkthrough-note').hidden=true;
 stage=3;render();matrixButtons.get('0-4').click();assert.equal(stage,3);assert.equal(selected.id,'0-4');
 nodes.get('#atlas-ingredient').events.change({target:{value:'5'}});assert.equal(stage,3);assert.equal(selected.id,'5-4');
 stage=2;render();
