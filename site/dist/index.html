@@ -138,6 +138,7 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 @media(max-width:700px){.compare-toggle{max-width:232px}}
 @media(prefers-reduced-motion:reduce){.compare-toggle,.toggle-track,.toggle-track:after,.attempt-stepper button{transition:none}}
 .prompt-peek{position:relative;margin-top:5px;border-bottom:1px solid var(--line)}
+.ingredient-sidebar:has(.prompt-panel:not([hidden])){z-index:6}
 .prompt-trigger{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;padding:10px 1px;border:0;background:none;text-align:left;font-size:12px}
 .prompt-trigger span{font-size:16px;color:var(--muted)}
 .prompt-trigger[aria-expanded=true]{color:var(--accent)}
@@ -158,21 +159,25 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 @media(max-width:400px){.atlas>header{display:block}#atlas-ingredient{display:block;width:100%;max-width:none;margin-top:12px}}
 .method-options{max-width:320px;margin:18px 0}.method-options .method-note{margin-bottom:0}
 /* The arrow is both a sequence and a directly draggable instrument. */
-.refinement-rail{grid-area:rail;position:sticky;top:90px;padding-top:60px;min-width:0;--progress:0}
+.refinement-rail{grid-area:rail;position:sticky;top:90px;padding-top:60px;min-width:0;--progress:0;z-index:4}
 #dice-deck{position:relative}
-.walkthrough-note{position:absolute;left:0;top:12px;z-index:4;width:100%;padding:16px 14px 15px;box-sizing:border-box;border:1px solid #c5cbbb;border-radius:9px;background:#fcfbf6;box-shadow:0 8px 26px #25301c1a,0 2px 4px #25301c0a;text-align:left}
-.walkthrough-meta{display:flex;align-items:center;justify-content:space-between;gap:5px;padding-right:18px;color:var(--muted);font:10px/1.3 Arial,sans-serif;margin-bottom:10px}
+.walkthrough-note{position:absolute;left:0;top:0;z-index:4;width:100%;padding:13px 12px 7px;box-sizing:border-box;border:1px solid #c5cbbb;border-radius:9px;background:#fcfbf6;box-shadow:0 8px 26px #25301c1a,0 2px 4px #25301c0a;text-align:left}
+.walkthrough-meta{display:flex;align-items:center;justify-content:space-between;gap:5px;padding-right:18px;color:var(--muted);font:10px/1.3 Arial,sans-serif;margin-bottom:8px}
 #walkthrough-count{white-space:nowrap;font-variant-numeric:tabular-nums}
 .walkthrough-note h3{font:600 15px/1.2 Arial,sans-serif;letter-spacing:-.3px;margin:0 0 7px;color:var(--ink)}
-.walkthrough-note p{font:13px/1.45 Arial,sans-serif;margin:0;min-height:4.35em;color:#53604c;text-wrap:pretty}
+.walkthrough-note p{font:12px/1.45 Arial,sans-serif;margin:0;min-height:4.35em;color:#53604c;text-wrap:pretty}
+.walkthrough-actions{display:flex;justify-content:space-between;gap:5px;margin-top:5px}
+.walkthrough-actions button{min-height:32px;padding:4px 0;border:0;background:none;font:11px Arial,sans-serif;color:var(--ink);white-space:nowrap}
+.walkthrough-actions button:hover{text-decoration:underline;text-underline-offset:3px}
 #walkthrough-close{position:absolute;top:4px;right:2px;display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:5px;background:transparent;color:var(--muted);font:19px/1 Arial}
 #walkthrough-close:hover{color:var(--ink);background:#e9ecdf}
 #dice-deck .die-object{transition:opacity 160ms ease-out}
-#dice-deck[data-touring=true] .die-object{opacity:.35}
-@media(max-width:1100px) and (min-width:701px){.walkthrough-note{padding:15px 12px}.walkthrough-meta{font-size:9px;gap:3px}.walkthrough-note h3{font-size:14px}.walkthrough-note p{font-size:12px}}
+#dice-deck[data-touring=true]:not([data-beat=roll]) .die-object{opacity:.35}
+@media(max-width:1100px) and (min-width:701px){.walkthrough-meta{font-size:9px;gap:3px}.walkthrough-note h3{font-size:14px}}
 @media(max-width:700px){
- .walkthrough-note{padding:15px 18px}
- .walkthrough-meta{font-size:10px;justify-content:flex-start;gap:12px;margin-bottom:7px}.walkthrough-note p{min-height:2.9em}
+ .walkthrough-note{padding:10px 14px 4px}
+ .walkthrough-meta{font-size:10px;justify-content:flex-start;gap:12px;margin-bottom:5px}.walkthrough-note p{min-height:2.9em}
+ .walkthrough-actions{margin-top:2px}.walkthrough-actions button{min-height:34px}
  #walkthrough-close{width:40px;height:40px;top:1px;right:3px}
 }
 @media(prefers-reduced-motion:reduce){.walkthrough-note,.walkthrough-note:after,#dice-deck .die-object{transition:none}}
@@ -180,9 +185,16 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 .rail-body{position:relative;height:300px}
 .rail-arrow{position:absolute;left:13px;top:24px;bottom:24px;width:3px;border-radius:2px;background:#c0c7b8;transform-origin:top;transition:transform 340ms cubic-bezier(.23,1,.32,1),opacity 160ms ease-out}
 .rail-arrow:after{content:'';position:absolute;left:-4px;bottom:-7px;width:9px;height:9px;border-right:2px solid #7d8971;border-bottom:2px solid #7d8971;transform:rotate(45deg)}
-.rail-progress{position:absolute;inset:0 0 auto;height:calc(100% * var(--progress));background:var(--ink);border-radius:2px}
+.rail-progress{position:absolute;inset:0 0 auto;height:calc(100% * var(--progress));background:var(--ink);border-radius:2px;transition:height 360ms cubic-bezier(.4,0,.2,1),width 360ms cubic-bezier(.4,0,.2,1)}
 .rail-stops{height:100%;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end}
-.rail-stops button{position:relative;flex:none;min-height:48px;width:calc(100% - 38px);padding:8px 6px;border:1px solid #b6bfab;border-radius:6px;background:#efefe7;text-align:center;font:13px/1.3 Arial,sans-serif;color:#53604c;white-space:nowrap;transition:background 140ms ease-out,color 140ms ease-out,border-color 140ms ease-out,opacity 160ms ease-out}
+.rail-stop{position:relative;width:calc(100% - 38px)}
+.rail-stops button{position:relative;flex:none;min-height:48px;width:100%;padding:6px;border:1px solid #b6bfab;border-radius:6px;background:#efefe7;text-align:center;font:13px/1.3 Arial,sans-serif;color:#53604c;white-space:nowrap;transition:background 200ms ease-out,color 200ms ease-out,border-color 200ms ease-out,opacity 160ms ease-out}
+.rail-stops button span{display:block;font-size:10px;font-weight:400;margin-top:2px}
+.stage-help{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%) translateX(-4px);width:224px;padding:12px 14px;border:1px solid #c5cbbb;border-radius:7px;background:#fcfbf6;box-shadow:0 5px 20px #25301c16;color:var(--ink);font:12px/1.5 Arial,sans-serif;opacity:0;visibility:hidden;transition:opacity 120ms ease-out,transform 120ms ease-out,visibility 120ms;z-index:5}
+.stage-help:before{content:'';position:absolute;right:100%;top:0;width:12px;height:100%}
+.rail-stop:has(button:focus-visible:not([data-help-dismissed])) .stage-help{opacity:1;visibility:visible;transform:translateY(-50%)}
+@media(hover:hover) and (pointer:fine){.rail-stop:has(button:not([disabled]):not([data-help-dismissed])):hover .stage-help{opacity:1;visibility:visible;transform:translateY(-50%)}}
+.refinement-rail[data-touring=true] .stage-help{display:none}
 .rail-stops b{font-weight:600;font-variant-numeric:tabular-nums}
 .rail-stops button:before{content:'';position:absolute;width:15px;height:1px;left:-25px;top:50%;background:#bcc5b0}
 .rail-stops button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:600;box-shadow:0 2px 3px #29352215}
@@ -223,6 +235,10 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  .rail-progress{inset:0 auto 0 0;width:calc(100% * var(--progress));height:auto}
  [data-journey=original] .rail-arrow{transform:scaleX(0)}
  .rail-stops{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;align-items:start}
+ .rail-stop{width:100%;position:static}
+ .stage-help{left:0;top:54px;width:100%;transform:translateY(4px);box-sizing:border-box}
+ .rail-stop:has(button:focus-visible:not([data-help-dismissed])) .stage-help{transform:none}
+ @media(hover:hover) and (pointer:fine){.rail-stop:has(button:not([disabled]):not([data-help-dismissed])):hover .stage-help{transform:none}}
  .rail-stops button{width:100%;height:48px;min-height:48px;padding:6px 2px;font-size:12px;white-space:normal;line-height:1.2}
  .rail-stops button span{display:block;font-size:10px;font-weight:400;margin-top:2px}
  .rail-stops button:before{width:1px;height:12px;left:50%;top:auto;bottom:-13px}
@@ -236,7 +252,7 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  [data-journey=original] .rail-body{height:48px}
  [data-journey=original] .refinement-rail h2{display:none}
 }
-@media(prefers-reduced-motion:reduce){.rail-arrow,.rail-stops button,.refinement-rail h2,.play-refinements svg,[data-journey=original] .toggle-track:after{transition:none}.refinement-rail[data-guide=refine] #stage-2{animation:none}.play-refinements svg{transform:none!important}}
+@media(prefers-reduced-motion:reduce){.rail-arrow,.rail-progress,.stage-help,.rail-stops button,.refinement-rail h2,.play-refinements svg,[data-journey=original] .toggle-track:after{transition:none}.refinement-rail[data-guide=refine] #stage-2{animation:none}.play-refinements svg{transform:none!important}}
 </style></head>
 <body>
 <noscript>Enable JavaScript to roll the dice and compare reports.</noscript>
@@ -248,7 +264,7 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
    <button type="button" id="compare" class="compare-toggle" aria-pressed="false" aria-controls="report-view compare-target"><span id="compare-label">Compare without ingredients</span><span class="toggle-track" aria-hidden="true"></span></button>
    <select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">Brief only</option><option value="other" id="compare-other">Original prompt</option></select>
    <section id="dice-deck" class="dice-deck" aria-label="Choose ingredients" aria-describedby="dice-hint">
-    <aside id="walkthrough-note" class="walkthrough-note" aria-label="Saved walkthrough" hidden><div class="walkthrough-meta"><span>Saved walkthrough</span><span id="walkthrough-count"></span></div><div id="walkthrough-copy" aria-live="polite" aria-atomic="true"><h3 id="walkthrough-title"></h3><p id="walkthrough-text"></p></div><button id="walkthrough-close" type="button" aria-label="Close walkthrough">×</button></aside>
+    <aside id="walkthrough-note" class="walkthrough-note" aria-label="Saved walkthrough" hidden><div class="walkthrough-meta"><span>Saved walkthrough</span><span id="walkthrough-count"></span></div><div id="walkthrough-copy" aria-live="polite" aria-atomic="true"><h3 id="walkthrough-title"></h3><p id="walkthrough-text"></p></div><div class="walkthrough-actions"><button id="walkthrough-prompt" type="button">Prompt ↗</button><button id="walkthrough-next" type="button">Roll dice →</button></div><button id="walkthrough-close" type="button" aria-label="Close walkthrough">×</button></aside>
     <div class="dice">
      <div class="die"><div class="die-top"><span>Ingredient 1</span></div><strong id="ingredient-a"></strong></div>
      <div class="die"><div class="die-top"><span>Ingredient 2</span></div><strong id="ingredient-b"></strong></div>
@@ -267,7 +283,12 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
     <div class="rail-body">
      <span class="rail-arrow" aria-hidden="true"><span class="rail-progress"></span></span>
      <input id="refinement-range" type="range" min="1" max="4" step="1" value="1" aria-labelledby="refinement-label" aria-valuetext="One-shot" aria-controls="report-view">
-     <div class="rail-stops"><button type="button" id="stage-1" aria-label="One-shot" aria-pressed="true">One-shot</button><button type="button" id="stage-2" aria-label="Refinement 1" aria-pressed="false"><b>+1</b> <span>pass</span></button><button type="button" id="stage-3" aria-label="Refinement 2" aria-pressed="false"><b>+2</b> <span>passes</span></button><button type="button" id="stage-4" aria-label="Refinement 3" aria-pressed="false"><b>+3</b> <span>passes</span></button></div>
+     <div class="rail-stops">
+      <div class="rail-stop"><button type="button" id="stage-1" aria-label="One-shot" aria-describedby="stage-help-1" aria-pressed="true">One-shot</button><span id="stage-help-1" class="stage-help" role="tooltip">One prompt with the brief, data and two ingredients. No refinement yet.</span></div>
+      <div class="rail-stop"><button type="button" id="stage-2" aria-label="Refinement 1" aria-describedby="stage-help-2" aria-pressed="false"><b>+1</b><span>refinement</span></button><span id="stage-help-2" class="stage-help" role="tooltip">Prompt again: critique the one-shot and lean into both ingredients.</span></div>
+      <div class="rail-stop"><button type="button" id="stage-3" aria-label="Refinement 2" aria-describedby="stage-help-3" aria-pressed="false"><b>+2</b><span>refinements</span></button><span id="stage-help-3" class="stage-help" role="tooltip">Apply the same refinement prompt to the previous result again.</span></div>
+      <div class="rail-stop"><button type="button" id="stage-4" aria-label="Refinement 3" aria-describedby="stage-help-4" aria-pressed="false"><b>+3</b><span>refinements</span></button><span id="stage-help-4" class="stage-help" role="tooltip">A third refinement with the same prompt. Judge what changed.</span></div>
+     </div>
     </div>
     <button id="play-refinements" type="button" class="play-refinements" aria-label="Play walkthrough" title="Play walkthrough" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="play-symbol" d="m7 4 9 6-9 6Z"/><path class="pause-symbol" d="M6 4h3v12H6zm6 0h3v12h-3z"/></svg><span id="play-word" class="play-word">Play</span><span class="pause-word">Pause</span></button>
    </section>
@@ -591,30 +612,43 @@ function showPrompt(pre,text,addition=''){
  }
 }
 
-// Replay saved results, never simulate generation. Manual input cancels the tour;
-// pausing holds its explanation, and completion leaves the final result in place.
-function createRefinementPlayback({getStage,setStage,onPlaying,onBeat=()=>{},canPlay,delay=1800,firstDelay=1200,schedule=setTimeout,unschedule=clearTimeout}){
- let timer=null,phase='idle',epoch=0;
- function clear(){epoch++;if(timer!==null)unschedule(timer);timer=null;}
+// A saved walkthrough: brief alone → roll → ingredient one-shot → three refinements.
+// The roll is real; the reports are recorded. Manual input invalidates pending work.
+function createRefinementPlayback({showPlain,rollIngredients,setStage,onPlaying,onBeat,canPlay,delay=2200,schedule=setTimeout,unschedule=clearTimeout}){
+ let timer=null,phase='idle',beat=0,rolling=false,run=0,ticket=0;
+ function clear(){ticket++;if(timer!==null)unschedule(timer);timer=null;}
  function state(next){phase=next;onPlaying(phase==='playing',phase);}
- function stop(){clear();if(phase!=='idle')state('idle');}
+ function stop(){clear();run++;rolling=false;if(phase!=='idle')state('idle');}
  function pause(){if(phase==='playing'){clear();state('paused');}}
  function queue(){
-  const token=epoch;
+  if(phase!=='playing'||rolling)return;
+  const token=ticket;
   timer=schedule(()=>{
-   if(token!==epoch||phase!=='playing')return;
+   if(token!==ticket||phase!=='playing')return;
    timer=null;
    if(!canPlay()){pause();return;}
-   if(getStage()>=4){state('complete');return;}
-   setStage(getStage()+1);onBeat(getStage());queue();
-  },getStage()===1?firstDelay:delay);
+   advance();
+  },delay);
+ }
+ function advance(){
+  if(rolling||phase==='idle')return;
+  clear();
+  if(beat===4){state('complete');return;}
+  beat++;
+  if(beat===1){
+   rolling=true;const token=run;onBeat('roll');
+   rollIngredients(()=>{
+    if(token!==run||phase==='idle')return;
+    rolling=false;setStage(1);onBeat(1);queue();
+   });
+  }else{setStage(beat);onBeat(beat);queue();}
  }
  function start({restart=true}={}){
   clear();if(!canPlay()){stop();return;}
-  if(restart)setStage(1);
-  state('playing');onBeat(getStage());queue();
+  if(restart){run++;beat=0;rolling=false;showPlain();}
+  state('playing');onBeat(rolling?'roll':beat);queue();
  }
- return {start,stop,pause,get running(){return phase==='playing';},get phase(){return phase;},toggle(){if(phase==='playing')pause();else start({restart:phase!=='paused'});}};
+ return {start,stop,pause,advance,get running(){return phase==='playing';},get phase(){return phase;},get beat(){return beat;},toggle(){if(phase==='playing')pause();else start({restart:phase!=='paused'});}};
 }
 
 // Keep the previous saved page visible while its replacement paints in the same frame.
@@ -645,7 +679,7 @@ function handoffReport(container,previous,incoming){
   if(reportHandoffs.get(container)!==active||active.animation)return;
   frame.dataset.loaded='true';frame.removeEventListener('load',active.reveal);
   if(active.immediate||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches){releaseReportHandoff(container);return;}
-  active.animation=previous.animate([{opacity:1},{opacity:0}],{duration:170,easing:'cubic-bezier(.23,1,.32,1)'});
+  active.animation=previous.animate([{opacity:1},{opacity:0}],{duration:360,easing:'cubic-bezier(.4,0,.2,1)'});
   active.animation.onfinish=()=>{if(reportHandoffs.get(container)===active)settleReportHandoff(container);};
  };
  if(frame.dataset.loaded==='true')active.reveal();
@@ -685,30 +719,45 @@ function guideRefinement(token){
 }
 function settlePresentation(){stopGuidance();settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
 const walkthroughBeats=[
- ['Add two ingredients','One prompt. A new visual direction.'],
- ['Critique + refine','Lean into both ingredients. Keep it simple.'],
- ['Prompt it again','Same refinement prompt. Build on the last result.'],
- ['One more pass','Same prompt again. More distinct—or just more?']
+ ['Start with the brief','One prompt, no ingredients. This is the starting point.'],
+ ['Add ingredients','Same brief and data. Two ingredients change the visual direction.'],
+ ['Refine once','Critique this result. Lean into both ingredients. Keep it simple.'],
+ ['Refine again','Repeat the same refinement prompt on the previous result.'],
+ ['Third refinement','Same prompt, one more pass. More distinct—or just more?']
 ];
 function showWalkthrough(value){
  const note=$('#walkthrough-note'),wasHidden=note.hidden;
+ $('#dice-deck').dataset.beat=String(value);
+ $('#dice-hint').textContent=value==='roll'?'Rolling two ingredients…':'Drag to choose · flick to roll';
+ if(value==='roll'){note.hidden=true;return;}
  const unchanged=value>1&&selected.steps[value-1].html===selected.steps[value-2].html;
- const [title,text]=unchanged?['No change this pass',value===2?'The refinement prompt left the design unchanged.':'Same prompt again. This pass kept the design.']:walkthroughBeats[value-1];
- $('#walkthrough-count').textContent=value+' / 4';
+ const [title,text]=unchanged?['No change this pass','The same refinement prompt was repeated. This result stayed unchanged.']:walkthroughBeats[value];
+ $('#walkthrough-count').textContent=(value+1)+' / 5';
  $('#walkthrough-title').textContent=title;$('#walkthrough-text').textContent=text;note.hidden=false;
+ $('#walkthrough-next').textContent=value===0?'Roll dice →':value===4?'Explore →':'Refine →';
  const copy=wasHidden?note:$('#walkthrough-copy');
  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)copy.animate?.([{opacity:0,transform:'translateY(5px)'},{opacity:1,transform:'translateY(0)'}],{duration:170,easing:'cubic-bezier(.23,1,.32,1)'});
 }
+function rollWalkthrough(complete){
+ const values=[nextIngredient(0,selected.a),nextIngredient(1,selected.b)];
+ selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
+ render(false);
+ tumbleDice([0,1],values,complete);
+}
 const playback=createRefinementPlayback({
- getStage:()=>stage,
- setStage:value=>{stage=value;render(false);},
- canPlay:()=>!introMode&&view==='dice'&&!document.hidden&&railVisible,
+ showPlain:()=>{cancelDiceRoll();introMode=true;stage=1;comparing=false;render();},
+ rollIngredients:rollWalkthrough,
+ setStage:value=>{introMode=false;stage=value;render(false);syncDice3D();},
+ canPlay:()=>view==='dice'&&!document.hidden&&railVisible,
  onBeat:showWalkthrough,
  onPlaying:(playing,phase)=>{
   $('#refinement-rail').dataset.playing=String(playing);
   $('#refinement-rail').dataset.touring=String(phase!=='idle');
   $('#dice-deck').dataset.touring=String(phase!=='idle');
-  if(phase==='idle')$('#walkthrough-note').hidden=true;
+  if(phase==='idle'){
+   $('#walkthrough-note').hidden=true;$('#dice-deck').removeAttribute('data-beat');
+   $('#dice-hint').textContent='Drag to choose · flick to roll';cancelDiceRoll();syncDice3D();
+  }
   const button=$('#play-refinements'),label=playing?'Pause walkthrough':phase==='paused'?'Resume walkthrough':phase==='complete'?'Replay walkthrough':'Play walkthrough';
   $('#play-word').textContent=phase==='paused'?'Resume':phase==='complete'?'Replay':'Play';
   button.setAttribute('aria-pressed',String(playing));button.setAttribute('aria-label',label);button.title=label;
@@ -753,8 +802,9 @@ function renderRail(){
  $('#refinement-rail').style.setProperty('--progress',String((stage-1)/3));
  const range=$('#refinement-range');range.value=String(stage);range.setAttribute('aria-valuetext',attemptName(stage));
  range.disabled=introMode;
+ $('#stage-help-1').textContent=introMode?'One prompt with just the brief and data. No ingredients or refinement yet.':'One prompt with the brief, data and two ingredients. No refinement yet.';
  for(let value=1;value<=4;value++){const button=$('#stage-'+value);button.setAttribute('aria-pressed',String(stage===value));button.disabled=introMode;}
- $('#play-refinements').hidden=introMode;
+ $('#play-refinements').hidden=false;
 }
 function renderResult(){
  const container=$('#report-view');container.classList.toggle('comparing',comparing);
@@ -859,18 +909,33 @@ $('#method-stronger').addEventListener('click',()=>changeMethod('stronger'));
 $('#plain-method').addEventListener('change',event=>changeMethod(event.target.value==='original'?'original':'stronger'));
 function setAttempt(value){if(introMode)return;playback.stop();settlePresentation();const next=Math.round(Number(value));if(selected.steps[next-1]){stage=next;render(false);}}
 $('#refinement-range').addEventListener('input',event=>setAttempt(event.target.value));
-for(let value=1;value<=4;value++)$('#stage-'+value).addEventListener('click',()=>setAttempt(value));
+for(let value=1;value<=4;value++){
+ const button=$('#stage-'+value);
+ button.addEventListener('click',()=>setAttempt(value));
+ button.addEventListener('pointerenter',()=>button.removeAttribute('data-help-dismissed'));
+ button.addEventListener('focus',()=>button.removeAttribute('data-help-dismissed'));
+ button.addEventListener('keydown',event=>{if(event.key==='Escape')button.dataset.helpDismissed='true';});
+}
 $('#play-refinements').addEventListener('click',()=>{
  stopGuidance();promptPeeks.forEach(peek=>peek.close());
  if(!playback.running)$('#play').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
  playback.toggle();
 });
 $('#walkthrough-close').addEventListener('click',()=>{playback.stop();$('#play-refinements').focus({preventScroll:true});});
+$('#walkthrough-next').addEventListener('click',()=>{
+ if(playback.beat===4){playback.stop();$('#stage-4').focus({preventScroll:true});}
+ else{playback.pause();playback.advance();}
+});
+$('#walkthrough-prompt').addEventListener('click',()=>{
+ playback.pause();promptPeeks[0].open();$('#prompt-trigger').focus({preventScroll:true});
+});
 // Direct intent takes over immediately. Background/offscreen playback holds its stage.
 for(const type of ['pointerdown','focusin','keydown'])document.addEventListener(type,event=>{
  if(event.key==='Escape'){const touring=playback.phase!=='idle';playback.stop();settlePresentation();if(touring)$('#play-refinements').focus({preventScroll:true});}
+ else if(event.target.closest('#prompt')){playback.pause();}
  else if(!event.target.closest('#play-refinements,#walkthrough-note')){playback.stop();settlePresentation();}
 },true);
+$('#prompt').addEventListener('pointerenter',()=>playback.pause());
 document.addEventListener('visibilitychange',()=>{if(document.hidden){playback.pause();settlePresentation();}});
 window.addEventListener('blur',()=>{playback.pause();settlePresentation();});
 matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',()=>{playback.pause();settlePresentation();});

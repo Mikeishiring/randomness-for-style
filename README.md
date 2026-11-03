@@ -38,7 +38,8 @@ The recorded reports here use no personal design skills or supplied visual refer
 
 - New visitors start with the plain one-shot. The first roll reveals two ingredients and their result.
 - Click a die to roll, drag slowly to choose its upper face, or flick to throw. Arrow keys turn it; Escape cancels a drag.
-- Choose One-shot, +1, +2 or +3, drag the refinement control, or press Play for a short walkthrough. Pause holds an explanation; a manual choice ends the tour.
+- Play starts with the plain one-shot, rolls both dice, then walks through the ingredient one-shot and three refinements. Pause or step through at your own pace; opening the exact prompt pauses the tour.
+- Choose One-shot, +1, +2 or +3, or drag the refinement control. Hover or focus a step to see what it means. A manual choice ends the tour.
 - Compare with the brief-only result, inspect the exact prompt and critique, browse all 36 combinations, or share a selected state.
 
 These are saved results, not live model calls. The original and stronger refinement sequences are both preserved. The stronger sequence restarts from the same one-shot in a fresh context. Generated reports were not manually restyled; unchanged passes and rough edges remain visible. The exact prompts and critiques are available so someone else can repeat the procedure.
