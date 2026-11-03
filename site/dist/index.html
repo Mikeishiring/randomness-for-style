@@ -159,6 +159,25 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 .method-options{max-width:320px;margin:18px 0}.method-options .method-note{margin-bottom:0}
 /* The arrow is both a sequence and a directly draggable instrument. */
 .refinement-rail{grid-area:rail;position:sticky;top:90px;padding-top:60px;min-width:0;--progress:0}
+.refinement-rail[data-touring=true]{z-index:4}
+.walkthrough-note{position:absolute;right:calc(100% + 20px);top:calc(252px * var(--progress) - 10px);width:192px;padding:16px 14px 15px;box-sizing:border-box;border:1px solid #c5cbbb;border-radius:9px;background:#fcfbf6;box-shadow:0 8px 26px #25301c1a,0 2px 4px #25301c0a;transition:top 220ms cubic-bezier(.23,1,.32,1);text-align:left}
+.walkthrough-note:after{content:'';position:absolute;top:28px;right:-8px;width:13px;height:13px;border-top:1px solid #c5cbbb;border-right:1px solid #c5cbbb;background:#fcfbf6;transform:rotate(45deg)}
+.walkthrough-meta{display:flex;align-items:center;justify-content:space-between;gap:5px;padding-right:18px;color:var(--muted);font:10px/1.3 Arial,sans-serif;margin-bottom:10px}
+#walkthrough-count{white-space:nowrap;font-variant-numeric:tabular-nums}
+.walkthrough-note h3{font:600 15px/1.2 Arial,sans-serif;letter-spacing:-.3px;margin:0 0 7px;color:var(--ink)}
+.walkthrough-note p{font:13px/1.45 Arial,sans-serif;margin:0;min-height:3em;color:#53604c;text-wrap:pretty}
+#walkthrough-close{position:absolute;top:4px;right:2px;display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:5px;background:transparent;color:var(--muted);font:19px/1 Arial}
+#walkthrough-close:hover{color:var(--ink);background:#e9ecdf}
+#dice-deck .die-object{transition:opacity 160ms ease-out}
+#dice-deck[data-touring=true] .die-object{opacity:.35}
+@media(max-width:1100px) and (min-width:701px){.walkthrough-note{right:calc(100% + 16px);width:164px;padding:15px 12px}.walkthrough-meta{font-size:9px;gap:3px}.walkthrough-note h3{font-size:14px}.walkthrough-note p{font-size:12px}}
+@media(max-width:700px){
+ .walkthrough-note{right:auto;left:0;top:auto;bottom:calc(100% + 160px);width:100%;padding:15px 18px;transition:none}
+ .walkthrough-note:after{display:none}
+ .walkthrough-meta{font-size:10px;justify-content:flex-start;gap:12px;margin-bottom:7px}.walkthrough-note p{min-height:2.9em}
+ #walkthrough-close{width:40px;height:40px;top:1px;right:3px}
+}
+@media(prefers-reduced-motion:reduce){.walkthrough-note,.walkthrough-note:after,#dice-deck .die-object{transition:none}}
 .refinement-rail h2{font:500 12px/1.3 Arial,sans-serif;margin:0 0 18px;padding-left:38px;color:var(--muted)}
 .rail-body{position:relative;height:300px}
 .rail-arrow{position:absolute;left:13px;top:24px;bottom:24px;width:3px;border-radius:2px;background:#c0c7b8;transform-origin:top;transition:transform 340ms cubic-bezier(.23,1,.32,1),opacity 160ms ease-out}
@@ -250,8 +269,9 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
      <span class="rail-arrow" aria-hidden="true"><span class="rail-progress"></span></span>
      <input id="refinement-range" type="range" min="1" max="4" step="1" value="1" aria-labelledby="refinement-label" aria-valuetext="One-shot" aria-controls="report-view">
      <div class="rail-stops"><button type="button" id="stage-1" aria-label="One-shot" aria-pressed="true">One-shot</button><button type="button" id="stage-2" aria-label="Refinement 1" aria-pressed="false"><b>+1</b> <span>pass</span></button><button type="button" id="stage-3" aria-label="Refinement 2" aria-pressed="false"><b>+2</b> <span>passes</span></button><button type="button" id="stage-4" aria-label="Refinement 3" aria-pressed="false"><b>+3</b> <span>passes</span></button></div>
+     <aside id="walkthrough-note" class="walkthrough-note" aria-label="Saved walkthrough" hidden><div class="walkthrough-meta"><span>Saved walkthrough</span><span id="walkthrough-count"></span></div><div id="walkthrough-copy" aria-live="polite" aria-atomic="true"><h3 id="walkthrough-title"></h3><p id="walkthrough-text"></p></div><button id="walkthrough-close" type="button" aria-label="Close walkthrough">×</button></aside>
     </div>
-    <button id="play-refinements" type="button" class="play-refinements" aria-label="Play refinements" title="Play refinements" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="play-symbol" d="m7 4 9 6-9 6Z"/><path class="pause-symbol" d="M6 4h3v12H6zm6 0h3v12h-3z"/></svg><span class="play-word">Play</span><span class="pause-word">Pause</span></button>
+    <button id="play-refinements" type="button" class="play-refinements" aria-label="Play walkthrough" title="Play walkthrough" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="play-symbol" d="m7 4 9 6-9 6Z"/><path class="pause-symbol" d="M6 4h3v12H6zm6 0h3v12h-3z"/></svg><span id="play-word" class="play-word">Play</span><span class="pause-word">Pause</span></button>
    </section>
    <section id="dice-lab" class="result" aria-labelledby="pair-title"><h2 id="pair-title" class="sr-only" tabindex="-1"></h2><div id="report-view"></div><div class="result-actions"><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Brief only →</button><button type="button" id="copy-link" class="text-button">Share this roll ↗</button><span id="share-status" role="status"></span></div></section>
    <section id="plain-controls" class="controls plain-controls" aria-label="Plain prompt and refinement" hidden>
@@ -573,22 +593,30 @@ function showPrompt(pre,text,addition=''){
  }
 }
 
-// A finite tour of saved outputs. Stopping holds the current stage; it never rerolls.
-function createRefinementPlayback({getStage,setStage,onPlaying,canPlay,delay=2200,schedule=setTimeout,unschedule=clearTimeout}){
- let timer=null,running=false;
- function stop(){if(timer!==null)unschedule(timer);timer=null;if(running){running=false;onPlaying(false);}}
- function tick(){
-  timer=null;
-  if(!running||!canPlay()){stop();return;}
-  setStage(getStage()+1);
-  if(getStage()>=4)stop();else timer=schedule(tick,delay);
+// Replay saved results, never simulate generation. Manual input cancels the tour;
+// pausing holds its explanation, and completion leaves the final result in place.
+function createRefinementPlayback({getStage,setStage,onPlaying,onBeat=()=>{},canPlay,delay=1800,firstDelay=1200,schedule=setTimeout,unschedule=clearTimeout}){
+ let timer=null,phase='idle',epoch=0;
+ function clear(){epoch++;if(timer!==null)unschedule(timer);timer=null;}
+ function state(next){phase=next;onPlaying(phase==='playing',phase);}
+ function stop(){clear();if(phase!=='idle')state('idle');}
+ function pause(){if(phase==='playing'){clear();state('paused');}}
+ function queue(){
+  const token=epoch;
+  timer=schedule(()=>{
+   if(token!==epoch||phase!=='playing')return;
+   timer=null;
+   if(!canPlay()){pause();return;}
+   if(getStage()>=4){state('complete');return;}
+   setStage(getStage()+1);onBeat(getStage());queue();
+  },getStage()===1?firstDelay:delay);
  }
- function start({restart=false}={}){
-  stop();if(!canPlay())return;
-  if(restart||getStage()>=4)setStage(1);
-  running=true;onPlaying(true);timer=schedule(tick,delay);
+ function start({restart=true}={}){
+  clear();if(!canPlay()){stop();return;}
+  if(restart)setStage(1);
+  state('playing');onBeat(getStage());queue();
  }
- return {start,stop,get running(){return running;},toggle(){if(running)stop();else start();}};
+ return {start,stop,pause,get running(){return phase==='playing';},get phase(){return phase;},toggle(){if(phase==='playing')pause();else start({restart:phase!=='paused'});}};
 }
 
 // Keep the previous saved page visible while its replacement paints in the same frame.
@@ -658,13 +686,33 @@ function guideRefinement(token){
  },650);
 }
 function settlePresentation(){stopGuidance();settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
+const walkthroughBeats=[
+ ['Add two ingredients','One prompt. A new visual direction.'],
+ ['Critique + refine','Lean into both ingredients. Keep it simple.'],
+ ['Prompt it again','Same refinement prompt. Build on the last result.'],
+ ['One more pass','Same prompt again. More distinct—or just more?']
+];
+function showWalkthrough(value){
+ const note=$('#walkthrough-note'),wasHidden=note.hidden;
+ const unchanged=value>1&&selected.steps[value-1].html===selected.steps[value-2].html;
+ const [title,text]=unchanged?['No change this pass',value===2?'The refinement prompt left the design unchanged.':'Same prompt again. This pass kept the design.']:walkthroughBeats[value-1];
+ $('#walkthrough-count').textContent=value+' / 4';
+ $('#walkthrough-title').textContent=title;$('#walkthrough-text').textContent=text;note.hidden=false;
+ const copy=wasHidden?note:$('#walkthrough-copy');
+ if(!matchMedia('(prefers-reduced-motion: reduce)').matches)copy.animate?.([{opacity:0,transform:'translateY(5px)'},{opacity:1,transform:'translateY(0)'}],{duration:170,easing:'cubic-bezier(.23,1,.32,1)'});
+}
 const playback=createRefinementPlayback({
  getStage:()=>stage,
  setStage:value=>{stage=value;render(false);},
  canPlay:()=>!introMode&&view==='dice'&&!document.hidden&&railVisible,
- onPlaying:playing=>{
+ onBeat:showWalkthrough,
+ onPlaying:(playing,phase)=>{
   $('#refinement-rail').dataset.playing=String(playing);
-  const button=$('#play-refinements'),label=playing?'Pause refinements':'Play refinements';
+  $('#refinement-rail').dataset.touring=String(phase!=='idle');
+  $('#dice-deck').dataset.touring=String(phase!=='idle');
+  if(phase==='idle')$('#walkthrough-note').hidden=true;
+  const button=$('#play-refinements'),label=playing?'Pause walkthrough':phase==='paused'?'Resume walkthrough':phase==='complete'?'Replay walkthrough':'Play walkthrough';
+  $('#play-word').textContent=phase==='paused'?'Resume':phase==='complete'?'Replay':'Play';
   button.setAttribute('aria-pressed',String(playing));button.setAttribute('aria-label',label);button.title=label;
  }
 });
@@ -814,15 +862,17 @@ $('#plain-method').addEventListener('change',event=>changeMethod(event.target.va
 function setAttempt(value){if(introMode)return;playback.stop();settlePresentation();const next=Math.round(Number(value));if(selected.steps[next-1]){stage=next;render(false);}}
 $('#refinement-range').addEventListener('input',event=>setAttempt(event.target.value));
 for(let value=1;value<=4;value++)$('#stage-'+value).addEventListener('click',()=>setAttempt(value));
-$('#play-refinements').addEventListener('click',()=>{stopGuidance();playback.toggle();});
+$('#play-refinements').addEventListener('click',()=>{stopGuidance();promptPeeks.forEach(peek=>peek.close());playback.toggle();});
+$('#walkthrough-close').addEventListener('click',()=>{playback.stop();$('#play-refinements').focus({preventScroll:true});});
 // Direct intent takes over immediately. Background/offscreen playback holds its stage.
 for(const type of ['pointerdown','focusin','keydown'])document.addEventListener(type,event=>{
- if(event.key==='Escape'||!event.target.closest('#play-refinements')){playback.stop();settlePresentation();}
+ if(event.key==='Escape'){const touring=playback.phase!=='idle';playback.stop();settlePresentation();if(touring)$('#play-refinements').focus({preventScroll:true});}
+ else if(!event.target.closest('#play-refinements,#walkthrough-note')){playback.stop();settlePresentation();}
 },true);
-document.addEventListener('visibilitychange',()=>{if(document.hidden){playback.stop();settlePresentation();}});
-window.addEventListener('blur',()=>{playback.stop();settlePresentation();});
-matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',()=>{playback.stop();settlePresentation();});
-const railObserver=new IntersectionObserver(entries=>{railVisible=entries[0].isIntersecting;if(!railVisible){playback.stop();stopGuidance();}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){playback.pause();settlePresentation();}});
+window.addEventListener('blur',()=>{playback.pause();settlePresentation();});
+matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',()=>{playback.pause();settlePresentation();});
+const railObserver=new IntersectionObserver(entries=>{railVisible=entries[0].isIntersecting;if(!railVisible){playback.pause();stopGuidance();}});
 railObserver.observe($('#refinement-rail'));
 const horizontalRail=matchMedia('(max-width:700px)');
 function orientRail(){$('#refinement-range').setAttribute('aria-orientation',horizontalRail.matches?'horizontal':'vertical');}

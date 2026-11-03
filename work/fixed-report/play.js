@@ -30,13 +30,33 @@ function guideRefinement(token){
  },650);
 }
 function settlePresentation(){stopGuidance();settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
+const walkthroughBeats=[
+ ['Add two ingredients','One prompt. A new visual direction.'],
+ ['Critique + refine','Lean into both ingredients. Keep it simple.'],
+ ['Prompt it again','Same refinement prompt. Build on the last result.'],
+ ['One more pass','Same prompt again. More distinct—or just more?']
+];
+function showWalkthrough(value){
+ const note=$('#walkthrough-note'),wasHidden=note.hidden;
+ const unchanged=value>1&&selected.steps[value-1].html===selected.steps[value-2].html;
+ const [title,text]=unchanged?['No change this pass',value===2?'The refinement prompt left the design unchanged.':'Same prompt again. This pass kept the design.']:walkthroughBeats[value-1];
+ $('#walkthrough-count').textContent=value+' / 4';
+ $('#walkthrough-title').textContent=title;$('#walkthrough-text').textContent=text;note.hidden=false;
+ const copy=wasHidden?note:$('#walkthrough-copy');
+ if(!matchMedia('(prefers-reduced-motion: reduce)').matches)copy.animate?.([{opacity:0,transform:'translateY(5px)'},{opacity:1,transform:'translateY(0)'}],{duration:170,easing:'cubic-bezier(.23,1,.32,1)'});
+}
 const playback=createRefinementPlayback({
  getStage:()=>stage,
  setStage:value=>{stage=value;render(false);},
  canPlay:()=>!introMode&&view==='dice'&&!document.hidden&&railVisible,
- onPlaying:playing=>{
+ onBeat:showWalkthrough,
+ onPlaying:(playing,phase)=>{
   $('#refinement-rail').dataset.playing=String(playing);
-  const button=$('#play-refinements'),label=playing?'Pause refinements':'Play refinements';
+  $('#refinement-rail').dataset.touring=String(phase!=='idle');
+  $('#dice-deck').dataset.touring=String(phase!=='idle');
+  if(phase==='idle')$('#walkthrough-note').hidden=true;
+  const button=$('#play-refinements'),label=playing?'Pause walkthrough':phase==='paused'?'Resume walkthrough':phase==='complete'?'Replay walkthrough':'Play walkthrough';
+  $('#play-word').textContent=phase==='paused'?'Resume':phase==='complete'?'Replay':'Play';
   button.setAttribute('aria-pressed',String(playing));button.setAttribute('aria-label',label);button.title=label;
  }
 });
@@ -186,15 +206,17 @@ $('#plain-method').addEventListener('change',event=>changeMethod(event.target.va
 function setAttempt(value){if(introMode)return;playback.stop();settlePresentation();const next=Math.round(Number(value));if(selected.steps[next-1]){stage=next;render(false);}}
 $('#refinement-range').addEventListener('input',event=>setAttempt(event.target.value));
 for(let value=1;value<=4;value++)$('#stage-'+value).addEventListener('click',()=>setAttempt(value));
-$('#play-refinements').addEventListener('click',()=>{stopGuidance();playback.toggle();});
+$('#play-refinements').addEventListener('click',()=>{stopGuidance();promptPeeks.forEach(peek=>peek.close());playback.toggle();});
+$('#walkthrough-close').addEventListener('click',()=>{playback.stop();$('#play-refinements').focus({preventScroll:true});});
 // Direct intent takes over immediately. Background/offscreen playback holds its stage.
 for(const type of ['pointerdown','focusin','keydown'])document.addEventListener(type,event=>{
- if(event.key==='Escape'||!event.target.closest('#play-refinements')){playback.stop();settlePresentation();}
+ if(event.key==='Escape'){const touring=playback.phase!=='idle';playback.stop();settlePresentation();if(touring)$('#play-refinements').focus({preventScroll:true});}
+ else if(!event.target.closest('#play-refinements,#walkthrough-note')){playback.stop();settlePresentation();}
 },true);
-document.addEventListener('visibilitychange',()=>{if(document.hidden){playback.stop();settlePresentation();}});
-window.addEventListener('blur',()=>{playback.stop();settlePresentation();});
-matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',()=>{playback.stop();settlePresentation();});
-const railObserver=new IntersectionObserver(entries=>{railVisible=entries[0].isIntersecting;if(!railVisible){playback.stop();stopGuidance();}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){playback.pause();settlePresentation();}});
+window.addEventListener('blur',()=>{playback.pause();settlePresentation();});
+matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',()=>{playback.pause();settlePresentation();});
+const railObserver=new IntersectionObserver(entries=>{railVisible=entries[0].isIntersecting;if(!railVisible){playback.pause();stopGuidance();}});
 railObserver.observe($('#refinement-rail'));
 const horizontalRail=matchMedia('(max-width:700px)');
 function orientRail(){$('#refinement-range').setAttribute('aria-orientation',horizontalRail.matches?'horizontal':'vertical');}
