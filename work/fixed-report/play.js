@@ -20,14 +20,32 @@ const previewCaches=new WeakMap();
 const matrixButtons=new Map();
 const matrixCells=new Map();
 const promptPeeks=[$('#prompt'),$('#plain-prompt-details')].map(bindPromptPeek);
-let hintsOpen=introMode,ingredientsChosen=!introMode;
+let hintsOpen=introMode,ingredientsChosen=!introMode,paintedStep=null;
+const actionAnimations=new Map();
+function updateActionText(node,text,animate){
+ if(node.textContent===text)return;
+ actionAnimations.get(node)?.cancel();actionAnimations.delete(node);
+ node.textContent=text;
+ if(!animate||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches||!node.animate)return;
+ const animation=node.animate([{opacity:.2,transform:'translateY(4px)'},{opacity:1,transform:'translateY(0)'}],{duration:160,easing:'cubic-bezier(.25,.8,.25,1)'});
+ actionAnimations.set(node,animation);
+ animation.onfinish=()=>{if(actionAnimations.get(node)===animation)actionAnimations.delete(node);};
+}
+function syncRailMarker(animate=false){
+ const button=$('#stage-'+(introMode?0:stage)),marker=$('#rail-marker');
+ const target=button.getBoundingClientRect?.(),track=$('#rail-stops').getBoundingClientRect?.();
+ if(!target?.width||!track)return;
+ marker.style.transitionDuration=animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches?'220ms':'0ms';
+ marker.style.width=target.width+'px';marker.style.transform='translateX('+(target.left-track.left)+'px)';
+}
+const railResize=new ResizeObserver(()=>syncRailMarker());railResize.observe($('#rail-stops'));
 function settlePresentation(){settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
 const walkthroughBeats=[
  ['Brief only','One prompt, no added ingredients. The brief and data stay fixed.'],
  ['Dice added','The same prompt, now with these two ingredients. Still one shot.'],
- ['Refinement 1','Prompt again: critique the result, lean into both ingredients, keep it simple.'],
- ['Refinement 2','The same refinement prompt, applied to the previous result.'],
- ['Refinement 3','One more pass of that same prompt. More distinct—or just more?']
+ ['Refinement 1','Critique the result. Commit to both ingredients. Keep it simple.'],
+ ['Refinement 2','Same prompt. This time, refine the first refinement.'],
+ ['Refinement 3','Same prompt, third pass. More distinct—or just more?']
 ];
 function showWalkthrough(){
  const value=introMode?0:stage,note=$('#walkthrough-note');
@@ -90,11 +108,18 @@ function renderStepper(prefix,value,total){
 }
 function renderRail(){
  const value=introMode?0:stage;
+ const animate=paintedStep!==null&&paintedStep!==value;
  for(let n=0;n<=4;n++){
   const button=$('#stage-'+n);button.setAttribute('aria-pressed',String(n===value));
   button.disabled=introMode&&n>1;
  }
- $('#next-label').textContent=introMode?(ingredientsChosen?'Back to ingredients':'Roll ingredients'):stage===1?'Refine once':stage<4?'Refine again':'Roll a new pair';
+ const refining=!introMode&&stage<4;
+ const label=introMode?(ingredientsChosen?'Back to ingredients':'Roll ingredients'):stage===1?'Lean into it':stage<4?'Again, same prompt':'Roll a new pair';
+ const cue=refining?'+'+stage:'→';
+ $('#experiment-next').dataset.action=refining?'refine':'roll';
+ $('#experiment-next').setAttribute('aria-label',refining?label+'. Refinement '+stage:label);
+ updateActionText($('#next-label'),label,animate);updateActionText($('#next-cue'),cue,animate);
+ syncRailMarker(animate);paintedStep=value;
  showWalkthrough();
 }
 function renderResult(){
@@ -208,8 +233,9 @@ $('#experiment-next').addEventListener('click',nextExperimentStep);
 $('#guide-toggle').addEventListener('click',()=>setHints(!hintsOpen));
 $('#walkthrough-close').addEventListener('click',()=>{setHints(false);$('#guide-toggle').focus({preventScroll:true});});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&hintsOpen){setHints(false);$('#guide-toggle').focus({preventScroll:true});}});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)settlePresentation();});
-matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',settlePresentation);
+function settleControlMotion(){actionAnimations.forEach(animation=>animation.cancel());actionAnimations.clear();syncRailMarker();}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){settlePresentation();settleControlMotion();}});
+matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',()=>{settlePresentation();settleControlMotion();});
 $('#copy-prompt').addEventListener('click',()=>copyText((introMode?currentBaseline().steps[0]:selected.steps[stage-1]).fullPrompt,$('#current-prompt'),$('#copy-status')));
 $('#refinement-prompt').textContent=EXPERIMENT.refinementPrompt;
 const exportPrompt=document.createElement('pre');exportPrompt.hidden=true;$('#export-status').after(exportPrompt);

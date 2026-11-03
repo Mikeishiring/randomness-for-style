@@ -43,7 +43,7 @@
 .die-top{height:0;overflow:hidden}
 .die-object{--size:78px;height:146px;border-radius:12px;user-select:none;touch-action:none;cursor:grab;--touch-x:0deg;--touch-z:0deg}
 .die-object:focus-visible{outline-offset:0}.die-object:active .cube-face{border-color:currentColor}
-.die>strong{font-size:18px;line-height:1.2;height:3.6em;min-height:0;padding:0 8px;display:grid;place-content:start center;text-wrap:balance;overflow-wrap:anywhere;letter-spacing:-.5px}
+.die>strong{font-size:17px;line-height:1.2;height:3.6em;min-height:0;padding:0 2px;display:grid;place-content:start center;text-wrap:balance;overflow-wrap:anywhere;letter-spacing:-.5px}
 #dice-hint{text-align:center;font-size:12px;line-height:1.5;color:var(--muted);margin:0 0 20px;text-wrap:balance}
 #dice-lab{grid-area:result}
 .refinement{padding-top:0;border-top:0}
@@ -169,11 +169,13 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 .rail-stops button{position:relative;min-width:0;min-height:46px;border:1px solid transparent;border-radius:5px;background:#e9ebdf;color:#59644f;font:12px/1.2 Arial,sans-serif;padding:6px 3px;transition:background 150ms ease-out,color 150ms ease-out;}
 .rail-stops button:nth-child(3){margin-left:6px}
 .rail-stops button[aria-pressed=true]{background:var(--ink);color:var(--paper);box-shadow:0 2px 3px #29352215}
-.rail-stops button[aria-pressed=true]:after{content:'';position:absolute;bottom:-13px;height:3px;left:0;right:0;background:var(--accent);border-radius:2px;z-index:1}
+.rail-marker{position:absolute;bottom:-1px;left:0;height:3px;background:var(--accent);border-radius:2px;z-index:1;pointer-events:none;transition:transform 220ms cubic-bezier(.25,.8,.25,1),width 220ms cubic-bezier(.25,.8,.25,1)}
 .rail-stops button:disabled{opacity:.38}
-.experiment-next{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:12px 14px;margin-top:14px;border:1px solid #bec6b5;border-radius:6px;background:transparent;font:600 13px/1.2 Arial,sans-serif;transition:background 150ms ease-out}
-.experiment-next span:last-child{font-size:20px;font-weight:400;transition:transform 150ms ease-out}
-.experiment-next:active span:last-child{transform:translateX(3px)}
+.experiment-next{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;height:48px;padding:10px 14px;margin-top:14px;border:1px solid #bec6b5;border-radius:6px;background:transparent;font:600 13px/1.3 Arial,sans-serif;transition:background 150ms ease-out,box-shadow 100ms ease-out}
+#next-label{display:block;text-align:left;white-space:nowrap}
+.next-cue{display:block;flex:none;width:28px;text-align:right;font:600 14px/1.3 Arial,sans-serif;font-variant-numeric:tabular-nums;color:var(--accent)}
+.experiment-next[data-action=roll] .next-cue{font-size:20px;font-weight:400;color:var(--ink)}
+.experiment-next:active{background:#dce3d2;box-shadow:inset 0 1px 3px #293b2a12}
 .experiment-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:4px;margin-top:8px}
 .experiment-tools #dice-controls{display:block}
 .experiment-tools .prompt-peek{margin:0;border:0}
@@ -182,8 +184,11 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 .experiment-tools #compare[aria-pressed=true],.experiment-tools #guide-toggle[aria-expanded=true]{background:#e2e7d8;color:var(--ink);font-weight:500;text-decoration:none}
 .experiment-tools #compare:disabled{opacity:.4}
 #compare-target{max-width:none;margin:4px 0 0}
-.walkthrough-note{position:absolute;left:0;right:0;top:calc(100% + 66px);padding:14px 16px 16px;border:1px solid #b8c1ac;border-radius:8px;background:#fcfbf6;box-shadow:0 8px 24px #25301c18,0 2px 4px #25301c09;z-index:5}
+.walkthrough-note{position:absolute;left:0;right:0;top:calc(100% + 66px);min-height:124px;padding:14px 16px 16px;border:1px solid #b8c1ac;border-radius:8px;background:#fcfbf6;box-shadow:0 8px 24px #25301c18,0 2px 4px #25301c09;z-index:5}
 .walkthrough-note:before{content:'';position:absolute;right:44px;top:-6px;width:10px;height:10px;border-top:1px solid #b8c1ac;border-left:1px solid #b8c1ac;transform:rotate(45deg);background:#fcfbf6}
+.walkthrough-note{opacity:1;transform:translateY(0);transition:opacity 120ms ease-out,transform 180ms cubic-bezier(.25,.8,.25,1),display 180ms allow-discrete}
+.walkthrough-note[hidden]{opacity:0;transform:translateY(4px);pointer-events:none}
+@starting-style{.walkthrough-note{opacity:0;transform:translateY(4px)}}
 .walkthrough-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;color:var(--muted);font:11px/1.3 Arial,sans-serif}
 #walkthrough-count{font-variant-numeric:tabular-nums}
 #walkthrough-close{width:30px;height:30px;margin:-8px -9px -4px 0;border:0;border-radius:4px;background:none;font:21px/1 Arial;color:var(--muted)}
@@ -192,18 +197,18 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 .prompt-panel{bottom:auto;top:0;width:min(450px,calc(100vw - 370px));left:calc(300% + 24px)}
 .prompt-panel:before{left:-26px;width:26px}
 .plain-controls .prompt-panel{left:calc(100% + 16px)}
-@media(hover:hover) and (pointer:fine){.rail-stops button:not(:disabled):not([aria-pressed=true]):hover{background:#dce3d2}.experiment-next:hover{background:#e3e8d9}.experiment-next:hover span:last-child{transform:translateX(2px)}.experiment-tools>button:not(:disabled):hover,#walkthrough-close:hover{background:#e5e9dd}}
+@media(hover:hover) and (pointer:fine){.rail-stops button:not(:disabled):not([aria-pressed=true]):hover{background:#dce3d2}.experiment-next:hover{background:#e3e8d9}.experiment-tools>button:not(:disabled):hover,#walkthrough-close:hover{background:#e5e9dd}}
 @media(max-width:700px){
  .rail-headings{margin-bottom:5px;font-size:10px}
- .rail-stops{padding-bottom:9px}.rail-stops button{min-height:44px}.rail-stops button[aria-pressed=true]:after{bottom:-10px}
- .experiment-next{min-height:42px;margin-top:10px;padding:9px 12px}
+ .rail-stops{padding-bottom:9px}.rail-stops button{min-height:44px}
+ .experiment-next{height:44px;margin-top:10px;padding:9px 12px}
  .experiment-tools{margin-top:2px}.experiment-tools button:not(.prompt-panel button){min-height:36px}
  .walkthrough-note{position:fixed;top:auto;bottom:16px;left:16px;right:16px;max-width:420px;margin:auto;padding:12px 16px;z-index:8}
  .walkthrough-note:before{display:none}
  .prompt-panel{position:fixed;left:16px;right:16px;top:auto;bottom:16px;width:auto;max-height:65dvh}
  .plain-controls .prompt-panel{left:16px}
 }
-@media(prefers-reduced-motion:reduce){.rail-stops button,.experiment-next,.experiment-next span,.walkthrough-note:before{transition:none}}
+@media(prefers-reduced-motion:reduce){.rail-stops button,.rail-marker,.experiment-next,.experiment-next span,.walkthrough-note,.walkthrough-note:before{transition:none!important}}
 </style></head>
 <body>
 <noscript>Enable JavaScript to roll the dice and compare reports.</noscript>
@@ -222,14 +227,15 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
    <p id="dice-hint">Click to roll · drag to choose</p>
    <section id="refinement-rail" class="refinement-rail" aria-label="Experiment steps">
     <div class="rail-headings" aria-hidden="true"><span>One-shot</span><span>Refinements</span></div>
-    <div class="rail-stops">
+    <div id="rail-stops" class="rail-stops">
      <button type="button" id="stage-0" aria-pressed="true" aria-label="Brief only, no ingredients">Brief only</button>
      <button type="button" id="stage-1" aria-pressed="false" aria-label="Dice added, one-shot">Dice added</button>
      <button type="button" id="stage-2" aria-pressed="false" aria-label="Refinement 1">+1</button>
      <button type="button" id="stage-3" aria-pressed="false" aria-label="Refinement 2">+2</button>
      <button type="button" id="stage-4" aria-pressed="false" aria-label="Refinement 3">+3</button>
+     <span id="rail-marker" class="rail-marker" aria-hidden="true"></span>
     </div>
-    <button type="button" id="experiment-next" class="experiment-next"><span id="next-label">Roll ingredients</span><span aria-hidden="true">→</span></button>
+    <button type="button" id="experiment-next" class="experiment-next" data-action="roll"><span id="next-label">Roll ingredients</span><span id="next-cue" class="next-cue" aria-hidden="true">→</span></button>
     <aside id="walkthrough-note" class="walkthrough-note" aria-label="Step hint" hidden>
      <div class="walkthrough-meta"><span id="walkthrough-count"></span><button id="walkthrough-close" type="button" aria-label="Close hint">×</button></div>
      <div id="walkthrough-copy" aria-live="polite" aria-atomic="true"><h3 id="walkthrough-title"></h3><p id="walkthrough-text"></p></div>
@@ -624,14 +630,32 @@ const previewCaches=new WeakMap();
 const matrixButtons=new Map();
 const matrixCells=new Map();
 const promptPeeks=[$('#prompt'),$('#plain-prompt-details')].map(bindPromptPeek);
-let hintsOpen=introMode,ingredientsChosen=!introMode;
+let hintsOpen=introMode,ingredientsChosen=!introMode,paintedStep=null;
+const actionAnimations=new Map();
+function updateActionText(node,text,animate){
+ if(node.textContent===text)return;
+ actionAnimations.get(node)?.cancel();actionAnimations.delete(node);
+ node.textContent=text;
+ if(!animate||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches||!node.animate)return;
+ const animation=node.animate([{opacity:.2,transform:'translateY(4px)'},{opacity:1,transform:'translateY(0)'}],{duration:160,easing:'cubic-bezier(.25,.8,.25,1)'});
+ actionAnimations.set(node,animation);
+ animation.onfinish=()=>{if(actionAnimations.get(node)===animation)actionAnimations.delete(node);};
+}
+function syncRailMarker(animate=false){
+ const button=$('#stage-'+(introMode?0:stage)),marker=$('#rail-marker');
+ const target=button.getBoundingClientRect?.(),track=$('#rail-stops').getBoundingClientRect?.();
+ if(!target?.width||!track)return;
+ marker.style.transitionDuration=animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches?'220ms':'0ms';
+ marker.style.width=target.width+'px';marker.style.transform='translateX('+(target.left-track.left)+'px)';
+}
+const railResize=new ResizeObserver(()=>syncRailMarker());railResize.observe($('#rail-stops'));
 function settlePresentation(){settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
 const walkthroughBeats=[
  ['Brief only','One prompt, no added ingredients. The brief and data stay fixed.'],
  ['Dice added','The same prompt, now with these two ingredients. Still one shot.'],
- ['Refinement 1','Prompt again: critique the result, lean into both ingredients, keep it simple.'],
- ['Refinement 2','The same refinement prompt, applied to the previous result.'],
- ['Refinement 3','One more pass of that same prompt. More distinct—or just more?']
+ ['Refinement 1','Critique the result. Commit to both ingredients. Keep it simple.'],
+ ['Refinement 2','Same prompt. This time, refine the first refinement.'],
+ ['Refinement 3','Same prompt, third pass. More distinct—or just more?']
 ];
 function showWalkthrough(){
  const value=introMode?0:stage,note=$('#walkthrough-note');
@@ -694,11 +718,18 @@ function renderStepper(prefix,value,total){
 }
 function renderRail(){
  const value=introMode?0:stage;
+ const animate=paintedStep!==null&&paintedStep!==value;
  for(let n=0;n<=4;n++){
   const button=$('#stage-'+n);button.setAttribute('aria-pressed',String(n===value));
   button.disabled=introMode&&n>1;
  }
- $('#next-label').textContent=introMode?(ingredientsChosen?'Back to ingredients':'Roll ingredients'):stage===1?'Refine once':stage<4?'Refine again':'Roll a new pair';
+ const refining=!introMode&&stage<4;
+ const label=introMode?(ingredientsChosen?'Back to ingredients':'Roll ingredients'):stage===1?'Lean into it':stage<4?'Again, same prompt':'Roll a new pair';
+ const cue=refining?'+'+stage:'→';
+ $('#experiment-next').dataset.action=refining?'refine':'roll';
+ $('#experiment-next').setAttribute('aria-label',refining?label+'. Refinement '+stage:label);
+ updateActionText($('#next-label'),label,animate);updateActionText($('#next-cue'),cue,animate);
+ syncRailMarker(animate);paintedStep=value;
  showWalkthrough();
 }
 function renderResult(){
@@ -812,8 +843,9 @@ $('#experiment-next').addEventListener('click',nextExperimentStep);
 $('#guide-toggle').addEventListener('click',()=>setHints(!hintsOpen));
 $('#walkthrough-close').addEventListener('click',()=>{setHints(false);$('#guide-toggle').focus({preventScroll:true});});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&hintsOpen){setHints(false);$('#guide-toggle').focus({preventScroll:true});}});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)settlePresentation();});
-matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',settlePresentation);
+function settleControlMotion(){actionAnimations.forEach(animation=>animation.cancel());actionAnimations.clear();syncRailMarker();}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){settlePresentation();settleControlMotion();}});
+matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',()=>{settlePresentation();settleControlMotion();});
 $('#copy-prompt').addEventListener('click',()=>copyText((introMode?currentBaseline().steps[0]:selected.steps[stage-1]).fullPrompt,$('#current-prompt'),$('#copy-status')));
 $('#refinement-prompt').textContent=EXPERIMENT.refinementPrompt;
 const exportPrompt=document.createElement('pre');exportPrompt.hidden=true;$('#export-status').after(exportPrompt);

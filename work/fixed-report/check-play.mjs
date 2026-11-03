@@ -132,10 +132,13 @@ const rememberedPair=selected;
 nodes.get('#experiment-next').click();assert.equal(introMode,false);assert.equal(selected,rememberedPair);assert.equal(stage,1);
 nodes.get('#guide-toggle').click();assert.equal(hintsOpen,true);assert.equal(nodes.get('#walkthrough-title').textContent,'Dice added');
 for(let next=2;next<=4;next++){
+ assert.equal(nodes.get('#next-label').textContent,next===2?'Lean into it':'Again, same prompt');
+ assert.equal(nodes.get('#next-cue').textContent,'+'+(next-1));
  nodes.get('#experiment-next').click();assert.equal(stage,next);assert.equal(selected,rememberedPair);
  assert.equal(nodes.get('#walkthrough-count').textContent,(next+1)+' / 5');
  assert.equal(nodes.get('#stage-'+next).attrs['aria-pressed'],'true');
 }
+assert.equal(nodes.get('#next-label').textContent,'Roll a new pair');assert.equal(nodes.get('#next-cue').textContent,'→');
 const finishedPair=selected;nodes.get('#experiment-next').click();assert.equal(stage,1);assert.notEqual(selected,finishedPair);
 nodes.get('#walkthrough-close').click();assert.equal(hintsOpen,false);assert.equal(document.activeElement,nodes.get('#guide-toggle'));
 const closedPair=selected;nodes.get('#guide-toggle').click();assert.equal(hintsOpen,true);assert.equal(selected,closedPair);assert.equal(stage,1);
