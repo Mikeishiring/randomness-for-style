@@ -23,11 +23,6 @@
   <h1 class="sr-only">Randomness for Style</h1>
   <div class="workbench">
    <div class="ingredient-sidebar">
-   <div class="experiment-actions">
-   <button id="play-refinements" type="button" class="play-refinements" aria-label="Play experiment" title="Play experiment" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="play-symbol" d="m7 4 9 6-9 6Z"/><path class="pause-symbol" d="M6 4h3v12H6zm6 0h3v12h-3z"/></svg><span id="play-word" class="play-word">Play experiment</span><span class="pause-word">Pause</span></button>
-   <button type="button" id="compare" class="compare-toggle" aria-pressed="false" aria-controls="report-view compare-target"><span id="compare-label">Compare without ingredients</span><span class="toggle-track" aria-hidden="true"></span></button>
-   </div>
-   <select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">Brief only</option><option value="other" id="compare-other">Original prompt</option></select>
    <section id="dice-deck" class="dice-deck" aria-label="Choose ingredients" aria-describedby="dice-hint">
     <div class="dice">
      <div class="die"><div class="die-top"><span>Ingredient 1</span></div><strong id="ingredient-a"></strong></div>
@@ -36,33 +31,33 @@
     <span id="dice-gesture-help" class="sr-only">Click or press Enter to roll. Drag slowly to choose the upper face; release quickly to throw. Arrow keys turn the die. Escape cancels a drag.</span>
    </section>
    <p id="dice-hint">Click to roll · drag to choose</p>
+   <section id="refinement-rail" class="refinement-rail" aria-label="Experiment steps">
+    <div class="rail-headings" aria-hidden="true"><span>One-shot</span><span>Refinements</span></div>
+    <div class="rail-stops">
+     <button type="button" id="stage-0" aria-pressed="true" aria-label="Brief only, no ingredients">Brief only</button>
+     <button type="button" id="stage-1" aria-pressed="false" aria-label="Dice added, one-shot">Dice added</button>
+     <button type="button" id="stage-2" aria-pressed="false" aria-label="Refinement 1">+1</button>
+     <button type="button" id="stage-3" aria-pressed="false" aria-label="Refinement 2">+2</button>
+     <button type="button" id="stage-4" aria-pressed="false" aria-label="Refinement 3">+3</button>
+    </div>
+    <button type="button" id="experiment-next" class="experiment-next"><span id="next-label">Roll ingredients</span><span aria-hidden="true">→</span></button>
+    <aside id="walkthrough-note" class="walkthrough-note" aria-label="Step hint" hidden>
+     <div class="walkthrough-meta"><span id="walkthrough-count"></span><button id="walkthrough-close" type="button" aria-label="Close hint">×</button></div>
+     <div id="walkthrough-copy" aria-live="polite" aria-atomic="true"><h3 id="walkthrough-title"></h3><p id="walkthrough-text"></p></div>
+    </aside>
+   </section>
+   <div class="experiment-tools">
    <section id="dice-controls" class="controls" aria-label="Refinement and prompt">
 
-    <p id="attempt-note" hidden></p>
-    <div id="prompt" class="prompt-peek"><button id="prompt-trigger" type="button" class="prompt-trigger" aria-expanded="false" aria-controls="prompt-panel">Prompt <span aria-hidden="true">↗</span></button><section id="prompt-panel" class="prompt-panel" aria-labelledby="prompt-title" hidden><header><h3 id="prompt-title">One-shot prompt</h3><button type="button" class="prompt-pin" aria-pressed="false">Pin</button><button type="button" class="prompt-close" aria-label="Close prompt">×</button></header><pre id="current-prompt"></pre><details id="critique" class="notes" hidden><summary>Critique</summary><pre id="current-critique"></pre></details><footer><button id="copy-prompt" type="button" class="text-button">Copy with data</button><p id="copy-status" role="status"></p></footer></section></div>
+    <div id="prompt" class="prompt-peek"><button id="prompt-trigger" type="button" class="prompt-trigger" aria-expanded="false" aria-controls="prompt-panel">Prompt ↗</button><section id="prompt-panel" class="prompt-panel" aria-labelledby="prompt-title" hidden><header><h3 id="prompt-title">One-shot prompt</h3><button type="button" class="prompt-pin" aria-pressed="false">Pin</button><button type="button" class="prompt-close" aria-label="Close prompt">×</button></header><pre id="current-prompt"></pre><details id="critique" class="notes" hidden><summary>Critique</summary><pre id="current-critique"></pre></details><footer><button id="copy-prompt" type="button" class="text-button">Copy with data</button><p id="copy-status" role="status"></p></footer></section></div>
    </section>
+    <button type="button" id="compare" title="Compare with brief only" aria-pressed="false" aria-label="Compare with brief only" aria-controls="report-view compare-target">Compare</button>
+    <button type="button" id="guide-toggle" aria-expanded="false" aria-controls="walkthrough-note">Hints</button>
    </div>
-   <section id="refinement-rail" class="refinement-rail" aria-label="Refinement stages">
-    <h2 id="refinement-label">Refinement</h2>
-    <div class="rail-body">
-     <span class="rail-arrow" aria-hidden="true"><span class="rail-progress"></span></span>
-     <input id="refinement-range" type="range" min="1" max="4" step="1" value="1" aria-labelledby="refinement-label" aria-valuetext="One-shot" aria-controls="report-view">
-     <div class="rail-stops">
-      <div class="rail-stop"><button type="button" id="stage-1" aria-label="One-shot" aria-describedby="stage-help-1" aria-pressed="true">One-shot</button><span id="stage-help-1" class="stage-help" role="tooltip">One prompt with the brief, data and two ingredients. No refinement yet.</span></div>
-      <div class="rail-stop"><button type="button" id="stage-2" aria-label="Refinement 1" aria-describedby="stage-help-2" aria-pressed="false"><b>+1</b><span>refinement</span></button><span id="stage-help-2" class="stage-help" role="tooltip">Prompt again: critique the one-shot and lean into both ingredients.</span></div>
-      <div class="rail-stop"><button type="button" id="stage-3" aria-label="Refinement 2" aria-describedby="stage-help-3" aria-pressed="false"><b>+2</b><span>refinements</span></button><span id="stage-help-3" class="stage-help" role="tooltip">Apply the same refinement prompt to the previous result again.</span></div>
-      <div class="rail-stop"><button type="button" id="stage-4" aria-label="Refinement 3" aria-describedby="stage-help-4" aria-pressed="false"><b>+3</b><span>refinements</span></button><span id="stage-help-4" class="stage-help" role="tooltip">A third refinement with the same prompt. Judge what changed.</span></div>
-     </div>
-    </div>
-   </section>
+   <p id="attempt-note" hidden></p>
+   </div>
    <section id="dice-lab" class="result" aria-labelledby="pair-title"><h2 id="pair-title" class="sr-only" tabindex="-1"></h2>
-    <aside id="walkthrough-note" class="walkthrough-note" aria-label="Saved walkthrough" hidden>
-     <div class="walkthrough-meta"><span>Saved walkthrough</span><span id="walkthrough-count"></span></div>
-     <div id="walkthrough-copy" aria-live="polite" aria-atomic="true"><h3 id="walkthrough-title"></h3><p id="walkthrough-text"></p></div>
-     <div class="walkthrough-actions"><button id="walkthrough-prompt" type="button">Prompt ↗</button><button id="walkthrough-next" type="button">Roll dice →</button></div>
-     <button id="walkthrough-close" type="button" aria-label="Close walkthrough">×</button>
-    </aside>
-    <div id="report-view"></div><div class="result-actions"><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Brief only →</button><button type="button" id="copy-link" class="text-button">Share this roll ↗</button><span id="share-status" role="status"></span></div>
+    <div id="report-view"></div><div class="result-actions"><button type="button" id="copy-link" class="text-button">Share this roll ↗</button><span id="share-status" role="status"></span></div>
    </section>
    <section id="plain-controls" class="controls plain-controls" aria-label="Plain prompt and refinement" hidden>
     <select id="plain-method" class="comparison-target" aria-label="Plain refinement prompt"><option value="original">Original prompt</option><option value="stronger" selected>Stronger prompt</option></select>
@@ -74,7 +69,7 @@
   </div>
   <section id="atlas" class="atlas" aria-labelledby="atlas-title"><header><h2 id="atlas-title">36 combinations</h2><select id="atlas-ingredient" aria-label="Browse pairings for the first ingredient"></select></header><div id="matrix" class="matrix" role="group" aria-label="Choose one of 36 ingredient combinations"></div></section>
   <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>What we call AI slop is often recognition of familiar design patterns. This experiment explores how randomness can help break them: the same brief and data, two unexpected ingredients, then three refinements with the same prompt.</p><p>These are saved examples, not live generations. The stronger sequence restarts from the same one-shot in a fresh context. More refinement does not guarantee a better result.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Refinement prompt"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button></div>
-    <p id="method-note" class="method-note">Both start from this one-shot.</p></div><div class="export-actions"><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
+    <p id="method-note" class="method-note">Both start from this one-shot.</p></div><select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">Brief only</option><option value="other" id="compare-other">Original prompt</option></select><div class="export-actions"><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Refine brief alone →</button><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
  </main>
  <footer><a href="previous-experiment.html">Earlier versions ↗</a></footer>
 </div>
