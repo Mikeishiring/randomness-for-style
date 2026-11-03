@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Olympus After Hours — Website performance · Week 01</title>
+<style>
+:root{--paper:#f7f3e9;--ink:#322540;--muted:#716777;--line:#dcd4d9;--purple:#71518c;--gold:#b88a32;--wash:#eee6f0}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5}main{max-width:1120px;margin:auto;padding:38px 40px 32px}header{display:flex;justify-content:space-between;align-items:center;padding-bottom:27px;border-bottom:1px solid var(--ink);gap:24px}.brand{font-size:12px;text-transform:uppercase;letter-spacing:2.3px;font-weight:bold;display:flex;align-items:center;gap:12px}.brand svg{width:40px;height:38px}h1{font-family:Georgia,serif;font-weight:normal;font-size:clamp(38px,5vw,58px);line-height:1.08;letter-spacing:-2px;margin:24px 0 8px}.period{color:var(--muted);margin:0}.orb{width:124px;height:142px;flex-shrink:0}.metrics{display:grid;grid-template-columns:repeat(3,1fr);padding:29px 0 32px;border-bottom:1px solid var(--line);gap:24px}.metric:not(:first-child){padding-left:28px;border-left:1px solid var(--line)}.metric-label{margin:0 0 7px;color:var(--muted);font-size:14px}.metric strong{font-family:Georgia,serif;font-weight:normal;font-size:44px;line-height:1.15;letter-spacing:-1px}.metric small{display:block;color:var(--muted);margin-top:6px;font-size:12px}h2{font-family:Georgia,serif;font-size:25px;font-weight:normal;margin:0;letter-spacing:-.5px}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:20px;margin:29px 0 20px}.legend{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}.dot{width:9px;height:9px;background:var(--purple);display:inline-block}.daily{display:grid;grid-template-columns:55px repeat(7,minmax(0,1fr));column-gap:12px}.axis{height:210px;display:flex;flex-direction:column;justify-content:space-between;color:var(--muted);font-size:11px;position:relative;top:-7px}.day{min-width:0;text-align:center}.plot{height:210px;display:flex;align-items:flex-end;justify-content:center;position:relative;background:repeating-linear-gradient(to top,transparent 0,transparent 69px,var(--line) 69px,var(--line) 70px)}.bar{width:64%;max-width:67px;background:var(--purple);position:relative;border-radius:2px 2px 0 0}.bar span{position:absolute;top:7px;left:0;right:0;color:white;font-size:12px;font-weight:bold}.dayname{padding:10px 0;font-size:13px}.signup{padding:10px 0;border-top:1px solid var(--line);font-size:13px}.rowlabel{align-self:end;padding:10px 0;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}.insight{margin:22px 0 0;padding:14px 18px;background:var(--wash);border-left:3px solid var(--purple);font-size:14px}.insight strong{font-weight:600}.sources{margin-top:30px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:right;font-size:14px}th{font-size:11px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:normal;padding:0 12px 12px;border-bottom:1px solid var(--line)}td{padding:18px 12px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}th:first-child,td:first-child{text-align:left;padding-left:0;width:43%}th:last-child,td:last-child{padding-right:0}.source-label{display:flex;align-items:center;gap:18px}.source-label b{font-weight:normal;min-width:50px}.track{width:150px;height:6px;background:#e5dce9}.fill{height:100%;background:var(--purple)}footer{margin-top:28px;display:flex;justify-content:space-between;gap:18px;font-size:11px;color:var(--muted)}.footer-mark{letter-spacing:1px;text-transform:uppercase;color:var(--gold)}@media(max-width:650px){main{padding:25px 20px}header{gap:10px}.orb{width:80px;height:110px}.brand{font-size:10px;letter-spacing:1.3px;gap:7px}.brand svg{width:30px}h1{letter-spacing:-1px}.metrics{gap:12px}.metric:not(:first-child){padding-left:12px}.metric strong{font-size:34px}.metric-label{font-size:12px}.metric small{font-size:10px}.daily{column-gap:5px;grid-template-columns:30px repeat(7,minmax(0,1fr))}.bar{width:90%}.bar span{font-size:10px;top:8px}.axis{font-size:9px}.rowlabel{font-size:9px}.track{display:none}th,td{padding-left:6px;padding-right:6px}th:first-child,td:first-child{width:auto}th{font-size:10px}footer{flex-direction:column;gap:6px}.section-head{gap:10px}h2{font-size:23px}}
+
+/* Keep the musical mythology in the masthead and the data comfortably readable. */
+.orb{width:140px;height:150px}.chart-scroll{overflow-x:auto;padding-top:8px}.chart-scroll:focus-visible{outline:2px solid var(--purple);outline-offset:5px}.daily{min-width:600px}.bar span{font-variant-numeric:tabular-nums}h1{font-size:clamp(34px,5vw,54px)}
+@media(max-width:650px){.orb{width:88px;height:112px}.daily{column-gap:12px;grid-template-columns:55px repeat(7,minmax(0,1fr))}.bar{width:76%}.bar span{font-size:12px}.axis,.rowlabel{font-size:11px}.metrics{gap:9px}.metric strong{font-size:clamp(27px,7vw,34px)}.section-head{align-items:center}.section-head h2{font-size:22px}.brand{font-size:9px;letter-spacing:1px}}
+
+tbody th{font-size:14px;letter-spacing:0;text-transform:none;color:var(--ink);font-weight:normal;padding-top:18px;padding-bottom:18px}.visit-value{display:flex;flex-direction:column;align-items:flex-end;gap:7px}.visit-value .track{display:block;width:100px;max-width:100%;height:5px}th:first-child,td:first-child{width:30%}
+@media(max-width:650px){tbody th{font-size:14px}.visit-value .track{width:60px}th:first-child,td:first-child{width:auto}}
+
+.axis{display:block;top:0}.axis span{position:absolute;left:0;transform:translateY(-50%)}.axis span:nth-child(1){top:0}.axis span:nth-child(2){top:33.333333%}.axis span:nth-child(3){top:66.666667%}.axis span:nth-child(4){top:100%}.plot{background:linear-gradient(to bottom,var(--line) 1px,transparent 1px) 0 0 / 100% 33.333333%;box-shadow:inset 0 -1px var(--line)}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div>
+<div class="brand">Olympus After Hours</div>
+<h1>Website performance</h1>
+<p class="period">Week 01 · Synthetic data</p>
+</div>
+<svg class="orb" viewBox="0 0 150 160" role="img" aria-labelledby="lyre-title">
+<title id="lyre-title">Apollo’s lyre with a golden disco ball suspended between its strings</title>
+<defs><clipPath id="sphere"><circle cx="75" cy="74" r="31"/></clipPath><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f2dfad"/><stop offset=".5" stop-color="#c5a059"/><stop offset="1" stop-color="#80602c"/></linearGradient></defs>
+<g fill="none" stroke="#b88a32"><path d="M31 23C14 7 12 42 27 46L34 108Q38 142 75 145Q112 142 116 108L123 46C138 42 136 7 119 23" stroke-width="4"/><path d="M26 34H124" stroke-width="4"/><path d="M52 35v91m12-91v99m11-99v103m11-103v99m12-99v91" stroke-width="1"/><path d="M44 121Q75 143 106 121" stroke-width="3"/></g>
+<circle cx="75" cy="74" r="31" fill="url(#gold)" stroke="#b88a32"/>
+<g clip-path="url(#sphere)" aria-hidden="true">
+<path d="M52 52h12v11H52zM75 63h11v11H75zM86 85h12v11H86z" fill="#f7f3e9" opacity=".8"/>
+<path d="M86 52h12v11H86zM52 74h12v11H52zM64 96h11v10H64z" fill="#71518c" opacity=".45"/>
+</g>
+<g clip-path="url(#sphere)" stroke="#f7f3e9" fill="none" stroke-width="1"><ellipse cx="75" cy="74" rx="11" ry="31"/><ellipse cx="75" cy="74" rx="23" ry="31"/><path d="M44 74h62M46 63h58M52 52h46M46 85h58M52 96h46M75 43v62"/></g>
+<path d="m125 63 2 7 7 2-7 2-2 7-2-7-7-2 7-2Z" fill="#b88a32"/>
+</svg>
+</header>
+<section class="metrics" aria-label="Weekly totals">
+<div class="metric"><p class="metric-label">Visits</p><strong>12,480</strong></div>
+<div class="metric"><p class="metric-label">Signups</p><strong>624</strong></div>
+<div class="metric"><p class="metric-label">Conversion</p><strong>5.0%</strong><small>Signups ÷ visits</small></div>
+</section>
+<section aria-labelledby="daily-title">
+<div class="section-head"><h2 id="daily-title">Daily visits &amp; signups</h2><span class="legend"><span class="dot"></span>Visits</span></div>
+<div class="chart-scroll" tabindex="0" role="region" aria-label="Daily visits and signups; scroll horizontally on small screens"><div class="daily" role="group" aria-label="Daily visits and signups">
+<div class="axis" aria-hidden="true"><span>2,100</span><span>1,400</span><span>700</span><span>0</span></div>
+<div class="day" role="group" aria-label="Monday: 1,420 visits"><div class="plot"><div class="bar" style="height:67.619%"><span>1,420</span></div></div><div class="dayname">Mon</div></div>
+<div class="day" role="group" aria-label="Tuesday: 1,600 visits"><div class="plot"><div class="bar" style="height:76.190%"><span>1,600</span></div></div><div class="dayname">Tue</div></div>
+<div class="day" role="group" aria-label="Wednesday: 1,780 visits"><div class="plot"><div class="bar" style="height:84.762%"><span>1,780</span></div></div><div class="dayname">Wed</div></div>
+<div class="day" role="group" aria-label="Thursday: 1,640 visits"><div class="plot"><div class="bar" style="height:78.095%"><span>1,640</span></div></div><div class="dayname">Thu</div></div>
+<div class="day" role="group" aria-label="Friday: 1,920 visits"><div class="plot"><div class="bar" style="height:91.429%"><span>1,920</span></div></div><div class="dayname">Fri</div></div>
+<div class="day" role="group" aria-label="Saturday: 2,020 visits"><div class="plot"><div class="bar" style="height:96.190%"><span>2,020</span></div></div><div class="dayname">Sat</div></div>
+<div class="day" role="group" aria-label="Sunday: 2,100 visits"><div class="plot"><div class="bar" style="height:100%"><span>2,100</span></div></div><div class="dayname">Sun</div></div>
+<div class="rowlabel">Signups</div><div class="day signup" aria-label="Monday: 57 signups">57</div><div class="day signup" aria-label="Tuesday: 72 signups">72</div><div class="day signup" aria-label="Wednesday: 89 signups">89</div><div class="day signup" aria-label="Thursday: 74 signups">74</div><div class="day signup" aria-label="Friday: 96 signups">96</div><div class="day signup" aria-label="Saturday: 109 signups">109</div><div class="day signup" aria-label="Sunday: 127 signups">127</div>
+</div>
+</div>
+<p class="insight"><strong>Sunday led on both counts:</strong> 2,100 visits and 127 signups.</p>
+</section>
+<section class="sources" aria-labelledby="source-title">
+<div class="section-head"><h2 id="source-title">Where visitors came from</h2></div>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">Source</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Conversion</th></tr></thead>
+<tbody>
+<tr><th scope="row">Direct</th><td><div class="visit-value">5,240<div class="track" aria-hidden="true"><div class="fill" style="width:100%"></div></div></div></td><td>314</td><td>6.0%</td></tr>
+<tr><th scope="row">Search</th><td><div class="visit-value">4,480<div class="track" aria-hidden="true"><div class="fill" style="width:85.496%"></div></div></div></td><td>224</td><td>5.0%</td></tr>
+<tr><th scope="row">Social</th><td><div class="visit-value">2,760<div class="track" aria-hidden="true"><div class="fill" style="width:52.672%"></div></div></div></td><td>86</td><td>3.1%</td></tr>
+</tbody></table></div>
+<p class="insight"><strong>Direct brought the most visits and converted best.</strong> Social had the lowest conversion, at 3.1%.</p>
+</section>
+<footer><span>Conversion rounded to one decimal place.</span></footer>
+</main>
+</body>
+</html>

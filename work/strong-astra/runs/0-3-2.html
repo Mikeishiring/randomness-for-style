@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 01 · The Deep Opera</title>
+<style>
+:root{--ink:#182f2c;--muted:#52615a;--paper:#eee8d8;--line:#b7b9a7;--sea:#102d29;--mint:#9ebba4;--gold:#d0b57c;--wine:#632a37}*{box-sizing:border-box}body{margin:0;background:var(--sea);color:var(--ink);font:15px/1.5 system-ui,sans-serif}main{max-width:1120px;margin:32px auto;padding:36px 48px 24px;background:var(--paper);border-radius:180px 180px 0 0;border:1px solid var(--gold)}header{position:relative;text-align:center;padding:0 0 28px;border-bottom:3px double var(--ink)}.brand{display:flex;flex-direction:column;align-items:center;gap:8px;font:small-caps 20px Georgia,serif;letter-spacing:3px;color:var(--wine)}.seal{width:82px;height:82px}.period{font-size:12px;letter-spacing:1px;margin-top:20px;text-transform:uppercase}h1{font:normal clamp(38px,6vw,66px)/1.04 Georgia,serif;letter-spacing:-2px;margin:14px 0;color:var(--wine)}.intro{font-size:14px;margin:0;color:var(--muted)}.intro strong{color:var(--ink)}.metrics{display:grid;grid-template-columns:repeat(3,1fr);padding:24px 0;gap:20px;border-bottom:3px double var(--ink)}.metric{text-align:center}.metric+.metric{border-left:1px solid var(--line)}.label{font-size:13px;color:var(--muted)}.value{font:normal 46px/1.2 Georgia,serif;font-variant-numeric:tabular-nums;margin:3px 0}.small{font-size:11px;color:var(--muted)}.content{margin-top:28px}h2{font:normal 29px/1.2 Georgia,serif;margin:0 0 18px;color:var(--wine)}h2 span{font:italic 22px Georgia,serif;margin-right:12px;color:var(--muted)}section[aria-labelledby="daily-title"]{display:grid;grid-template-columns:1.15fr 1fr;gap:0 28px;align-items:start}#daily-title{grid-column:1/-1}section[aria-labelledby="daily-title"]>.label{grid-column:1;color:var(--paper);background:var(--sea);padding:18px 22px 0;border-radius:70px 70px 0 0;text-align:center}.chart{grid-column:1;height:256px;display:flex;align-items:end;gap:12px;padding:32px 22px 36px;background:var(--sea);color:var(--paper);position:relative;border-bottom:3px double var(--gold)}.column{height:100%;display:flex;flex:1;flex-direction:column;justify-content:end;align-items:center;position:relative}.bar{width:100%;max-width:38px;background:var(--mint);border-radius:24px 24px 0 0;position:relative;min-height:1px}.column:last-child .bar{background:var(--gold)}.bar b{position:absolute;top:-24px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:400;white-space:nowrap;font-variant-numeric:tabular-nums}.day{position:absolute;bottom:-25px;font-size:12px;color:var(--paper)}table{grid-column:2;grid-row:2/4;width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}th{text-align:right;font-size:11px;font-weight:500;color:var(--muted);padding:10px 0;border-bottom:1px solid var(--line)}td{text-align:right;padding:7px 0;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}tbody tr:last-child{background:#dedfca}tfoot td{font-weight:600;border-bottom:0;padding-top:12px}section[aria-labelledby="source-title"]{display:grid;grid-template-columns:repeat(3,1fr);column-gap:28px;margin-top:30px;padding-top:24px;border-top:3px double var(--ink)}#source-title{grid-column:1/-1}.source{min-width:0}.source-head{display:flex;flex-direction:column;margin-bottom:12px}.source-name{font:normal 24px Georgia,serif;color:var(--wine)}.source-count{font-variant-numeric:tabular-nums;font-size:17px;margin-top:5px}.track{height:8px;background:#d1d5c3;margin-bottom:12px}.fill{height:100%;background:var(--sea);border-radius:0 8px 8px 0}.source-details{display:flex;flex-direction:column;gap:3px;color:var(--muted);font-size:12px}.note{grid-column:1/-1;border-top:1px solid var(--line);margin-top:22px;padding-top:16px}.note h3{font:normal 20px Georgia,serif;margin:0 0 5px}.note p{font-size:13px;margin:0;color:var(--muted)}.note strong{color:var(--ink)}footer{display:flex;justify-content:space-between;gap:20px;border-top:3px double var(--ink);margin-top:25px;padding-top:13px;color:var(--muted);font-size:11px}@media(max-width:760px){main{margin:12px;padding:28px 22px 20px;border-radius:100px 100px 0 0}section[aria-labelledby="daily-title"]{display:block}.chart{margin-bottom:20px;height:235px}table{margin-top:18px}.metrics{gap:10px}.value{font-size:34px}.metric+.metric{padding-left:10px}.label{font-size:12px}section[aria-labelledby="source-title"]{column-gap:16px}.source-name{font-size:21px}.source-count{font-size:14px}.source-details{font-size:11px}footer{flex-direction:column;gap:5px}}@media(max-width:420px){main{padding-inline:16px}.value{font-size:29px}.chart{gap:10px;padding-inline:14px}h2{font-size:25px}section[aria-labelledby="source-title"]{display:block}.source{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;padding:14px 0;border-bottom:1px solid var(--line)}.source-head{grid-column:1;margin:0}.track{grid-column:2;grid-row:1;align-self:center;margin:0}.source-details{grid-column:1/-1;flex-direction:row;justify-content:space-between;margin-top:10px}.source-name{font-size:23px}.source-count{font-size:15px}.note{border:0;margin-top:16px;padding-top:0}}
+</style>
+</head>
+<body>
+
+<main>
+<header>
+<div class="brand"><svg class="seal" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M7 41V22a17 17 0 0 1 34 0v19M12 41V22a12 12 0 0 1 24 0v19" stroke="currentColor"/><path d="M17 24c0-12 14-12 14 0v5c0 8 10 1 7-3M24 25v12c0 9-13 6-10 0M20 28c0 8-12 8-10 0M28 29v9c0 6 8 5 8 1" stroke="currentColor" stroke-width="1.5"/><path d="m19 22 3 2m7-2-3 2" stroke="currentColor" stroke-width="2"/></svg>The Deep Opera</div>
+<div class="period">Week 01 · Website performance</div>
+<h1>A strong closing act.</h1>
+<p class="intro">Sunday led with 2,100 visits, 127 signups and a 6.0% signup rate.</p>
+
+</header>
+<section class="metrics" aria-label="Weekly totals">
+<div class="metric"><div class="label">Visits</div><div class="value">12,480</div></div>
+<div class="metric"><div class="label">Signups</div><div class="value">624</div></div>
+<div class="metric"><div class="label">Signup rate</div><div class="value">5.0<span style="font-size:.65em">%</span></div><div class="small">Signups ÷ visits</div></div>
+</section>
+<div class="content">
+<section aria-labelledby="daily-title">
+<h2 id="daily-title"><span>I</span>Daily performance</h2>
+<div class="label">Daily visits</div>
+<div class="chart" role="img" aria-label="Daily visits rise from 1,420 on Monday to 2,100 on Sunday, with a dip on Thursday. Exact figures appear in the table below.">
+<div class="column"><div class="bar" style="height:67.62%"><b>1,420</b></div><span class="day">Mon</span></div>
+<div class="column"><div class="bar" style="height:76.19%"><b>1,600</b></div><span class="day">Tue</span></div>
+<div class="column"><div class="bar" style="height:84.76%"><b>1,780</b></div><span class="day">Wed</span></div>
+<div class="column"><div class="bar" style="height:78.10%"><b>1,640</b></div><span class="day">Thu</span></div>
+<div class="column"><div class="bar" style="height:91.43%"><b>1,920</b></div><span class="day">Fri</span></div>
+<div class="column"><div class="bar" style="height:96.19%"><b>2,020</b></div><span class="day">Sat</span></div>
+<div class="column"><div class="bar" style="height:100%"><b>2,100</b></div><span class="day">Sun</span></div>
+</div>
+<table aria-label="Daily performance"><thead><tr><th scope="col">Day</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Signup rate</th></tr></thead><tbody>
+<tr><th scope="row">Mon</th><td>1,420</td><td>57</td><td>4.0%</td></tr>
+<tr><th scope="row">Tue</th><td>1,600</td><td>72</td><td>4.5%</td></tr>
+<tr><th scope="row">Wed</th><td>1,780</td><td>89</td><td>5.0%</td></tr>
+<tr><th scope="row">Thu</th><td>1,640</td><td>74</td><td>4.5%</td></tr>
+<tr><th scope="row">Fri</th><td>1,920</td><td>96</td><td>5.0%</td></tr>
+<tr><th scope="row">Sat</th><td>2,020</td><td>109</td><td>5.4%</td></tr>
+<tr><th scope="row">Sun</th><td>2,100</td><td>127</td><td>6.0%</td></tr>
+</tbody><tfoot><tr><td>Total</td><td>12,480</td><td>624</td><td>5.0%</td></tr></tfoot></table>
+</section>
+<section aria-labelledby="source-title">
+<h2 id="source-title"><span>II</span>Traffic sources</h2>
+<div class="source"><div class="source-head"><span class="source-name">Direct</span><span class="source-count">5,240 visits</span></div><div class="track" aria-hidden="true"><div class="fill" style="width:41.99%"></div></div><div class="source-details"><span>42.0% of visits</span><span>314 signups · 6.0% rate</span></div></div>
+<div class="source"><div class="source-head"><span class="source-name">Search</span><span class="source-count">4,480 visits</span></div><div class="track" aria-hidden="true"><div class="fill" style="width:35.90%"></div></div><div class="source-details"><span>35.9% of visits</span><span>224 signups · 5.0% rate</span></div></div>
+<div class="source"><div class="source-head"><span class="source-name">Social</span><span class="source-count">2,760 visits</span></div><div class="track" aria-hidden="true"><div class="fill" style="width:22.12%"></div></div><div class="source-details"><span>22.1% of visits</span><span>86 signups · 3.1% rate</span></div></div>
+<div class="note"><h3>Direct brings the most visits and signups.</h3><p>Its 6.0% signup rate leads the sources. Social converts at 3.1%, below the weekly 5.0%.</p></div>
+</section>
+</div>
+<footer><span>Week 01 · Supplied synthetic data</span><span>Rates rounded to one decimal. No prior-week comparison supplied.</span></footer>
+</main>
+</body>
+</html>

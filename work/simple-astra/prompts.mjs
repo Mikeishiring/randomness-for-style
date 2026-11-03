@@ -1,0 +1,10 @@
+import {dataset,basePrompt} from '../raw-astra/prompts.mjs';
+export {dataset,basePrompt};
+export const ingredientsA=['Cthulhu','Greek myths','Weather','Bureaucracy','Motorsport','Deep-sea bioluminescence'];
+export const ingredientsB=['Tech','Disco','Fast food','Opera','Luxury hotel','Victorian insect collecting'];
+export const simplicityPrompt='Keep it simple to understand. Express the identity without competing with the information or removing useful detail.';
+export const ingredientPrompt=(a,b)=>`Combine ${ingredientsA[a]} and ${ingredientsB[b]} into a distinct visual identity.`;
+export const firstPrompt=(a,b)=>[basePrompt,...(a===null?[]:[ingredientPrompt(a,b)]),simplicityPrompt].join('\n\n');
+export const filledPrompt=(a,b)=>firstPrompt(a,b)+'\n\nSynthetic data:\n'+JSON.stringify(dataset,null,2);
+export const refinementPrompt='Harshly critique originality and clarity, then refine the design. Develop the same two ingredients without making the report harder to understand. Preserve useful detail and strong decisions. Change only what improves it. Keep the purpose and data unchanged. Return the complete revised HTML.';
+export const pilotIds=['0-2','1-4','2-0','3-1','4-3'];

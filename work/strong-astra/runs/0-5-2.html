@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 01 · The Observatory</title>
+<style>
+:root{--paper:#eee9dc;--ink:#203c36;--muted:#526357;--rule:#b9bcae;--accent:#806645;--green:#315b4c}*{box-sizing:border-box}body{margin:0;background:#142923;color:var(--ink);font:15px/1.5 Georgia,serif;padding:36px 24px}.sheet{max-width:1080px;margin:auto;padding:0 30px 24px;background:var(--paper);border:8px solid #334a3e;outline:1px solid #947d55;box-shadow:0 15px 50px #0005}header{display:grid;grid-template-columns:105px 1fr auto;align-items:center;gap:25px;margin:0 -30px;padding:24px 30px;background:#203c36;color:var(--paper);border-bottom:5px double #a08e69}.specimen{width:100px;height:114px;background:#eee9dc;border:1px solid #a08e69;padding:7px;transform:rotate(-3deg)}h1{font-weight:normal;font-size:43px;line-height:1.1;margin:0 0 8px;letter-spacing:-1px}.sub{margin:0;font:12px/1.5 system-ui,sans-serif;color:#d8d6c5}.period{text-align:right;font:11px system-ui,sans-serif;border:1px solid #9d9b7b;padding:12px 16px;white-space:nowrap}.period strong{display:block;font:25px Georgia,serif;margin-bottom:6px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:3px double var(--rule);padding:25px 0 21px}.metric{padding:0 25px;border-left:1px solid var(--rule)}.metric:first-child{padding-left:0;border-left:0}.label{font:12px system-ui,sans-serif;color:var(--muted)}.value{font-size:43px;line-height:1.3;font-variant-numeric:tabular-nums}.finding{margin:18px 0 25px;font-size:17px;max-width:750px}.finding strong{font-weight:normal;font-style:italic}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:22px}h2{font-size:25px;font-weight:normal;margin:0;line-height:1.2}h2:before{display:block;font:10px/1.7 system-ui,sans-serif;letter-spacing:2px;color:var(--accent);margin-bottom:4px}#visits-title:before{content:'PLATE I / DAILY COLLECTION'}#daily-title:before{content:'I · SPECIMEN REGISTER'}#sources-title:before{content:'PLATE II / POINTS OF ORIGIN'}.section-head span{font:12px system-ui,sans-serif;color:var(--muted)}section[aria-labelledby="visits-title"]{padding:20px 22px 18px;border:1px solid #a8ae9d;background:#e4e5d7;box-shadow:inset 0 0 0 4px var(--paper)}.chart{display:grid;grid-template-columns:36px 1fr;gap:9px;height:216px;font:11px system-ui,sans-serif}.axis{display:flex;flex-direction:column;justify-content:space-between;text-align:right;color:var(--muted);padding-bottom:25px}.plot{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:18px;padding:0 12px}.plot:before{content:"";position:absolute;inset:0 0 25px;border-bottom:1px solid #919c89;background:repeating-linear-gradient(to top,transparent 0,transparent calc(50% - 1px),#a0aa9670 calc(50% - 1px),#a0aa9670 50%)}.column{position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;padding-bottom:25px}.column:before{content:"";position:absolute;top:0;bottom:25px;width:1px;background:#8e957b55}.bar{width:100%;max-width:48px;background:#315b4c;border:1px solid #203c36;position:relative;box-shadow:3px 0 0 #315b4c18}.bar:after{content:"";position:absolute;width:3px;height:3px;border-radius:50%;background:#d0bd8b;top:7px;left:calc(50% - 1px)}.bar span{position:absolute;top:-21px;left:50%;transform:translateX(-50%);font-variant-numeric:tabular-nums;color:var(--ink);background:#e4e5d7;padding:0 2px}.day{position:absolute;bottom:0;color:var(--ink);font:12px Georgia,serif}.tables{display:grid;grid-template-columns:1.1fr 1fr;gap:0;margin-top:25px;border-top:3px double var(--rule);border-bottom:3px double var(--rule)}.tables section{padding:23px 25px 22px 0}.tables section+section{border-left:1px solid var(--rule);padding-left:25px;padding-right:0}table{width:100%;border-collapse:collapse;font:13px/1.5 system-ui,sans-serif;font-variant-numeric:tabular-nums;margin-top:16px}th,td{padding:9px 0;border-bottom:1px solid #b9bcae88;text-align:right}th{font-size:11px;font-weight:500;color:var(--muted)}th:first-child,td:first-child{text-align:left}tbody td:first-child{font-family:Georgia,serif;font-size:15px}tfoot td{border-top:1px solid var(--ink);border-bottom:0;font-weight:600}.best{background:#d5ddcb}.best td:first-child{padding-left:8px}.note{font-size:15px;margin:19px 0 0;max-width:330px}.method{font:11px/1.6 system-ui,sans-serif;color:var(--muted);margin-top:17px;display:flex;justify-content:space-between;gap:25px}.caption{font:10px system-ui,sans-serif;letter-spacing:1px;fill:var(--muted)}@media(max-width:700px){body{padding:12px}.sheet{padding:0 18px 19px;border-width:5px}header{margin:0 -18px;padding:20px 18px;grid-template-columns:65px 1fr;gap:15px}.specimen{width:65px;height:85px;grid-row:span 2}h1{font-size:32px}.period{grid-column:2;text-align:left;border:0;padding:0;font-size:10px;display:flex;gap:12px;align-items:baseline}.period strong{font-size:19px;margin:0}.sub{font-size:11px}.metrics{padding:20px 0 17px}.metric{padding:0 12px}.value{font-size:32px}.label{font-size:11px}.finding{font-size:16px}.tables{grid-template-columns:1fr}.tables section{padding:20px 0}.tables section+section{border-left:0;border-top:1px solid var(--rule);padding:20px 0}.plot{gap:9px;padding:0 4px}.bar span{font-size:9px;padding:0}.method{display:block}.method span{display:block;margin-bottom:5px}h2{font-size:23px}section[aria-labelledby="visits-title"]{padding:17px 10px}.chart{gap:5px;grid-template-columns:29px 1fr;height:190px}.section-head{margin-bottom:22px}.bar{max-width:35px}}@media(max-width:380px){body{padding:6px}.sheet{padding:0 12px 16px}header{margin:0 -12px;padding:18px 12px}h1{font-size:27px}.value{font-size:28px}.metric{padding:0 9px}.plot{gap:6px}.bar span{font-size:8px}}
+</style>
+</head>
+<body><main class="sheet">
+<header>
+<svg class="specimen" viewBox="0 0 100 114" aria-hidden="true" fill="none" stroke="#315b4c" stroke-width="1.15">
+<path d="M50 5v93" stroke="#a29477"/><circle cx="50" cy="7" r="2" fill="#806645"/>
+<path d="M46 35C25 8 6 18 12 43c3 14 18 21 33 15M54 35C75 8 94 18 88 43c-3 14-18 21-33 15M43 48C13 44 14 76 39 74M57 48c30-4 29 28 4 26M43 35c0-15 14-15 14 0v23c0 12-14 12-14 0Z"/>
+<path d="M44 55c-11 10-17 26-10 30 7 3 12-7 7-10M48 59c-6 20-3 32 4 32 6-1 6-8 2-10M54 56c11 7 20 24 12 30-5 4-10-1-8-6M43 41 22 26m21 23L18 39m39 2 21-15M57 49l25-10M45 27l-8-9m18 9 8-9"/>
+<circle cx="47" cy="36" r="1.4" fill="#315b4c"/><circle cx="53" cy="36" r="1.4" fill="#315b4c"/>
+<path d="M15 101h70" stroke="#a29477"/><text x="50" y="112" text-anchor="middle" class="caption">SPECIMEN 01</text>
+</svg>
+<div><h1>The Observatory</h1><p class="sub">Website performance · Abyssal collections</p></div>
+<div class="period"><strong>Week 01</strong>Synthetic data</div>
+</header>
+<section class="metrics" aria-label="Weekly totals">
+<div class="metric"><div class="label">Visits</div><div class="value">12,480</div></div>
+<div class="metric"><div class="label">Signups</div><div class="value">624</div></div>
+<div class="metric"><div class="label">Signup rate</div><div class="value">5.00%</div></div>
+</section>
+<p class="finding"><strong>Sunday led the week</strong> with 2,100 visits and 127 signups. Direct brought the most visits and signups of any source.</p>
+<section aria-labelledby="visits-title">
+<div class="section-head"><h2 id="visits-title">Daily visits</h2></div>
+<div class="chart" role="img" aria-label="Daily visits: Monday 1,420; Tuesday 1,600; Wednesday 1,780; Thursday 1,640; Friday 1,920; Saturday 2,020; Sunday 2,100. Exact daily figures and signup rates follow in the table.">
+<div class="axis"><span>2,400</span><span>1,200</span><span>0</span></div>
+<div class="plot">
+<div class="column"><div class="bar" style="height:59.167%"><span>1,420</span></div><span class="day">Mon</span></div>
+<div class="column"><div class="bar" style="height:66.667%"><span>1,600</span></div><span class="day">Tue</span></div>
+<div class="column"><div class="bar" style="height:74.167%"><span>1,780</span></div><span class="day">Wed</span></div>
+<div class="column"><div class="bar" style="height:68.333%"><span>1,640</span></div><span class="day">Thu</span></div>
+<div class="column"><div class="bar" style="height:80%"><span>1,920</span></div><span class="day">Fri</span></div>
+<div class="column"><div class="bar" style="height:84.167%"><span>2,020</span></div><span class="day">Sat</span></div>
+<div class="column"><div class="bar" style="height:87.5%"><span>2,100</span></div><span class="day">Sun</span></div>
+</div></div>
+</section>
+<div class="tables">
+<section aria-labelledby="daily-title"><h2 id="daily-title">Daily record</h2>
+<table><thead><tr><th scope="col">Day</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Rate</th></tr></thead>
+<tbody><tr><td>Mon</td><td>1,420</td><td>57</td><td>4.01%</td></tr><tr><td>Tue</td><td>1,600</td><td>72</td><td>4.50%</td></tr><tr><td>Wed</td><td>1,780</td><td>89</td><td>5.00%</td></tr><tr><td>Thu</td><td>1,640</td><td>74</td><td>4.51%</td></tr><tr><td>Fri</td><td>1,920</td><td>96</td><td>5.00%</td></tr><tr><td>Sat</td><td>2,020</td><td>109</td><td>5.40%</td></tr><tr class="best"><td>Sun</td><td>2,100</td><td>127</td><td>6.05%</td></tr></tbody>
+<tfoot><tr><td>Week</td><td>12,480</td><td>624</td><td>5.00%</td></tr></tfoot></table>
+</section>
+<section aria-labelledby="sources-title"><h2 id="sources-title">Traffic sources</h2>
+<table><thead><tr><th scope="col">Source</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Rate</th></tr></thead>
+<tbody><tr><td>Direct</td><td>5,240</td><td>314</td><td>5.99%</td></tr><tr><td>Search</td><td>4,480</td><td>224</td><td>5.00%</td></tr><tr><td>Social</td><td>2,760</td><td>86</td><td>3.12%</td></tr></tbody></table>
+<p class="note">Direct’s signup rate was highest at 5.99%. Social’s was lowest at 3.12%.</p>
+
+</section></div>
+<footer class="method"><span>Rate = signups ÷ visits. Rates rounded to two decimal places.</span><span>Week 01 only · No prior-week comparison supplied.</span></footer>
+</main></body></html>

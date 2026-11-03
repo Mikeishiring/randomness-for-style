@@ -1,0 +1,9 @@
+The first refinement made the identity more coherent: the arched border, wine-colored edges and tentacled crest now suggest a theatre belonging to something from the deep. Further decorative expansion would compete with the report. Keep that architecture, palette, factual totals, source shares and complete daily table.
+
+There are still clarity defects. Sunday's figures immediately precede three unlabeled-period cards, so the cards can briefly be mistaken for another Sunday summary. “Sunday took the lead” followed by “The week's highest daily figures” spends two lines saying one thing. The body-row day labels inherit tiny column-heading styles despite being data. Source rates are labeled only “rate,” and the Social commentary repeats counts already printed above it. “Volume” is vaguer than visits and signups.
+
+The second refinement explicitly labels the cards as weekly. One factual headline states Sunday's peak across all three measures, followed by the figures without a redundant explanatory line. Sunday receives a restrained table-row tint, connecting the headline and chart emphasis to the detailed record. Body-row labels use the same readable size as the values. Source rates explicitly say signup rate, source details can wrap, and the source observations stop repeating nearby figures.
+
+Originality gets one small, contained development: angular wings added inside the existing tentacled proscenium seal make its Cthulhu reference more specific without introducing another illustration. The headline and crest sizing are restrained on narrow screens, and text reserves room for the existing header flourish on desktop.
+
+All supplied counts, derived daily/source rates, visit shares, totals, and the synthetic-data disclosure are retained. This is one refinement of the immediately preceding result.

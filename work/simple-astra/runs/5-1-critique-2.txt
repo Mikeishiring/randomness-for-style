@@ -1,0 +1,9 @@
+The report now leads with its purpose, and the source table has room to breathe. Its counts, rates, Sunday finding and Direct signup share remain useful. Another structural redesign would be churn.
+
+The identity still has one specific weakness: the halo around a disco sphere does not convincingly establish deep-sea life. It is an ordinary disco ball in a teal interface. The faceted visit bars help connect disco to the report, but adding more textures would start competing with the numbers.
+
+The remaining clarity defect is color meaning. The chart assigns aqua to visits and pink to signups, but the totals highlight signup rate in aqua and leave signups neutral. That is inconsistent emphasis without analytical justification.
+
+Refine only those two points. Reshape the existing ornament into a compact, faceted jellyfish bell with three thin luminous tendrils. The mirror facets supply disco; the organism silhouette and restrained glow supply deep-sea bioluminescence. Keep it decorative, static, hidden from assistive technology and proportionally smaller on mobile. Use aqua for the visits total, pink for the signups total, and neutral text for the signup rate, matching the chart. Give the visit legend marker a square shape to echo its bars. Consolidate the two adjacent style blocks.
+
+Preserve the layout, chart heights and baseline, every supplied count, all displayed derived rates, finding text, table semantics, chart description and synthetic-data disclosure. No external sources, other experiments or skills were consulted. This is a source-level refinement; rendered appearance has not been verified.

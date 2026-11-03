@@ -1,0 +1,5 @@
+The original is a conventional SaaS dashboard wearing teal. Rounded panels, generic typography and a detached disco-ball ornament could survive almost any theme swap. Deep sea supplies the background color; disco supplies a sticker. Neither organizes the information.
+
+Replace that separation with one clear idea: an illuminated dance floor below the surface. A continuous squared grid holds the totals and seven daily lanes. Segmented luminous visit columns rise from a shared zero baseline: the tiles carry the data. Oversized condensed typography supplies the club-poster hierarchy, while the depth gradient and restrained bioluminescent palette keep the information readable. Remove the orb, rounded card shells and redundant supporting copy.
+
+Keep every supplied count and existing calculated rate. Add daily signup rates as a labelled row so Sunday's strongest conversion is visible in context. Keep the source table, express its visit bars with the same tiled language, and preserve the useful Direct share and Sunday findings. No motion or external assets. The daily grid scrolls locally on narrow screens and remains keyboard accessible.

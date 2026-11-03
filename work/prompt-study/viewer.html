@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f3ec"><title>Prompt test · Randomness for Style</title><style>/* STUDY_CSS */</style></head>
+<body><main>
+<header class="toolbar"><a href="index.html">← Dice</a><h1>Prompt test</h1><select id="pair" aria-label="Ingredient pairing"></select><button type="button" id="compare" aria-pressed="true">Compare prompts</button></header>
+<div class="view-row"><p>Same saved design. One fresh pass per prompt.</p><div class="views" role="group" aria-label="Report to view"><button type="button" data-view="start" aria-pressed="false">Starting design</button><button type="button" data-view="original" aria-pressed="false">Original prompt</button><button type="button" data-view="stronger" aria-pressed="false">Stronger prompt</button></div></div>
+<div id="reports" class="reports comparing"></div>
+<section id="observations" hidden aria-labelledby="observations-title"><h2 id="observations-title">What changed</h2><p id="pair-observation"></p><p id="study-observation"></p></section>
+<details class="method"><summary>How this was tested</summary><div><p id="design"></p><p id="selection"></p><p id="limits"></p><p>Examples are preserved as generated. A change is not a quality score.</p><details><summary>Starting brief and data</summary><pre id="brief"></pre></details></div></details>
+<p id="status" class="sr-only" role="status"></p>
+</main><script>/* STUDY_JS */</script></body></html>

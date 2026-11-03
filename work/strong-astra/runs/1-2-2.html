@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Olympus Drive-In — Week 01</title>
+<style>
+:root{--paper:#fff8e7;--red:#922d23;--ink:#33251e;--line:#d3bfa1;--faint:#f0e4cb}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px Arial,Helvetica,sans-serif}main{max-width:1320px;margin:auto;padding:30px 36px 34px}.masthead{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:25px}.wordmark{font-size:14px;font-weight:900;letter-spacing:2px;color:var(--red)}.period{font:13px 'Courier New',monospace}.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:28px;align-items:start}.pediment{height:122px;background:var(--red);color:var(--paper);clip-path:polygon(50% 0,100% 49%,100% 100%,0 100%,0 49%);display:flex;align-items:center;justify-content:end;flex-direction:column;padding:0 15px 16px;text-align:center}.pediment h1{font:normal clamp(25px,3vw,38px) Georgia,serif;letter-spacing:1px;text-transform:uppercase;margin:4px 0 0}.bolt{font-size:22px;line-height:1}.board{background:var(--red);color:var(--paper);border-top:5px double var(--paper);padding:0 27px 26px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:5px double var(--paper);margin:0 -10px 25px}.metric{margin:0;padding:23px 10px;text-align:center}.metric+.metric{border-left:1px solid #fff8e766}.metric dt{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;font-weight:bold}.metric dd{font:normal clamp(29px,3.6vw,48px) Georgia,serif;font-variant-numeric:lining-nums tabular-nums;margin:10px 0 0;white-space:nowrap}.section-title{display:flex;align-items:baseline;gap:13px;margin-bottom:15px}.number{font:italic 17px Georgia,serif;opacity:.8}h2{font:normal 22px Georgia,serif;margin:0}.unit{margin-left:auto;font:11px Arial,sans-serif;text-transform:uppercase;letter-spacing:1px}.chart{height:190px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:15px;padding:25px 0 0;border-bottom:1px solid #fff8e780}.column{height:100%;display:flex;align-items:end;justify-content:center}.bar{width:100%;max-width:42px;height:var(--height);background:var(--paper);position:relative}.bar span{position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);font:12px 'Courier New',monospace;white-space:nowrap}.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:15px;text-align:center;padding-top:10px;font-size:11px}.finding{font-size:13px;line-height:1.6;margin:19px 0 0}.finding strong{font-weight:700}.sources{border-top:1px solid #fff8e780;margin-top:24px;padding-top:23px}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}th,td{text-align:right}th:first-child,td:first-child{text-align:left}th{font-weight:normal;font-size:10px;letter-spacing:.6px;text-transform:uppercase;padding:0 0 11px}td{padding:14px 0;border-top:1px solid #fff8e750;font-size:13px}td:first-child{font-weight:bold}.receipt{margin-top:61px;background:#fffcf4;border:1px solid var(--line);padding:25px 20px 29px;position:relative;box-shadow:3px 4px 0 var(--faint);font-family:'Courier New',monospace}.receipt:before{content:'';display:block;height:8px;position:absolute;left:-1px;right:-1px;top:-8px;background:linear-gradient(135deg,transparent 50%,var(--line) 50%) 0 0/12px 8px,linear-gradient(225deg,transparent 50%,var(--line) 50%) 0 0/12px 8px}.receipt-head{text-align:center;border-bottom:1px dashed var(--ink);padding-bottom:20px;margin-bottom:20px}.receipt-head h2{font:normal 24px Georgia,serif;text-transform:uppercase;letter-spacing:1px}.receipt-head p{margin:7px 0 0;font-size:11px}.receipt th{font-size:9px;letter-spacing:0;padding-bottom:12px}.receipt td{font-size:12px;padding:15px 0;border-top:1px dotted var(--line)}.receipt tbody th{font-size:12px;text-transform:none;font-weight:normal;padding:15px 0;border-top:1px dotted var(--line)}.receipt tbody tr:last-child{font-weight:bold;background:var(--faint)}.receipt tbody tr:last-child th{font-weight:bold}.receipt tfoot td{border-top:1px dashed var(--ink);font-weight:bold;padding-top:19px}.method{font-size:10px;line-height:1.7;margin:19px 0 0;padding-top:15px;border-top:1px dashed var(--ink)}footer{font:11px 'Courier New',monospace;margin-top:23px;color:#6c5644}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}@media(min-width:1100px){.receipt{padding:27px 23px 31px}.chart{height:220px}}@media(max-width:950px){main{padding:24px}.layout{grid-template-columns:minmax(0,1fr) 300px;gap:20px}.board{padding:0 20px 23px}.chart,.days{gap:10px}.receipt{padding:24px 15px}.metric dd{font-size:32px}.pediment h1{font-size:28px}}@media(max-width:760px){.layout{grid-template-columns:1fr}.receipt{margin-top:8px;padding:25px}.receipt td,.receipt tbody th{font-size:14px}.receipt th{font-size:11px}.metric dd{font-size:clamp(31px,7vw,47px)}.pediment h1{font-size:clamp(25px,6vw,38px)}}@media(max-width:390px){main{padding:18px 13px}.masthead{gap:10px}.wordmark{font-size:11px;letter-spacing:1px}.period{font-size:11px}.board{padding-left:17px;padding-right:17px}.chart,.days{gap:8px}.bar span{font-size:10px}.metric dt{font-size:9px}.metric dd{font-size:29px}.receipt{padding:23px 16px}h2{font-size:20px}}
+</style>
+</head>
+<body>
+<main>
+<header class="masthead"><div class="wordmark">OLYMPUS DRIVE-IN</div><div class="period">Week 01 · Synthetic data</div></header>
+<div class="layout">
+<div>
+<div class="pediment"><span class="bolt" aria-hidden="true">ϟ</span><h1>Website performance</h1></div>
+<div class="board">
+<div class="metrics">
+<dl class="metric"><dt>Visits</dt><dd>12,480</dd></dl>
+<dl class="metric"><dt>Signups</dt><dd>624</dd></dl>
+<dl class="metric"><dt>Conversion</dt><dd>5.00%</dd></dl>
+</div>
+<section aria-labelledby="daily-title">
+<div class="section-title"><span class="number" aria-hidden="true">01</span><h2 id="daily-title">The daily rush</h2><span class="unit">Visits</span></div>
+<div class="chart" role="img" aria-label="Visits, with bars starting at zero: Monday 1,420; Tuesday 1,600; Wednesday 1,780; Thursday 1,640; Friday 1,920; Saturday 2,020; Sunday 2,100.">
+<div class="column"><div class="bar" style="--height:67.62%"><span>1,420</span></div></div>
+<div class="column"><div class="bar" style="--height:76.19%"><span>1,600</span></div></div>
+<div class="column"><div class="bar" style="--height:84.76%"><span>1,780</span></div></div>
+<div class="column"><div class="bar" style="--height:78.10%"><span>1,640</span></div></div>
+<div class="column"><div class="bar" style="--height:91.43%"><span>1,920</span></div></div>
+<div class="column"><div class="bar" style="--height:96.19%"><span>2,020</span></div></div>
+<div class="column"><div class="bar" style="--height:100%"><span>2,100</span></div></div>
+</div>
+<div class="days" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+<p class="finding"><strong>Sunday led all three measures:</strong> 2,100 visits, 127 signups and 6.05% conversion.</p>
+</section>
+<section class="sources" aria-labelledby="sources-title">
+<div class="section-title"><span class="number" aria-hidden="true">02</span><h2 id="sources-title">Traffic sources</h2></div>
+<table><thead><tr><th scope="col">Source</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Conversion</th></tr></thead><tbody>
+<tr><td>Direct</td><td>5,240</td><td>314</td><td>5.99%</td></tr>
+<tr><td>Search</td><td>4,480</td><td>224</td><td>5.00%</td></tr>
+<tr><td>Social</td><td>2,760</td><td>86</td><td>3.12%</td></tr>
+</tbody></table>
+<p class="finding"><strong>Direct brought the most signups.</strong> Social converted least: 3.12%.</p>
+</section>
+</div>
+</div>
+<section class="receipt" aria-labelledby="receipt-title">
+<div class="receipt-head"><h2 id="receipt-title">The full order</h2><p>Daily breakdown / Week 01</p></div>
+<table aria-label="Daily visits, signups and conversion"><thead><tr><th scope="col">Day</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col"><abbr title="Conversion" style="text-decoration:none">Conv.</abbr></th></tr></thead><tbody>
+<tr><th scope="row">Mon</th><td>1,420</td><td>57</td><td>4.01%</td></tr>
+<tr><th scope="row">Tue</th><td>1,600</td><td>72</td><td>4.50%</td></tr>
+<tr><th scope="row">Wed</th><td>1,780</td><td>89</td><td>5.00%</td></tr>
+<tr><th scope="row">Thu</th><td>1,640</td><td>74</td><td>4.51%</td></tr>
+<tr><th scope="row">Fri</th><td>1,920</td><td>96</td><td>5.00%</td></tr>
+<tr><th scope="row">Sat</th><td>2,020</td><td>109</td><td>5.40%</td></tr>
+<tr><th scope="row">Sun</th><td>2,100</td><td>127</td><td>6.05%</td></tr>
+</tbody><tfoot><tr><td>Total</td><td>12,480</td><td>624</td><td>5.00%</td></tr></tfoot></table>
+<p class="method">Conversion = signups ÷ visits.<br>Rates rounded to two decimal places.</p>
+</section>
+</div>
+<footer>Source: supplied synthetic dataset · No prior-week comparison supplied.</footer>
+</main>
+</body>
+</html>

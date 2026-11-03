@@ -1,0 +1,13 @@
+The original is accurate and usable, but its identity is timid: a broken-circle logo, rounded cream cards and a generic “Your week in numbers” headline could belong to almost any analytics template. There is no reason to rebuild its information architecture. The weekly totals, metric switch, directly labelled bars, complete daily table, source breakdown and single consolidated method note are strong decisions.
+
+Clarity has three avoidable weaknesses. The source-name underlines look like tiny charts but never identify their measure or scale; the adjacent numeric columns communicate the information more reliably. The daily chart's unlabelled horizontal grid implies a readable scale without providing one. “Rate” is unnecessarily vague, while the formula beneath the headline rate repeats the footer.
+
+One refinement pass:
+- Made the title literal: “Website performance.”
+- Developed “Site notes” into a restrained notebook identity through serif display typography, a small binding-like mark, squared panels and ruled metric headings. Kept the compact sans-serif data typography and green palette.
+- Removed the ambiguous source microbars and unlabelled chart grid. Retained zero-based bars, direct values, day labels and the accessible chart description.
+- Named both table columns “Signup rate” and retained the formula once in the method note.
+- Tightened the source finding around the conversion comparison.
+- Prevented bars from flex-shrinking and slightly reduced narrow-screen metric type to preserve readable spacing.
+
+All supplied figures, computed totals and rounded rates remain unchanged. The interactive visits/signups switch and complete daily/source detail remain. The HTML remains self-contained. This was a source-level refinement; no browser rendering was inspected.

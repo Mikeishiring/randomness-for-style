@@ -1,0 +1,9 @@
+The report now has a coherent and reasonably distinctive identity. The proscenium outline, winged tentacled crest, dark sea-green field and wine accents combine the two ingredients without inventing theatrical names for actual metrics. The table and source breakdown remain the strongest part: exact, complete, and easy to compare. More ornament would be churn rather than an improvement.
+
+Two remaining layout decisions undermine that restraint. First, the large flourish is anchored at the bottom of the header, which is precisely where the finding and supporting figures live. Its 150-pixel width also exceeds the 120-pixel text reservation. At intermediate widths it can compete with wrapped headline text. Move a slightly smaller flourish beside the crest, where it reinforces the identity and leaves the analytical statement clear. This develops the existing composition rather than introducing another motif.
+
+Second, the explicit weekly labels help comprehension, but the longer signup-rate label can wrap on a phone while the other labels remain on one line. That moves the three headline values off a common baseline. Reserve the same two-line label height for all three metrics on narrow screens.
+
+The headline is also more cumbersome than its finding requires: “Sunday peaked on all three measures” reads like an analyst describing a chart. “Sunday led every measure” conveys the same supported comparison, with visits, signups and signup rate immediately named below it.
+
+Only those changes are justified in this pass. Keep the factual source findings, readable table labels, Sunday emphasis, all figures and derived rates, source shares, and consolidated data disclosure. The revised page is a single refinement of the preceding result; no data or external sources were added.

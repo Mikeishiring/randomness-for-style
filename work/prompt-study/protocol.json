@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-02",
+  "model": "gpt-6-astra",
+  "question": "Does the stronger refinement prompt move a stalled design beyond the original prompt while preserving clarity?",
+  "design": "Three purposively selected pairs. Both arms start from exactly the same saved third refinement in separate fresh Astra contexts. Each receives its original filled brief, the starting HTML and one refinement prompt. One pass per arm, no reruns or manual repairs. The original wrapper, including permission to keep the HTML unchanged, is identical in both arms. This compares prompts after context restoration, not uninterrupted trajectories.",
+  "selection": "Cthulhu × Fast food is the familiar pilot; Greek myths × Luxury hotel tests restraint; Deep-sea bioluminescence × Victorian insect collecting tests the niche combination currently being viewed. All three third refinements had kept their predecessors unchanged. Chosen before generation.",
+  "limits": "One output per arm per pair; no independent replicates, blinding or controlled seed. Changes alone do not establish improvement. Findings apply to these saved starting designs, not all 36 pairs.",
+  "wrapper": "Continue this same experiment from your previous result. Read the exact refinement prompt specified below and apply it once. Save your critique and complete revised HTML to the specified files. Do not overwrite any earlier output. Do not load skills, inspect other experiments, use external sources or delegate. If you find no justified change, save an identical HTML file and explain that in the critique. Do not edit the result after saving. Return only the saved paths.",
+  "prompts": {
+    "original": "Harshly critique originality and clarity, then refine the design. Develop the same two ingredients without making the report harder to understand. Preserve useful detail and strong decisions. Change only what improves it. Keep the purpose and data unchanged. Return the complete revised HTML.",
+    "stronger": "Harshly critique what still feels generic or only superficially themed. Rework the weakest design decisions so both ingredients shape the layout, typography and presentation of information. Commit to one clear visual idea; replace weak choices instead of accumulating decoration. Simple means easy to understand, with useful detail intact. Keep the purpose, figures and clear metric labels unchanged. Return the complete revised HTML."
+  },
+  "pairs": [
+    {
+      "id": "0-2",
+      "label": "Cthulhu × Fast food",
+      "startingFile": "0-2-4.html",
+      "startingSha256": "349a5c0d0adee06b5cd2fcf8ccfd9a9f3bca309600e14c71a4a47483cfaff0c9",
+      "briefSha256": "c20cf014f5f3f9cafbd2ecc65de23afe901385b1f2bcadc7ae8d180383c08333"
+    },
+    {
+      "id": "1-4",
+      "label": "Greek myths × Luxury hotel",
+      "startingFile": "1-4-4.html",
+      "startingSha256": "bb8ff1a7f76400688f38db0388a14288761c0a6c71a7c3d8429545c5e3dd2ba3",
+      "briefSha256": "d0692bce38685cfdd9a54afc7706fbbc59427cc52e628b8beea7d407ae351eb1"
+    },
+    {
+      "id": "5-5",
+      "label": "Deep-sea bioluminescence × Victorian insect collecting",
+      "startingFile": "5-5-4.html",
+      "startingSha256": "7c0d824f6477ae290a3b8ed128169681b102d41f42fa1de176bc8d65073d1845",
+      "briefSha256": "a07714eb28498cc0dc96003fdcdc111bee89b3f288ab05edd76f2efab8efc5b6"
+    }
+  ]
+}

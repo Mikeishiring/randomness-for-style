@@ -1,0 +1,9 @@
+The previous refinement fixed the biggest hierarchy problem: the page now tells the owner what it is and which week it covers. The visible chart scale and consistent metric colors also earn their space. The complete counts and conversion tables remain the strongest part of the report.
+
+Originality is still limited. The page reads as a restrained dark dashboard with racing slashes, not a particularly distinctive instrument. More automotive language would only camouflage this. The useful opportunity is the timing-sheet discipline of motorsport: aligned numeric columns, compact comparative marks and clear row tracking. That can develop the identity without inventing a visual metaphor for ordinary visits.
+
+The weakest remaining information design is the source microbars. They appear under source names, although their lengths encode visits. The owner should not have to infer which of the three numeric measures they represent. Move them into the visits cells. The lower tables also lack a strong numeric rhythm. Use tabular monospace for their measurements, with a quiet row hover to assist tracking across columns. Keep entity colors unchanged.
+
+Two implementation details merit correction: the chart's metric control should expose a semantic group, and changing metrics currently replaces the entire bar background, removing the fine highlight used in the initial state. Preserve that highlight by changing backgroundColor only. Allow the chart header and brand header to wrap gracefully on narrow screens, and name each table for assistive technology.
+
+This pass deliberately retains the layout, headline, totals, axes, interpretations and every supplied figure. It improves the connection between marks and measures and develops the existing pitwall/timing-sheet identity; more decoration or a new layout would not improve understanding.

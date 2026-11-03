@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 01 — Website performance</title>
+<style>
+:root{--paper:#f4f0e6;--ink:#163a32;--muted:#57665d;--rule:#c9cbbc;--wash:#e5e8dc;--gold:#917b49}*{box-sizing:border-box}body{margin:0;background:#deded3;color:var(--ink);font:14px Arial,Helvetica,sans-serif}.folio{max-width:1190px;margin:32px auto;display:grid;grid-template-columns:240px minmax(0,1fr);background:var(--paper);border-top:5px solid var(--ink)}.spine{background:var(--ink);color:var(--paper);padding:31px 28px;display:flex;flex-direction:column}.period{display:grid;grid-template-columns:1fr auto;align-items:end;gap:0 10px;border-bottom:1px solid #789082;padding-bottom:20px}.week{font:11px 'Courier New',monospace;letter-spacing:.15em;text-transform:uppercase}.number{font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:74px;letter-spacing:-2px;line-height:1}.dates{font:12px 'Courier New',monospace;grid-column:1/-1;display:block;padding-top:14px;color:#d0d7c9}.metrics{margin-top:41px}.metrics>div{padding:0 0 22px;margin-bottom:22px;border-bottom:1px solid #627b6d}.metric-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#d0d7c9}.value{font:bold 39px/1.15 'Courier New',monospace;letter-spacing:-2px;margin-top:8px}.value small{font-size:24px;letter-spacing:-1px}.definition{font-size:11px;line-height:1.6;color:#d0d7c9;margin:0}.content{padding:30px 34px 22px;min-width:0}.masthead{display:flex;align-items:baseline;justify-content:space-between;gap:15px;padding-bottom:18px;border-bottom:1px solid var(--gold)}.brand{font:21px Georgia,serif;letter-spacing:.12em}.masthead span{font:italic 14px Georgia,serif;color:var(--muted)}h1{font:normal 35px/1.1 Georgia,serif;letter-spacing:-1px;margin:25px 0 28px}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding-bottom:10px;border-bottom:2px solid var(--ink);margin-top:25px}h2{font:italic 24px Georgia,serif;margin:0}.section-head span{font:11px 'Courier New',monospace;color:var(--muted)}table{width:100%;border-collapse:collapse;table-layout:fixed;font-variant-numeric:tabular-nums}th{font-size:10px;text-transform:uppercase;letter-spacing:.02em;color:var(--muted);text-align:right;padding:12px 8px 10px;font-weight:normal}th:first-child{text-align:left;padding-left:10px}th small{display:block;font-size:10px;text-transform:none;letter-spacing:0;padding-top:4px}td{border-top:1px solid var(--rule);padding:12px 8px;text-align:right;font:14px 'Courier New',monospace}tbody th{text-align:left;padding:12px 10px;border-top:1px solid var(--rule);font:14px 'Courier New',monospace;color:var(--ink);text-transform:none;letter-spacing:0}.sources tbody th{font:18px Georgia,serif}tbody tr:last-child td,tbody tr:last-child th{border-bottom:1px solid var(--ink)}.day{width:16%}.visits{width:44%}.signups{width:17%}.rate{width:23%}.bar-cell{display:flex;align-items:center;gap:14px}.track{height:9px;background:var(--wash);flex:1;position:relative}.bar{height:100%;width:var(--w);background:var(--ink)}.count{min-width:48px}.peak{background:var(--wash)}.peak td,.peak th{font-weight:bold}.peak th{box-shadow:inset 3px 0 var(--gold)}.peak .track{background:#d4dacb}.note{font-size:12px;line-height:1.5;color:var(--muted);margin:11px 0 0}.note strong{font-weight:normal;color:var(--ink)}.sources td,.sources tbody th{padding-top:14px;padding-bottom:14px}.source-count{display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:48px}.share{font-size:11px;color:var(--muted)}.sources .bar-cell{gap:14px}.foot{margin-top:24px;border-top:1px solid var(--gold);padding-top:12px;color:var(--muted);font-size:10px;line-height:1.6}.foot p{margin:0}@media(max-width:900px){.folio{grid-template-columns:190px minmax(0,1fr);margin:0;min-height:100vh}.spine{padding:27px 20px}.content{padding:27px 22px}.value{font-size:33px}.brand{font-size:18px}.masthead span{font-size:12px}.bar-cell{gap:9px}.sources .bar-cell{gap:9px}}@media(max-width:700px){.folio{display:block}.spine{padding:17px 20px}.period{display:flex;align-items:baseline;justify-content:flex-start;gap:10px;padding:0;border:0}.number{font-size:37px;letter-spacing:-1px}.dates{padding:0;margin-left:auto}.metrics{margin-top:18px;display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:15px;border-top:1px solid #789082;padding-top:16px}.metrics>div{margin:0;padding:0;border:0}.value{font-size:31px;letter-spacing:-1.6px;margin-top:6px}.value small{font-size:20px}.metric-label{font-size:10px}.definition{margin-top:13px;font-size:10px}.content{padding:22px 20px}.brand{font-size:19px}h1{font-size:32px;margin:23px 0 24px}.section-head{margin-top:24px}th{font-size:9px;padding-right:5px;padding-left:5px}td{font-size:13px;padding:12px 5px}tbody th{font-size:13px}.sources tbody th{font-size:16px}.foot{font-size:10px}}@media(max-width:430px){.spine{padding:16px}.content{padding:21px 12px}.metrics{gap:9px}.value{font-size:28px}.masthead{gap:8px}.brand{font-size:17px}.masthead span{font-size:12px}.track{height:4px;width:100%;flex:none;order:2}.bar-cell{flex-direction:column;align-items:flex-end;gap:6px}.count{min-width:0}.sources .bar-cell{gap:6px}.source-count{min-width:0;gap:3px}.share{font-size:10px}.day{width:17%}.visits{width:39%}.signups{width:18%}.rate{width:26%}th small{font-size:9px}tbody th,thead th:first-child{padding-left:7px}.section-head span{font-size:10px}h2{font-size:23px}}@media print{body{background:var(--paper)}.folio{margin:0;max-width:none}.spine{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<main class="folio">
+<aside class="spine" aria-label="Week 01 summary"><div class="period"><span class="week">Week</span><span class="number">01</span><span class="dates">Mon — Sun</span></div><section class="metrics" aria-label="Weekly totals">
+<div><div class="metric-label">Visits</div><div class="value">12,480</div></div>
+<div><div class="metric-label">Signups</div><div class="value">624</div></div>
+<div><div class="metric-label">Conversion</div><div class="value">5.0<small>%</small></div></div>
+</section><p class="definition">Conversion = signups ÷ visits</p></aside>
+<div class="content">
+<div class="masthead"><div class="brand">THE PADDOCK</div><span>The weekly briefing</span></div>
+<header><h1>Website performance</h1></header>
+
+<section aria-labelledby="daily-heading">
+<div class="section-head"><h2 id="daily-heading">Daily pace</h2><span>Mon–Sun</span></div>
+<table aria-label="Daily visits, signups and conversion rates">
+<thead><tr><th scope="col" class="day">Day</th><th scope="col" class="visits">Visits <small class="bar-scale">Daily peak = full bar</small></th><th scope="col" class="signups">Signups</th><th scope="col" class="rate">Conversion</th></tr></thead>
+<tbody>
+<tr><th scope="row">Mon</th><td><div class="bar-cell"><div class="track" aria-hidden="true"><div class="bar" style="--w:67.62%"></div></div><span class="count">1,420</span></div></td><td>57</td><td>4.0%</td></tr>
+<tr><th scope="row">Tue</th><td><div class="bar-cell"><div class="track" aria-hidden="true"><div class="bar" style="--w:76.19%"></div></div><span class="count">1,600</span></div></td><td>72</td><td>4.5%</td></tr>
+<tr><th scope="row">Wed</th><td><div class="bar-cell"><div class="track" aria-hidden="true"><div class="bar" style="--w:84.76%"></div></div><span class="count">1,780</span></div></td><td>89</td><td>5.0%</td></tr>
+<tr><th scope="row">Thu</th><td><div class="bar-cell"><div class="track" aria-hidden="true"><div class="bar" style="--w:78.10%"></div></div><span class="count">1,640</span></div></td><td>74</td><td>4.5%</td></tr>
+<tr><th scope="row">Fri</th><td><div class="bar-cell"><div class="track" aria-hidden="true"><div class="bar" style="--w:91.43%"></div></div><span class="count">1,920</span></div></td><td>96</td><td>5.0%</td></tr>
+<tr><th scope="row">Sat</th><td><div class="bar-cell"><div class="track" aria-hidden="true"><div class="bar" style="--w:96.19%"></div></div><span class="count">2,020</span></div></td><td>109</td><td>5.4%</td></tr>
+<tr class="peak"><th scope="row">Sun</th><td><div class="bar-cell"><div class="track" aria-hidden="true"><div class="bar" style="--w:100%"></div></div><span class="count">2,100</span></div></td><td>127</td><td>6.0%</td></tr>
+</tbody></table>
+<p class="note"><strong>Sunday led on visits, signups and conversion.</strong></p>
+</section>
+<section aria-labelledby="sources-heading">
+<div class="section-head source-heading"><h2 id="sources-heading">Where visits began</h2></div>
+<table class="sources" aria-label="Visits, share of weekly visits, signups and conversion by source">
+<thead><tr><th scope="col" class="day">Source</th><th scope="col" class="visits">Visits <small>Share of weekly visits</small></th><th scope="col" class="signups">Signups</th><th scope="col" class="rate">Conversion</th></tr></thead>
+<tbody>
+<tr><th scope="row">Direct</th><td><div class="bar-cell"><div class="track" aria-hidden="true"><div class="bar" style="--w:41.987%"></div></div><span class="source-count"><span class="count">5,240</span><span class="share">42.0%</span></span></div></td><td>314</td><td>6.0%</td></tr>
+<tr><th scope="row">Search</th><td><div class="bar-cell"><div class="track" aria-hidden="true"><div class="bar" style="--w:35.897%"></div></div><span class="source-count"><span class="count">4,480</span><span class="share">35.9%</span></span></div></td><td>224</td><td>5.0%</td></tr>
+<tr><th scope="row">Social</th><td><div class="bar-cell"><div class="track" aria-hidden="true"><div class="bar" style="--w:22.115%"></div></div><span class="source-count"><span class="count">2,760</span><span class="share">22.1%</span></span></div></td><td>86</td><td>3.1%</td></tr>
+</tbody></table>
+<p class="note"><strong>Direct brought the most signups.</strong> Social had the lowest conversion rate, at 3.1%.</p>
+</section>
+<footer class="foot"><p>Synthetic data · Week 01 · Rates rounded to one decimal.<br>No prior-period data supplied.</p></footer>
+</div>
+</main>
+</body>
+</html>
+
+

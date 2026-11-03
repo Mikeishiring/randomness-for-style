@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 01 · The Web Observatory</title>
+<style>
+:root{--paper:#f5f0e3;--ink:#263e39;--muted:#5b6d63;--line:#b8b8a2;--brass:#947341;--wash:#e7e9dc;--green:#3e695b}*{box-sizing:border-box}body{margin:0;background:#deded0;color:var(--ink);font:14px/1.5 Arial,Helvetica,sans-serif}main{max-width:1160px;margin:30px auto;padding:30px 38px 22px;background:var(--paper);border:1px solid var(--line)}header{display:flex;justify-content:space-between;align-items:center;gap:20px;border-top:4px double var(--ink);border-bottom:1px solid var(--ink);padding:18px 0}h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Georgia,'Times New Roman',serif;font-weight:400}h1{font-size:36px;letter-spacing:-1px;line-height:1.15}.mast{display:flex;align-items:center;gap:16px}.seal{width:58px;height:62px;flex:none}.context{margin-top:5px;font-size:12px;color:var(--muted)}.period{border-left:1px solid var(--brass);padding-left:20px;text-align:right;white-space:nowrap}.period strong{display:block;font:24px Georgia,serif}.period span{font-size:11px;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:3px double var(--ink)}.metric{padding:19px 24px;border-left:1px solid var(--line)}.metric:first-child{padding-left:0;border:0}.label{font-size:12px;letter-spacing:1px;text-transform:uppercase}.number{font:49px/1.2 Georgia,serif;font-variant-numeric:lining-nums tabular-nums;letter-spacing:-1px;margin-top:5px}.number small{font-size:30px}.definition{font-size:11px;color:var(--muted)}.finding{padding:15px 0 18px;font-size:14px}.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,1fr);border:1px solid var(--line)}.daily{padding:20px 24px 15px}.sources{border-left:1px solid var(--line);background:var(--wash);display:flex;flex-direction:column}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.section-head h2{font-size:25px;line-height:1.2}.section-head span{font:11px 'Courier New',monospace;color:var(--muted);white-space:nowrap}.graph{margin:19px 0 8px}.graph svg{display:block;width:100%;height:auto;overflow:visible}.graph text{font:11px 'Courier New',monospace;fill:var(--muted)}.graph .gridline{stroke:var(--line);stroke-width:.7}.graph .trace{fill:none;stroke:var(--green);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}.graph .point{fill:var(--paper);stroke:var(--green);stroke-width:2}.graph .plot-label{font:italic 14px Georgia,serif;fill:var(--ink)}.graph .signup-trace .trace,.graph .signup-trace .point{stroke:var(--brass)}table{width:100%;border-collapse:collapse;font:12px/1.5 'Courier New',monospace;font-variant-numeric:tabular-nums}th,td{padding:8px 7px;text-align:right;border-bottom:1px solid var(--line)}thead th{font:11px Arial,sans-serif;color:var(--muted);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);padding-top:10px;padding-bottom:10px}th:first-child,td:first-child{text-align:left;padding-left:0}th:last-child,td:last-child{padding-right:0}tbody th{font-family:Arial,sans-serif;font-weight:400}tbody tr:last-child{background:#e7e8d9}tfoot th,tfoot td{border:0;font-weight:bold;padding-top:12px}.sources>.section-head{padding:20px 20px 17px}.drawer{position:relative;flex:1;margin:0 12px 12px;border:1px solid var(--line);padding:15px;background:var(--paper)}.drawer:before{content:"";position:absolute;width:4px;height:4px;border-radius:50%;background:var(--brass);top:7px;left:calc(50% - 2px)}.drawer-heading{display:flex;align-items:center;gap:14px;margin-bottom:12px;border-bottom:1px solid var(--line);padding-bottom:10px}.specimen{width:54px;height:55px;flex:none;color:var(--ink)}.drawer h3{font-size:23px;line-height:1.2}.source-visits{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font:12px 'Courier New',monospace}.source-visits strong{font-size:19px;font-weight:400}.source-visits span:last-child{color:var(--muted);font-size:11px}.track{height:6px;margin:8px 0 11px;background:#d0d6c6}.track i{display:block;height:100%;background:var(--green)}.source-facts{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted)}.source-facts b{font:14px 'Courier New',monospace;color:var(--ink)}.note{padding:16px 20px;border-top:1px solid var(--line);font-size:12px}.note strong{font-weight:600}footer{border-top:3px double var(--ink);margin-top:20px;padding-top:11px;display:flex;justify-content:space-between;gap:16px;font-size:11px;color:var(--muted)}@media(max-width:800px){main{margin:0;padding:24px;border:0}.layout{grid-template-columns:1fr}.sources{border-left:0;border-top:1px solid var(--line)}.daily{padding:20px}.drawer{padding:16px 20px}.drawer-heading{float:left;width:33%;margin:0;border-bottom:0;padding-bottom:0}.source-visits,.track,.source-facts{margin-left:35%}.source-visits{padding-top:3px}.drawer:after{content:'';display:block;clear:both}.note{clear:both}h1{font-size:30px}}@media(max-width:480px){main{padding:18px 14px}.seal{width:36px;height:47px}.mast{gap:9px}h1{font-size:25px;max-width:180px}.context{font-size:11px}.period{padding-left:10px}.period strong{font-size:19px}.period span{font-size:10px}.metric{padding:17px 10px}.label{font-size:10px;letter-spacing:.6px}.number{font-size:35px}.number small{font-size:22px}.definition{font-size:10px}.finding{font-size:12px}.daily{padding:17px 12px 12px}.section-head h2{font-size:23px}table{font-size:11px}th,td{padding:8px 4px}.drawer-heading{float:none;width:auto;margin-bottom:10px;border-bottom:1px solid var(--line);padding-bottom:10px}.source-visits,.track,.source-facts{margin-left:0}.sources>.section-head{padding:17px 20px}.source-facts{font-size:12px}footer{flex-direction:column;gap:3px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="mast">
+<svg class="seal" viewBox="0 0 60 66" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="30" cy="33" r="27" stroke-width=".7"/><path d="M30 1v9m0 46v9M0 33h7m46 0h7M9 14l5 5m32 28 5 5M9 52l5-5m32-28 5-5" stroke-width=".7"/><path d="M28 28C9 8 6 30 17 34 8 45 20 53 28 39m4-11C51 8 54 30 43 34c9 11-3 19-11 5M27 25l-4-8m10 8 4-8"/><ellipse cx="30" cy="33" rx="2" ry="13" fill="currentColor"/><path d="M14 29l13 5-10 7m29-12-13 5 10 7" stroke-width=".6"/></svg>
+<div><h1>The Web Observatory</h1><p class="context">Website performance</p></div></div>
+<div class="period"><strong>Week 01</strong><span>Synthetic data</span></div>
+</header>
+<section class="metrics" aria-label="Weekly totals">
+<div class="metric"><div class="label">Visits</div><div class="number">12,480</div></div>
+<div class="metric"><div class="label">Signups</div><div class="number">624</div></div>
+<div class="metric"><div class="label">Conversion</div><div class="number">5.0<small>%</small></div><div class="definition">Signups ÷ visits</div></div>
+</section>
+<p class="finding">Sunday led on visits, signups and conversion: <strong>2,100 · 127 · 6.0%.</strong></p>
+<div class="layout">
+<section class="daily" aria-labelledby="daily-title">
+<div class="section-head"><h2 id="daily-title">Daily readings</h2><span>MON — SUN</span></div>
+<div class="graph">
+<svg viewBox="0 0 520 330" role="img" aria-labelledby="chart-title chart-desc">
+<title id="chart-title">Daily visits and signups, Week 01</title>
+<desc id="chart-desc">Two aligned recording strips show visits and signups from Monday to Sunday. Each uses its own labelled scale beginning at zero. Both dip on Thursday and peak on Sunday. Exact counts and conversion rates follow in the table.</desc>
+<defs><pattern id="recording-paper" width="19" height="15" patternUnits="userSpaceOnUse"><path d="M19 0H0V15" fill="none" stroke="#b8b8a2" stroke-width=".35"/></pattern></defs>
+<rect x="46" y="28" width="456" height="105" fill="url(#recording-paper)"/>
+<rect x="46" y="190" width="456" height="105" fill="url(#recording-paper)"/>
+<g class="gridline"><path d="M46 28H502M46 133H502M46 190H502M46 295H502"/><path d="M46 28V295M122 28V295M198 28V295M274 28V295M350 28V295M426 28V295M502 28V295" stroke-dasharray="2 4"/></g>
+<text x="46" y="14" class="plot-label">Visits</text><text x="46" y="176" class="plot-label">Signups</text>
+<g text-anchor="end"><text x="38" y="32">2,100</text><text x="38" y="137">0</text><text x="38" y="194">127</text><text x="38" y="299">0</text></g><g class='visits-trace'><polyline class='trace' points='46,62 122,53 198,44 274,51 350,37 426,32 502,28'/><g class='point'><circle cx='46' cy='62' r='3'/><circle cx='122' cy='53' r='3'/><circle cx='198' cy='44' r='3'/><circle cx='274' cy='51' r='3'/><circle cx='350' cy='37' r='3'/><circle cx='426' cy='32' r='3'/><circle cx='502' cy='28' r='3'/></g></g><g class='signup-trace'><polyline class='trace' points='46,247.874 122,235.472 198,221.417 274,233.819 350,215.63 426,204.882 502,190'/><g class='point'><circle cx='46' cy='247.874' r='3'/><circle cx='122' cy='235.472' r='3'/><circle cx='198' cy='221.417' r='3'/><circle cx='274' cy='233.819' r='3'/><circle cx='350' cy='215.63' r='3'/><circle cx='426' cy='204.882' r='3'/><circle cx='502' cy='190' r='3'/></g></g><g text-anchor="middle"><text x='46' y='317'>Mon</text><text x='122' y='317'>Tue</text><text x='198' y='317'>Wed</text><text x='274' y='317'>Thu</text><text x='350' y='317'>Fri</text><text x='426' y='317'>Sat</text><text x='502' y='317'>Sun</text></g></svg></div>
+<table aria-label="Daily visits, signups and conversion">
+<thead><tr><th scope="col">Day</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Conversion</th></tr></thead>
+<tbody>
+<tr><th scope="row">Monday</th><td>1,420</td><td>57</td><td>4.0%</td></tr>
+<tr><th scope="row">Tuesday</th><td>1,600</td><td>72</td><td>4.5%</td></tr>
+<tr><th scope="row">Wednesday</th><td>1,780</td><td>89</td><td>5.0%</td></tr>
+<tr><th scope="row">Thursday</th><td>1,640</td><td>74</td><td>4.5%</td></tr>
+<tr><th scope="row">Friday</th><td>1,920</td><td>96</td><td>5.0%</td></tr>
+<tr><th scope="row">Saturday</th><td>2,020</td><td>109</td><td>5.4%</td></tr>
+<tr><th scope="row">Sunday</th><td>2,100</td><td>127</td><td>6.0%</td></tr>
+</tbody><tfoot><tr><th scope="row">Week 01</th><td>12,480</td><td>624</td><td>5.0%</td></tr></tfoot>
+</table>
+</section>
+<section class="sources" aria-labelledby="source-title">
+<div class="section-head"><h2 id="source-title">Source collection</h2></div>
+<article class="drawer" aria-labelledby="direct-title">
+<div class="drawer-heading"><svg class="specimen" viewBox="0 0 50 52" fill="none" stroke="currentColor" aria-hidden="true"><path d="M25 1v50" stroke="#947341" stroke-width=".6"/><path d="M23 20C6 0 0 23 14 28 3 39 15 49 23 32m4-12C44 0 50 23 36 28c11 11-1 21-9 4M22 17l-5-9m11 9 5-9"/><path d="m9 17 13 9-10-2m29-7-13 9 10-2m-22 12 8-7m10 7-8-7" stroke-width=".6"/><ellipse cx="25" cy="27" rx="2" ry="12" fill="currentColor"/></svg><div><h3 id="direct-title">Direct</h3></div></div>
+<div class="source-visits"><span><strong>5,240</strong> visits</span><span>42.0% of visits</span></div>
+<div class="track" aria-hidden="true"><i style="width:41.987%"></i></div>
+<div class="source-facts"><span><b>314</b> signups</span><span><b>6.0%</b> conversion</span></div>
+</article>
+<article class="drawer" aria-labelledby="search-title">
+<div class="drawer-heading"><svg class="specimen" viewBox="0 0 50 52" fill="none" stroke="currentColor" aria-hidden="true"><path d="M25 1v50" stroke="#947341" stroke-width=".6"/><path d="m22 16-6-9m12 9 6-9M18 23l-9-5-3-6m12 17-10 1-4 6m15 1-8 7v5m21-26 9-5 3-6m-12 17 10 1 4 6m-15 1 8 7v5"/><ellipse cx="25" cy="30" rx="9" ry="14"/><path d="M25 19v25M18 22h14" stroke-width=".7"/><ellipse cx="25" cy="16" rx="5" ry="4" fill="currentColor"/></svg><div><h3 id="search-title">Search</h3></div></div>
+<div class="source-visits"><span><strong>4,480</strong> visits</span><span>35.9% of visits</span></div>
+<div class="track" aria-hidden="true"><i style="width:35.897%"></i></div>
+<div class="source-facts"><span><b>224</b> signups</span><span><b>5.0%</b> conversion</span></div>
+</article>
+<article class="drawer" aria-labelledby="social-title">
+<div class="drawer-heading"><svg class="specimen" viewBox="0 0 50 52" fill="none" stroke="currentColor" aria-hidden="true"><path d="M25 1v50" stroke="#947341" stroke-width=".6"/><path d="M24 23C1 1-8 22 23 26 0 24-3 39 24 29m2-6C49 1 58 22 27 26c23-2 26 13-1 3"/><path d="m7 16 16 8m20-8-16 8M9 32l14-4m18 4-14-4" stroke-width=".6"/><path d="M25 19v24" stroke-width="3"/><circle cx="25" cy="16" r="3" fill="currentColor"/></svg><div><h3 id="social-title">Social</h3></div></div>
+<div class="source-visits"><span><strong>2,760</strong> visits</span><span>22.1% of visits</span></div>
+<div class="track" aria-hidden="true"><i style="width:22.115%"></i></div>
+<div class="source-facts"><span><b>86</b> signups</span><span><b>3.1%</b> conversion</span></div>
+</article>
+<p class="note"><strong>Direct supplies the most traffic and converts best.</strong> Social has the lowest signup rate.</p>
+</section>
+</div>
+<footer><span>No previous period supplied.</span><span>Rates rounded to one decimal place.</span></footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,7 @@
+The revised design has reached a useful limit on ornament. Its luminous burger–sea-creature sign, squared menu rail, and warm torn receipt now express the two ingredients consistently. More bubbles, fries, sea creatures, or themed labels would make the report less direct. Keep the clear titles, restrained glow, legible totals, exact chart labels, and concise conclusions.
+
+One clarity defect remains: the miniature source bars sit under the source names, although the table contains visits, signups, and signup rates. Their placement makes the encoded measure unnecessarily ambiguous. Move each existing bar directly underneath its visit count, retaining the same relative lengths and cyan color. Give those tracks a compact responsive width so the table remains comfortable on narrow screens. No new legend or explanatory copy is needed.
+
+The table markup also makes source names and days ordinary cells. Promote them to row headers and preserve their visual weight, spacing, and separators. This improves navigation for assistive technology without adding visual clutter.
+
+This is intentionally a small second refinement: the identity already works, and the original prompt requires changing only what improves it. All figures, daily detail, interpretations, and source context remain unchanged. Applied once to the previous saved result; no external sources, other experiments, or browser rendering were used.

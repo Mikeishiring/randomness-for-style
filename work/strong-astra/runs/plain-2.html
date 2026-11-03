@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 01 · Website performance</title>
+<style>
+:root{color-scheme:light;--paper:#f8f7f2;--ink:#202424;--muted:#626765;--rule:#c8ccc7;--blue:#224fc3;--wash:#e8edf8}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1160px;margin:auto;padding:32px 40px 28px}header{display:flex;align-items:baseline;justify-content:space-between;gap:20px;border-top:6px solid var(--ink);border-bottom:1px solid var(--ink);padding:17px 0}.identity{font-size:24px;font-weight:750;letter-spacing:-.06em}h1{font-size:14px;font-weight:500;margin:0;color:var(--muted)}.week{font:14px ui-monospace,SFMono-Regular,Consolas,monospace;white-space:nowrap}.metrics{display:grid;grid-template-columns:repeat(3,1fr);margin:30px 0 38px}.metric{padding:0 24px;border-left:1px solid var(--rule)}.metric:first-child{padding-left:0;border-left:0}.label{color:var(--muted);font-size:13px}.value{font-size:clamp(40px,6vw,72px);line-height:1.2;letter-spacing:-.065em;font-weight:550;font-variant-numeric:tabular-nums}.value span{font-size:.6em}.section-head{border-top:2px solid var(--ink);padding:13px 0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}h2{font-size:19px;font-weight:650;letter-spacing:-.035em;margin:0}.switch{display:inline-flex;border:1px solid var(--rule);padding:2px}.switch button{border:0;background:transparent;color:var(--muted);padding:7px 15px;font:inherit;font-size:12px;cursor:pointer}.switch button[aria-pressed=true]{color:white;background:var(--blue)}button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}.daily-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(290px,1fr);gap:32px;align-items:start}.plot{display:grid;grid-template-columns:34px 1fr;grid-template-rows:260px auto;column-gap:10px;padding-top:12px}.axis{height:260px;position:relative;font:10px ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--muted)}.axis span{position:absolute;right:0;transform:translateY(50%)}.axis span:first-child{top:0;transform:translateY(-50%)}.axis span:nth-child(2){bottom:75%}.axis span:nth-child(3){bottom:50%}.axis span:nth-child(4){bottom:25%}.axis span:last-child{bottom:0}.chart{height:260px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:14px;background:repeating-linear-gradient(to top,transparent 0,transparent calc(25% - 1px),var(--rule) calc(25% - 1px),var(--rule) 25%);border-bottom:1px solid var(--ink)}.column{height:100%;position:relative;display:flex;align-items:flex-end}.bar{position:relative;background:var(--blue);width:100%;height:var(--height)}.bar-value{position:absolute;left:50%;bottom:calc(100% + 7px);transform:translateX(-50%);font:11px ui-monospace,SFMono-Regular,Consolas,monospace;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}.days{grid-column:2;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:14px;text-align:center;padding-top:10px;color:var(--muted);font-size:11px}.finding{font-size:13px;color:var(--muted);margin:21px 0 0;padding:13px 0 0;border-top:1px solid var(--rule)}.finding strong{color:var(--ink);font-weight:600}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}th,td{text-align:right;padding:10px 0 10px 14px;border-bottom:1px solid var(--rule);white-space:nowrap}th:first-child,td:first-child{text-align:left;padding-left:0}thead th{color:var(--muted);font-size:11px;font-weight:500;padding-top:0;padding-bottom:10px}tbody th{font-weight:500}tfoot th,tfoot td{font-weight:650;border-bottom:0;border-top:1px solid var(--ink)}.sources{margin-top:35px}.sources .section-head{padding-bottom:12px}.source-table{table-layout:fixed}.source-table th:first-child{width:22%}.source-table th:nth-child(2){width:38%}.source-table th:nth-child(3),.source-table th:nth-child(4){width:20%}.source-table tbody th,.source-table tbody td{padding-top:17px;padding-bottom:17px}.visit-cell{display:flex;align-items:center;gap:20px}.track{height:8px;flex:1;background:#e0e3e1}.track span{display:block;height:100%;background:var(--blue)}.visit-cell .number{min-width:48px}footer{display:flex;justify-content:space-between;gap:16px;color:var(--muted);font-size:11px;margin-top:23px}@media(max-width:820px){.daily-layout{grid-template-columns:1fr;gap:25px}.plot,.chart,.axis{height:230px}.plot{height:auto;grid-template-rows:230px auto}.source-table th:first-child{width:25%}.source-table th:nth-child(2){width:35%}}@media(max-width:520px){main{padding:20px 18px}header{flex-wrap:wrap;gap:4px 20px}.identity{font-size:22px}header h1{order:3;flex-basis:100%;font-size:12px}.metrics{margin:24px 0 28px}.metric{padding:0 12px}.value{font-size:36px}.label{font-size:11px}.section-head{gap:10px}h2{font-size:17px}.switch button{padding:7px 10px}.chart,.days{gap:9px}.bar-value{font-size:9px}.plot{grid-template-columns:27px 1fr;column-gap:7px}.axis{font-size:9px}.visit-cell{gap:8px}.track{height:5px}.source-table{font-size:12px}th,td{padding-left:10px}.source-table th:first-child{width:23%}.source-table th:nth-child(2){width:37%}footer{flex-direction:column;gap:4px}}@media print{main{padding:0}.switch{display:none}.daily-layout{grid-template-columns:1.5fr 1fr}.sources{break-inside:avoid}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="identity">Site notes.</div><h1>Website performance</h1><div class="week">Week 01</div></header>
+<section class="metrics" aria-label="Weekly totals">
+<div class="metric"><div class="label">Visits</div><div class="value">12,480</div></div>
+<div class="metric"><div class="label">Signups</div><div class="value">624</div></div>
+<div class="metric"><div class="label">Signup rate</div><div class="value">5.0<span>%</span></div></div>
+</section>
+<section aria-labelledby="daily-title">
+<div class="section-head"><h2 id="daily-title">Visits through the week</h2><div class="switch" role="group" aria-label="Chart metric"><button type="button" aria-pressed="true" data-metric="visits">Visits</button><button type="button" aria-pressed="false" data-metric="signups">Signups</button></div></div>
+<div class="daily-layout"><div>
+<div class="plot"><div class="axis" aria-hidden="true"><span>2,400</span><span>1,800</span><span>1,200</span><span>600</span><span>0</span></div>
+<div id="chart" class="chart" role="img" aria-label="Daily visits on a zero to 2,400 scale. Monday 1,420; Tuesday 1,600; Wednesday 1,780; Thursday 1,640; Friday 1,920; Saturday 2,020; Sunday 2,100.">
+<div class="column"><div class="bar" style="--height:59.1667%"><span class="bar-value">1,420</span></div></div>
+<div class="column"><div class="bar" style="--height:66.6667%"><span class="bar-value">1,600</span></div></div>
+<div class="column"><div class="bar" style="--height:74.1667%"><span class="bar-value">1,780</span></div></div>
+<div class="column"><div class="bar" style="--height:68.3333%"><span class="bar-value">1,640</span></div></div>
+<div class="column"><div class="bar" style="--height:80%"><span class="bar-value">1,920</span></div></div>
+<div class="column"><div class="bar" style="--height:84.1667%"><span class="bar-value">2,020</span></div></div>
+<div class="column"><div class="bar" style="--height:87.5%"><span class="bar-value">2,100</span></div></div>
+</div><div class="days" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div></div>
+<p class="finding"><strong>Sunday led on visits and signups.</strong> Its signup rate reached 6.0%, compared with 5.0% for the week.</p>
+</div>
+<div class="table-wrap"><table aria-label="Day by day"><thead><tr><th scope="col">Day</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Rate</th></tr></thead><tbody>
+<tr><th scope="row">Mon</th><td>1,420</td><td>57</td><td>4.0%</td></tr>
+<tr><th scope="row">Tue</th><td>1,600</td><td>72</td><td>4.5%</td></tr>
+<tr><th scope="row">Wed</th><td>1,780</td><td>89</td><td>5.0%</td></tr>
+<tr><th scope="row">Thu</th><td>1,640</td><td>74</td><td>4.5%</td></tr>
+<tr><th scope="row">Fri</th><td>1,920</td><td>96</td><td>5.0%</td></tr>
+<tr><th scope="row">Sat</th><td>2,020</td><td>109</td><td>5.4%</td></tr>
+<tr><th scope="row">Sun</th><td>2,100</td><td>127</td><td>6.0%</td></tr>
+</tbody><tfoot><tr><th scope="row">Week 01</th><td>12,480</td><td>624</td><td>5.0%</td></tr></tfoot></table></div>
+</div></section>
+<section class="sources" aria-labelledby="sources-title"><div class="section-head"><h2 id="sources-title">Where visitors came from</h2></div>
+<div class="table-wrap"><table class="source-table"><thead><tr><th scope="col">Source</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Rate</th></tr></thead><tbody>
+<tr><th scope="row">Direct</th><td><div class="visit-cell"><span class="track" aria-hidden="true"><span style="width:100%"></span></span><span class="number">5,240</span></div></td><td>314</td><td>6.0%</td></tr>
+<tr><th scope="row">Search</th><td><div class="visit-cell"><span class="track" aria-hidden="true"><span style="width:85.4962%"></span></span><span class="number">4,480</span></div></td><td>224</td><td>5.0%</td></tr>
+<tr><th scope="row">Social</th><td><div class="visit-cell"><span class="track" aria-hidden="true"><span style="width:52.6718%"></span></span><span class="number">2,760</span></div></td><td>86</td><td>3.1%</td></tr>
+</tbody></table></div></section>
+<footer><span>Supplied synthetic data · Week 01</span><span>Rate = signups ÷ visits, rounded to one decimal.</span></footer>
+</main>
+<script>
+const daily=[{day:'Mon',visits:1420,signups:57},{day:'Tue',visits:1600,signups:72},{day:'Wed',visits:1780,signups:89},{day:'Thu',visits:1640,signups:74},{day:'Fri',visits:1920,signups:96},{day:'Sat',visits:2020,signups:109},{day:'Sun',visits:2100,signups:127}];
+const format=n=>n.toLocaleString('en-GB');
+document.querySelectorAll('[data-metric]').forEach(button=>button.addEventListener('click',()=>{const metric=button.dataset.metric;const max=metric==='visits'?2400:160;document.querySelectorAll('[data-metric]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));document.getElementById('daily-title').textContent=(metric==='visits'?'Visits':'Signups')+' through the week';document.querySelectorAll('.axis span').forEach((tick,i)=>tick.textContent=format(max*(1-i/4)));document.querySelectorAll('.column').forEach((column,i)=>{column.querySelector('.bar-value').textContent=format(daily[i][metric]);column.querySelector('.bar').style.setProperty('--height',(daily[i][metric]/max*100)+'%')});document.getElementById('chart').setAttribute('aria-label','Daily '+metric+' on a zero to '+format(max)+' scale. '+daily.map(d=>d.day+' '+format(d[metric])).join('; ')+'.')}));
+</script>
+</body>
+</html>

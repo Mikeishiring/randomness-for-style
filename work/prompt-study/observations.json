@@ -1,0 +1,9 @@
+{
+  "basis": "Source checks and rendered inspection of all six outputs, with a full-width and narrow-screen check of the specimen result. These are qualitative judgments by the experiment's author, not blinded scores.",
+  "summary": "All six fresh-context runs changed, including all three using the original prompt. The stronger prompt produced larger changes to composition and information presentation in these examples. This does not isolate the cause of the earlier plateau or establish a general quality improvement.",
+  "pairs": {
+    "0-2": "The stronger version turns the main report into a menu board and the detail into a receipt. Typography and number treatment carry more of the fast-food identity. Cthulhu still relies heavily on the mascot; a larger thematic change is not automatically a clearer report. The original-prompt control makes smaller useful changes to spacing, labels and receipt styling.",
+    "1-4": "The stronger version replaces the dashboard panels with a hotel folio. Ariadne's thread organizes its sections, and daily visits and signups appear together instead of behind a toggle. The myth remains subtle and depends on recognizing the reference. The original-prompt control retains the dashboard while improving labels, target sizes and copy.",
+    "5-5": "The stronger version uses a specimen drawer and inventory rail to organize the report. Daily counts, signups and rates sit together; luminous marks carry the sea ingredient into the data. This is a more integrated interpretation, though the insect itself remains an illustration. The original-prompt control mostly refines the beetle, chart rules and source observation."
+  }
+}

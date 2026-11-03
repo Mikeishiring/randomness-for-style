@@ -1,0 +1,4 @@
+# Recorded artifact hashes include their original bytes.
+* -text
+*.jpg binary
+*.png binary

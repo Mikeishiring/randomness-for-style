@@ -1,0 +1,33 @@
+{
+  "model": "gpt-6-astra",
+  "setup": "The original plain first attempt is unchanged. A fresh Astra agent resumed from its saved HTML and original prompt for three sequential refinements, without design skills. The refinement prompt replaces “the same two ingredients” with “the visual identity”; everything else is identical. All outputs are preserved, including unchanged attempts.",
+  "refinementPrompt": "Harshly critique originality and clarity, then refine the design. Develop the visual identity without making the report harder to understand. Preserve useful detail and strong decisions. Change only what improves it. Keep the purpose and data unchanged. Return the complete revised HTML.",
+  "artifacts": [
+    {
+      "file": "plain-1.html",
+      "sha256": "a70b064977b62eeeb0e9eb20764e147d49666b15ec70dca71deb1d1c41c62e85",
+      "promptSha256": "3e37d396644327e2dcb80d8bc63cde7bfda3b7ccef1c74380ff678921ec73aac"
+    },
+    {
+      "file": "plain-2.html",
+      "sha256": "c2abe1d71df43f6289737aa8a4a1d464fee1c26f6fd4955e0f57a986eb287831",
+      "promptSha256": "ff46e59e9a9b368b94bf8da43c8a7298d7fe6e826bbd09963fb9288042969cc0",
+      "critiqueSha256": "df8097d3d953022b16b6770b02119291b2aa3289b9e0b63ea661203f9f1be186",
+      "predecessorSha256": "a70b064977b62eeeb0e9eb20764e147d49666b15ec70dca71deb1d1c41c62e85"
+    },
+    {
+      "file": "plain-3.html",
+      "sha256": "c2abe1d71df43f6289737aa8a4a1d464fee1c26f6fd4955e0f57a986eb287831",
+      "promptSha256": "ff46e59e9a9b368b94bf8da43c8a7298d7fe6e826bbd09963fb9288042969cc0",
+      "critiqueSha256": "dfdd8112386d39f746131bd1a1f869a4c841b1f363f5c726265edf4c03ac5eeb",
+      "predecessorSha256": "c2abe1d71df43f6289737aa8a4a1d464fee1c26f6fd4955e0f57a986eb287831"
+    },
+    {
+      "file": "plain-4.html",
+      "sha256": "c2abe1d71df43f6289737aa8a4a1d464fee1c26f6fd4955e0f57a986eb287831",
+      "promptSha256": "ff46e59e9a9b368b94bf8da43c8a7298d7fe6e826bbd09963fb9288042969cc0",
+      "critiqueSha256": "0e0962320282a6aa8af6051cbc610eb98dd32287793f4b5b8018eb2e7f050d69",
+      "predecessorSha256": "c2abe1d71df43f6289737aa8a4a1d464fee1c26f6fd4955e0f57a986eb287831"
+    }
+  ]
+}

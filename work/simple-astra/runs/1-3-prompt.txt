@@ -1,0 +1,65 @@
+Create a one-page website that helps its owner understand this week’s website performance using the supplied synthetic data. Use only the supplied figures. Return a complete, self-contained HTML page.
+
+Combine Greek myths and Opera into a distinct visual identity.
+
+Keep it simple to understand. Express the identity without competing with the information or removing useful detail.
+
+Synthetic data:
+{
+  "period": "Week 01",
+  "synthetic": true,
+  "daily": [
+    {
+      "day": "Mon",
+      "visits": 1420,
+      "signups": 57
+    },
+    {
+      "day": "Tue",
+      "visits": 1600,
+      "signups": 72
+    },
+    {
+      "day": "Wed",
+      "visits": 1780,
+      "signups": 89
+    },
+    {
+      "day": "Thu",
+      "visits": 1640,
+      "signups": 74
+    },
+    {
+      "day": "Fri",
+      "visits": 1920,
+      "signups": 96
+    },
+    {
+      "day": "Sat",
+      "visits": 2020,
+      "signups": 109
+    },
+    {
+      "day": "Sun",
+      "visits": 2100,
+      "signups": 127
+    }
+  ],
+  "sources": [
+    {
+      "name": "Direct",
+      "visits": 5240,
+      "signups": 314
+    },
+    {
+      "name": "Search",
+      "visits": 4480,
+      "signups": 224
+    },
+    {
+      "name": "Social",
+      "visits": 2760,
+      "signups": 86
+    }
+  ]
+}

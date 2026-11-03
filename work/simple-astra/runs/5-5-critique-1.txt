@@ -1,0 +1,9 @@
+The original is clear and numerically sound, but its originality is thin. A dark teal dashboard with a beetle in the header does not fully combine deep-sea bioluminescence with Victorian insect collecting. Most of the page could belong to any restrained analytics product. The two plus signs on the source panel suggest mounting hardware, but do too little to establish a specimen collection.
+
+Preserve the hierarchy, all figures, the daily ledger, source comparisons, explicit synthetic-data label, and definition of signup rate. The observations are supported by the figures. No extra explanatory copy or new metrics are needed.
+
+One genuine clarity defect exists in the bar implementation: the tallest percentage-height bar plus its value label can exceed the chart height. Flexbox may shrink bars by different amounts, weakening their proportional accuracy. Reserve space for labels, set the maximum bar to 86% of the shared plotting height, derive every other height from its exact ratio to Sunday, and prevent bars and values from shrinking.
+
+Refine the identity through the existing information surfaces. Give the traffic-source panel the shallow frame of a specimen drawer, mount each existing source name on a small ivory identification label, and use fine brass rules and pins to divide its records. Retain one luminous color for quantitative marks and the same bar scale across sources. Slightly strengthen the engraved insect and header rules, with a restrained deep-water background glow. These changes develop the original ingredients without adding another illustration, section, interaction, or explanatory paragraph.
+
+Applied once. The report purpose and supplied data are unchanged; the revised output retains every daily and source count and all rates. No post-save refinement was performed.

@@ -1,0 +1,44 @@
+import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+import {dataset} from '../simple-astra/prompts.mjs';
+const file=name=>new URL(name,import.meta.url),read=name=>readFileSync(file(name),'utf8');
+const sha=text=>createHash('sha256').update(text).digest('hex');
+const protocol=JSON.parse(read('protocol.json'));
+const records=existsSync(file('recorded.json'))?JSON.parse(read('recorded.json')):[];
+const additions=[];
+const pairs=protocol.pairs.map(pair=>{
+ const start=read('../simple-astra/runs/'+pair.startingFile),brief=read(`../simple-astra/runs/${pair.id}-prompt.txt`);
+ assert.equal(sha(start),pair.startingSha256,'Starting HTML changed');
+ assert.equal(sha(brief),pair.briefSha256,'Starting brief changed');
+ const arms=Object.fromEntries(['original','stronger'].map(arm=>{
+  const name=`${pair.id}-${arm}.html`,html=read('runs/'+name),critique=read(`runs/${pair.id}-${arm}-critique.txt`),prompt=read(arm+'-prompt.txt');
+  assert.equal(prompt,protocol.prompts[arm]);
+  assert.ok(/<!doctype html>/i.test(html)&&/<\/html>\s*$/i.test(html),name+': complete HTML');
+  assert.ok(critique.trim(),name+': missing critique');
+  assert.ok(!/<(?:script|img|link|iframe)\b[^>]*(?:src|href)=["'](?:https?:|\/\/)/i.test(html),name+': external resource');
+  assert.ok(!/@import\b|\bfetch\s*\(|\bXMLHttpRequest\b|AudioContext|<audio\b/i.test(html),name+': external request or audio');
+  assert.ok(/synthetic/i.test(html),name+': synthetic data label');
+  for(const script of html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi))new vm.Script(script[1],{filename:name});
+  const compact=html.replace(/,/g,'');
+  for(const number of [12480,624,...dataset.daily.flatMap(row=>[row.visits,row.signups]),...dataset.sources.flatMap(row=>[row.visits,row.signups])])assert.ok(compact.includes(String(number)),name+': missing supplied figure '+number);
+  const record={file:name,sha256:sha(html),critiqueSha256:sha(critique),promptSha256:sha(prompt),predecessorSha256:pair.startingSha256};
+  const existing=records.find(value=>value.file===name);
+  if(existing)assert.deepEqual(record,existing,'Saved output changed');else additions.push(record);
+  return[arm,{file:name,html,critique,prompt,sha256:record.sha256,unchanged:html===start}];
+ }));
+ return{...pair,brief,start:{file:pair.startingFile,html:start,sha256:pair.startingSha256},arms};
+});
+const review=existsSync(file('observations.json'))?JSON.parse(read('observations.json')):null;
+const publicProtocol={design:protocol.design.replace(/Astra/g,'model').replace(/HTML/g,'design'),selection:protocol.selection,limits:protocol.limits,prompts:protocol.prompts};
+const study={protocol:publicProtocol,dataset,pairs,review};
+const script=('const STUDY='+JSON.stringify(study).replace(/</g,'\\u003c')+';\n'+read('viewer.js')).replace(/<\/script/gi,'<\\/script');
+new vm.Script(script);
+const html=read('viewer.html').replace('/* STUDY_CSS */',read('viewer.css')).replace('/* STUDY_JS */',()=>script);
+const publicText=html+'\n'+JSON.stringify(study);
+assert.ok(!/\b(?:Astra|Codex)\b/.test(publicText),'Model branding found in public page');
+for(const pattern of [/\b(?:micha(?:el)?|mike|williamson)\b|mikeishiring|michaelwilliamsonthe/i,/file:\/\/\/|[A-Z]:[\\/](?:Users|home)|\.codex[\\/]|Documents[\\/]Codex/i,/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i,/\b(?:mailto:|tel:)|name=["']author["']/i])assert.ok(!pattern.test(publicText),'Identifying detail; publication stopped');
+writeFileSync(file('recorded.json'),JSON.stringify([...records,...additions],null,2));
+for(const destination of ['../../outputs/','../../site/dist/']){mkdirSync(file(destination),{recursive:true});writeFileSync(file(destination+'prompt-test.html'),html);}
+console.log(JSON.stringify({pairs:pairs.length,outputs:pairs.length*2,unchanged:Object.fromEntries(['original','stronger'].map(arm=>[arm,pairs.filter(pair=>pair.arms[arm].unchanged).length])),checks:'input and output hashes, exact prompts, figures, script syntax, local assets, privacy'},null,2));
