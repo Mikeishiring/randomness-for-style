@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Outlook · Week 01</title>
+<style>
+:root{--paper:#f5f2ea;--ink:#243d46;--muted:#626d6c;--line:#d7d7cb;--gold:#a28042;--pale:#e6ece8;--white:#fdfbf6}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5}main{max-width:1120px;padding:38px 48px 34px;margin:auto}header{display:flex;align-items:center;justify-content:space-between;padding-bottom:28px;border-bottom:1px solid var(--ink)}.brand{display:flex;align-items:center;gap:14px}.brand svg{width:42px;height:42px;color:var(--gold)}.brand-name{font:26px Georgia,serif;letter-spacing:-.5px}.brand-caption{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:3px}.period{font-size:12px;letter-spacing:1px}.intro{display:flex;justify-content:space-between;align-items:end;gap:25px;padding:36px 0 29px}h1{font:normal 46px/1.1 Georgia,serif;letter-spacing:-1.3px;margin:0}.outlook{margin:0;max-width:290px;font-size:14px;color:var(--muted)}.outlook strong{color:var(--ink);font-weight:normal}.metrics{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.metric{padding:25px 25px 26px 0}.metric+.metric{border-left:1px solid var(--line);padding-left:30px}.label{font-size:12px;color:var(--muted)}.number{font:normal 46px/1.2 Georgia,serif;margin:8px 0 2px;font-variant-numeric:lining-nums tabular-nums}.metric small{font-size:11px;color:var(--muted)}section{margin-top:37px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:23px}h2{font:normal 25px Georgia,serif;margin:0;letter-spacing:-.4px}.segmented{display:flex;border:1px solid var(--line);padding:3px;gap:3px}.segmented button{border:0;background:transparent;color:var(--muted);font:12px Arial,sans-serif;padding:8px 15px;cursor:pointer}.segmented button[aria-pressed="true"]{background:var(--ink);color:var(--white)}button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.chart{height:225px;display:grid;grid-template-columns:repeat(7,1fr);align-items:end;gap:24px;padding:22px 10px 0;background:repeating-linear-gradient(to top,transparent 0,transparent 49px,#dedfd533 49px,#dedfd533 50px);border-bottom:1px solid var(--line)}.column{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;position:relative}.bar-value{font-size:12px;margin-bottom:8px;font-variant-numeric:tabular-nums}.bar{width:100%;max-width:66px;background:#7c9699;border-top:2px solid #54787e;min-height:2px}.column:last-child .bar{background:var(--ink);border-color:var(--gold)}.days{display:grid;grid-template-columns:repeat(7,1fr);gap:24px;padding:10px 10px 0;text-align:center;color:var(--muted);font-size:12px}.chart-note{display:flex;align-items:center;gap:8px;margin:22px 0 0;font-size:13px}.sun{color:var(--gold);font-size:22px;line-height:1}.bottom{display:grid;grid-template-columns:1.15fr 1fr;gap:50px;margin-top:40px;padding-top:30px;border-top:1px solid var(--line)}.bottom section{margin:0}.bottom h2{margin-bottom:20px}table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}th{text-align:right;color:var(--muted);font-size:10px;letter-spacing:.5px;font-weight:normal;padding:0 0 12px;border-bottom:1px solid var(--line)}td{padding:11px 0;border-bottom:1px solid #d7d7cb88;text-align:right}th:first-child,td:first-child{text-align:left}tbody tr:last-child td{border-bottom:0}.source-name{display:block;font-size:13px}.source-track{height:3px;background:var(--pale);width:85px;margin-top:7px}.source-fill{height:100%;background:var(--ink)}.source-summary{font-size:13px;color:var(--muted);margin:21px 0 0}.source-summary strong{color:var(--ink);font-weight:normal}footer{display:flex;justify-content:space-between;gap:20px;margin-top:35px;padding-top:18px;border-top:1px solid var(--ink);font-size:10px;color:var(--muted)}
+@media(min-width:900px){.sources td{padding:20px 0}}@media(max-width:700px){main{padding:24px}.intro{display:block;padding-top:28px}h1{font-size:38px}.outlook{margin-top:17px;max-width:100%}.metric{padding:20px 12px 20px 0}.metric+.metric{padding-left:15px}.number{font-size:34px}.bottom{grid-template-columns:1fr;gap:32px}.chart,.days{gap:12px}.chart{height:190px}header{padding-bottom:21px}.brand-name{font-size:23px}.brand-caption{font-size:9px}.brand svg{width:34px}.section-head{align-items:start}h2{font-size:23px}.segmented button{padding:7px 10px}.chart-note{align-items:start}.metric small{font-size:10px}footer{flex-direction:column;gap:4px}}
+/* A weather bulletin on hotel stationery: brass, sea glass and ruled paper. */
+header{border-top:3px double var(--gold);padding-top:22px}
+.brand svg{width:50px;height:50px;padding:8px;border:1px solid var(--gold);border-radius:50%}
+.period{font-variant-numeric:tabular-nums;border-left:1px solid var(--gold);padding-left:18px}
+.metrics{background:var(--white)}
+.metric{padding-left:20px}
+.metric+.metric{padding-left:30px}
+.chart{position:relative;background:linear-gradient(to bottom,#e6ece870,transparent);padding-top:30px;margin-left:20px}
+.chart::before{content:'0';position:absolute;left:-20px;bottom:-8px;color:var(--muted);font-size:11px}
+.bar{flex-shrink:0}
+.bar-value{flex-shrink:0}
+.chart-note{color:var(--muted)}
+.bottom{gap:40px}
+.bottom section:first-child{padding-right:30px;border-right:1px solid var(--line)}
+.source-track{display:none}
+.sources th,.sources td{padding-left:10px}
+.sources th:first-child,.sources td:first-child{padding-left:0}
+.sources tbody tr:first-child{background:#e6ece870}
+@media(max-width:700px){.section-head{flex-wrap:wrap;align-items:center}.metric{padding-left:12px}.metric+.metric{padding-left:12px}.number{font-size:30px}.chart,.days{gap:9px}.chart{height:210px}.days{margin-left:20px}.bottom section:first-child{padding-right:0;border-right:0}.brand svg{width:42px;height:42px}.period{padding-left:12px;font-size:11px}.segmented button{min-height:40px}.bar-value{font-size:11px}}
+@media(min-width:701px){.days{margin-left:20px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <div class="brand"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M8 30a16 16 0 0 1 32 0M3 35h42M10 41h28M24 3v6M6 12l5 5M42 12l-5 5" stroke="currentColor" stroke-width="1.3"/><path d="M16 30a8 8 0 0 1 16 0" stroke="currentColor" stroke-width="1.3"/></svg><div><div class="brand-name">The Outlook</div><div class="brand-caption">Website performance</div></div></div>
+ <div class="period">WEEK 01</div>
+</header>
+<div class="intro"><h1>A bright finish.</h1><p class="outlook"><strong>Sunday led the week</strong> in visits, signups and signup rate.</p></div>
+<div class="metrics" aria-label="Weekly totals">
+ <div class="metric"><div class="label">Visits</div><div class="number">12,480</div></div>
+ <div class="metric"><div class="label">Signups</div><div class="number">624</div></div>
+ <div class="metric"><div class="label">Signup rate</div><div class="number">5.00<span style="font-size:.6em">%</span></div></div>
+</div>
+<section aria-labelledby="daily-heading">
+ <div class="section-head"><h2 id="daily-heading">The daily outlook</h2><div class="segmented" aria-label="Chart metric"><button type="button" aria-pressed="true" data-metric="visits">Visits</button><button type="button" aria-pressed="false" data-metric="signups">Signups</button><button type="button" aria-pressed="false" data-metric="rate">Signup rate</button></div></div>
+ <div id="chart" class="chart" role="img" aria-label="Daily visits: Monday 1,420; Tuesday 1,600; Wednesday 1,780; Thursday 1,640; Friday 1,920; Saturday 2,020; Sunday 2,100. Bars start at zero.">
+  <div class="column"><span class="bar-value">1,420</span><div class="bar" style="height:61.48%"></div></div>
+  <div class="column"><span class="bar-value">1,600</span><div class="bar" style="height:69.26%"></div></div>
+  <div class="column"><span class="bar-value">1,780</span><div class="bar" style="height:77.06%"></div></div>
+  <div class="column"><span class="bar-value">1,640</span><div class="bar" style="height:71%"></div></div>
+  <div class="column"><span class="bar-value">1,920</span><div class="bar" style="height:83.12%"></div></div>
+  <div class="column"><span class="bar-value">2,020</span><div class="bar" style="height:87.45%"></div></div>
+  <div class="column"><span class="bar-value">2,100</span><div class="bar" style="height:90.91%"></div></div>
+ </div>
+ <div class="days" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+ <p class="chart-note"><span class="sun" aria-hidden="true">☀</span>Thursday’s dip in visits was followed by three consecutive daily gains.</p>
+</section>
+<div class="bottom">
+ <section aria-labelledby="sources-heading"><h2 id="sources-heading">Visitor sources</h2>
+  <table class="sources"><thead><tr><th scope="col">Source</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Rate</th></tr></thead><tbody>
+   <tr><td><span class="source-name">Direct</span><div class="source-track" aria-hidden="true"><div class="source-fill" style="width:100%"></div></div></td><td>5,240</td><td>314</td><td>5.99%</td></tr>
+   <tr><td><span class="source-name">Search</span><div class="source-track" aria-hidden="true"><div class="source-fill" style="width:85.50%"></div></div></td><td>4,480</td><td>224</td><td>5.00%</td></tr>
+   <tr><td><span class="source-name">Social</span><div class="source-track" aria-hidden="true"><div class="source-fill" style="width:52.67%"></div></div></td><td>2,760</td><td>86</td><td>3.12%</td></tr>
+  </tbody></table>
+  <p class="source-summary"><strong>Direct led both volume and signup rate.</strong> Social had the lowest rate at 3.12%.</p>
+ </section>
+ <section aria-labelledby="detail-heading"><h2 id="detail-heading">Day by day</h2><table><thead><tr><th scope="col">Day</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Rate</th></tr></thead><tbody>
+  <tr><td>Monday</td><td>1,420</td><td>57</td><td>4.01%</td></tr>
+  <tr><td>Tuesday</td><td>1,600</td><td>72</td><td>4.50%</td></tr>
+  <tr><td>Wednesday</td><td>1,780</td><td>89</td><td>5.00%</td></tr>
+  <tr><td>Thursday</td><td>1,640</td><td>74</td><td>4.51%</td></tr>
+  <tr><td>Friday</td><td>1,920</td><td>96</td><td>5.00%</td></tr>
+  <tr><td>Saturday</td><td>2,020</td><td>109</td><td>5.40%</td></tr>
+  <tr><td>Sunday</td><td>2,100</td><td>127</td><td>6.05%</td></tr>
+ </tbody></table></section>
+</div>
+<footer><span>Week 01 · Supplied synthetic data</span><span>Rates = signups ÷ visits, rounded to two decimals.</span></footer>
+</main>
+<script>
+const daily=[{day:'Monday',visits:1420,signups:57},{day:'Tuesday',visits:1600,signups:72},{day:'Wednesday',visits:1780,signups:89},{day:'Thursday',visits:1640,signups:74},{day:'Friday',visits:1920,signups:96},{day:'Saturday',visits:2020,signups:109},{day:'Sunday',visits:2100,signups:127}];
+const chart=document.getElementById('chart');
+function render(metric){
+ const values=daily.map(d=>metric==='rate'?d.signups/d.visits*100:d[metric]);
+ const maximum=Math.max(...values);
+ const format=value=>metric==='rate'?value.toFixed(2)+'%':value.toLocaleString('en-GB');
+ chart.querySelectorAll('.column').forEach((column,i)=>{
+  column.querySelector('.bar-value').textContent=format(values[i]);
+  column.querySelector('.bar').style.height=(values[i]/maximum*80)+'%';
+ });
+ chart.setAttribute('aria-label','Daily '+(metric==='rate'?'signup rate':metric)+': '+daily.map((d,i)=>d.day+' '+format(values[i])).join('; ')+'. Bars start at zero.');
+ document.querySelectorAll('[data-metric]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.metric===metric)));
+}
+document.querySelectorAll('[data-metric]').forEach(button=>button.addEventListener('click',()=>render(button.dataset.metric)));
+render('visits');
+</script>
+</body>
+</html>

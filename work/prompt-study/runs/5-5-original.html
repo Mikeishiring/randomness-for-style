@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 · The Luminous Collection</title>
+<style>
+:root{--bg:#071b22;--panel:#0c252c;--line:#294149;--ink:#edf0db;--muted:#a5b8b8;--glow:#8be7d1;--gold:#c9b282}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5}main{max-width:1120px;margin:auto;padding:48px 36px 38px}header{display:flex;align-items:center;justify-content:space-between;padding-bottom:30px;border-bottom:1px solid var(--gold);gap:25px}.identity{display:flex;align-items:center;gap:20px}.beetle{width:60px;height:76px;flex-shrink:0;color:var(--glow)}.collection{font-family:Georgia,serif;font-size:15px;color:var(--gold);letter-spacing:.035em;margin:0 0 8px}h1{font:normal clamp(30px,4vw,44px)/1.15 Georgia,serif;margin:0}header .period{text-align:right;white-space:nowrap;font-family:Georgia,serif;font-size:24px}.period small{display:block;font:11px Arial,sans-serif;color:var(--muted);margin-top:7px;letter-spacing:.08em;text-transform:uppercase}.metrics{display:grid;grid-template-columns:repeat(3,1fr);padding:30px 0 34px;border-bottom:1px solid var(--line);gap:24px}.metric+.metric{border-left:1px solid var(--line);padding-left:30px}.metric dt{color:var(--muted);margin-bottom:8px}.metric dd{font-family:Georgia,serif;font-size:48px;line-height:1.1;margin:0;font-variant-numeric:tabular-nums}.metric:last-child dd{color:var(--glow)}.metric small{display:block;color:var(--muted);margin-top:8px;font-size:12px}.grid{display:grid;grid-template-columns:1.3fr 1fr;gap:32px;margin-top:34px}section{min-width:0}h2{font:normal 25px Georgia,serif;margin:0}h3{font:normal 20px Georgia,serif;margin:0}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:22px}.index{font:12px Georgia,serif;color:var(--gold);margin-right:9px}.section-head small{color:var(--muted);font-size:12px}.chart{height:227px;display:flex;gap:15px;align-items:stretch;border-bottom:1px solid var(--line);padding:0 8px;background:none}.day{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;position:relative;min-width:0}.value{color:var(--ink);font-size:12px;font-variant-numeric:tabular-nums;margin-bottom:8px}.bar{width:70%;max-width:42px;background:linear-gradient(to top,#225b5a,#8be7d1);border:1px solid #8be7d166;border-radius:2px 2px 0 0;position:relative}.bar:before{content:'';position:absolute;left:50%;top:-4px;width:5px;height:5px;background:var(--ink);border-radius:50%;transform:translateX(-50%);box-shadow:0 0 10px #8be7d177,0 0 18px #8be7d133}.day-labels{display:flex;gap:15px;padding:10px 8px 0;color:var(--muted);font-size:12px}.day-labels span{flex:1;text-align:center}.observation{margin:22px 0 0;color:var(--muted);font-size:14px}.observation strong{color:var(--ink);font-weight:normal}.sources{border:1px solid var(--line);background:var(--panel);padding:23px 24px;position:relative}.sources:before,.sources:after{content:'+';position:absolute;color:var(--gold);font:14px Georgia,serif;top:5px}.sources:before{left:8px}.sources:after{right:8px}.source{margin-top:24px}.source-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}.source-head span{color:var(--glow);font-variant-numeric:tabular-nums}.track{height:5px;background:#203a41;margin:11px 0}.fill{height:100%;background:var(--glow)}.source-stats{color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:10px}.sources .observation{padding-top:18px;border-top:1px solid var(--line);margin-top:24px;font-size:13px}.ledger{margin-top:36px;padding-top:27px;border-top:1px solid var(--line)}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}th,td{text-align:right;padding:11px 16px;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left;padding-left:0}th:last-child,td:last-child{padding-right:0}thead th{font-weight:normal;font-size:12px;color:var(--muted);padding-top:0}tbody th{font-weight:normal}tbody tr:last-child{background:#8be7d107}tfoot{color:var(--glow)}tfoot td,tfoot th{border:0;padding-top:15px}footer{margin-top:30px;display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--gold);padding-top:15px;font-size:11px;color:var(--muted)}@media(max-width:700px){main{padding:26px 20px}.identity{gap:12px}.beetle{width:38px;height:56px}.collection{font-size:12px}header{align-items:flex-start}.period{font-size:18px!important}h1{font-size:29px}.metrics{gap:12px}.metric+.metric{padding-left:15px}.metric dd{font-size:34px}.metric dt{font-size:12px}.grid{grid-template-columns:1fr;gap:30px}.chart{height:205px}.sources{padding:24px}.ledger{margin-top:30px}th,td{padding:11px 8px}footer{flex-direction:column;gap:4px}.section-head{gap:8px}h2{font-size:23px}}@media(max-width:390px){.beetle{display:none}.metric dd{font-size:29px}.collection{font-size:11px}.value{font-size:10px}.chart,.day-labels{gap:8px}}
+/* The specimen drawer: luminous marks, fine brass rules, paper identification labels. */
+body{background:radial-gradient(ellipse at 10% 0%,#103039 0,transparent 47%),var(--bg)}
+header{border-top:1px solid var(--gold);padding-top:23px}
+.beetle{width:68px;height:84px;filter:drop-shadow(0 0 8px #8be7d122)}
+.collection{font-variant:small-caps;letter-spacing:.07em}
+.bar{flex-shrink:0}
+.value{flex-shrink:0}
+.sources{background:linear-gradient(135deg,#102e35,#0a2229);border:1px solid #52615b;box-shadow:inset 0 0 0 5px var(--bg),inset 0 0 0 6px #294149;padding:25px 26px}
+.source{position:relative;padding:17px 0 0;border-top:1px solid #52615b;margin-top:20px}
+.source:before{content:'';position:absolute;width:5px;height:5px;left:-2px;top:-3px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px var(--panel)}
+.source-head h3{font-size:17px;color:#23342f;background:#e5dfc7;padding:2px 10px;border:1px solid #b8ae8e;box-shadow:inset 0 0 0 2px #e5dfc7,inset 0 0 0 3px #b8ae8e}
+.source-head span{font-size:17px}
+.track{height:6px;margin:13px 0 10px}
+.fill{background:linear-gradient(90deg,#3f8a80,var(--glow))}
+.sources .observation{margin-top:20px}
+@media(max-width:700px){.beetle{width:42px;height:60px}.sources{padding:24px}.source-head h3{font-size:17px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="identity">
+<svg class="beetle" viewBox="0 0 60 80" fill="none" aria-hidden="true"><path d="M30 2v75" stroke="#c9b282" stroke-width=".7"/><circle cx="30" cy="3" r="2" fill="#c9b282"/><path d="M25 24 17 15 17 7M35 24 43 15 43 7M21 33 9 26 5 17M39 33 51 26 55 17M19 44 7 42 2 49M41 44 53 42 58 49M21 55 10 61 9 72M39 55 50 61 51 72" stroke="currentColor" stroke-width="1"/><ellipse cx="30" cy="46" rx="12" ry="20" stroke="currentColor"/><path d="M22 30c-3-15 19-15 16 0M30 28v38M29 30c-6 5-9 14-7 23M31 30c6 5 9 14 7 23" stroke="currentColor"/><path d="M23 35 27 39 24 47 28 55M37 35 33 39 36 47 32 55" stroke="currentColor" stroke-width=".5" opacity=".45"/><g fill="currentColor"><circle cx="25" cy="38" r="1.4"/><circle cx="35" cy="38" r="1.4"/><circle cx="23" cy="46" r="1.7"/><circle cx="37" cy="46" r="1.7"/><circle cx="26" cy="54" r="1.2"/><circle cx="34" cy="54" r="1.2"/><circle cx="28" cy="60" r=".7"/><circle cx="32" cy="60" r=".7"/></g><g fill="currentColor" opacity=".1"><circle cx="23" cy="46" r="4"/><circle cx="37" cy="46" r="4"/></g></svg>
+<div><p class="collection">The Luminous Collection</p><h1>Website performance</h1></div>
+</div>
+<div class="period">Week 01<small>Synthetic data</small></div>
+</header>
+<dl class="metrics">
+<div class="metric"><dt>Total visits</dt><dd>12,480</dd></div>
+<div class="metric"><dt>Total signups</dt><dd>624</dd></div>
+<div class="metric"><dt>Signup rate</dt><dd>5.0%</dd><small>Signups ÷ visits</small></div>
+</dl>
+<div class="grid">
+<section aria-labelledby="daily-heading">
+<div class="section-head"><h2 id="daily-heading"><span class="index">I.</span>Visits by day</h2><small>Baseline: 0 visits</small></div>
+<div class="chart" role="img" aria-label="Daily visits: Monday 1,420; Tuesday 1,600; Wednesday 1,780; Thursday 1,640; Friday 1,920; Saturday 2,020; Sunday 2,100. All bars start at zero.">
+<div class="day"><span class="value">1,420</span><div class="bar" style="height:58.1524%"></div></div>
+<div class="day"><span class="value">1,600</span><div class="bar" style="height:65.5238%"></div></div>
+<div class="day"><span class="value">1,780</span><div class="bar" style="height:72.8952%"></div></div>
+<div class="day"><span class="value">1,640</span><div class="bar" style="height:67.1619%"></div></div>
+<div class="day"><span class="value">1,920</span><div class="bar" style="height:78.6286%"></div></div>
+<div class="day"><span class="value">2,020</span><div class="bar" style="height:82.7238%"></div></div>
+<div class="day"><span class="value">2,100</span><div class="bar" style="height:86%"></div></div>
+</div>
+<div class="day-labels" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+<p class="observation"><strong>Sunday led in visits and signups:</strong> 2,100 visits brought 127 signups, a 6.0% signup rate.</p>
+</section>
+<section class="sources" aria-labelledby="sources-heading">
+<div class="section-head"><h2 id="sources-heading"><span class="index">II.</span>Traffic sources</h2><small>Visits</small></div>
+<div class="source"><div class="source-head"><h3>Direct</h3><span>5,240</span></div><div class="track" aria-hidden="true"><div class="fill" style="width:100%"></div></div><div class="source-stats"><span>314 signups</span><span>6.0% signup rate</span></div></div>
+<div class="source"><div class="source-head"><h3>Search</h3><span>4,480</span></div><div class="track" aria-hidden="true"><div class="fill" style="width:85.5%"></div></div><div class="source-stats"><span>224 signups</span><span>5.0% signup rate</span></div></div>
+<div class="source"><div class="source-head"><h3>Social</h3><span>2,760</span></div><div class="track" aria-hidden="true"><div class="fill" style="width:52.7%"></div></div><div class="source-stats"><span>86 signups</span><span>3.1% signup rate</span></div></div>
+<p class="observation"><strong>Direct converted 6.0% of visits to signups;</strong> Social converted 3.1%.</p>
+</section>
+</div>
+<section class="ledger" aria-labelledby="ledger-heading">
+<div class="section-head"><h2 id="ledger-heading"><span class="index">III.</span>Daily record</h2></div>
+<table><thead><tr><th scope="col">Day</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Signup rate</th></tr></thead><tbody>
+<tr><th scope="row">Monday</th><td>1,420</td><td>57</td><td>4.0%</td></tr>
+<tr><th scope="row">Tuesday</th><td>1,600</td><td>72</td><td>4.5%</td></tr>
+<tr><th scope="row">Wednesday</th><td>1,780</td><td>89</td><td>5.0%</td></tr>
+<tr><th scope="row">Thursday</th><td>1,640</td><td>74</td><td>4.5%</td></tr>
+<tr><th scope="row">Friday</th><td>1,920</td><td>96</td><td>5.0%</td></tr>
+<tr><th scope="row">Saturday</th><td>2,020</td><td>109</td><td>5.4%</td></tr>
+<tr><th scope="row">Sunday</th><td>2,100</td><td>127</td><td>6.0%</td></tr>
+</tbody><tfoot><tr><th scope="row">Week 01</th><td>12,480</td><td>624</td><td>5.0%</td></tr></tfoot></table>
+</section>
+<footer><span>Rates rounded to one decimal place.</span><span>No previous-week data supplied.</span></footer>
+</main>
+</body>
+</html>
+

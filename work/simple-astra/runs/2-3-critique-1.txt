@@ -1,0 +1,11 @@
+The original is clear and complete, but its identity is timid. “The Overture” and a small arch/cloud emblem carry nearly all the opera reference. The curved chart box reads as a generic dashboard flourish. Weather is mostly a heading. Neither ingredient meaningfully shapes the page.
+
+Its strongest decisions deserve to stay: a single weekly summary, legible exact values, daily conversion detail, source volumes alongside source conversion, and a restrained palette. The figures and rounded rates agree with the supplied data. No extra panels or interaction are needed.
+
+The chart has a more serious clarity defect: percentage-height bars share a flex column with their labels, allowing the tallest bars to shrink. That undermines the stated shared scale. Positioning bars and labels independently within an identical fixed-height plotting area restores proportional heights and a true common zero.
+
+The refinement gives the chart a restrained double-line burgundy proscenium and pale weather contours. The italic serif headline and program-like masthead develop opera without adding thematic jargon. The atmospheric lines remain faint, behind opaque bars. Sunday retains the original burgundy emphasis. Chart labeling becomes literal: Daily visits, Mon–Sun, baseline 0.
+
+Remove redundant KPI sublabels and the header's description of visible metrics. Keep the conversion definition, synthetic-data disclosure, rounding note, every supplied count and every derived conversion rate. Tighten the daily observation to include Sunday's leading conversion rate. Keep source interpretation concise and numerical. Preserve the source-share bars and complete daily table.
+
+One refinement pass only. No external sources, extra experiments or additional datasets were used.

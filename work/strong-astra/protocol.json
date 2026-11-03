@@ -1,0 +1,237 @@
+{
+  "model": "gpt-6-astra",
+  "date": "2026-11-02",
+  "passesPerPair": 3,
+  "firstWrapper": "Produce one recorded experiment result. Read only the prompt file specified below and follow it exactly. Save the complete first HTML result to the output file specified below. Do not inspect other files, load design skills, use external sources, delegate, or do an iterative critique/refinement pass. The output must be your actual first response to the supplied prompt. Do not change it after saving it. Return only the saved path.",
+  "refinementWrapper": "Continue this same experiment from your previous result. Read the exact refinement prompt specified below and apply it once. Save your critique and complete revised HTML to the specified files. Do not overwrite any earlier output. Do not load skills, inspect other experiments, use external sources or delegate. If you find no justified change, save an identical HTML file and explain that in the critique. Do not edit the result after saving. Return only the saved paths.",
+  "prompt": "Harshly critique what still feels generic or only superficially themed. Rework the weakest design decisions so both ingredients shape the layout, typography and presentation of information. Commit to one clear visual idea; replace weak choices instead of accumulating decoration. Simple means easy to understand, with useful detail intact. Keep the purpose, figures and clear metric labels unchanged. Return the complete revised HTML.",
+  "plainPrompt": "Harshly critique what still feels generic or only superficially themed. Rework the weakest design decisions so a distinct visual identity shapes the layout, typography and presentation of information. Commit to one clear visual idea; replace weak choices instead of accumulating decoration. Simple means easy to understand, with useful detail intact. Keep the purpose, figures and clear metric labels unchanged. Return the complete revised HTML.",
+  "refinementPromptSha256": "c6fdc5db54e395ac04b934b1e4aec1676055a4410cfcd7e1473f98f2b4238ec9",
+  "plainRefinementPromptSha256": "6603988c0606baa5ff95c2f9dfc1cb09409958c1696497f4fdfaf48084f72f09",
+  "starts": [
+    {
+      "id": "0-0",
+      "file": "0-0-1.html",
+      "sha256": "97e457ed5de926b95ad494292cfffac04b430e315b408a271a3381d03a2f876d",
+      "briefSha256": "d01813ceb7573b772005a327d2ad279dc6fc8ad86d97485fa061c7a071f23a09"
+    },
+    {
+      "id": "0-1",
+      "file": "0-1-1.html",
+      "sha256": "3b53949930fe750bf4749f3331d52966d580ef49e31acc739e87743a4491f096",
+      "briefSha256": "3fc5d53658af62e56d98ffa94dd2f491d84e845d4ff7c14ffbbde95baee62f09"
+    },
+    {
+      "id": "0-2",
+      "file": "0-2-1.html",
+      "sha256": "dc7a70e71baf5b6db801df5ad453560c98e0ca2055d39fb180cc5f7647adf9a4",
+      "briefSha256": "c20cf014f5f3f9cafbd2ecc65de23afe901385b1f2bcadc7ae8d180383c08333"
+    },
+    {
+      "id": "0-3",
+      "file": "0-3-1.html",
+      "sha256": "a341e1cf8a76d7cecb2e3fbdc2c456b089619e787bdadc52e1aab5f9fe1aa31b",
+      "briefSha256": "e9bcc1044cbdd511d663ecc5867b82ee492d81ddd1cbb174e85edcabc0de8301"
+    },
+    {
+      "id": "0-4",
+      "file": "0-4-1.html",
+      "sha256": "58c6354e7431021ab3da2f7542a18ff1cc57d4d59a07590a14469602462d2fc6",
+      "briefSha256": "494715957e58f851d93fb59a7faa9321859b761ad234556c615f120ec1ce34cc"
+    },
+    {
+      "id": "0-5",
+      "file": "0-5-1.html",
+      "sha256": "0bfd0d8a2848eebd75d5f4fee651285cde0012dfb41049f6bceac11fb10e85a4",
+      "briefSha256": "a319904bc0b104ff7bf5b5b216f8258364c562fc99953eb667a4edeb6b51642f"
+    },
+    {
+      "id": "1-0",
+      "file": "1-0-1.html",
+      "sha256": "51cbbcafcd1e0f760c80c3ae8b6486d312e161d335bf067e1c8a92a65654091b",
+      "briefSha256": "c7cd64bc6516e504cde68f106d0f0bcef6c10e4046e2579b8213f24e2d29273f"
+    },
+    {
+      "id": "1-1",
+      "file": "1-1-1.html",
+      "sha256": "6872fd1f59ec92db8e0e450c88e2ad49a8f40f628ea9746307af65476e30e5e4",
+      "briefSha256": "735249b25d92fc21c41e37f90f95a499335dd8807903a772d535f68af8b357a2"
+    },
+    {
+      "id": "1-2",
+      "file": "1-2-1.html",
+      "sha256": "fb47dcad73124fbea9e8a5cf89f85ecdd05bdaccac3ad40031c16aa5930a68f6",
+      "briefSha256": "77f00234ca4eb9fda6dd1b9fe441ce715e82a0da82b3bbda8e74744d5fd88cb8"
+    },
+    {
+      "id": "1-3",
+      "file": "1-3-1.html",
+      "sha256": "ec69f3321c59e02f1abeda8b71070d6866ded0310a286e3162136cf4f2867c03",
+      "briefSha256": "a0a530177e41fb0aae667493a1d1fbddeede9cc95e5b358ad40e277c823d658a"
+    },
+    {
+      "id": "1-4",
+      "file": "1-4-1.html",
+      "sha256": "cbb9f2fae89f39f6dc748c7c1b4be31686f0d7448ce88388a042a5f0d97faffa",
+      "briefSha256": "d0692bce38685cfdd9a54afc7706fbbc59427cc52e628b8beea7d407ae351eb1"
+    },
+    {
+      "id": "1-5",
+      "file": "1-5-1.html",
+      "sha256": "25934cae78f80eb38e610f3aea98fc8aac0cdad62e34212f7929db67e347fa43",
+      "briefSha256": "fc96552950ca53db0040cf921e24a24a4d3ff6abfbd440a5c3f6aa1b801c64ab"
+    },
+    {
+      "id": "2-0",
+      "file": "2-0-1.html",
+      "sha256": "d3b1f4c0cf2d78f75c6a4e7891879e630c3a3af530ed3b168c786e3410421749",
+      "briefSha256": "ae3b1a2a2faefe83a25be89504dff814d19b08d35386d16d36ad7e45a6b0df1f"
+    },
+    {
+      "id": "2-1",
+      "file": "2-1-1.html",
+      "sha256": "961f614bb1fa5d54dcbed2e58af9ddb758dcf79c1f163db5eee172fe583ae558",
+      "briefSha256": "4c54e0f8e18b464db3acb4ab4b28fa2a1a81b18b15ab54a74767349aa3c0a82a"
+    },
+    {
+      "id": "2-2",
+      "file": "2-2-1.html",
+      "sha256": "3821661b9e01215ae6ad387b5714d31156dd9c16da0e55d82f0700b8b09a7525",
+      "briefSha256": "a93baebd421ed4aa9409e9ba644b027a8308a95f70814ea58509ec7799db1a76"
+    },
+    {
+      "id": "2-3",
+      "file": "2-3-1.html",
+      "sha256": "349166362441de41be5800a5266fb16dc2df59b0cf5d039527a7aa19e29c70cd",
+      "briefSha256": "fbaba2674fa644a1ae0cfd2b408d01d8534c5def513a8d792760e599b1c4b811"
+    },
+    {
+      "id": "2-4",
+      "file": "2-4-1.html",
+      "sha256": "41f8b88f57aa330b95cb93bb2fdb16c027f6c87d768ce233ba79878c3aa193b0",
+      "briefSha256": "cfeea3248d5e3bcd2d11536f2335b4ddc696491fc51c6741e1e479daa27d3166"
+    },
+    {
+      "id": "2-5",
+      "file": "2-5-1.html",
+      "sha256": "373fa257fceed8b44c3575bfb339ab669a3cdf7ce77fe75b8268ebbb3cfa74b3",
+      "briefSha256": "804278774fe2235c342f0944e4977b30658898112a01cbc53f481d2845268ba8"
+    },
+    {
+      "id": "3-0",
+      "file": "3-0-1.html",
+      "sha256": "b81842ee6da488f274cd8b248c28a3b3eb19892a08b60f949c024fad161af5d1",
+      "briefSha256": "d9ebabe6ec4c4a18969b0cf7ffc06b58db24a080965e07327bff0863a7f2b0f4"
+    },
+    {
+      "id": "3-1",
+      "file": "3-1-1.html",
+      "sha256": "cf979bdac18e7a2b04ff8a048e7649971174b2503ef3a11c919304733fa51675",
+      "briefSha256": "880c402ba2c2d831884a3720fb0606896869c30ca459c42fe4fcfdee0a177fb8"
+    },
+    {
+      "id": "3-2",
+      "file": "3-2-1.html",
+      "sha256": "fc247e9adcfdd7af56ed8c230477e18420fe760c75ea171d7c0f7bd9723fe71a",
+      "briefSha256": "b176020886a980d2fcd7caa9333fff7703a9fc89e11a8706bd489bba30dbd7c4"
+    },
+    {
+      "id": "3-3",
+      "file": "3-3-1.html",
+      "sha256": "859d8ba16c4578c05dd62e7fa7334c0c9ac37fdbddd8cda5abf5ecdbd82d6d21",
+      "briefSha256": "10265533374433910bd5d9452aa80be04dbc60e1a83ba6084d9790e0da986c84"
+    },
+    {
+      "id": "3-4",
+      "file": "3-4-1.html",
+      "sha256": "da907e923cec8e12ded79a18d73efc0b6b96a0b46a6bcc674e4ae079bd49cf32",
+      "briefSha256": "02e8f11732bdd7f6589b5064425f78bd06a3e51a4b15b5d82dd63d4df2810900"
+    },
+    {
+      "id": "3-5",
+      "file": "3-5-1.html",
+      "sha256": "6806503b39097aabe85089e3f2426478c659dbffefe9f3e17c3bb8754f94cab7",
+      "briefSha256": "03c078b9a3340160ae9c54e47474a4f4d8f535ef917fe5187bc7099d59029fd8"
+    },
+    {
+      "id": "4-0",
+      "file": "4-0-1.html",
+      "sha256": "15ffc9361fcb494b1df14c022a0eeb7facacf8118454692a43f2c4347eb4426b",
+      "briefSha256": "d95b55f92b2d57e23971ccffe775bb2d0ce28516b73055d54cfa52d9362c1d7e"
+    },
+    {
+      "id": "4-1",
+      "file": "4-1-1.html",
+      "sha256": "14ee97b7dafb66e4ab1d5a91733b60bbf45180f7a6d8f7cbbbc92f8f1627be43",
+      "briefSha256": "31c0139b38a44e608d6ffd525bda04195380ff108012747a78d2f17c32d525aa"
+    },
+    {
+      "id": "4-2",
+      "file": "4-2-1.html",
+      "sha256": "b2359c633e197bf40773a16c289eb19d85352f73dafb0e21d941004fc4878f57",
+      "briefSha256": "78a5468fe69e5638e8db251ffc99d6637e8ee0f0c51c7afde160f9795f37ce45"
+    },
+    {
+      "id": "4-3",
+      "file": "4-3-1.html",
+      "sha256": "4de1093c8209ad73a5f3bd37b68241b3d4e73f2d14e310ccc7beae722bc5f179",
+      "briefSha256": "fc16507fc821abf31e8eba3298e64558ab69730cf74449afccee156b5d39b6ed"
+    },
+    {
+      "id": "4-4",
+      "file": "4-4-1.html",
+      "sha256": "971780ba98e30070a6c5310e4548da4b41dfea48d64b040a0e153509496fc46b",
+      "briefSha256": "ae30cee3b21aebe67e6703bf8c7d51abbb99db54a33b737bc9bedac208375668"
+    },
+    {
+      "id": "4-5",
+      "file": "4-5-1.html",
+      "sha256": "c2c0258577e9243c6d09c2512025b761b3f261ea6fa986bb7509c99228c10adb",
+      "briefSha256": "f4a00f8768472416c8ed1ce870e4d1b10b60677915cd95d1b7f291ecad0a57d4"
+    },
+    {
+      "id": "5-0",
+      "file": "5-0-1.html",
+      "sha256": "df7fbe3b7a9f6ddf5ebe3fa9df19b58f90790777299faab56c9f178384224bcb",
+      "briefSha256": "348b593498edb816b0b9b8cd7b7266350317a9d2df00e5320cf3425f9a157535"
+    },
+    {
+      "id": "5-1",
+      "file": "5-1-1.html",
+      "sha256": "1d41fcad623181b6cab3d507a13cb9483ea6f2c5c2c138f6af1a7f10f8f36486",
+      "briefSha256": "d2f67dbc6dff0c43c1bf32f375dbbb7355f28f9e1f85293dfdfec08811c61c2e"
+    },
+    {
+      "id": "5-2",
+      "file": "5-2-1.html",
+      "sha256": "aeab394786a0e998b5797e3ae0a747718b95de8e3ded4e185c1593339a056a14",
+      "briefSha256": "4b85b8d8be2032e6f7c8f00f249b92c973ba9a2ff5aaa3230b38d9b9ac821fa9"
+    },
+    {
+      "id": "5-3",
+      "file": "5-3-1.html",
+      "sha256": "cf2971dd71e4ae1a0b8599b99ead92e9b27dee911ddaa77200a5f432f1953463",
+      "briefSha256": "a9c16d4f1e36aa5097e6beb7e972427764b5ac2962ddb9033fc121cf1204742b"
+    },
+    {
+      "id": "5-4",
+      "file": "5-4-1.html",
+      "sha256": "9c5a7bddbd147ae7cb30491fcd3575b6f3415e9678e1add3c5981e70ea7a95a2",
+      "briefSha256": "388bde33feca5c587f9ff394efdae96c7ebf37eea63c9da186cdcd9a38b29b2a"
+    },
+    {
+      "id": "5-5",
+      "file": "5-5-1.html",
+      "sha256": "50a7b241af5a6668de53796131c1dbabca1038d51971f61e7b1f14a82d2300be",
+      "briefSha256": "a07714eb28498cc0dc96003fdcdc111bee89b3f288ab05edd76f2efab8efc5b6"
+    },
+    {
+      "id": "plain",
+      "file": "plain-1.html",
+      "sha256": "a70b064977b62eeeb0e9eb20764e147d49666b15ec70dca71deb1d1c41c62e85",
+      "briefSha256": "3e37d396644327e2dcb80d8bc63cde7bfda3b7ccef1c74380ff678921ec73aac"
+    }
+  ],
+  "setup": "Each stronger-prompt trajectory starts from the exact preserved original one-shot in a fresh Astra context supplied with its original filled brief and saved HTML. Three separate sequential refinement turns use the same unchanged prompt, continuing in that restored context. No design skills, external references, sibling outputs, reruns or manual HTML repairs are supplied. The previous prompt trajectories are preserved separately. Restored contexts differ from uninterrupted original conversations, so this is an illustrative comparison rather than an isolated estimate of the prompt effect. The brief-only trajectory follows the same procedure with “both ingredients shape” replaced by “a distinct visual identity shapes”.",
+  "sourceStudy": "The stronger prompt was selected after the three-pair matched test. These trajectories restart from the original one-shots, not from that test or the previous final refinements."
+}

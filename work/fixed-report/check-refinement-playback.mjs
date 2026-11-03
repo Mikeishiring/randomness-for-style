@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+let stage=1,visible=true,nextId=0;
+const tasks=new Map(),states=[],visited=[];
+const context=vm.createContext({setTimeout,clearTimeout});
+vm.runInContext(readFileSync(new URL('refinement-playback.js',import.meta.url),'utf8')+';this.create=createRefinementPlayback;',context);
+const player=context.create({getStage:()=>stage,setStage:n=>{stage=n;visited.push(n)},canPlay:()=>visible,onPlaying:on=>states.push(on),schedule:(fn,delay)=>{const id=++nextId;tasks.set(id,{fn,delay});return id},unschedule:id=>tasks.delete(id)});
+const next=()=>{const [id,task]=tasks.entries().next().value;tasks.delete(id);assert.equal(task.delay,2200);task.fn()};
+player.start();assert.equal(stage,1);assert.equal(player.running,true);assert.equal(tasks.size,1);
+next();assert.equal(stage,2);next();assert.equal(stage,3);next();assert.equal(stage,4);assert.equal(player.running,false);assert.equal(tasks.size,0);assert.deepEqual(visited,[2,3,4]);
+player.start();assert.equal(stage,1);next();player.stop();assert.equal(stage,2);assert.equal(tasks.size,0);player.toggle();next();assert.equal(stage,3);
+visible=false;next();assert.equal(stage,3);assert.equal(player.running,false);assert.equal(tasks.size,0);
+player.start();assert.equal(player.running,false);visible=true;player.start();const stale=tasks.values().next().value.fn;player.stop();stale();assert.equal(stage,3);assert.equal(tasks.size,0);
+player.start({restart:true});assert.equal(stage,1);player.toggle();assert.equal(player.running,false);assert.equal(tasks.size,0);
+console.log('PASS: finite four-stage playback, reading holds, pause/resume, replay, cancellation and visibility guard; no skipped or fabricated stages.');

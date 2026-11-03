@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deep Disco — Week 01</title>
+<style>
+
+:root{color-scheme:dark;--bg:#081d20;--surface:#102a2d;--line:#41605b;--text:#f4edcc;--muted:#b2c2b8;--mint:#b9e8b6;--pink:#f2b9ce;--gold:#e6cf89}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:1120px;margin:32px auto;padding:0 36px 28px;border-left:1px solid var(--line);border-right:1px solid var(--line)}header{position:relative;display:flex;justify-content:space-between;align-items:center;gap:24px;min-height:174px;border-bottom:3px double var(--line)}.brand{display:flex;align-items:center;gap:22px}.brand svg{width:84px;height:108px;flex-shrink:0}.brand-name{font:italic 76px/.9 Georgia,serif;letter-spacing:-5px}.brand-name span{display:block;color:var(--mint);padding-left:38px}.period{align-self:flex-end;margin-bottom:25px;padding:10px 0 10px 24px;border-left:1px solid var(--line);font-size:15px;white-space:nowrap}h1{font:500 21px/1.3 system-ui,sans-serif;letter-spacing:-.5px;margin:27px 0 21px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);margin:0 0 32px;border:1px solid var(--line);border-radius:70px 70px 0 0;overflow:hidden;background:linear-gradient(180deg,#193a36,transparent)}.metric{padding:27px 24px 23px;border-left:1px solid var(--line);text-align:center}.metric:first-child{border:0}.metric dt{color:var(--muted);font-size:13px;margin-bottom:5px}.metric dd{margin:0;font:56px/1.15 Georgia,serif;letter-spacing:-2px;font-variant-numeric:lining-nums tabular-nums}.metric:last-child dd{color:var(--mint)}.panel{margin:0 0 30px;border-top:3px double var(--line);padding-top:22px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:20px}h2{font:500 20px/1.3 system-ui,sans-serif;letter-spacing:-.5px;margin:0}.switch{display:flex;border:1px solid var(--line);padding:3px}.switch button{font:inherit;font-size:13px;background:transparent;color:var(--muted);border:0;padding:6px 16px;cursor:pointer}.switch button[aria-pressed="true"]{background:var(--mint);color:var(--bg)}.switch button:hover{color:var(--text)}.switch button[aria-pressed="true"]:hover{color:var(--bg)}button:focus-visible{outline:2px solid var(--pink);outline-offset:4px}.chart{position:relative;margin-top:38px;padding-left:45px}.grid{position:absolute;inset:0 0 34px 45px;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}.grid div{border-top:1px solid var(--line);position:relative}.grid span{position:absolute;right:calc(100% + 10px);top:-9px;font-size:11px;color:var(--muted)}.bars{height:270px;display:grid;grid-template-columns:repeat(7,1fr);gap:clamp(10px,3vw,36px);position:relative;align-items:end}.column{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;position:relative;padding-bottom:34px}.bar{width:100%;max-width:86px;background-color:var(--mint);background-image:linear-gradient(90deg,transparent calc(50% - .5px),#305c4c88 calc(50% - .5px),#305c4c88 calc(50% + .5px),transparent calc(50% + .5px)),repeating-linear-gradient(0deg,transparent 0,transparent 23px,#305c4c88 23px,#305c4c88 24px);position:relative;min-height:2px;box-shadow:inset 0 0 18px #ffffff19}.column:last-child .bar{background-color:var(--pink)}.value{position:absolute;bottom:calc(100% + 6px);width:100%;text-align:center;font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}.day{position:absolute;bottom:0;color:var(--muted);font-size:13px}.chart-note{margin:20px 0 0;padding:13px 0 0;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}.chart-note strong{color:var(--text);font-weight:550}.sources{overflow-x:auto}table{border-collapse:collapse;width:100%;margin-top:23px;font-variant-numeric:tabular-nums}th{text-align:right;color:var(--muted);font-weight:400;font-size:12px;padding:0 0 12px}th:first-child{text-align:left;width:43%}td{padding:16px 0;border-top:1px solid var(--line);text-align:right}td:first-child{text-align:left}.source-name{display:flex;align-items:center;gap:10px}.dot{display:none}.source-bar{width:75%;height:6px;background:#203c38;margin-top:8px;overflow:hidden}.source-bar span{display:block;height:100%;background:var(--mint)}footer{display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:12px;border-top:3px double var(--line);padding-top:16px}.star{display:none}@media(max-width:600px){main{margin:16px 12px;padding:0 15px 20px}header{min-height:142px;gap:12px}.brand{gap:12px}.brand-name{font-size:52px;letter-spacing:-3px}.brand-name span{padding-left:20px}.brand svg{width:52px;height:77px}.period{font-size:12px;padding-left:10px;margin-bottom:20px}h1{font-size:19px;margin:23px 0 18px}.metrics{border-radius:40px 40px 0 0;margin-bottom:28px}.metric{padding:22px 6px 18px}.metric dt{font-size:11px}.metric dd{font-size:32px;letter-spacing:-1px}.panel-head{gap:10px}h2{font-size:17px}.switch button{padding:5px 9px;font-size:12px}.chart{padding-left:32px;margin-top:33px}.grid{left:32px}.bars{height:226px;gap:10px}.value{font-size:10px}.day{font-size:12px}.chart-note{font-size:13px}th:first-child{width:34%}td{font-size:13px}th{font-size:11px}.source-bar{width:85%}footer{font-size:11px;flex-wrap:wrap;gap:5px}}@media(max-width:360px){.brand-name{font-size:43px}.brand svg{width:43px}.period{padding-left:7px}.metric dd{font-size:29px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="brand">
+<svg viewBox="0 0 80 90" aria-hidden="true"><defs><clipPath id="ball"><circle cx="40" cy="28" r="21"/></clipPath></defs><path d="M40 0v7" stroke="#a5b8b5"/><circle cx="40" cy="28" r="21" fill="#a9e5bd"/><g clip-path="url(#ball)" fill="none" stroke="#143d38" stroke-width="1.5"><path d="M19 17h42M19 28h42M19 39h42M40 7v42M29 7q-7 21 0 42M51 7q7 21 0 42"/><path d="M20 9l40 39M15 31l25 25" stroke="#f3f0df" stroke-width="5" opacity=".55"/></g><path d="M23 43c-7 10-10 12-10 23 0 13-10 10-8 3M32 48c-9 9-7 18-6 24s-7 13-11 5M40 50v23c0 13-10 16-13 9M47 48c9 8 4 17 7 24s12 9 13 1M57 43c3 11 11 10 11 20 0 9 9 9 7 1" fill="none" stroke="#a9e5bd" stroke-width="4" stroke-linecap="round"/><path d="M67 6v10m-5-5h10" stroke="#edb0d0" stroke-width="2"/></svg>
+<div class="brand-name">Deep <span>Disco</span></div>
+</div>
+<div class="period">Week 01</div>
+</header>
+<h1>Website performance</h1>
+<dl class="metrics">
+<div class="metric"><dt>Visits</dt><dd>12,480</dd></div>
+<div class="metric"><dt>Signups</dt><dd>624</dd></div>
+<div class="metric"><dt>Signup rate</dt><dd>5.0%</dd></div>
+</dl>
+<section class="panel" aria-labelledby="daily-title">
+<div class="panel-head"><h2 id="daily-title">Daily performance</h2><div class="switch" role="group" aria-label="Chart metric"><button type="button" aria-pressed="true" data-metric="visits">Visits</button><button type="button" aria-pressed="false" data-metric="signups">Signups</button></div></div>
+<div class="chart" role="img" id="chart" aria-label="Daily visits: Monday 1,420; Tuesday 1,600; Wednesday 1,780; Thursday 1,640; Friday 1,920; Saturday 2,020; Sunday 2,100.">
+<div class="grid" aria-hidden="true"><div><span id="axis-top">2,500</span></div><div><span id="axis-mid">1,250</span></div><div><span>0</span></div></div>
+<div class="bars" aria-hidden="true">
+<div class="column"><div class="bar" style="height:56.8%"><span class="value">1,420</span></div><span class="day">Mon</span></div>
+<div class="column"><div class="bar" style="height:64%"><span class="value">1,600</span></div><span class="day">Tue</span></div>
+<div class="column"><div class="bar" style="height:71.2%"><span class="value">1,780</span></div><span class="day">Wed</span></div>
+<div class="column"><div class="bar" style="height:65.6%"><span class="value">1,640</span></div><span class="day">Thu</span></div>
+<div class="column"><div class="bar" style="height:76.8%"><span class="value">1,920</span></div><span class="day">Fri</span></div>
+<div class="column"><div class="bar" style="height:80.8%"><span class="value">2,020</span></div><span class="day">Sat</span></div>
+<div class="column"><div class="bar" style="height:84%"><span class="value">2,100</span></div><span class="day">Sun</span></div>
+</div>
+</div>
+<p class="chart-note"><span class="star" aria-hidden="true">✦</span><strong>Sunday led both measures:</strong> 2,100 visits and 127 signups.</p>
+</section>
+<section class="panel" aria-labelledby="sources-title">
+<h2 id="sources-title">Where visitors came from</h2>
+<div class="sources"><table><thead><tr><th scope="col">Source</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Signup rate</th></tr></thead><tbody>
+<tr><td><div class="source-name"><span class="dot"></span>Direct</div><div class="source-bar" aria-hidden="true"><span style="width:41.987%"></span></div></td><td>5,240</td><td>314</td><td>6.0%</td></tr>
+<tr class="search"><td><div class="source-name"><span class="dot"></span>Search</div><div class="source-bar" aria-hidden="true"><span style="width:35.897%"></span></div></td><td>4,480</td><td>224</td><td>5.0%</td></tr>
+<tr class="social"><td><div class="source-name"><span class="dot"></span>Social</div><div class="source-bar" aria-hidden="true"><span style="width:22.115%"></span></div></td><td>2,760</td><td>86</td><td>3.1%</td></tr>
+</tbody></table></div>
+<p class="chart-note"><strong>Direct brought the most visits and signups.</strong> Social had the lowest signup rate.</p>
+</section>
+<footer><span>Synthetic data · Week 01</span><span>Signup rate = signups ÷ visits</span></footer>
+</main>
+<script>
+const daily=[{day:'Mon',visits:1420,signups:57},{day:'Tue',visits:1600,signups:72},{day:'Wed',visits:1780,signups:89},{day:'Thu',visits:1640,signups:74},{day:'Fri',visits:1920,signups:96},{day:'Sat',visits:2020,signups:109},{day:'Sun',visits:2100,signups:127}];
+const format=n=>n.toLocaleString('en-US');
+function draw(metric){const max=metric==='visits'?2500:150;document.querySelectorAll('[data-metric]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.metric===metric)));document.querySelector('#axis-top').textContent=format(max);document.querySelector('#axis-mid').textContent=format(max/2);document.querySelectorAll('.bar').forEach((bar,i)=>{bar.style.height=(daily[i][metric]/max*100)+'%';bar.querySelector('.value').textContent=format(daily[i][metric]);});document.querySelector('#chart').setAttribute('aria-label','Daily '+metric+': '+daily.map(d=>d.day+' '+format(d[metric])).join('; ')+'.');}
+document.querySelectorAll('[data-metric]').forEach(button=>button.addEventListener('click',()=>draw(button.dataset.metric)));
+</script>
+</body>
+</html>

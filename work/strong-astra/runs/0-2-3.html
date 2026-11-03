@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Deep Fry — Week 01</title>
+<style>
+:root{--sea:#102e29;--deep:#09241f;--cream:#f7eed5;--gold:#f4c451;--muted:#bdcabe;--rule:#486157;--red:#ae432c}*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--cream);font-family:Arial,Helvetica,sans-serif}button{font:inherit}main{max-width:1180px;margin:32px auto;padding:0 28px}.board{position:relative;background:var(--sea);border:8px solid var(--deep);border-radius:120px 120px 12px 12px;padding:30px 34px 32px;box-shadow:inset 0 0 0 1px var(--rule)}.masthead{display:grid;grid-template-columns:1fr 150px 1fr;align-items:center;gap:20px;padding:0 8px 19px;border-bottom:1px solid var(--rule)}.brand{font-family:Georgia,'Times New Roman',serif;font-size:clamp(30px,4.3vw,52px);font-weight:900;line-height:.89;letter-spacing:-2px;color:var(--gold)}.crest{width:150px;height:122px;display:block}.week{justify-self:end;text-align:center;border-top:2px solid var(--gold);border-bottom:2px solid var(--gold);padding:10px 21px;color:var(--gold)}.week span{display:block;font-size:11px;font-weight:700;letter-spacing:2px}.week strong{font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:45px;line-height:1.1}.page-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:23px 0 16px}h1{font-size:14px;letter-spacing:1.6px;text-transform:uppercase;margin:0}.synthetic{color:var(--muted);font-size:11px;white-space:nowrap}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;border-bottom:2px solid var(--gold);padding:4px 0 24px}.metric{padding:21px 10px 0;text-align:center;border-top:2px solid var(--gold);border-radius:50% 50% 0 0}.metric-label{position:relative}.metric-label{font-size:14px;font-weight:700}.metric-value{display:block;color:var(--gold);font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:clamp(43px,6vw,74px);line-height:1.15;font-weight:900;letter-spacing:1px;margin-top:8px;font-variant-numeric:tabular-nums}.analytics{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:32px;margin-top:28px}.sources{border-left:1px solid var(--rule);padding-left:32px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:36px;margin-bottom:21px}h2{font-family:Impact,'Arial Narrow',Arial,sans-serif;text-transform:uppercase;font-size:25px;font-weight:800;letter-spacing:1px;margin:0}.toggle{display:flex;border:1px solid var(--muted);padding:2px;flex-shrink:0}.toggle button{min-height:34px;padding:6px 10px;border:0;color:var(--cream);background:transparent;cursor:pointer;font-size:12px;font-weight:bold}.toggle button[aria-pressed=true]{background:var(--gold);color:var(--deep)}button:focus-visible{outline:3px solid white;outline-offset:4px}.chart-wrap{position:relative;padding-left:37px;padding-top:19px}.axis-top,.axis-zero{position:absolute;left:0;font-family:monospace;font-size:10px;color:var(--muted)}.axis-top{top:14px}.axis-zero{bottom:24px}.chart{position:relative;height:182px;display:flex;gap:10px;align-items:flex-end;border-top:1px solid var(--rule);border-bottom:1px solid var(--muted);background:linear-gradient(to bottom,transparent calc(50% - .5px),var(--rule) 50%,transparent calc(50% + .5px))}.column{position:relative;flex:1;height:100%;display:flex;align-items:flex-end;justify-content:center}.bar{position:relative;width:100%;max-width:43px;background:var(--cream);height:var(--height);border-radius:0;flex-shrink:0}.column:last-child .bar{background:var(--gold)}.bar-label{position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);font-size:11px;font-weight:bold;white-space:nowrap;font-variant-numeric:tabular-nums}.days{display:flex;gap:10px;padding-top:10px}.days span{flex:1;text-align:center;font-size:11px;color:var(--muted)}.days span:last-child{color:var(--gold)}.finding{font-size:13px;line-height:1.6;color:var(--muted);margin:22px 0 0}.finding strong{color:var(--cream);font-weight:700}.source-unit{font-size:11px;color:var(--muted)}.source{margin-bottom:24px}.source-top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:8px;font-size:14px}.source-top strong{font-family:monospace;font-size:20px;color:var(--cream)}.track{height:7px;background:var(--deep)}.fill{height:100%;background:var(--cream)}.source-details{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:var(--muted);margin-top:8px}.receipt{position:relative;background:#fffcf2;color:var(--deep);margin:0 32px;padding:28px 34px 24px;filter:drop-shadow(0 6px 4px #102e2910);border-top:6px solid #071d18}.receipt:after{content:"";position:absolute;bottom:-9px;left:0;right:0;height:10px;background:linear-gradient(135deg,#fffcf2 25%,transparent 25%) -10px 0/20px 20px,linear-gradient(225deg,#fffcf2 25%,transparent 25%) -10px 0/20px 20px}.receipt-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px}.receipt-head h2{font-size:23px}.receipt-head span{font:11px monospace}table{width:100%;border-collapse:collapse;font-family:'Courier New',monospace;font-size:13px;font-variant-numeric:tabular-nums;margin-top:18px}th,td{text-align:right;padding:9px 10px;border-bottom:1px dashed #c4cabe}th:first-child,td:first-child{text-align:left;padding-left:0}th:last-child,td:last-child{padding-right:0}thead th{font-size:11px;padding-top:0;padding-bottom:12px}tbody th{font-weight:normal}tfoot{font-weight:bold}tfoot th,tfoot td{border-top:2px solid var(--deep);border-bottom:0;padding-top:14px}.receipt footer{margin-top:18px;border-top:1px dashed #a1ada2;padding-top:12px;font-size:10px;line-height:1.6;color:#53665c}@media(max-width:800px){main{padding:0 16px;margin:16px auto}.board{padding:25px 23px;border-width:6px;border-radius:70px 70px 10px 10px}.masthead{grid-template-columns:1fr 100px 1fr;gap:10px}.crest{width:100px;height:100px}.brand{font-size:35px}.week{padding:9px 14px}.week strong{font-size:36px}.metrics{padding:4px 0 18px}.metric{padding:20px 8px 0}.metric-value{font-size:48px}.analytics{grid-template-columns:1fr;gap:28px}.sources{border-left:0;border-top:1px solid var(--rule);padding-left:0;padding-top:22px}.source{margin-bottom:18px}.receipt{margin:0 18px;padding:24px}.chart{height:190px}.finding{margin-top:18px}}@media(max-width:480px){main{padding:0 9px;margin-top:9px}.board{padding:21px 16px 25px;border-width:5px;border-radius:55px 55px 8px 8px}.masthead{padding:0 0 14px;grid-template-columns:1fr 82px 62px;gap:8px}.brand{font-size:29px;letter-spacing:0}.crest{width:82px;height:90px}.week{padding:7px 10px}.week span{font-size:9px;letter-spacing:1px}.week strong{font-size:30px}.page-heading{align-items:baseline;padding-top:19px}h1{font-size:11px;letter-spacing:1px}.synthetic{font-size:10px}.metrics{gap:8px}.metric{padding:18px 2px 0}.metric-label{font-size:12px}.metric-value{font-size:35px;letter-spacing:0}.section-head{gap:8px}h2{font-size:22px}.toggle button{padding:6px 9px}.chart-wrap{padding-left:28px}.chart,.days{gap:7px}.chart{height:170px}.bar-label{font-size:10px}.axis-top,.axis-zero{font-size:9px}.receipt{margin:0 9px;padding:22px 14px}.receipt-head h2{font-size:20px}.receipt-head span{font-size:10px}table{font-size:12px}th,td{padding:9px 5px}thead th{font-size:10px}}
+</style>
+</head>
+<body>
+<main>
+<div class="board">
+<header class="masthead">
+<div class="brand">THE<br>DEEP FRY</div>
+<svg class="crest" viewBox="0 0 150 122" aria-hidden="true">
+<path d="M48 47C34 23 14 24 4 13L10 70Q22 57 31 70Q37 61 46 73M102 47C116 23 136 24 146 13L140 70Q128 57 119 70Q113 61 104 73" fill="#f4c451"/>
+<path d="M10 25 39 57M140 25 111 57" fill="none" stroke="#102e29" stroke-width="3"/>
+<path d="M39 70C16 67 11 90 24 96C36 101 43 91 37 86M111 70C134 67 139 90 126 96C114 101 107 91 113 86M56 77C42 88 50 112 34 109M94 77C108 88 100 112 116 109M67 79C56 101 65 119 75 109C85 119 94 101 83 79" fill="none" stroke="#f4c451" stroke-width="7" stroke-linecap="round"/>
+<path d="M38 43C38 3 112 3 112 43Z" fill="#f4c451" stroke="#102e29" stroke-width="4"/><path d="m56 29 4-3m13-5 4 1m13 7 4 2" stroke="#102e29" stroke-width="3" stroke-linecap="round"/>
+<path d="M36 49h78" stroke="#f7eed5" stroke-width="6" stroke-linecap="round"/><path d="m41 58 12 5 11-5 11 5 11-5 11 5 12-5v12c0 14-21 22-34 21-13 1-34-7-34-21Z" fill="#f4c451"/><path d="m53 70 12 5m32-5-12 5" stroke="#102e29" stroke-width="4" stroke-linecap="round"/>
+</svg>
+<div class="week"><span>WEEK</span><strong>01</strong></div>
+</header>
+<div class="page-heading"><h1>Website performance</h1><span class="synthetic">Synthetic data</span></div>
+<section class="metrics" aria-label="Week 01 totals">
+<div class="metric"><span class="metric-label">Visits</span><strong class="metric-value">12,480</strong></div>
+<div class="metric"><span class="metric-label">Signups</span><strong class="metric-value">624</strong></div>
+<div class="metric"><span class="metric-label">Signup rate</span><strong class="metric-value">5.0%</strong></div>
+</section>
+<div class="analytics">
+<section aria-labelledby="daily-title">
+<div class="section-head"><h2 id="daily-title">By day</h2><div class="toggle" role="group" aria-label="Daily chart metric"><button id="visits-button" type="button" aria-pressed="true">Visits</button><button id="signups-button" type="button" aria-pressed="false">Signups</button></div></div>
+<div class="chart-wrap"><span class="axis-top" id="axis-max" aria-hidden="true">2,400</span><span class="axis-zero" aria-hidden="true">0</span>
+<div class="chart" id="chart" role="img" aria-label="Daily visits, scale zero to 2,400. Monday 1,420; Tuesday 1,600; Wednesday 1,780; Thursday 1,640; Friday 1,920; Saturday 2,020; Sunday 2,100. Exact values and signup rates are in the daily receipt below.">
+<div class="column"><div class="bar" style="--height:59.1667%"><span class="bar-label">1,420</span></div></div>
+<div class="column"><div class="bar" style="--height:66.6667%"><span class="bar-label">1,600</span></div></div>
+<div class="column"><div class="bar" style="--height:74.1667%"><span class="bar-label">1,780</span></div></div>
+<div class="column"><div class="bar" style="--height:68.3333%"><span class="bar-label">1,640</span></div></div>
+<div class="column"><div class="bar" style="--height:80%"><span class="bar-label">1,920</span></div></div>
+<div class="column"><div class="bar" style="--height:84.1667%"><span class="bar-label">2,020</span></div></div>
+<div class="column"><div class="bar" style="--height:87.5%"><span class="bar-label">2,100</span></div></div>
+</div>
+<div class="days" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div></div>
+<p class="finding"><strong>Sunday leads all three measures:</strong> 2,100 visits, 127 signups and a 6.0% signup rate.</p>
+</section>
+<section class="sources" aria-labelledby="sources-title"><div class="section-head"><h2 id="sources-title">By source</h2><span class="source-unit">Visits</span></div>
+<div class="source"><div class="source-top"><span>Direct</span><strong>5,240</strong></div><div class="track" aria-hidden="true"><div class="fill" style="width:100%"></div></div><div class="source-details"><span>314 signups</span><span>6.0% signup rate</span></div></div>
+<div class="source"><div class="source-top"><span>Search</span><strong>4,480</strong></div><div class="track" aria-hidden="true"><div class="fill" style="width:85.4962%"></div></div><div class="source-details"><span>224 signups</span><span>5.0% signup rate</span></div></div>
+<div class="source"><div class="source-top"><span>Social</span><strong>2,760</strong></div><div class="track" aria-hidden="true"><div class="fill" style="width:52.6718%"></div></div><div class="source-details"><span>86 signups</span><span>3.1% signup rate</span></div></div>
+<p class="finding"><strong>Direct leads in visits and signup rate.</strong> Social converts at 3.1%, below the 5.0% weekly average.</p>
+</section>
+</div>
+</div>
+<section class="receipt" aria-labelledby="receipt-title">
+<div class="receipt-head"><h2 id="receipt-title">The daily receipt</h2><span>WEEK 01 / 7 DAYS</span></div>
+<table><thead><tr><th scope="col">Day</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Signup rate</th></tr></thead><tbody>
+<tr><th scope="row">Mon</th><td>1,420</td><td>57</td><td>4.0%</td></tr>
+<tr><th scope="row">Tue</th><td>1,600</td><td>72</td><td>4.5%</td></tr>
+<tr><th scope="row">Wed</th><td>1,780</td><td>89</td><td>5.0%</td></tr>
+<tr><th scope="row">Thu</th><td>1,640</td><td>74</td><td>4.5%</td></tr>
+<tr><th scope="row">Fri</th><td>1,920</td><td>96</td><td>5.0%</td></tr>
+<tr><th scope="row">Sat</th><td>2,020</td><td>109</td><td>5.4%</td></tr>
+<tr><th scope="row">Sun</th><td>2,100</td><td>127</td><td>6.0%</td></tr>
+</tbody><tfoot><tr><th scope="row">Total</th><td>12,480</td><td>624</td><td>5.0%</td></tr></tfoot></table>
+<footer>Source: supplied synthetic data, Week 01. Signup rate = signups ÷ visits, rounded to one decimal. No previous-period data supplied.</footer>
+</section>
+</main>
+<script>
+const days=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const values={visits:[1420,1600,1780,1640,1920,2020,2100],signups:[57,72,89,74,96,109,127]};
+function setMetric(metric){
+const max=metric==='visits'?2400:140;
+const chart=document.getElementById('chart');
+chart.querySelectorAll('.bar').forEach((bar,i)=>{bar.style.setProperty('--height',(values[metric][i]/max*100)+'%');bar.querySelector('.bar-label').textContent=values[metric][i].toLocaleString('en-US');});
+document.getElementById('axis-max').textContent=max.toLocaleString('en-US');
+chart.setAttribute('aria-label','Daily '+metric+', scale zero to '+max.toLocaleString('en-US')+'. '+days.map((day,i)=>day+' '+values[metric][i].toLocaleString('en-US')).join('; ')+'. Exact values and signup rates are in the daily receipt below.');
+['visits','signups'].forEach(key=>document.getElementById(key+'-button').setAttribute('aria-pressed',String(key===metric)));
+}
+['visits','signups'].forEach(metric=>document.getElementById(metric+'-button').addEventListener('click',()=>setMetric(metric)));
+</script>
+</body>
+</html>
+

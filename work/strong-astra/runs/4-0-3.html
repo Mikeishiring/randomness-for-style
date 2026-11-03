@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 01 — Site telemetry</title>
+<style>
+:root{--bg:#121719;--ink:#f0f2e9;--muted:#a9b2b3;--line:#3b474a;--lime:#d5f45a;--cyan:#70d9e6;--mono:Consolas,'Liberation Mono',monospace}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px Arial,Helvetica,sans-serif}main{max-width:1320px;padding:28px 36px;margin:auto}.mast{display:flex;justify-content:space-between;gap:16px;padding:0 0 18px;border-bottom:1px solid var(--line);font:12px var(--mono);letter-spacing:.04em}.mast strong{font-weight:normal;color:var(--lime)}.mast span{color:var(--muted)}.console{display:grid;grid-template-columns:245px minmax(0,1fr);gap:38px;margin-top:28px}.overview{border-right:1px solid var(--line);padding-right:30px}.session{padding:0 0 25px;border-bottom:4px solid var(--ink)}h1{font:italic 66px/.95 Impact,'Arial Narrow',Arial,sans-serif;letter-spacing:-.025em;text-transform:uppercase;margin:0 0 14px}h1 span{color:var(--lime)}.session p{color:var(--muted);font:12px/1.5 var(--mono);margin:0}.metrics{margin:0}.metric{padding:24px 0;border-bottom:1px solid var(--line)}.metric dt{font:13px var(--mono);margin-bottom:10px}.metric dd{font:bold 47px/1 var(--mono);letter-spacing:-.065em;margin:0}.metric dd small{font-size:.56em;margin-left:3px}.metric.visits dt,.visits-value{color:var(--lime)}.metric.signups dt,.signups-value{color:var(--cyan)}.boards{min-width:0}.board-head{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:0 0 12px;border-bottom:3px solid var(--ink)}h2{font-size:19px;margin:0;letter-spacing:-.025em}.board-head span{font:10px var(--mono);color:var(--muted)}table{width:100%;border-collapse:collapse;table-layout:fixed;font:14px var(--mono);font-variant-numeric:tabular-nums}col:first-child{width:20%}col:nth-child(2){width:29%}col:nth-child(3){width:28%}col:last-child{width:23%}thead th{font-size:11px;font-weight:normal;text-align:right;color:var(--muted);padding:11px 12px}thead th:first-child{text-align:left}thead small{display:block;font-size:9px;font-weight:normal;color:var(--muted);margin-top:4px}tbody td,tbody th{height:49px;border-top:1px solid var(--line);padding:8px 12px;text-align:right;font-weight:normal}tbody th{text-align:left;font-size:13px}tbody tr:nth-child(even){background:#192124}.row-id{display:inline-block;width:27px;color:#99a5a8;font-size:10px}.value{display:block}.track{display:block;height:5px;background:#354044;margin-top:7px}.track i{display:block;height:100%;background:var(--lime)}.track.signups i{background:var(--cyan)}.daily tr.best{background:#273323}.daily tr.best th{box-shadow:inset 3px 0 var(--lime)}.daily tr.best td:last-child{font-weight:bold}.finding{padding:12px 0 0;margin:0;color:var(--muted);font-size:12px;line-height:1.6}.finding strong{color:var(--ink);font-weight:normal}.source-board{margin-top:28px}footer{margin-top:24px;border-top:1px solid var(--line);padding-top:13px;font:10px/1.6 var(--mono);color:var(--muted)}@media(max-width:900px){main{padding:24px}.console{grid-template-columns:190px minmax(0,1fr);gap:24px}.overview{padding-right:22px}h1{font-size:54px}.metric dd{font-size:38px}tbody td,tbody th{padding-left:8px;padding-right:8px}thead th{padding-left:8px;padding-right:8px}.row-id{width:22px}table{font-size:13px}}@media(max-width:680px){main{padding:20px 16px}.mast{font-size:10px;letter-spacing:0}.console{display:block;margin-top:22px}.overview{padding:0;border:0}.session{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:0 0 18px}h1{font-size:49px;margin:0}.session p{font-size:10px;text-align:right}.metrics{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:26px}.metric{padding:15px 8px 17px 0}.metric+.metric{padding-left:12px;border-left:1px solid var(--line)}.metric dt{font-size:11px;margin-bottom:8px}.metric dd{font-size:30px}.board-head{padding-bottom:10px}h2{font-size:18px}.board-head span{font-size:9px}thead th{font-size:10px;padding:10px 5px}thead small{font-size:8px}tbody th{font-size:12px}tbody td,tbody th{padding:8px 5px}table{font-size:12px}.row-id{display:none}col:first-child{width:19%}col:nth-child(2){width:28%}col:nth-child(3){width:27%}col:last-child{width:26%}.finding{font-size:11px}}@media(max-width:360px){.metric dd{font-size:26px}.metric+.metric{padding-left:8px}}
+</style>
+</head>
+<body>
+<main>
+<div class="mast"><strong>PITWALL / WEB ANALYTICS</strong><span>Synthetic data</span></div>
+<div class="console">
+<aside class="overview" aria-label="Week 01 overview"><header>
+<div class="session"><h1>Week <span>01</span></h1><p>Website performance<br>Mon — Sun</p></div>
+</header>
+<dl class="metrics" aria-label="Weekly totals">
+<div class="metric visits"><dt>Visits</dt><dd>12,480</dd></div>
+<div class="metric signups"><dt>Signups</dt><dd>624</dd></div>
+<div class="metric"><dt>Conversion</dt><dd>5.00<small>%</small></dd></div>
+</dl>
+</aside>
+<div class="boards">
+<section aria-labelledby="daily-title">
+<div class="board-head"><h2 id="daily-title">Daily performance</h2><span>MON — SUN</span></div>
+<table class="daily" aria-label="Daily visits, signups and conversion">
+<colgroup><col><col><col><col></colgroup>
+<thead><tr><th scope="col">Day</th><th scope="col" class="visits-value">Visits<small>0–2,500</small></th><th scope="col" class="signups-value">Signups<small>0–150</small></th><th scope="col">Conversion</th></tr></thead>
+<tbody>
+<tr><th scope="row"><span class="row-id" aria-hidden="true">01</span>Mon</th><td class="cell"><span class="value">1,420</span><span class="track" aria-hidden="true"><i style="width:56.8%"></i></span></td><td class="cell"><span class="value">57</span><span class="track signups" aria-hidden="true"><i style="width:38%"></i></span></td><td>4.01%</td></tr>
+<tr><th scope="row"><span class="row-id" aria-hidden="true">02</span>Tue</th><td class="cell"><span class="value">1,600</span><span class="track" aria-hidden="true"><i style="width:64%"></i></span></td><td class="cell"><span class="value">72</span><span class="track signups" aria-hidden="true"><i style="width:48%"></i></span></td><td>4.50%</td></tr>
+<tr><th scope="row"><span class="row-id" aria-hidden="true">03</span>Wed</th><td class="cell"><span class="value">1,780</span><span class="track" aria-hidden="true"><i style="width:71.2%"></i></span></td><td class="cell"><span class="value">89</span><span class="track signups" aria-hidden="true"><i style="width:59.3333%"></i></span></td><td>5.00%</td></tr>
+<tr><th scope="row"><span class="row-id" aria-hidden="true">04</span>Thu</th><td class="cell"><span class="value">1,640</span><span class="track" aria-hidden="true"><i style="width:65.6%"></i></span></td><td class="cell"><span class="value">74</span><span class="track signups" aria-hidden="true"><i style="width:49.3333%"></i></span></td><td>4.51%</td></tr>
+<tr><th scope="row"><span class="row-id" aria-hidden="true">05</span>Fri</th><td class="cell"><span class="value">1,920</span><span class="track" aria-hidden="true"><i style="width:76.8%"></i></span></td><td class="cell"><span class="value">96</span><span class="track signups" aria-hidden="true"><i style="width:64%"></i></span></td><td>5.00%</td></tr>
+<tr><th scope="row"><span class="row-id" aria-hidden="true">06</span>Sat</th><td class="cell"><span class="value">2,020</span><span class="track" aria-hidden="true"><i style="width:80.8%"></i></span></td><td class="cell"><span class="value">109</span><span class="track signups" aria-hidden="true"><i style="width:72.6667%"></i></span></td><td>5.40%</td></tr>
+<tr class="best"><th scope="row"><span class="row-id" aria-hidden="true">07</span>Sun</th><td class="cell"><span class="value">2,100</span><span class="track" aria-hidden="true"><i style="width:84%"></i></span></td><td class="cell"><span class="value">127</span><span class="track signups" aria-hidden="true"><i style="width:84.6667%"></i></span></td><td>6.05%</td></tr>
+</tbody></table>
+<p class="finding"><strong>Sunday led in visits, signups and conversion.</strong></p>
+</section>
+<section class="source-board" aria-labelledby="sources-title">
+<div class="board-head"><h2 id="sources-title">Traffic sources</h2><span>BY VISITS ↓</span></div>
+<table class="sources" aria-label="Traffic sources ranked by visits">
+<colgroup><col><col><col><col></colgroup>
+<thead><tr><th scope="col">Source</th><th scope="col" class="visits-value">Visits<small>0–6,000</small></th><th scope="col" class="signups-value">Signups<small>0–350</small></th><th scope="col">Conversion</th></tr></thead>
+<tbody>
+<tr><th scope="row"><span class="row-id" aria-hidden="true">01</span>Direct</th><td><span class="value">5,240</span><span class="track" aria-hidden="true"><i style="width:87.3333%"></i></span></td><td><span class="value">314</span><span class="track signups" aria-hidden="true"><i style="width:89.7143%"></i></span></td><td>5.99%</td></tr>
+<tr><th scope="row"><span class="row-id" aria-hidden="true">02</span>Search</th><td><span class="value">4,480</span><span class="track" aria-hidden="true"><i style="width:74.6667%"></i></span></td><td><span class="value">224</span><span class="track signups" aria-hidden="true"><i style="width:64%"></i></span></td><td>5.00%</td></tr>
+<tr><th scope="row"><span class="row-id" aria-hidden="true">03</span>Social</th><td><span class="value">2,760</span><span class="track" aria-hidden="true"><i style="width:46%"></i></span></td><td><span class="value">86</span><span class="track signups" aria-hidden="true"><i style="width:24.5714%"></i></span></td><td>3.12%</td></tr>
+</tbody></table>
+<p class="finding"><strong>Direct led in visits and signups.</strong> Social had the lowest conversion rate.</p>
+</section>
+</div>
+</div>
+<footer>Conversion = signups ÷ visits · Rates rounded to 2 decimals · Track ranges appear under each metric</footer>
+</main>
+</body>
+</html>

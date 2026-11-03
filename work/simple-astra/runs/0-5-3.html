@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 01 · The Abyssal Cabinet</title>
+<style>
+:root{--paper:#eee9dc;--ink:#203c36;--muted:#657068;--rule:#b9bcae;--accent:#806645;--green:#315b4c}*{box-sizing:border-box}body{margin:0;background:#20352f;color:var(--ink);font:15px/1.5 Georgia,serif}.sheet{max-width:1100px;margin:36px auto;padding:35px 48px 28px;background:var(--paper);border:1px solid #d2c9b3;outline:1px solid #a8a38e;outline-offset:-9px}header{display:flex;align-items:center;gap:24px;padding-bottom:25px;border-bottom:2px solid var(--ink)}.specimen{width:100px;height:114px;flex-shrink:0}h1{font-weight:normal;font-size:42px;line-height:1.1;margin:0 0 7px;letter-spacing:-1px}.sub{margin:0;color:var(--muted);font:13px/1.5 system-ui,sans-serif}.period{margin-left:auto;text-align:right;white-space:nowrap;font:13px system-ui,sans-serif}.period strong{display:block;font:25px Georgia,serif;margin-bottom:6px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--rule);padding:25px 0}.metric{padding:0 25px;border-left:1px solid var(--rule)}.metric:first-child{padding-left:0;border-left:0}.label{font:12px system-ui,sans-serif;color:var(--muted)}.value{font-size:43px;line-height:1.3;font-variant-numeric:tabular-nums}.finding{margin:20px 0 25px;font-size:18px}.finding strong{font-weight:normal;border-bottom:1px solid var(--accent)}h2{font-size:24px;font-weight:normal;margin:0}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:18px}.section-head span{font:12px system-ui,sans-serif;color:var(--muted)}.chart{display:grid;grid-template-columns:36px 1fr;gap:9px;height:200px;font:11px system-ui,sans-serif}.axis{display:flex;flex-direction:column;justify-content:space-between;text-align:right;color:var(--muted);padding-bottom:25px}.plot{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:18px;padding:0 12px}.plot:before{content:"";position:absolute;inset:0 0 25px;border-bottom:1px solid var(--rule);background:repeating-linear-gradient(to top,transparent 0,transparent calc(50% - 1px),#b9bcae88 calc(50% - 1px),#b9bcae88 50%)}.column{position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;padding-bottom:25px}.bar{width:100%;max-width:58px;background:var(--green);position:relative;border:1px solid #203c36}.bar span{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-variant-numeric:tabular-nums;color:var(--ink)}.day{position:absolute;bottom:0;color:var(--muted)}.tables{display:grid;grid-template-columns:1.1fr 1fr;gap:38px;margin-top:35px;padding-top:27px;border-top:1px solid var(--rule)}table{width:100%;border-collapse:collapse;font:13px/1.5 system-ui,sans-serif;font-variant-numeric:tabular-nums;margin-top:14px}th,td{padding:9px 0;border-bottom:1px solid #b9bcae88;text-align:right}th{font-size:11px;font-weight:500;color:var(--muted)}th:first-child,td:first-child{text-align:left}tfoot td{border-top:1px solid var(--ink);border-bottom:0;font-weight:600}.best{background:#dce0d2}.best td:first-child{padding-left:8px}.note{font-size:15px;margin:18px 0 0}.method{font:11px/1.6 system-ui,sans-serif;color:var(--muted);margin-top:32px;padding-top:15px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;gap:25px}.caption{font:10px system-ui,sans-serif;letter-spacing:1px;fill:var(--muted)}@media(max-width:700px){.sheet{margin:0;padding:25px 24px;outline-offset:-6px}header{gap:12px}.specimen{width:60px;height:85px}h1{font-size:29px}.period strong{font-size:20px}.period{font-size:10px}.sub{font-size:11px}.metric{padding:0 13px}.value{font-size:32px}.label{font-size:10px}.finding{font-size:16px}.tables{grid-template-columns:1fr;gap:28px}.plot{gap:10px;padding:0 5px}.bar span{font-size:9px}.method{display:block}.method span{display:block;margin-bottom:5px}h2{font-size:22px}}
+
+/* A restrained specimen cabinet: the engraving carries the fiction. */
+.sheet{box-shadow:0 12px 40px #10251f55}
+header{gap:22px}
+h1{font-size:40px}
+.specimen{width:104px;height:119px}
+.sub{font-size:14px}
+.period{color:var(--muted)}
+.period strong{color:var(--ink)}
+.section-head{margin-bottom:22px}
+.bar{background:repeating-linear-gradient(90deg,transparent 0 5px,#eee9dc13 5px 6px),var(--green)}
+
+.note{max-width:36em}
+@media(max-width:700px){
+header{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px 15px;padding-bottom:20px}
+.specimen{width:64px;height:76px;grid-row:1 / 3}
+h1{font-size:30px;letter-spacing:-.6px;margin-bottom:5px}
+.sub{font-size:12px}
+.period{grid-column:2;text-align:left;display:flex;align-items:baseline;gap:12px;font-size:11px;margin-left:0}
+.period strong{font-size:17px;margin:0}
+.value{font-size:30px}
+.metric{padding:0 10px}
+.finding{line-height:1.55}
+}
+@media(max-width:370px){.sheet{padding:24px 18px}.value{font-size:27px}.plot{gap:7px}.bar span{font-size:8px}h1{font-size:27px}}
+
+/* Align tick labels to the plot coordinates, including its zero baseline. */
+.axis{position:relative;height:175px;padding:0;display:block}
+.axis span{position:absolute;right:0;transform:translateY(-50%);line-height:1}
+th{white-space:nowrap}
+th:not(:first-child),td:not(:first-child){padding-left:10px}
+.best td:last-child{padding-right:8px}
+@media(max-width:440px){
+.bar span{display:none}
+.chart{font-size:11px}
+.label{font-size:11px}
+}
+</style>
+</head>
+<body><main class="sheet">
+<header>
+<svg class="specimen" viewBox="0 0 100 114" aria-hidden="true" fill="none" stroke="#315b4c" stroke-width="1.15">
+<rect x="3" y="3" width="94" height="93" rx="1" stroke="#a29477" stroke-width=".6"/><path d="M8 10h8M12 6v8M84 10h8M88 6v8" stroke="#a29477" stroke-width=".6"/><path d="M50 5v93" stroke="#a29477"/><circle cx="50" cy="7" r="2" fill="#806645"/>
+<path d="M46 35C25 8 6 18 12 43c3 14 18 21 33 15M54 35C75 8 94 18 88 43c-3 14-18 21-33 15M43 48C13 44 14 76 39 74M57 48c30-4 29 28 4 26M41 35c-4-20 22-20 18 0l-3 10H44ZM44 46v12c0 12 12 12 12 0V46"/>
+<path d="M44 55c-11 10-17 26-10 30 7 3 12-7 7-10M48 59c-6 20-3 32 4 32 6-1 6-8 2-10M54 56c11 7 20 24 12 30-5 4-10-1-8-6M43 41 22 26m21 23L18 39m39 2 21-15M57 49l25-10M45 27l-8-9m18 9 8-9"/>
+<path d="M45 40c-7 8-10 17-5 21 4 3 7-2 4-5m5-15c-3 9-3 20 1 22 4 2 7-3 4-7m0-15c8 9 12 16 8 20-3 3-7 0-5-3" stroke-width="1.25"/><path d="M42 36 20 24m23 17L16 30m26 17L16 37m24 16L20 46m38-10 22-12m-23 17 27-11m-26 17 26-10m-24 16 20-7M38 58l-15 6m16 0-11 5m34-11 15 6m-16 0 11 5" stroke-width=".5" opacity=".65"/><circle cx="47" cy="36" r="1.4" fill="#315b4c"/><circle cx="53" cy="36" r="1.4" fill="#315b4c"/>
+<path d="M15 101h70" stroke="#a29477"/><text x="50" y="112" text-anchor="middle" class="caption">C. ABYSSALIS</text>
+</svg>
+<div><h1>The Abyssal Cabinet</h1><p class="sub">Website performance</p></div>
+<div class="period"><strong>Week 01</strong>Synthetic data</div>
+</header>
+<section class="metrics" aria-label="Weekly totals">
+<div class="metric"><div class="label">Visits</div><div class="value">12,480</div></div>
+<div class="metric"><div class="label">Signups</div><div class="value">624</div></div>
+<div class="metric"><div class="label">Signup rate</div><div class="value">5.00%</div></div>
+</section>
+<p class="finding"><strong>Sunday led the week</strong> with 2,100 visits, 127 signups and the highest signup rate (6.05%). Direct led sources in visits and signups.</p>
+<section aria-labelledby="visits-title">
+<div class="section-head"><h2 id="visits-title">Daily visits</h2></div>
+<div class="chart" role="img" aria-label="Daily visits: Monday 1,420; Tuesday 1,600; Wednesday 1,780; Thursday 1,640; Friday 1,920; Saturday 2,020; Sunday 2,100. Exact daily figures and signup rates follow in the table.">
+<div class="axis"><span style="top:0">2,400</span><span style="top:50%">1,200</span><span style="top:100%">0</span></div>
+<div class="plot">
+<div class="column"><div class="bar" style="height:59.167%"><span>1,420</span></div><span class="day">Mon</span></div>
+<div class="column"><div class="bar" style="height:66.667%"><span>1,600</span></div><span class="day">Tue</span></div>
+<div class="column"><div class="bar" style="height:74.167%"><span>1,780</span></div><span class="day">Wed</span></div>
+<div class="column"><div class="bar" style="height:68.333%"><span>1,640</span></div><span class="day">Thu</span></div>
+<div class="column"><div class="bar" style="height:80%"><span>1,920</span></div><span class="day">Fri</span></div>
+<div class="column"><div class="bar" style="height:84.167%"><span>2,020</span></div><span class="day">Sat</span></div>
+<div class="column"><div class="bar" style="height:87.5%"><span>2,100</span></div><span class="day">Sun</span></div>
+</div></div>
+</section>
+<div class="tables">
+<section aria-labelledby="daily-title"><h2 id="daily-title">Daily record</h2>
+<table><thead><tr><th scope="col">Day</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Signup rate</th></tr></thead>
+<tbody><tr><td>Mon</td><td>1,420</td><td>57</td><td>4.01%</td></tr><tr><td>Tue</td><td>1,600</td><td>72</td><td>4.50%</td></tr><tr><td>Wed</td><td>1,780</td><td>89</td><td>5.00%</td></tr><tr><td>Thu</td><td>1,640</td><td>74</td><td>4.51%</td></tr><tr><td>Fri</td><td>1,920</td><td>96</td><td>5.00%</td></tr><tr><td>Sat</td><td>2,020</td><td>109</td><td>5.40%</td></tr><tr class="best"><td>Sun</td><td>2,100</td><td>127</td><td>6.05%</td></tr></tbody>
+<tfoot><tr><td>Week</td><td>12,480</td><td>624</td><td>5.00%</td></tr></tfoot></table>
+</section>
+<section aria-labelledby="sources-title"><h2 id="sources-title">Traffic sources</h2>
+<table><thead><tr><th scope="col">Source</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Signup rate</th></tr></thead>
+<tbody><tr class="best"><td>Direct</td><td>5,240</td><td>314</td><td>5.99%</td></tr><tr><td>Search</td><td>4,480</td><td>224</td><td>5.00%</td></tr><tr><td>Social</td><td>2,760</td><td>86</td><td>3.12%</td></tr></tbody></table>
+<p class="note">Direct’s signup rate was highest at 5.99%. Social’s was lowest at 3.12%.</p>
+
+</section></div>
+<footer class="method"><span>Rate = signups ÷ visits. Rates rounded to two decimal places.</span><span>Week 01 only · No prior-week comparison supplied.</span></footer>
+</main></body></html>

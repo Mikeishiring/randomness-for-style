@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Deep Fry · Week 01</title>
+<style>
+:root{color-scheme:dark;--bg:#061b22;--surface:#0b2830;--line:#25434b;--text:#eafaed;--muted:#9eb9b7;--glow:#b8ff64;--cyan:#68e5db}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;font-size:15px}main{max-width:1120px;margin:auto;padding:38px 32px 28px}header{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-bottom:28px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:14px}.mark{width:48px;height:48px;color:var(--glow);filter:drop-shadow(0 0 8px #b8ff6430)}.wordmark{font-weight:900;font-size:25px;letter-spacing:-1px;font-style:italic}.period{font-family:monospace;color:var(--muted);font-size:14px}h1{font-size:clamp(30px,5vw,48px);letter-spacing:-2px;margin:35px 0 25px;font-weight:800}h2{font-size:21px;margin:0;letter-spacing:-.5px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}.metric{padding:25px 28px}.metric+.metric{border-left:1px solid var(--line)}.metric dt{color:var(--muted);font-size:14px;margin-bottom:13px}.metric dd{font-size:clamp(32px,5vw,50px);font-weight:800;letter-spacing:-2px;margin:0;font-variant-numeric:tabular-nums}.metric:last-child dd{color:var(--glow);text-shadow:0 0 28px #b8ff6420}.metric small{font-size:12px;display:block;color:var(--muted);margin-top:8px}.layout{display:grid;grid-template-columns:1.12fr 1fr;gap:32px;margin-top:36px}.panel{min-width:0}.panelhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.unit{color:var(--muted);font-size:12px}.chart{display:flex;gap:13px;height:195px;padding-top:20px;border-bottom:1px solid var(--line);background:repeating-linear-gradient(to top,transparent 0,transparent 48px,#25434b60 48px,#25434b60 49px)}.daybar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:7px;min-width:0}.daybar .value{font:11px monospace;color:var(--muted)}.bar{width:100%;max-width:43px;background:var(--cyan);border-radius:5px 5px 0 0;min-height:1px}.daybar:last-child .bar{background:var(--glow);box-shadow:0 -5px 20px #b8ff6415}.daylabels{display:flex;gap:13px;margin-top:10px;color:var(--muted);font-size:12px}.daylabels span{flex:1;text-align:center}.note{border-left:3px solid var(--glow);padding:2px 0 2px 13px;line-height:1.6;margin:24px 0;color:var(--muted)}.note strong{color:var(--text);font-weight:600}table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}th{color:var(--muted);font-weight:400;font-size:11px;padding:12px 6px;text-align:right;border-bottom:1px solid var(--line)}td{padding:12px 6px;text-align:right;border-bottom:1px solid #25434b80}th:first-child,td:first-child{text-align:left;padding-left:0}th:last-child,td:last-child{padding-right:0}tbody tr:last-child td{border-bottom:0}.sources td{padding-top:20px;padding-bottom:20px}.source-name{font-weight:bold}.track{display:block;width:95px;height:4px;background:#25434b;margin-top:9px;border-radius:5px;overflow:hidden}.track i{display:block;height:100%;background:var(--cyan)}.receipt{margin-top:26px;background:#dff0dd;color:#112b29;padding:23px 24px 27px;clip-path:polygon(0 0,100% 0,100% 96%,95% 100%,90% 96%,85% 100%,80% 96%,75% 100%,70% 96%,65% 100%,60% 96%,55% 100%,50% 96%,45% 100%,40% 96%,35% 100%,30% 96%,25% 100%,20% 96%,15% 100%,10% 96%,5% 100%,0 96%)}.receipt h3{font-family:monospace;font-size:13px;text-transform:uppercase;letter-spacing:1px;margin:0 0 15px;padding-bottom:13px;border-bottom:1px dashed #78948c}.receipt p{font-size:14px;line-height:1.6;margin:0}.receipt strong{font-weight:700}footer{display:flex;justify-content:space-between;gap:20px;color:var(--muted);border-top:1px solid var(--line);margin-top:34px;padding-top:18px;font-size:11px;line-height:1.6}.dailytable{margin-top:24px}details{margin-top:22px}summary{cursor:pointer;font-size:13px;color:var(--cyan);padding:8px 0}summary:focus-visible{outline:2px solid var(--glow);outline-offset:5px}@media(max-width:760px){main{padding:24px 20px}.layout{grid-template-columns:1fr;gap:32px}.metric{padding:19px 14px}.metric dd{font-size:34px}.metric dt{font-size:12px}.metric small{font-size:10px}.wordmark{font-size:22px}header{gap:12px}.period{font-size:12px}footer{flex-direction:column;gap:4px}h1{letter-spacing:-1px}.sources .track{width:110px}}@media(max-width:380px){.metric dd{font-size:28px}.metric{padding:16px 10px}.mark{width:36px}.chart,.daylabels{gap:8px}}
+
+/* A submerged counter: luminous signage, a menu rail, and a paper receipt. */
+body{background:radial-gradient(ellipse at 15% 0%,#103b45 0,transparent 52%),var(--bg)}
+header{padding-bottom:22px;border-bottom:2px solid var(--cyan);box-shadow:0 7px 16px -13px var(--cyan)}
+.mark{width:54px;height:54px;filter:drop-shadow(0 0 7px #b8ff6460)}
+.wordmark{font-size:29px;letter-spacing:-1.2px;color:var(--glow)}
+.period{border:1px solid var(--line);padding:10px 12px;border-radius:3px;white-space:nowrap}
+h1{font-size:clamp(28px,4vw,40px);margin:27px 0 20px;letter-spacing:-1.5px}
+.metrics{border-radius:4px;border-top:3px solid var(--glow);background:linear-gradient(180deg,#12343c,var(--surface));margin:0}
+.metric{padding:22px 26px}
+.metric+.metric{border-left:1px dashed #496168}
+.metric dd{font-family:monospace;font-size:clamp(32px,4.6vw,48px);letter-spacing:-2px}
+.metric dt{color:#b7ceca}
+.layout{margin-top:30px}
+.chart{height:209px;background:none;padding-top:22px}
+.bar{flex-shrink:0;border-radius:3px 3px 0 0;background:linear-gradient(0deg,#277d83,var(--cyan));border-top:2px solid #a3fff3}
+.daybar .value{color:#c0d6d2;font-size:12px}
+.daybar:last-child .bar{background:linear-gradient(0deg,#547f3c,var(--glow));border-top-color:#deffb9;box-shadow:0 -8px 25px #b8ff6425}
+.track{height:5px;border-radius:0}
+.track i{background:var(--cyan)}
+.receipt{position:relative;background:#f0edcf;color:#142f30;padding:24px 24px 29px;box-shadow:none}
+.receipt h3{font-size:14px;color:#142f30;border-color:#6c8171}
+.receipt p{font-family:monospace;font-size:14px;line-height:1.65}
+.note{margin-bottom:16px}
+summary{min-height:44px;display:list-item;align-content:center}
+th{font-size:12px;color:#b7ceca}
+@media(max-width:760px){header{gap:10px}.wordmark{font-size:23px}.mark{width:42px;height:48px}.brand{gap:9px}.period{padding:8px;font-size:11px}.metric{padding:19px 14px}.metric dd{font-size:34px}.sources .track{width:95px}}
+@media(max-width:420px){header{align-items:flex-start}.period{max-width:100px;white-space:normal;line-height:1.5}.wordmark{font-size:22px}.metric dd{font-size:29px}.metric{padding:17px 10px}.metric dt{font-size:12px}.chart,.daylabels{gap:8px}.daybar .value{font-size:10px}th{font-size:11px}.sources .track{width:72px}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="brand"><svg class="mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M10 25c0-8 6-13 14-13s14 5 14 13H10Z" stroke="currentColor" stroke-width="2.5"/><path d="M9 30h30M12 35h24M18 40l-2 4m8-4v5m6-5 2 4M24 12V7c0-4 7-4 7 0" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="31" cy="7" r="3" fill="currentColor"/></svg><span class="wordmark">The Deep Fry</span></div><div class="period">WEEK 01 / WEBSITE</div></header>
+<h1>Website performance</h1>
+<dl class="metrics"><div class="metric"><dt>Total visits</dt><dd>12,480</dd></div><div class="metric"><dt>Total signups</dt><dd>624</dd></div><div class="metric"><dt>Signup rate</dt><dd>5.0<span style="font-size:.6em">%</span></dd><small>Signups ÷ visits</small></div></dl>
+<div class="layout">
+<section class="panel" aria-labelledby="daily-title"><div class="panelhead"><h2 id="daily-title">Daily visits</h2><span class="unit">Baseline 0</span></div>
+<div role="img" aria-label="Daily visits: Monday 1,420; Tuesday 1,600; Wednesday 1,780; Thursday 1,640; Friday 1,920; Saturday 2,020; Sunday 2,100. Sunday was the busiest day."><div class="chart" aria-hidden="true"><div class="daybar"><span class="value">1,420</span><div class="bar" style="height:108px"></div></div><div class="daybar"><span class="value">1,600</span><div class="bar" style="height:122px"></div></div><div class="daybar"><span class="value">1,780</span><div class="bar" style="height:136px"></div></div><div class="daybar"><span class="value">1,640</span><div class="bar" style="height:125px"></div></div><div class="daybar"><span class="value">1,920</span><div class="bar" style="height:146px"></div></div><div class="daybar"><span class="value">2,020</span><div class="bar" style="height:154px"></div></div><div class="daybar"><span class="value">2,100</span><div class="bar" style="height:160px"></div></div></div><div class="daylabels" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div></div>
+<p class="note"><strong>Sunday led on visits and signups.</strong><br>127 signups · 6.0% signup rate</p>
+<details><summary>Daily figures</summary><table class="dailytable"><thead><tr><th scope="col">Day</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Signup rate</th></tr></thead><tbody><tr><td>Mon</td><td>1,420</td><td>57</td><td>4.0%</td></tr><tr><td>Tue</td><td>1,600</td><td>72</td><td>4.5%</td></tr><tr><td>Wed</td><td>1,780</td><td>89</td><td>5.0%</td></tr><tr><td>Thu</td><td>1,640</td><td>74</td><td>4.5%</td></tr><tr><td>Fri</td><td>1,920</td><td>96</td><td>5.0%</td></tr><tr><td>Sat</td><td>2,020</td><td>109</td><td>5.4%</td></tr><tr><td>Sun</td><td>2,100</td><td>127</td><td>6.0%</td></tr></tbody></table></details>
+</section>
+<section class="panel" aria-labelledby="source-title"><div class="panelhead"><h2 id="source-title">Where visits came from</h2></div><table class="sources"><thead><tr><th scope="col">Source</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Signup rate</th></tr></thead><tbody><tr><td><span class="source-name">Direct</span><span class="track" aria-hidden="true"><i style="width:100%"></i></span></td><td>5,240</td><td>314</td><td>6.0%</td></tr><tr><td><span class="source-name">Search</span><span class="track" aria-hidden="true"><i style="width:85.5%"></i></span></td><td>4,480</td><td>224</td><td>5.0%</td></tr><tr><td><span class="source-name">Social</span><span class="track" aria-hidden="true"><i style="width:52.7%"></i></span></td><td>2,760</td><td>86</td><td>3.1%</td></tr></tbody></table>
+<aside class="receipt"><h3>Your weekly takeaway</h3><p><strong>Direct led with 314 signups and a 6.0% signup rate.</strong> Social had the lowest rate: 3.1%.</p></aside>
+</section>
+</div>
+<footer><span>Source: supplied synthetic data · Week 01</span><span>Rates rounded to one decimal. No previous-week data supplied.</span></footer>
+</main>
+</body>
+</html>

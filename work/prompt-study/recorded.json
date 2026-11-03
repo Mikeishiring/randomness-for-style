@@ -1,0 +1,44 @@
+[
+  {
+    "file": "0-2-original.html",
+    "sha256": "9c2dcc8c477fad8a25e84306801df05c6b8cbca53a51bf0e687855b88540f626",
+    "critiqueSha256": "21295dfe7dd8d0a8445b93a29ea35d4d9044b5b935b942b24a6482bfb6bd9b94",
+    "promptSha256": "aa1c74cc5746c6fe4720917aaaaccc3e2fbbd5edac5ef362ea2826fdd59cb679",
+    "predecessorSha256": "349a5c0d0adee06b5cd2fcf8ccfd9a9f3bca309600e14c71a4a47483cfaff0c9"
+  },
+  {
+    "file": "0-2-stronger.html",
+    "sha256": "a88c4e7022d8f7f3a5b712ed0ad5a79f06fcf5c36965f152e9caa4f5b40f77f7",
+    "critiqueSha256": "583352a44acf377333eba9a725fd3772d12a6a11880c87abd8251b7e3d4c5010",
+    "promptSha256": "c6fdc5db54e395ac04b934b1e4aec1676055a4410cfcd7e1473f98f2b4238ec9",
+    "predecessorSha256": "349a5c0d0adee06b5cd2fcf8ccfd9a9f3bca309600e14c71a4a47483cfaff0c9"
+  },
+  {
+    "file": "1-4-original.html",
+    "sha256": "a4dda8248bebc03d0468574c26ca1c1cd08b444a440ed40ea0fdc5916b340b43",
+    "critiqueSha256": "d2f608099fc60a0e9fcdba3ac6b5ad1a3cde7b64aee3f6c3a5588b3f8552c018",
+    "promptSha256": "aa1c74cc5746c6fe4720917aaaaccc3e2fbbd5edac5ef362ea2826fdd59cb679",
+    "predecessorSha256": "bb8ff1a7f76400688f38db0388a14288761c0a6c71a7c3d8429545c5e3dd2ba3"
+  },
+  {
+    "file": "1-4-stronger.html",
+    "sha256": "943d5c6492d580ded1f7b7de987a7a74f8588c72238b6ca45c7b4fec956c1a0a",
+    "critiqueSha256": "d89c2c70ef6f6150e3cd01601976e48559d7a1453351b5e34345a6487171c5ca",
+    "promptSha256": "c6fdc5db54e395ac04b934b1e4aec1676055a4410cfcd7e1473f98f2b4238ec9",
+    "predecessorSha256": "bb8ff1a7f76400688f38db0388a14288761c0a6c71a7c3d8429545c5e3dd2ba3"
+  },
+  {
+    "file": "5-5-original.html",
+    "sha256": "534303339251000e0c693fa736a6ae16e2e0bb948dd3141d9a5b23665d18a731",
+    "critiqueSha256": "162e29882ef88299eae03ab3d008700400261fff7f050d31a435abb65436a3e1",
+    "promptSha256": "aa1c74cc5746c6fe4720917aaaaccc3e2fbbd5edac5ef362ea2826fdd59cb679",
+    "predecessorSha256": "7c0d824f6477ae290a3b8ed128169681b102d41f42fa1de176bc8d65073d1845"
+  },
+  {
+    "file": "5-5-stronger.html",
+    "sha256": "f7cc4a52cc4e28b5859e56149a6494209ba9484c69218046a611d7fe64b111d4",
+    "critiqueSha256": "dbe3204e30d6659818fe95f2d296b35ea2593e2537af70bf6db13a56d0b4b7b7",
+    "promptSha256": "c6fdc5db54e395ac04b934b1e4aec1676055a4410cfcd7e1473f98f2b4238ec9",
+    "predecessorSha256": "7c0d824f6477ae290a3b8ed128169681b102d41f42fa1de176bc8d65073d1845"
+  }
+]

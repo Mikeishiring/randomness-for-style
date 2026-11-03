@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orpheus — Week 01 performance</title>
+<style>
+:root{--paper:#f4efdf;--ink:#302a25;--muted:#746557;--red:#70272e;--line:#cec2ac;--gold:#cdb785}*{box-sizing:border-box}body{margin:0;background:#e1d9c8;color:var(--ink);font:14px/1.5 Arial,Helvetica,sans-serif}.programme{max-width:1120px;margin:32px auto;background:var(--paper);box-shadow:0 9px 40px #302a2512}.cover{background:var(--red);color:var(--paper);padding:26px 44px 34px;position:relative;overflow:hidden}.cover-top{display:flex;justify-content:space-between;gap:16px;font-size:11px;letter-spacing:1px;border-bottom:1px solid #f4efdf55;padding-bottom:16px}.title-row{display:flex;align-items:center;justify-content:space-between;gap:28px;padding-top:23px}h1{font:normal clamp(48px,7.5vw,88px)/1 Georgia,serif;letter-spacing:-3px;margin:0}.subtitle{font:italic 23px/1.4 Georgia,serif;margin:10px 0 0;color:#e1cba6}.lyre{width:170px;height:136px;flex-shrink:0;color:var(--gold)}.body{padding:0 44px 28px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);padding:27px 0 29px;border-bottom:3px double var(--ink)}.metric{border-left:1px solid var(--line);padding-left:32px}.metric:first-child{padding-left:0;border:0}.label{font-size:12px;color:var(--muted)}.value{font:normal 52px/1.2 Georgia,serif;font-variant-numeric:lining-nums tabular-nums;letter-spacing:-1.5px;margin-top:7px}.metric:last-child .value{color:var(--red)}.section-head{display:flex;gap:17px;align-items:baseline;margin:29px 0 23px}.act{font:italic 35px/1 Georgia,serif;color:var(--red);min-width:35px}h2{font:normal 27px/1.2 Georgia,serif;margin:0}.section-head .unit{margin-left:auto;font-size:12px;color:var(--muted)}.score-scroll{overflow-x:auto;padding-top:3px}.score{min-width:530px;display:grid;grid-template-columns:52px repeat(7,minmax(0,1fr));grid-template-rows:27px 214px 34px 37px;font-variant-numeric:tabular-nums}.day{text-align:center;font-size:12px;color:var(--muted)}.axis{position:relative;grid-column:1;grid-row:2}.axis span{position:absolute;right:12px;font-size:10px;color:var(--muted);transform:translateY(50%)}.axis span:last-child{transform:none}.measure{grid-row:2;position:relative;border-bottom:1px solid var(--ink);border-left:1px solid var(--line);background:repeating-linear-gradient(to top,transparent 0,transparent calc(25% - 1px),#cec2ac90 calc(25% - 1px),#cec2ac90 25%)}.measure:last-of-type{border-right:1px solid var(--line)}.bar{position:absolute;bottom:0;left:28%;width:44%;height:var(--h);background:var(--red)}.count{text-align:center;padding-top:8px;font-size:13px}.signups{text-align:center;border-bottom:1px solid var(--line);padding:8px 0;font-size:13px}.row-label{font-size:10px;color:var(--muted);display:flex;align-items:center}.finding{font:italic 19px/1.5 Georgia,serif;margin:20px 0 0;max-width:760px}.finding strong{font-style:normal;font-weight:normal;color:var(--red)}.source-section{border-top:3px double var(--ink);margin-top:29px}table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}th{text-align:right;color:var(--muted);font-size:11px;font-weight:normal;padding:0 0 11px;border-bottom:1px solid var(--ink)}th:first-child{text-align:left;width:40%}td{text-align:right;padding:15px 0;border-bottom:1px solid var(--line);font-size:16px}tbody th{font:normal 22px/1.4 Georgia,serif;color:var(--ink);padding:15px 0;border-bottom:1px solid var(--line)}td:last-child{color:var(--red)}footer{border-top:1px solid var(--line);margin-top:28px;padding-top:13px;color:var(--muted);font-size:11px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.score-scroll:focus-visible{outline:2px solid var(--red);outline-offset:4px}@media(max-width:700px){.programme{margin:0}.cover{padding:22px 22px 26px}.body{padding:0 22px 24px}.cover-top{font-size:10px}.lyre{width:88px;height:100px}.title-row{gap:12px}h1{font-size:49px;letter-spacing:-2px}.subtitle{font-size:19px}.metric{padding-left:17px}.value{font-size:37px;letter-spacing:-1px}.metrics{padding:23px 0}.label{font-size:11px}.finding{font-size:17px}.section-head{gap:11px}.act{font-size:30px;min-width:25px}h2{font-size:24px}th:first-child{width:32%}td{font-size:14px}tbody th{font-size:20px}}@media(max-width:390px){.metrics{grid-template-columns:1fr;padding:8px 0}.metric,.metric:first-child{border:0;border-bottom:1px solid var(--line);padding:12px 0;display:flex;justify-content:space-between;align-items:center}.metric:last-child{border-bottom:0}.value{margin:0;font-size:34px}.label{font-size:12px}.lyre{width:64px}h1{font-size:43px}.cover-top{letter-spacing:0}}
+</style>
+</head>
+<body>
+<main class="programme">
+<header class="cover">
+<div class="cover-top"><span>WEBSITE PERFORMANCE</span><span>Week 01 · Synthetic data</span></div>
+<div class="title-row"><div><h1>Orpheus</h1><p class="subtitle">A weekly performance</p></div><svg class="lyre" viewBox="0 0 180 140" fill="none" aria-hidden="true"><path d="M22 10C3 10 17 80 40 99L63 115H117L140 99C163 80 177 10 158 10M26 28H154M40 99H140M63 115V128H117V115M53 134H127" stroke="currentColor" stroke-width="2"/><path d="M48 28V99M62 28V99M76 28V99M90 28V99M104 28V99M118 28V99M132 28V99" stroke="currentColor" stroke-width="1"/></svg></div>
+</header>
+<div class="body">
+<section class="metrics" aria-label="Weekly totals">
+<div class="metric"><div class="label">Total visits</div><div class="value">12,480</div></div>
+<div class="metric"><div class="label">Total signups</div><div class="value">624</div></div>
+<div class="metric"><div class="label">Signup rate</div><div class="value">5.0%</div></div>
+</section>
+<section aria-labelledby="daily-heading">
+<div class="section-head"><span class="act" aria-hidden="true">I.</span><h2 id="daily-heading">Daily performance</h2><span class="unit">Visits</span></div>
+<div class="score-scroll" tabindex="0" role="region" aria-label="Daily performance chart; scroll horizontally on small screens">
+<div class="score" role="img" aria-label="Daily visits and signups. Monday: 1,420 visits, 57 signups. Tuesday: 1,600 visits, 72 signups. Wednesday: 1,780 visits, 89 signups. Thursday: 1,640 visits, 74 signups. Friday: 1,920 visits, 96 signups. Saturday: 2,020 visits, 109 signups. Sunday: 2,100 visits, 127 signups. Visits axis runs from zero to 2,400.">
+<div aria-hidden="true"></div><div class="day" aria-hidden="true">Mon</div><div class="day" aria-hidden="true">Tue</div><div class="day" aria-hidden="true">Wed</div><div class="day" aria-hidden="true">Thu</div><div class="day" aria-hidden="true">Fri</div><div class="day" aria-hidden="true">Sat</div><div class="day" aria-hidden="true">Sun</div>
+<div class="axis" aria-hidden="true"><span style="bottom:100%">2,400</span><span style="bottom:75%">1,800</span><span style="bottom:50%">1,200</span><span style="bottom:25%">600</span><span style="bottom:0">0</span></div>
+<div class="measure" aria-hidden="true"><div class="bar" style="--h:59.167%"></div></div><div class="measure" aria-hidden="true"><div class="bar" style="--h:66.667%"></div></div><div class="measure" aria-hidden="true"><div class="bar" style="--h:74.167%"></div></div><div class="measure" aria-hidden="true"><div class="bar" style="--h:68.333%"></div></div><div class="measure" aria-hidden="true"><div class="bar" style="--h:80%"></div></div><div class="measure" aria-hidden="true"><div class="bar" style="--h:84.167%"></div></div><div class="measure" aria-hidden="true"><div class="bar" style="--h:87.5%"></div></div>
+<div class="row-label" aria-hidden="true">Visits</div><div class="count" aria-hidden="true">1,420</div><div class="count" aria-hidden="true">1,600</div><div class="count" aria-hidden="true">1,780</div><div class="count" aria-hidden="true">1,640</div><div class="count" aria-hidden="true">1,920</div><div class="count" aria-hidden="true">2,020</div><div class="count" aria-hidden="true">2,100</div>
+<div class="row-label" aria-hidden="true">Signups</div><div class="signups" aria-hidden="true">57</div><div class="signups" aria-hidden="true">72</div><div class="signups" aria-hidden="true">89</div><div class="signups" aria-hidden="true">74</div><div class="signups" aria-hidden="true">96</div><div class="signups" aria-hidden="true">109</div><div class="signups" aria-hidden="true">127</div>
+</div></div>
+<p class="finding"><strong>Sunday led the week:</strong> 2,100 visits and 127 signups, with a 6.0% signup rate.</p>
+</section>
+<section class="source-section" aria-labelledby="sources-heading">
+<div class="section-head"><span class="act" aria-hidden="true">II.</span><h2 id="sources-heading">Traffic sources</h2></div>
+<table><caption class="sr-only">Visits, signups and signup rate by traffic source</caption><thead><tr><th scope="col">Source</th><th scope="col">Visits</th><th scope="col">Signups</th><th scope="col">Signup rate</th></tr></thead><tbody>
+<tr><th scope="row">Direct</th><td>5,240</td><td>314</td><td>6.0%</td></tr>
+<tr><th scope="row">Search</th><td>4,480</td><td>224</td><td>5.0%</td></tr>
+<tr><th scope="row">Social</th><td>2,760</td><td>86</td><td>3.1%</td></tr>
+</tbody></table>
+<p class="finding"><strong>Direct brought the most visits</strong> and the highest signup rate. Social converted at 3.1%.</p>
+</section>
+<footer>Signup rate = signups ÷ visits. Rates rounded to one decimal.</footer>
+</div>
+</main>
+</body>
+</html>

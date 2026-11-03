@@ -1,0 +1,826 @@
+[
+  {
+    "file": "plain-1.html",
+    "sha256": "a70b064977b62eeeb0e9eb20764e147d49666b15ec70dca71deb1d1c41c62e85",
+    "recordedAt": "2026-11-02T13:45:13.861Z"
+  },
+  {
+    "file": "0-0-1.html",
+    "sha256": "97e457ed5de926b95ad494292cfffac04b430e315b408a271a3381d03a2f876d",
+    "recordedAt": "2026-11-02T13:45:13.863Z"
+  },
+  {
+    "file": "0-1-1.html",
+    "sha256": "3b53949930fe750bf4749f3331d52966d580ef49e31acc739e87743a4491f096",
+    "recordedAt": "2026-11-02T13:45:13.863Z"
+  },
+  {
+    "file": "0-2-1.html",
+    "sha256": "dc7a70e71baf5b6db801df5ad453560c98e0ca2055d39fb180cc5f7647adf9a4",
+    "recordedAt": "2026-11-02T13:46:05.209Z"
+  },
+  {
+    "file": "0-3-1.html",
+    "sha256": "a341e1cf8a76d7cecb2e3fbdc2c456b089619e787bdadc52e1aab5f9fe1aa31b",
+    "recordedAt": "2026-11-02T13:47:37.783Z"
+  },
+  {
+    "file": "0-4-1.html",
+    "sha256": "58c6354e7431021ab3da2f7542a18ff1cc57d4d59a07590a14469602462d2fc6",
+    "recordedAt": "2026-11-02T13:47:37.785Z"
+  },
+  {
+    "file": "0-2-2.html",
+    "sha256": "74d788bf7ff6bf75ce031bf3a7d843f3cf4e8ac1338e3f79ea5500fdab69f92f",
+    "recordedAt": "2026-11-02T13:47:44.679Z"
+  },
+  {
+    "file": "1-0-1.html",
+    "sha256": "51cbbcafcd1e0f760c80c3ae8b6486d312e161d335bf067e1c8a92a65654091b",
+    "recordedAt": "2026-11-02T13:49:24.871Z"
+  },
+  {
+    "file": "1-1-1.html",
+    "sha256": "6872fd1f59ec92db8e0e450c88e2ad49a8f40f628ea9746307af65476e30e5e4",
+    "recordedAt": "2026-11-02T13:49:24.872Z"
+  },
+  {
+    "file": "0-2-3.html",
+    "sha256": "349a5c0d0adee06b5cd2fcf8ccfd9a9f3bca309600e14c71a4a47483cfaff0c9",
+    "recordedAt": "2026-11-02T13:49:29.126Z"
+  },
+  {
+    "file": "0-2-4.html",
+    "sha256": "349a5c0d0adee06b5cd2fcf8ccfd9a9f3bca309600e14c71a4a47483cfaff0c9",
+    "recordedAt": "2026-11-02T13:50:31.511Z"
+  },
+  {
+    "file": "1-2-1.html",
+    "sha256": "fb47dcad73124fbea9e8a5cf89f85ecdd05bdaccac3ad40031c16aa5930a68f6",
+    "recordedAt": "2026-11-02T13:52:16.197Z"
+  },
+  {
+    "file": "1-3-1.html",
+    "sha256": "ec69f3321c59e02f1abeda8b71070d6866ded0310a286e3162136cf4f2867c03",
+    "recordedAt": "2026-11-02T13:52:16.198Z"
+  },
+  {
+    "file": "1-4-1.html",
+    "sha256": "cbb9f2fae89f39f6dc748c7c1b4be31686f0d7448ce88388a042a5f0d97faffa",
+    "recordedAt": "2026-11-02T13:52:24.833Z"
+  },
+  {
+    "file": "2-0-1.html",
+    "sha256": "d3b1f4c0cf2d78f75c6a4e7891879e630c3a3af530ed3b168c786e3410421749",
+    "recordedAt": "2026-11-02T13:53:54.682Z"
+  },
+  {
+    "file": "2-1-1.html",
+    "sha256": "961f614bb1fa5d54dcbed2e58af9ddb758dcf79c1f163db5eee172fe583ae558",
+    "recordedAt": "2026-11-02T13:53:54.683Z"
+  },
+  {
+    "file": "1-4-2.html",
+    "sha256": "7e7f6029fe702579b33903673531639667e9c2a6c7fea86c06b62f0e672c4f7a",
+    "recordedAt": "2026-11-02T13:54:06.277Z"
+  },
+  {
+    "file": "2-2-1.html",
+    "sha256": "3821661b9e01215ae6ad387b5714d31156dd9c16da0e55d82f0700b8b09a7525",
+    "recordedAt": "2026-11-02T13:55:52.463Z"
+  },
+  {
+    "file": "2-3-1.html",
+    "sha256": "349166362441de41be5800a5266fb16dc2df59b0cf5d039527a7aa19e29c70cd",
+    "recordedAt": "2026-11-02T13:55:52.464Z"
+  },
+  {
+    "file": "1-4-3.html",
+    "sha256": "bb8ff1a7f76400688f38db0388a14288761c0a6c71a7c3d8429545c5e3dd2ba3",
+    "recordedAt": "2026-11-02T13:55:52.464Z"
+  },
+  {
+    "file": "1-4-4.html",
+    "sha256": "bb8ff1a7f76400688f38db0388a14288761c0a6c71a7c3d8429545c5e3dd2ba3",
+    "recordedAt": "2026-11-02T13:56:55.649Z"
+  },
+  {
+    "file": "2-4-1.html",
+    "sha256": "41f8b88f57aa330b95cb93bb2fdb16c027f6c87d768ce233ba79878c3aa193b0",
+    "recordedAt": "2026-11-02T13:58:13.768Z"
+  },
+  {
+    "file": "3-0-1.html",
+    "sha256": "b81842ee6da488f274cd8b248c28a3b3eb19892a08b60f949c024fad161af5d1",
+    "recordedAt": "2026-11-02T13:58:13.768Z"
+  },
+  {
+    "file": "3-1-1.html",
+    "sha256": "cf979bdac18e7a2b04ff8a048e7649971174b2503ef3a11c919304733fa51675",
+    "recordedAt": "2026-11-02T14:00:06.804Z"
+  },
+  {
+    "file": "3-2-1.html",
+    "sha256": "fc247e9adcfdd7af56ed8c230477e18420fe760c75ea171d7c0f7bd9723fe71a",
+    "recordedAt": "2026-11-02T14:00:06.806Z"
+  },
+  {
+    "file": "3-3-1.html",
+    "sha256": "859d8ba16c4578c05dd62e7fa7334c0c9ac37fdbddd8cda5abf5ecdbd82d6d21",
+    "recordedAt": "2026-11-02T14:00:06.806Z"
+  },
+  {
+    "file": "3-4-1.html",
+    "sha256": "da907e923cec8e12ded79a18d73efc0b6b96a0b46a6bcc674e4ae079bd49cf32",
+    "recordedAt": "2026-11-02T14:01:26.138Z"
+  },
+  {
+    "file": "4-0-1.html",
+    "sha256": "15ffc9361fcb494b1df14c022a0eeb7facacf8118454692a43f2c4347eb4426b",
+    "recordedAt": "2026-11-02T14:02:44.525Z"
+  },
+  {
+    "file": "4-1-1.html",
+    "sha256": "14ee97b7dafb66e4ab1d5a91733b60bbf45180f7a6d8f7cbbbc92f8f1627be43",
+    "recordedAt": "2026-11-02T14:02:44.526Z"
+  },
+  {
+    "file": "4-2-1.html",
+    "sha256": "b2359c633e197bf40773a16c289eb19d85352f73dafb0e21d941004fc4878f57",
+    "recordedAt": "2026-11-02T14:03:35.936Z"
+  },
+  {
+    "file": "4-3-1.html",
+    "sha256": "4de1093c8209ad73a5f3bd37b68241b3d4e73f2d14e310ccc7beae722bc5f179",
+    "recordedAt": "2026-11-02T14:04:35.528Z"
+  },
+  {
+    "file": "4-4-1.html",
+    "sha256": "971780ba98e30070a6c5310e4548da4b41dfea48d64b040a0e153509496fc46b",
+    "recordedAt": "2026-11-02T14:04:35.529Z"
+  },
+  {
+    "file": "4-3-2.html",
+    "sha256": "359ab5eb5291ae4823ba2fbb78ccf13957793f73346a0de41a6f9b8346118ecb",
+    "recordedAt": "2026-11-02T14:06:12.426Z"
+  },
+  {
+    "file": "2-0-2.html",
+    "sha256": "bf5bb9e5580b1408506dbeece94b15f90ccbefaf360563c95dc2d373d4c5519c",
+    "recordedAt": "2026-11-02T14:06:12.427Z"
+  },
+  {
+    "file": "3-1-2.html",
+    "sha256": "f4ef47bb64da68cbfe2e283624eef970e744338832ae00f6c7ccda75b1995420",
+    "recordedAt": "2026-11-02T14:06:33.261Z"
+  },
+  {
+    "file": "4-3-3.html",
+    "sha256": "9c681d40327be0e4368404591db473764889a40ff5bb89318fbe557850789079",
+    "recordedAt": "2026-11-02T14:07:46.084Z"
+  },
+  {
+    "file": "3-1-3.html",
+    "sha256": "f4ef47bb64da68cbfe2e283624eef970e744338832ae00f6c7ccda75b1995420",
+    "recordedAt": "2026-11-02T14:08:00.656Z"
+  },
+  {
+    "file": "2-0-3.html",
+    "sha256": "9c6db61db0e21c6821ec86abbdc6822f04f6d202009d062e4b8741a3b7d9a044",
+    "recordedAt": "2026-11-02T14:08:12.940Z"
+  },
+  {
+    "file": "4-3-4.html",
+    "sha256": "9c681d40327be0e4368404591db473764889a40ff5bb89318fbe557850789079",
+    "recordedAt": "2026-11-02T14:09:22.425Z"
+  },
+  {
+    "file": "3-1-4.html",
+    "sha256": "f4ef47bb64da68cbfe2e283624eef970e744338832ae00f6c7ccda75b1995420",
+    "recordedAt": "2026-11-02T14:09:22.427Z"
+  },
+  {
+    "file": "2-0-4.html",
+    "sha256": "9c6db61db0e21c6821ec86abbdc6822f04f6d202009d062e4b8741a3b7d9a044",
+    "recordedAt": "2026-11-02T14:10:15.122Z"
+  },
+  {
+    "file": "plain-2.html",
+    "sha256": "c2abe1d71df43f6289737aa8a4a1d464fee1c26f6fd4955e0f57a986eb287831",
+    "recordedAt": "2026-11-02T14:27:20.138Z"
+  },
+  {
+    "file": "plain-3.html",
+    "sha256": "c2abe1d71df43f6289737aa8a4a1d464fee1c26f6fd4955e0f57a986eb287831",
+    "recordedAt": "2026-11-02T14:31:11.370Z"
+  },
+  {
+    "file": "plain-4.html",
+    "sha256": "c2abe1d71df43f6289737aa8a4a1d464fee1c26f6fd4955e0f57a986eb287831",
+    "recordedAt": "2026-11-02T14:33:50.517Z"
+  },
+  {
+    "file": "0-5-1.html",
+    "sha256": "0bfd0d8a2848eebd75d5f4fee651285cde0012dfb41049f6bceac11fb10e85a4",
+    "recordedAt": "2026-11-02T15:08:37.954Z"
+  },
+  {
+    "file": "1-5-1.html",
+    "sha256": "25934cae78f80eb38e610f3aea98fc8aac0cdad62e34212f7929db67e347fa43",
+    "recordedAt": "2026-11-02T15:08:50.021Z"
+  },
+  {
+    "file": "2-5-1.html",
+    "sha256": "373fa257fceed8b44c3575bfb339ab669a3cdf7ce77fe75b8268ebbb3cfa74b3",
+    "recordedAt": "2026-11-02T15:09:20.084Z"
+  },
+  {
+    "file": "3-5-1.html",
+    "sha256": "6806503b39097aabe85089e3f2426478c659dbffefe9f3e17c3bb8754f94cab7",
+    "recordedAt": "2026-11-02T15:11:26.037Z"
+  },
+  {
+    "file": "4-5-1.html",
+    "sha256": "c2c0258577e9243c6d09c2512025b761b3f261ea6fa986bb7509c99228c10adb",
+    "recordedAt": "2026-11-02T15:11:26.038Z"
+  },
+  {
+    "file": "5-0-1.html",
+    "sha256": "df7fbe3b7a9f6ddf5ebe3fa9df19b58f90790777299faab56c9f178384224bcb",
+    "recordedAt": "2026-11-02T15:11:26.038Z"
+  },
+  {
+    "file": "5-1-1.html",
+    "sha256": "1d41fcad623181b6cab3d507a13cb9483ea6f2c5c2c138f6af1a7f10f8f36486",
+    "recordedAt": "2026-11-02T15:13:18.461Z"
+  },
+  {
+    "file": "5-2-1.html",
+    "sha256": "aeab394786a0e998b5797e3ae0a747718b95de8e3ded4e185c1593339a056a14",
+    "recordedAt": "2026-11-02T15:14:07.268Z"
+  },
+  {
+    "file": "5-3-1.html",
+    "sha256": "cf2971dd71e4ae1a0b8599b99ead92e9b27dee911ddaa77200a5f432f1953463",
+    "recordedAt": "2026-11-02T15:14:07.269Z"
+  },
+  {
+    "file": "5-4-1.html",
+    "sha256": "9c5a7bddbd147ae7cb30491fcd3575b6f3415e9678e1add3c5981e70ea7a95a2",
+    "recordedAt": "2026-11-02T15:15:08.849Z"
+  },
+  {
+    "file": "5-5-1.html",
+    "sha256": "50a7b241af5a6668de53796131c1dbabca1038d51971f61e7b1f14a82d2300be",
+    "recordedAt": "2026-11-02T15:16:10.798Z"
+  },
+  {
+    "file": "5-4-2.html",
+    "sha256": "b8ff04f6a9f978b5e0d2137db3014d27f70d37a67ccaaf0b5db35f19f3685538",
+    "recordedAt": "2026-11-02T19:41:40.452Z"
+  },
+  {
+    "file": "5-3-2.html",
+    "sha256": "45153df7763205415b13efd5991521acc2128fad1fc0de0eb1865302d00576ea",
+    "recordedAt": "2026-11-02T19:41:51.892Z"
+  },
+  {
+    "file": "5-5-2.html",
+    "sha256": "7c0d824f6477ae290a3b8ed128169681b102d41f42fa1de176bc8d65073d1845",
+    "recordedAt": "2026-11-02T19:41:51.893Z"
+  },
+  {
+    "file": "5-4-3.html",
+    "sha256": "de4115d42cfa1ffcf487c06ab860ebbe58ab505c7cb7e7e5b04ff620a1a5aaae",
+    "recordedAt": "2026-11-02T19:43:04.151Z"
+  },
+  {
+    "file": "5-5-3.html",
+    "sha256": "7c0d824f6477ae290a3b8ed128169681b102d41f42fa1de176bc8d65073d1845",
+    "recordedAt": "2026-11-02T19:43:04.152Z"
+  },
+  {
+    "file": "5-3-3.html",
+    "sha256": "a4556d4351d83c5671648a8abe13f6526ca89f593a5d11ac349333aa56fb80ca",
+    "recordedAt": "2026-11-02T19:43:19.828Z"
+  },
+  {
+    "file": "5-3-4.html",
+    "sha256": "a4556d4351d83c5671648a8abe13f6526ca89f593a5d11ac349333aa56fb80ca",
+    "recordedAt": "2026-11-02T19:44:26.524Z"
+  },
+  {
+    "file": "5-4-4.html",
+    "sha256": "de4115d42cfa1ffcf487c06ab860ebbe58ab505c7cb7e7e5b04ff620a1a5aaae",
+    "recordedAt": "2026-11-02T19:44:26.526Z"
+  },
+  {
+    "file": "5-5-4.html",
+    "sha256": "7c0d824f6477ae290a3b8ed128169681b102d41f42fa1de176bc8d65073d1845",
+    "recordedAt": "2026-11-02T19:44:26.527Z"
+  },
+  {
+    "file": "0-0-2.html",
+    "sha256": "fba8d9126c3dd377da5ccf0095324590c76e8cd7e8cc17bbcd6589d82b5451bd",
+    "critiqueSha256": "0fdc4b364d6c911fac9ef65ca313416c0c13a63e84d56460592e6a9d72a4a3f9",
+    "recordedAt": "2026-11-02T19:45:53.317Z"
+  },
+  {
+    "file": "0-1-2.html",
+    "sha256": "5d27bfaf041b8b57e50ea8ccbaa1dc6a8ba1bc07a638437a01a42d09572bb7d7",
+    "critiqueSha256": "861418918f409888cc0f2e92ffa7aabbe729dea1eeb358fc8e01e2459ccf454f",
+    "recordedAt": "2026-11-02T19:45:53.319Z"
+  },
+  {
+    "file": "0-3-2.html",
+    "sha256": "a8c2007f8318b6dc5d762bb4cb3c47b583100d58b163e095608a35d35096abb0",
+    "critiqueSha256": "eac9c7516cb209778a0e5047e1680270c8b7c0d69df3413ae78e45fd15eea369",
+    "recordedAt": "2026-11-02T19:46:11.750Z"
+  },
+  {
+    "file": "0-0-3.html",
+    "sha256": "c817a49ccdddf7be6dd371ac739d1451549ca6473ce1d8926ced78c4e31ae7d5",
+    "critiqueSha256": "81cd163189d2e3033419ea0eb796e9a1564ddd7afc5334fb3aa56d7e9853704d",
+    "recordedAt": "2026-11-02T19:46:49.413Z"
+  },
+  {
+    "file": "0-1-3.html",
+    "sha256": "9fd73bfa468642a776dfdfdb18fc19a74ae598cc20ab84ce6271a67595f3aed9",
+    "critiqueSha256": "603175fea84c8631bbfa860f00bc0b9805b52800cb8aeb9028ac0f6be85ac1f5",
+    "recordedAt": "2026-11-02T19:47:11.246Z"
+  },
+  {
+    "file": "0-3-3.html",
+    "sha256": "a8c916227e9196d4c9351ec8a56c0bb4ab74687fd4887f223b4337cc0d49a222",
+    "critiqueSha256": "4416c78a9970c4f704fce4879e25b9713e69b8370496d9a7c3e83656a6b967a9",
+    "recordedAt": "2026-11-02T19:47:11.248Z"
+  },
+  {
+    "file": "0-0-4.html",
+    "sha256": "c817a49ccdddf7be6dd371ac739d1451549ca6473ce1d8926ced78c4e31ae7d5",
+    "critiqueSha256": "c61281ddd323878d0892a17edfda54eb8c2677c77137354f3095c37976efa016",
+    "recordedAt": "2026-11-02T19:47:36.827Z"
+  },
+  {
+    "file": "0-1-4.html",
+    "sha256": "9fd73bfa468642a776dfdfdb18fc19a74ae598cc20ab84ce6271a67595f3aed9",
+    "critiqueSha256": "d2a5ec8146034a1c65d26eb23749b777e3fa3698fb643b79464cf9918b241cad",
+    "recordedAt": "2026-11-02T19:48:21.190Z"
+  },
+  {
+    "file": "0-3-4.html",
+    "sha256": "b764dd642b0dd0ef3400e0e1577ea24d2043251a69b415a507b063a756f4e6b8",
+    "critiqueSha256": "f58935fe1709fc44787636e17645bc2c80d2a061667de74d892f17017271518b",
+    "recordedAt": "2026-11-02T19:48:21.194Z"
+  },
+  {
+    "file": "0-4-2.html",
+    "sha256": "6df116b0feb9494979e6cadc6e8e1acff4c72da79f873bba90885b1cb9bdada1",
+    "critiqueSha256": "bd8ffcb0ef25e1939ea89f0407d1d212aefc2f1d9b02203e5d1b444b6daf3459",
+    "recordedAt": "2026-11-02T19:49:10.347Z"
+  },
+  {
+    "file": "0-5-2.html",
+    "sha256": "ce441ec993b4f2c4d08d8c866bd2ef77853e052f4cf015cc94f481e16c77f104",
+    "critiqueSha256": "c6de679e45bea974d5f647a276877b575be5fab279dcb8d618f9ee16eba4a4e1",
+    "recordedAt": "2026-11-02T19:49:37.281Z"
+  },
+  {
+    "file": "1-0-2.html",
+    "sha256": "f4083485e26159fddeb1c8618a446a935de9d3b80a81f36f59abec11e7182ab3",
+    "critiqueSha256": "c3adfa5075b9ef8a2ce3ffafc447af8c8ddeecfd3da29c5de93a679aa1a33b90",
+    "recordedAt": "2026-11-02T19:49:47.024Z"
+  },
+  {
+    "file": "0-4-3.html",
+    "sha256": "fff0800ece8cd965dc9972006a0f85975f80c3c846b533cd3b2f5c4b66529227",
+    "critiqueSha256": "f652d5de63867e023c2fdcd6bfb752cb7c9de66757e491b7a864466ad676495a",
+    "recordedAt": "2026-11-02T19:50:17.004Z"
+  },
+  {
+    "file": "0-5-3.html",
+    "sha256": "8ca2887363babcfb4e3b9fda8cb698c58cac69c21e14b40890d0e023ecde30d2",
+    "critiqueSha256": "59a194c70cd8a8aedaf1bb6efcc97a32a35e2dbda60aaa3694068f2961104722",
+    "recordedAt": "2026-11-02T19:50:38.695Z"
+  },
+  {
+    "file": "1-0-3.html",
+    "sha256": "72f4264728eb12805df54b5578aaff8fae3b0751b0475b7d8f91fc151cb6bc83",
+    "critiqueSha256": "798fa46c9d1acaaf5b6cfb8389ab33120ac2a68789acd2573e5e72cb28f94230",
+    "recordedAt": "2026-11-02T19:50:48.597Z"
+  },
+  {
+    "file": "0-4-4.html",
+    "sha256": "fff0800ece8cd965dc9972006a0f85975f80c3c846b533cd3b2f5c4b66529227",
+    "critiqueSha256": "e196ac89a4b100c5d86538f196547c2fa1447fdbc8eb393232d15ed6371ade68",
+    "recordedAt": "2026-11-02T19:50:57.549Z"
+  },
+  {
+    "file": "0-5-4.html",
+    "sha256": "62afd8222dc77a2be7654c1cb77327ba87dd24e29f989959bc0c129a92d61aa3",
+    "critiqueSha256": "9e5a11eb0a0e4df21fc75e704f24aa5475443960aa8a5a1458c2313bfc31b4c7",
+    "recordedAt": "2026-11-02T19:51:37.725Z"
+  },
+  {
+    "file": "1-0-4.html",
+    "sha256": "72f4264728eb12805df54b5578aaff8fae3b0751b0475b7d8f91fc151cb6bc83",
+    "critiqueSha256": "5f42e3cc3c86ea6872382638bec29f35bfa16bb14a36e7fac0eaf9e8c1e7167a",
+    "recordedAt": "2026-11-02T19:51:37.730Z"
+  },
+  {
+    "file": "1-1-2.html",
+    "sha256": "2406593f32cbd1fb6e202f7875647c5d82ac2d420ed0710cd50582cf1dbb784c",
+    "critiqueSha256": "e83f6278c8edb4e7f36d14d47390bd56efcac953d923eb4394e115e5e60c9274",
+    "recordedAt": "2026-11-02T19:52:03.631Z"
+  },
+  {
+    "file": "1-2-2.html",
+    "sha256": "164d8292be1cdfe2c234605123efa4008676aaec4ec8b82290020664d1912eb2",
+    "critiqueSha256": "f9aeacdf6df4fe62494ff3995b804099c04c38028d55fcd584bb7b2c12addf7c",
+    "recordedAt": "2026-11-02T19:52:44.750Z"
+  },
+  {
+    "file": "1-1-3.html",
+    "sha256": "f7e3b41a806eddb1f52937b74d937b01cf3ff45ca346b136c67d444f3789e89f",
+    "critiqueSha256": "3f336fdb991d3533d30cf548b2e04a098855a251b33ca53d27aa1fd49f9ec9ca",
+    "recordedAt": "2026-11-02T19:53:00.663Z"
+  },
+  {
+    "file": "1-3-2.html",
+    "sha256": "27f69829163e3305ffe6aef2c2cd338026ea321301fe8ed50a49b551b554c8d9",
+    "critiqueSha256": "b078b2ac30ff4b15519afcb42e58d0d4a6862715df25b5fc8214edf184d9befc",
+    "recordedAt": "2026-11-02T19:53:10.943Z"
+  },
+  {
+    "file": "1-2-3.html",
+    "sha256": "451346f20a37aa84bfd7ae401dded4922d4a65e83db5eb23e16b62b27214bb89",
+    "critiqueSha256": "d66396d53695174e9079b04f6df5771816f57b0f7be9b09fd400099df6f77278",
+    "recordedAt": "2026-11-02T19:53:51.672Z"
+  },
+  {
+    "file": "1-1-4.html",
+    "sha256": "b7d944bdd17fd226bf35f7f000b42995118e7b9477165d43a64a1273827c06ea",
+    "critiqueSha256": "deeb36e604bde6111df396953d80546e168e8bac215e164a0444ad9321cb2a8b",
+    "recordedAt": "2026-11-02T19:54:01.335Z"
+  },
+  {
+    "file": "1-3-3.html",
+    "sha256": "ecffd158b895b642d7b139a8e4b71a527804df4e8850ad3be870a21eeb4c2c19",
+    "critiqueSha256": "052d0fa2df85c86a6d500d8dadccab8811980528a4fa7ae7b690af39b6eb937a",
+    "recordedAt": "2026-11-02T19:54:15.227Z"
+  },
+  {
+    "file": "1-2-4.html",
+    "sha256": "451346f20a37aa84bfd7ae401dded4922d4a65e83db5eb23e16b62b27214bb89",
+    "critiqueSha256": "c25d3db8e14fff195cb2aceb30d7a6885419f85df0448bbc7e839ae844965447",
+    "recordedAt": "2026-11-02T19:54:39.082Z"
+  },
+  {
+    "file": "1-3-4.html",
+    "sha256": "ecffd158b895b642d7b139a8e4b71a527804df4e8850ad3be870a21eeb4c2c19",
+    "critiqueSha256": "46eda43fa2163f17ee2d191b491bb82312b9cb79e8a36a8b1602bc60a80df46a",
+    "recordedAt": "2026-11-02T19:55:35.770Z"
+  },
+  {
+    "file": "1-5-2.html",
+    "sha256": "e2c660a286dc7ae6763390e9c7b808ff86a74e89d31557ce14c2d97ddcf9df49",
+    "critiqueSha256": "c10d70ef5ded1b7ba6a55b74d69637fb12fb706fe6531a87c863da1819860ff6",
+    "recordedAt": "2026-11-02T19:55:35.773Z"
+  },
+  {
+    "file": "2-1-2.html",
+    "sha256": "eb3b32652209cee465c736b46ceecffbc9bce3031f90cefc299a9a428f351c45",
+    "critiqueSha256": "3794c4ceb4dd9e56ea77039bce7ececa70390c8d5a31ba0e8208f530f98a4117",
+    "recordedAt": "2026-11-02T19:56:07.935Z"
+  },
+  {
+    "file": "1-5-3.html",
+    "sha256": "e86cc7f526587677e5f3d76bd7a95d80de3b3a4f4ad9ad627d5404abd3f69ee1",
+    "critiqueSha256": "7c32a1f905e5fc9c9cc58da253d1ff02af649addc836e48853b15c8daf7cff15",
+    "recordedAt": "2026-11-02T19:57:05.353Z"
+  },
+  {
+    "file": "2-2-2.html",
+    "sha256": "9aa8b9324a5351938cec7f14cd80632146920ebf3ec0eb35fde1c0307f2ff8c7",
+    "critiqueSha256": "8cfec9c610af66711e96da07f0a95066948b529c49b07534264709fbe0412bae",
+    "recordedAt": "2026-11-02T19:57:05.356Z"
+  },
+  {
+    "file": "2-1-3.html",
+    "sha256": "91effb35d4cd18bdde1b2f0314a5d6652c7e9fc8e8087813e8789f9968b2a370",
+    "critiqueSha256": "deaed55faaf50f6b3880034395c4fa558ee0c4e8b8a097910991a31616d9ffba",
+    "recordedAt": "2026-11-02T19:57:52.666Z"
+  },
+  {
+    "file": "1-5-4.html",
+    "sha256": "e86cc7f526587677e5f3d76bd7a95d80de3b3a4f4ad9ad627d5404abd3f69ee1",
+    "critiqueSha256": "34b5cbaf608bd7023809bbfd9ad85d074f99a6c4361283e6952cbe1139402364",
+    "recordedAt": "2026-11-02T19:58:34.181Z"
+  },
+  {
+    "file": "2-2-3.html",
+    "sha256": "3e9fbe033694f30fb861c32076f9b7014b28ddb164c0cfa89f204826fdc4f2ea",
+    "critiqueSha256": "39cee3c41bf0daa4c00273dbf2a0cbd21f240ea7b8164e9f3c513d1f3d5c0dd8",
+    "recordedAt": "2026-11-02T19:59:00.372Z"
+  },
+  {
+    "file": "2-1-4.html",
+    "sha256": "91effb35d4cd18bdde1b2f0314a5d6652c7e9fc8e8087813e8789f9968b2a370",
+    "critiqueSha256": "501e456fc6701311cfc739bd4fbc2e17d83eef7c61f07c1bd97e35eda165ef13",
+    "recordedAt": "2026-11-02T19:59:35.761Z"
+  },
+  {
+    "file": "2-3-2.html",
+    "sha256": "030ce6060b5f57b68d900926e02b494224a5164f498b89c3df258bb341e9365a",
+    "critiqueSha256": "148c40938bd51c286fa1fa9ee04fc31523dcb28381302e0b1edd130bd281bc8d",
+    "recordedAt": "2026-11-02T20:00:36.391Z"
+  },
+  {
+    "file": "2-2-4.html",
+    "sha256": "3e9fbe033694f30fb861c32076f9b7014b28ddb164c0cfa89f204826fdc4f2ea",
+    "critiqueSha256": "527a0a3f3a3a8aa4fa6268cbeb7900895a79de443fb17f6f845489deff52d483",
+    "recordedAt": "2026-11-02T20:00:36.393Z"
+  },
+  {
+    "file": "2-4-2.html",
+    "sha256": "789338fa4f012d417257297170c7a1dbb1dc87fcd6795bb940bddbb779ac03dd",
+    "critiqueSha256": "b560ce61bddcc5289d917d5bafbafbf6ef7d81efad69ba1c3c0bb9d8899ac21a",
+    "recordedAt": "2026-11-02T20:01:48.149Z"
+  },
+  {
+    "file": "2-3-3.html",
+    "sha256": "4a9956c7551b8e1f9b893a6defeb84f639ab9fa25d02818d84b4a78a7cad4355",
+    "critiqueSha256": "0176b4ab526f3a7d5336ddba8553ffff7b0674a9f61bd966e133352df7506624",
+    "recordedAt": "2026-11-02T20:02:08.302Z"
+  },
+  {
+    "file": "2-5-2.html",
+    "sha256": "7c46dac4048311bd8ef818fe206f82b40be9dae9632d5da12df4ad1a40a53b6d",
+    "critiqueSha256": "5c3a6e5f27c1fc81bd52c2b2786fbafaffe81d334cf81e2d6199b5635ca82849",
+    "recordedAt": "2026-11-02T20:02:31.719Z"
+  },
+  {
+    "file": "2-3-4.html",
+    "sha256": "4a9956c7551b8e1f9b893a6defeb84f639ab9fa25d02818d84b4a78a7cad4355",
+    "critiqueSha256": "6144b2ebc4f98741fbca58d581937107dd15f914599e321cbe24ee9477ef4f85",
+    "recordedAt": "2026-11-02T20:03:06.133Z"
+  },
+  {
+    "file": "2-4-3.html",
+    "sha256": "7cefe14efd66c541ee2ba1d7541a147a08ecbe374729bc17056e34dc1502b9d0",
+    "critiqueSha256": "7098593df30a2c369d0e486da0b51ca34f2b371761be4e3251944d473fc0e413",
+    "recordedAt": "2026-11-02T20:03:20.015Z"
+  },
+  {
+    "file": "2-5-3.html",
+    "sha256": "aecdfb2c10c8f2b61efbf646d032a9d12921e0905e705662e85d9308b3ae681e",
+    "critiqueSha256": "7a696c7ac92d9906c98f7458ded09bf00d5b8c4156da101730a3e69b9e6e793b",
+    "recordedAt": "2026-11-02T20:03:49.673Z"
+  },
+  {
+    "file": "2-4-4.html",
+    "sha256": "7cefe14efd66c541ee2ba1d7541a147a08ecbe374729bc17056e34dc1502b9d0",
+    "critiqueSha256": "2245216a16221d1163c413bc4a6f8e98ac756d798d27d100cb214bfbe63bef35",
+    "recordedAt": "2026-11-02T20:04:05.267Z"
+  },
+  {
+    "file": "3-0-2.html",
+    "sha256": "1703122e50a4334ee54b1cde0b23e3523df7a695b78d771610355514e36ecb8f",
+    "critiqueSha256": "cff0260b99a0e1085975f753c7b8ae0b161de1547e8e1b9e89089acc5bf2ea96",
+    "recordedAt": "2026-11-02T20:04:52.787Z"
+  },
+  {
+    "file": "2-5-4.html",
+    "sha256": "aecdfb2c10c8f2b61efbf646d032a9d12921e0905e705662e85d9308b3ae681e",
+    "critiqueSha256": "62654c83c360097b4112beaea170f8b4152efecf7f800838cd05f0b0562937f2",
+    "recordedAt": "2026-11-02T20:04:52.789Z"
+  },
+  {
+    "file": "3-2-2.html",
+    "sha256": "00adc637b332345664a438070e6bfa674338bf451e1f8c0d882b2195a49c88e6",
+    "critiqueSha256": "c84e27cb6aeec375165433e3c55cc01147cd3cfeb1d2283b0c07b55ce37a250e",
+    "recordedAt": "2026-11-02T20:05:22.825Z"
+  },
+  {
+    "file": "3-0-3.html",
+    "sha256": "b1006b84791ffe49f89c97003bf99537ff9634b998ec859ffc92ee9d70e571f5",
+    "critiqueSha256": "68e79bd4c23677a60cfbac928e29bc8d67887cf0e954760d76bc253d3d64e584",
+    "recordedAt": "2026-11-02T20:05:57.124Z"
+  },
+  {
+    "file": "3-3-2.html",
+    "sha256": "4ca5c1eafc2cac8206dc9943ebe79e74ad0516a21a12f719da92fbc466e5e920",
+    "critiqueSha256": "fa399ea5f296765872eddaf6ad8e86414ae80ce17fed0fc5290e2db1a3433e6c",
+    "recordedAt": "2026-11-02T20:06:15.576Z"
+  },
+  {
+    "file": "3-2-3.html",
+    "sha256": "e7f74dff02b68e64f094b8e2ce190dc658df427a0fdee025479c8fdff8effbd8",
+    "critiqueSha256": "1d70014d671b6a97df9aa8e0fa942e444c9d519f94dd7dadf16e4141ac395814",
+    "recordedAt": "2026-11-02T20:06:26.884Z"
+  },
+  {
+    "file": "3-0-4.html",
+    "sha256": "b1006b84791ffe49f89c97003bf99537ff9634b998ec859ffc92ee9d70e571f5",
+    "critiqueSha256": "656f331f41f594087e0706236181c4b70ad33de3c29a3e563f258ed514c10fc2",
+    "recordedAt": "2026-11-02T20:07:12.441Z"
+  },
+  {
+    "file": "3-3-3.html",
+    "sha256": "5f19d16d41e3f7d42d0772900a00978e6aff3e7796cdface866db04a72b63ddc",
+    "critiqueSha256": "caa0e114b562351ed16a2783f6e2e98ee7be7bce61ce567edb3348c8c7812541",
+    "recordedAt": "2026-11-02T20:07:12.443Z"
+  },
+  {
+    "file": "3-2-4.html",
+    "sha256": "e7f74dff02b68e64f094b8e2ce190dc658df427a0fdee025479c8fdff8effbd8",
+    "critiqueSha256": "6e12fb678497d2a5e007f2089f440576fd3071f6a50c91004e4b60e8edf2b77c",
+    "recordedAt": "2026-11-02T20:07:12.445Z"
+  },
+  {
+    "file": "3-3-4.html",
+    "sha256": "5f19d16d41e3f7d42d0772900a00978e6aff3e7796cdface866db04a72b63ddc",
+    "critiqueSha256": "17a726fb2a7f416a8d3cbe566dfa0b09206fe72e44408ef2ab7572537334177d",
+    "recordedAt": "2026-11-02T20:08:18.085Z"
+  },
+  {
+    "file": "3-4-2.html",
+    "sha256": "3cda00eb94fbba586e00b29fcd5a538b15c39018384d345efa9dc7cb2e710478",
+    "critiqueSha256": "45ba673c317b901a82cd823dd2918f450d2181ff19052c85d2b4f5bc14e850dd",
+    "recordedAt": "2026-11-02T20:08:35.627Z"
+  },
+  {
+    "file": "3-5-2.html",
+    "sha256": "7582f710a48809fc415789774576b2874aba74bfa00fb6b59cae15b557c57dbc",
+    "critiqueSha256": "0ea7067dc56b5efafd56cfe8d1a90ab6c675f796f391c23a94a7c64e52db640c",
+    "recordedAt": "2026-11-02T20:08:47.168Z"
+  },
+  {
+    "file": "4-0-2.html",
+    "sha256": "11a5b15a528415980a56dc3726773a179d57b484ae53b270b19d90467c563f61",
+    "critiqueSha256": "e4af87f85afc039f14ae5d8b8f1b38431a3abbaf8af8fdd31f86c11fcb0c1e3a",
+    "recordedAt": "2026-11-02T20:09:29.308Z"
+  },
+  {
+    "file": "3-5-3.html",
+    "sha256": "62694edcd2b4fc994b79da95d15b7b79cdaf4722302ad0bc3c9e3d419b21653b",
+    "critiqueSha256": "f7a53290373462ab7c6b0815ecd00824fa0beae952d488b5080d1c1b8f337e26",
+    "recordedAt": "2026-11-02T20:09:38.772Z"
+  },
+  {
+    "file": "3-4-3.html",
+    "sha256": "cfdbe8e2f495518aa4ceebfc805b593d8b4ec76fe42443b1018c707dade7005f",
+    "critiqueSha256": "5ac620e7fad0518af3b6e2d5b573fd63bd3b8f886792110f64ffab554c9795ea",
+    "recordedAt": "2026-11-02T20:09:46.206Z"
+  },
+  {
+    "file": "4-0-3.html",
+    "sha256": "c4224f2254cb9281cca46b8529181b21f1ba9a91d4d46b592056241e55e42954",
+    "critiqueSha256": "bc7716af233965d1274d888163a1cc460d00d66c8e4389d78f11d840bc4c39ae",
+    "recordedAt": "2026-11-02T20:10:23.720Z"
+  },
+  {
+    "file": "3-4-4.html",
+    "sha256": "cfdbe8e2f495518aa4ceebfc805b593d8b4ec76fe42443b1018c707dade7005f",
+    "critiqueSha256": "871e55423af7c63ea9d37735b4e37531c8fd066272bf96fc55dd898268cc1074",
+    "recordedAt": "2026-11-02T20:10:32.675Z"
+  },
+  {
+    "file": "3-5-4.html",
+    "sha256": "8263e7cd5241b891a0353fbd161591411facdb84b719f6be5513098223a2f87c",
+    "critiqueSha256": "8e6665ebd6a1371293831d6659006a166639bf165546ef9f888d626f3965278f",
+    "recordedAt": "2026-11-02T20:10:32.677Z"
+  },
+  {
+    "file": "4-0-4.html",
+    "sha256": "c4224f2254cb9281cca46b8529181b21f1ba9a91d4d46b592056241e55e42954",
+    "critiqueSha256": "d46bc32ce18796be6978bf53c091c5471ef0f4c20d2e1a23438f873cbd9d0bbd",
+    "recordedAt": "2026-11-02T20:11:06.619Z"
+  },
+  {
+    "file": "4-2-2.html",
+    "sha256": "499bb6f83b8df3246553a75835b82884e43c5aa9296943a902d486ffea224820",
+    "critiqueSha256": "eca66fb103e5bad78fd71291d472dce27dea18acc87c7247b15171ad0e8ff96e",
+    "recordedAt": "2026-11-02T20:11:51.200Z"
+  },
+  {
+    "file": "4-1-2.html",
+    "sha256": "229e1855fd5788863ab75ffe2f9e9579bbcf89ccc205adae44d30df7c327d15d",
+    "critiqueSha256": "6a82b65001e1841c42f1401bd1c2f2d3ff206d5e084df89a1a101e50c9da616c",
+    "recordedAt": "2026-11-02T20:12:10.335Z"
+  },
+  {
+    "file": "4-4-2.html",
+    "sha256": "5a8801ed4d14b11a9f7bfd68ec6610c9e6956d7c8e30d614f9cb1b7767667ed3",
+    "critiqueSha256": "b082b38a3ed5d6bb91a1ed0f2be8f4386f866304813e5ce142d54e79af5e1764",
+    "recordedAt": "2026-11-02T20:12:10.336Z"
+  },
+  {
+    "file": "4-2-3.html",
+    "sha256": "29cc5e2a55127b3d2d977fba577b66ac1c4aae2ab2765d55e5f774e8520cb266",
+    "critiqueSha256": "ca5cfdee84ca0e08553e56e04e17b215f96a3e58152087476a62c8454c5d2bf4",
+    "recordedAt": "2026-11-02T20:12:40.081Z"
+  },
+  {
+    "file": "4-4-3.html",
+    "sha256": "4e3a3f7f01e71ca3a4f187969d9bdb3f9e6681144afc1b7c7c44165d2cbdcd57",
+    "critiqueSha256": "1b0df541a11dc77817d681ab32995a2e000a55aca81e912ec05067c9184c6e93",
+    "recordedAt": "2026-11-02T20:13:04.797Z"
+  },
+  {
+    "file": "4-1-3.html",
+    "sha256": "73c63734f817c70e312a386e55f0e35af55cab9d0910a3010d1ec54068680555",
+    "critiqueSha256": "99061d2ab50d079cc407c05257c6998d65aad02b548eb44b84556ba041be63b7",
+    "recordedAt": "2026-11-02T20:13:38.141Z"
+  },
+  {
+    "file": "4-2-4.html",
+    "sha256": "29cc5e2a55127b3d2d977fba577b66ac1c4aae2ab2765d55e5f774e8520cb266",
+    "critiqueSha256": "97e7b427f226da790eb94f561c939227150149f0a89f6dc389dc31f19edb3ff7",
+    "recordedAt": "2026-11-02T20:13:38.143Z"
+  },
+  {
+    "file": "4-4-4.html",
+    "sha256": "c8c705e932db54abb85dcc3603ab89ae0747a9782b0ca0e9dae02cb006f1160f",
+    "critiqueSha256": "e0b9621e743e163abb0be851f9b72cf216b5fc674774b3584044ba02afb114f1",
+    "recordedAt": "2026-11-02T20:14:01.486Z"
+  },
+  {
+    "file": "4-1-4.html",
+    "sha256": "73c63734f817c70e312a386e55f0e35af55cab9d0910a3010d1ec54068680555",
+    "critiqueSha256": "3a789e7252cc840ff170cdb7ce0ab1720835e9b7ef8cad967dcad80d0d7817aa",
+    "recordedAt": "2026-11-02T20:14:19.611Z"
+  },
+  {
+    "file": "5-0-2.html",
+    "sha256": "16fe07eb86b9cadf07b9db78028e5f4808c200c60942599b5e65fe2391710f02",
+    "critiqueSha256": "f718de47533aa8f5e691313d99e0f78e14cdf161ea4dec1ef0f7b5e5cb2f2ce7",
+    "recordedAt": "2026-11-02T20:15:11.873Z"
+  },
+  {
+    "file": "4-5-2.html",
+    "sha256": "e8df9e8146bbcf34c3e930dff3c57e68bd3b205969243bb60c0922692b742752",
+    "critiqueSha256": "f775016000b8f4a08aa02c4ca3cd0c20b8cef21fed35774de4034143b9b7156e",
+    "recordedAt": "2026-11-02T20:15:21.643Z"
+  },
+  {
+    "file": "5-0-3.html",
+    "sha256": "b623d794187ec0ee81dc58e0cfeb0e759d963f049b76168d314ad074e5950962",
+    "critiqueSha256": "6f182db387eca871efb73f6300e38bc82a1c3c85fbb7dee42362df41de22c376",
+    "recordedAt": "2026-11-02T20:16:03.600Z"
+  },
+  {
+    "file": "4-5-3.html",
+    "sha256": "bff94cd67b0c2f7c52f80343c7d680c3cff8555932810ab07cf081106be5ea69",
+    "critiqueSha256": "5913e21a05ea21616ef295bb1abc2dae692b498970b45596aea2af7924a6409a",
+    "recordedAt": "2026-11-02T20:16:21.087Z"
+  },
+  {
+    "file": "5-1-2.html",
+    "sha256": "92616a1251bd93e1809da41b7bd750fdbbf0a47c231312f713fd3fe96ce8ebc3",
+    "critiqueSha256": "66f8522fa7c87bee505abc687db4fe81a4aaa66aedf30854ffb902086a35cb69",
+    "recordedAt": "2026-11-02T20:16:40.164Z"
+  },
+  {
+    "file": "5-0-4.html",
+    "sha256": "07996c618068420774b063504970a561d0177b4206e204522fb921f073b7a792",
+    "critiqueSha256": "7e456f28c0c78b0b20ce45838e0f42fbda7f0bb1df7d7e91a3e53279691c6c64",
+    "recordedAt": "2026-11-02T20:16:51.531Z"
+  },
+  {
+    "file": "4-5-4.html",
+    "sha256": "bff94cd67b0c2f7c52f80343c7d680c3cff8555932810ab07cf081106be5ea69",
+    "critiqueSha256": "68bc46a5a6f3bd4282df85a02bd8480879ef1383c9e378757907bb9f22c19c6b",
+    "recordedAt": "2026-11-02T20:17:32.680Z"
+  },
+  {
+    "file": "5-1-3.html",
+    "sha256": "45b662f78063992ddd671baf91db418f1dc624b02d6821e92e52199bc04b3d41",
+    "critiqueSha256": "e1ee8ac28650febeb4b0bfc13e9ba9818b05b2070581f3b37aca64ce7ce92906",
+    "recordedAt": "2026-11-02T20:18:06.143Z"
+  },
+  {
+    "file": "5-2-2.html",
+    "sha256": "25c18686604e258a07370561471ce69f0064e582a8573e7a6b3006c701a41ca1",
+    "critiqueSha256": "9c639372e921f480b48cda171b7857f109d75ab1e7ccdaa6c9ed3bd75eab97c3",
+    "recordedAt": "2026-11-02T20:18:17.778Z"
+  },
+  {
+    "file": "5-1-4.html",
+    "sha256": "45b662f78063992ddd671baf91db418f1dc624b02d6821e92e52199bc04b3d41",
+    "critiqueSha256": "0eacca5686bc61453fc0089b8727578b4b5b82381a05dbce7972809bcc3fae50",
+    "recordedAt": "2026-11-02T20:18:55.807Z"
+  },
+  {
+    "file": "5-2-3.html",
+    "sha256": "8e56bb187d67d407d492627a7a6a506d9edeef8197e97bdf6c2629215349e5b1",
+    "critiqueSha256": "2dd12ce16bde286452073ba1baec9dec540589e4a38195c43e7915eeb77cda1f",
+    "recordedAt": "2026-11-02T20:19:06.315Z"
+  },
+  {
+    "file": "5-2-4.html",
+    "sha256": "8e56bb187d67d407d492627a7a6a506d9edeef8197e97bdf6c2629215349e5b1",
+    "critiqueSha256": "81b82ba996bab44faca0b821aaeae7e87bd41b301a4883502072547d8196c797",
+    "recordedAt": "2026-11-02T20:19:48.480Z"
+  }
+]
