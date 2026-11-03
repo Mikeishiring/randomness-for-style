@@ -1,10 +1,38 @@
 # Randomness for Style
 
-An interactive experiment in visual originality: give the same website brief two unexpected ingredients, then see what repeated refinement changes.
+A small, playable experiment in making AI-generated design more original: combine two unexpected ingredients, then refine the result while keeping the brief fixed.
 
 [Try the live site](https://randomness-for-style.vercel.app/)
 
-The brief is deliberately small: a one-page weekly website-performance report using fixed synthetic data. Six ingredients on each die produce 36 combinations, from Cthulhu × Fast food to Motorsport × Opera. Every combination has its original one-shot and three sequential refinements using the same prompt.
+## Why this exists
+
+The starting idea is that some of what gets called “AI slop” is familiarity: we learn to recognize the same layouts, typography and visual habits appearing repeatedly. AI may raise the baseline quality of design while also making its defaults easier to spot.
+
+This project explores whether a little deliberate randomness can interrupt those defaults. Two dice supply ingredients you might never choose together: Cthulhu × Fast food, Motorsport × Opera, or Deep-sea bioluminescence × Victorian insect collecting. Both dice are simply ingredients; they do not need to fit a rigid theme/style taxonomy.
+
+The combination should shape the idea, language, typography, layout and presentation of information. Cthulhu × Fast food should feel different from Cthulhu × Luxury hotel. A different color or a themed mascot alone is a weak interpretation.
+
+Originality is the aim, with simplicity as a constraint. Simple means easy to understand while keeping useful detail. It does not require a minimalist aesthetic, and adding more decoration is not the same as developing an identity.
+
+## What the experiment makes visible
+
+The brief stays deliberately small: a one-page weekly website-performance report using fixed synthetic data. It supplies the purpose and figures without prescribing a chart, layout or visual style. That gives the model room to make design decisions and makes those decisions easier to compare.
+
+The journey has three parts:
+
+1. **Plain one-shot:** see the result from the brief alone.
+2. **Add two ingredients:** see another one-shot with an unexpected visual direction.
+3. **Refine three times:** repeat the same harsh-critique prompt, asking the model to commit more strongly to the ingredients while keeping the report understandable.
+
+Six ingredients on each die produce 36 combinations. The page is an educational toy: roll, choose, compare and inspect the prompts to judge what changed for yourself. The interesting question is whether the ingredients become part of the design's structure, and whether further passes develop that idea or merely add noise.
+
+These examples explore a hypothesis; they do not prove that randomness always makes work more original or that each refinement is better. Distinctiveness, clarity and quality can move in different directions.
+
+## A related idea: build a reusable sense of style
+
+An earlier idea behind the project was to collect a handful of references, analyze them repeatedly, and turn the observations into a reusable design skill. Try a fresh one-shot with that skill, feed the critique back into the skill, then try again. The intention is to spend more effort learning a preferred style upfront and need fewer corrections later.
+
+The recorded reports here use no personal design skills or supplied visual references. This keeps the current experiment focused on the brief, the two ingredients and the refinement prompt. The reference-to-skill loop is a separate direction to explore.
 
 ## Explore
 
@@ -13,7 +41,7 @@ The brief is deliberately small: a one-page weekly website-performance report us
 - Choose One-shot, +1, +2 or +3, drag the refinement control, or press Play.
 - Compare with the brief-only result, inspect the exact prompt and critique, browse all 36 combinations, or share a selected state.
 
-These are saved results, not live model calls. The original and stronger refinement sequences are both preserved. The stronger sequence restarts from the same one-shot in a fresh context. Generated reports were not manually restyled; unchanged passes and rough edges remain visible. More refinement is not a quality score, and these examples do not establish that randomness always improves a design.
+These are saved results, not live model calls. The original and stronger refinement sequences are both preserved. The stronger sequence restarts from the same one-shot in a fresh context. Generated reports were not manually restyled; unchanged passes and rough edges remain visible. The exact prompts and critiques are available so someone else can repeat the procedure.
 
 ## Run locally
 
