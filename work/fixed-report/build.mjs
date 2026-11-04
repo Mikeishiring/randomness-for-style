@@ -12,7 +12,7 @@ const publicExperiment=({runs,plain,refinementPrompt})=>({runs,plain,refinementP
 const publicBaseline=({steps,protocol})=>({steps,protocol:{refinementPrompt:protocol.refinementPrompt}});
 const constants={EXPERIMENT:publicExperiment(experiment),INGREDIENTS_A:ingredientsA,INGREDIENTS_B:ingredientsB,BASELINE:publicBaseline(plainCatalog()),STRONGER_EXPERIMENT:publicExperiment(stronger.experiment),STRONGER_BASELINE:publicBaseline(stronger.baseline)};
 const payload=Object.entries(constants).map(([name,value])=>'const '+name+'='+JSON.stringify(value).replace(/</g,'\\u003c')+';').join('\n');
-const javascript=(payload+'\n'+read('dice-math.js')+'\n'+read('dice.js')+'\n'+read('dice-interaction.js')+'\n'+read('prompt-peek.js')+'\n'+read('report-handoff.js')+'\n'+read('play.js')+'\n'+read('demo.js')).replace(/<\/script/gi,'<\\/script');
+const javascript=(payload+'\n'+read('dice-math.js')+'\n'+read('dice.js')+'\n'+read('dice-interaction.js')+'\n'+read('dice-sound.js')+'\n'+read('prompt-peek.js')+'\n'+read('report-handoff.js')+'\n'+read('play.js')+'\n'+read('demo.js')).replace(/<\/script/gi,'<\\/script');
 const html=read('play.html').replace('/* SHELL_CSS */',read('shell.css')+'\n'+read('play.css')).replace('/* APP_JS */',()=>javascript);
 const output=new URL('../../outputs/',import.meta.url);mkdirSync(output,{recursive:true});
 writeFileSync(new URL('index.html',output),html);

@@ -9,72 +9,141 @@ body{font-family:var(--sans);overflow-x:clip}
 .demo-toggle{display:inline-flex;align-items:center;gap:9px;min-height:36px;padding:0 14px 0 12px;border:1px solid #cfd0c3;border-radius:999px;background:transparent;color:var(--ink);font:500 13px var(--sans);transition:background 150ms ease-out,border-color 150ms ease-out}
 .demo-glyph{width:8px;height:9px;background:currentColor;clip-path:polygon(0 0,100% 50%,0 100%);transition:clip-path 160ms var(--ease-out),background 160ms ease-out}
 .demo-toggle[aria-pressed=true] .demo-glyph{clip-path:polygon(0 0,100% 0,100% 100%,0 100%);background:var(--accent);width:8px;height:8px;border-radius:1px}
-.story{text-align:center;padding:22px 16px 18px}
+/* The step is announced to screen readers; on screen the pointing label carries it beside the control. */
+.story{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.shell{padding-top:28px}
 #story-title{font:400 clamp(34px,4vw,54px)/1.05 var(--serif);letter-spacing:-.02em;margin:0;text-wrap:balance}
 #story-text{margin:8px auto 0;max-width:620px;min-height:3em;font:15px/1.5 var(--sans);color:var(--muted);text-wrap:balance}
 
-.workbench{display:grid;grid-template-columns:minmax(150px,1fr) minmax(0,920px) minmax(150px,1fr);grid-template-areas:"left report right" ". bar .";column-gap:24px;row-gap:16px;align-items:center}
+.workbench{position:relative;display:grid;grid-template-columns:minmax(210px,1fr) minmax(0,860px) minmax(210px,1fr);grid-template-areas:"left report right" ". bar ." ". steps .";column-gap:24px;row-gap:12px;align-items:center}
 .dice-deck,.dice{display:contents}
 .die{min-width:0;text-align:center}
 .die:first-child{grid-area:left}.die:nth-child(2){grid-area:right}
 .die-top{height:0;overflow:hidden}
-.die-object{--size:92px;height:176px;border-radius:12px;user-select:none;touch-action:none;cursor:grab;--touch-x:0deg;--touch-z:0deg}
+.die-object{--size:116px;height:260px;border-radius:12px;user-select:none;touch-action:none;cursor:grab;--touch-x:0deg;--touch-z:0deg}
 .die-object:focus-visible{outline-offset:0}.die-object:active .cube-face{border-color:currentColor}
 .die>strong{display:block;font:500 17px/1.25 var(--sans);letter-spacing:-.3px;min-height:2.5em;padding:0 4px;text-wrap:balance;overflow-wrap:anywhere}
-[data-journey=original] .dice-deck:not(.leaving) .die{visibility:hidden}
+[data-journey=original] .die:nth-child(2):not(.leaving){visibility:hidden}
 #dice-lab{grid-area:report;min-width:0}
 .result{min-width:0}
-.report-frame{height:clamp(420px,calc(100dvh - 304px),900px);background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px #25301c0d,0 12px 32px -18px #25301c33}
+.report-frame{height:clamp(420px,calc(100dvh - 250px),880px);background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px #25301c0d,0 12px 32px -18px #25301c33}
 #report-view,#plain-report{position:relative;isolation:isolate}
+#report-view{margin-top:28px}
+/* Each refinement pass leaves a sheet behind the report, so the passes accumulate visibly. */
+.version-stack{position:absolute;inset:0;pointer-events:none}
+.version-stack i{position:absolute;left:0;right:0;top:0;height:min(100%,900px);border-radius:6px;background:#fbfaf6;border:1px solid #d7d6ca;opacity:0;transform:none;transform-origin:50% 0;transition:transform 520ms var(--ease-out) 120ms,opacity 320ms ease-out 120ms;pointer-events:none}
+.version-stack i:nth-child(1){z-index:-1}.version-stack i:nth-child(2){z-index:-2}.version-stack i:nth-child(3){z-index:-3}
+#report-view[data-passes='1'] .version-stack i:nth-child(-n+1),#report-view[data-passes='2'] .version-stack i:nth-child(-n+2),#report-view[data-passes='3'] .version-stack i:nth-child(-n+3){opacity:1}
+.version-stack i:nth-child(1){--lift:-10px;--shrink:.97;background:#f4f1e7}.version-stack i:nth-child(2){--lift:-19px;--shrink:.94;background:#ebe8dc}.version-stack i:nth-child(3){--lift:-27px;--shrink:.91;background:#e2dfd2}
+.version-stack i{box-shadow:0 -1px 0 #ffffffb3 inset,0 -2px 6px -3px #1d261e33}
+#report-view[data-passes='1'] .version-stack i:nth-child(-n+1),#report-view[data-passes='2'] .version-stack i:nth-child(-n+2),#report-view[data-passes='3'] .version-stack i:nth-child(-n+3){transform:translateY(var(--lift)) scaleX(var(--shrink))}
 .report-frame{transition:opacity 260ms ease-out}.report-frame:not([data-loaded=true]){opacity:0}
 /* The reveal line rides the boundary as the previous page is wiped away. */
 .report-sweep{position:absolute;left:-1px;right:-1px;top:0;height:2px;border-radius:2px;background:var(--accent);box-shadow:0 8px 18px -6px #c2432a99;opacity:0;z-index:3;pointer-events:none}
 .frame-section.report-outgoing{position:absolute;inset:0;z-index:2;pointer-events:none}
-#report-view.comparing{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#report-view.comparing{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+/* Comparing gives both pages the full width, side by side; the dice step aside. */
+[data-comparing=true] #dice-lab{grid-column:1/-1}
+[data-comparing=true] .die{visibility:hidden}
 .frame-section h3{font:500 12px var(--sans);margin:0 0 8px;min-height:16px;color:var(--muted)}
 
 /* One action, with reset and the occasional tools at its sides. */
-.stage-bar{grid-area:bar;display:grid;grid-template-columns:1fr auto 1fr;grid-template-areas:"reset next .";align-items:center;gap:16px;min-height:48px}
-.reset{grid-area:reset;justify-self:start;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px 0 8px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:500 14px var(--sans);transition:background 150ms ease-out,color 150ms ease-out}
+/* The bar under the report: Reset, the action in the centre, Compare beside it. */
+.stage-bar{grid-area:bar;display:grid;grid-template-columns:1fr auto 1fr;grid-template-areas:"reset next compare";align-items:center;gap:16px}
+#experiment-next{grid-area:next}
+#reset{grid-area:reset;justify-self:end}
+#compare{grid-area:compare;justify-self:start}
+/* While the dice are the action, the button steps back; it appears for refinement. */
+[data-journey=original] #experiment-next,[data-journey=half] #experiment-next,[data-journey=original] #compare,[data-journey=half] #compare{visibility:hidden}
+#compare{min-height:44px;padding:0 16px;border:1.5px solid #cfcdbf;border-radius:10px;background:transparent;color:var(--ink);font:600 14px var(--sans);transition:background 180ms ease-out,border-color 180ms ease-out,color 180ms ease-out}
+#compare[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--paper)}#compare:disabled{opacity:.4}
+.reset{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px 0 8px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:500 14px var(--sans);transition:background 180ms ease-out,color 180ms ease-out}
+.reset span{display:inline-block;transition:transform 260ms var(--ease-out)}
 .reset span{font-size:17px;line-height:1}
-.experiment-next{grid-area:next;display:flex;align-items:center;justify-content:space-between;gap:18px;min-width:230px;height:48px;padding:0 20px 0 24px;border:0;border-radius:999px;background:var(--ink);color:var(--paper);font:600 15px/1 var(--sans);box-shadow:0 1px 2px #1a24151f,0 6px 16px -8px #1a241566;transition:background 150ms ease-out,transform 120ms var(--ease-out)}
+/* The main action is a keycap: a raised vermilion block with a visible edge that presses down. */
+.experiment-next{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:22px;min-width:340px;height:62px;padding:0 12px 0 26px;border:0;border-radius:12px;background:var(--accent);color:#fff;font:650 18px/1 var(--sans);letter-spacing:-.2px;box-shadow:0 4px 0 #8c2a16,0 14px 24px -12px #8c2a16b3;transform:translateY(0);transition:background 180ms ease-out,transform 180ms var(--ease-out),box-shadow 180ms var(--ease-out)}
+.experiment-next .next-cue{transition:transform 180ms var(--ease-out),background 180ms ease-out}
+.experiment-next:active,.experiment-next.is-demo-press{transform:translateY(3px);box-shadow:0 1px 0 #8c2a16,0 6px 12px -8px #8c2a16b3}
+.experiment-next:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+/* A sheen crosses the button as it fires, so the press reads as starting something. */
+.experiment-next:after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,#fff0 30%,#ffffff2e 50%,#fff0 70%);transform:translateX(-100%);pointer-events:none}
+.experiment-next.is-firing:after{animation:next-sheen 520ms cubic-bezier(.3,.6,.2,1)}
+@keyframes next-sheen{to{transform:translateX(100%)}}
 .experiment-next:active{transform:scale(.97)}
 #next-label{display:block;white-space:nowrap}
-.next-cue{display:block;flex:none;min-width:30px;padding:5px 7px;border-radius:7px;background:#f4f2ea1f;text-align:center;font:600 12px/1 var(--mono);font-variant-numeric:tabular-nums}
-.experiment-next[data-action=roll] .next-cue{background:none;padding:0;font:400 18px/1 var(--sans);text-align:right}
-.experiment-next.is-demo-hover{background:#121a13}.experiment-next.is-demo-press{transform:scale(.97)}
-.experiment-tools{grid-area:bar;justify-self:end;align-self:center;position:relative;display:flex;align-items:center;gap:2px}
+.next-cue{display:grid;place-items:center;flex:none;min-width:46px;height:40px;padding:0 10px;border-radius:8px;background:#00000026;color:#fff;font:650 15px/1 var(--mono);font-variant-numeric:tabular-nums}
+.experiment-next[data-action=roll] .next-cue{font:400 21px/1 var(--sans)}
+.experiment-next.is-demo-hover{background:#d14c31}
+.page-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:8px;padding:14px 0;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.page-footer>a{font-size:12px;color:var(--muted);text-decoration:none}
+.experiment-tools{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.page-footer .prompt-panel{left:0;right:auto}
 .experiment-tools #dice-controls{display:block;padding:0}
 .experiment-tools .prompt-peek{position:static;margin:0;border:0}
-.experiment-tools>button,.experiment-tools .prompt-trigger{min-height:40px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:500 13px var(--sans);text-align:center;transition:background 150ms ease-out,color 150ms ease-out}
+.experiment-tools>button,.experiment-tools .prompt-trigger{min-height:40px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:500 13px var(--sans);text-align:center;transition:background 180ms ease-out,color 180ms ease-out}
 .experiment-tools .prompt-trigger{display:block;width:auto}
-.experiment-tools #compare[aria-pressed=true],.experiment-tools .prompt-trigger[aria-expanded=true]{background:#e2e7d8;color:var(--ink)}
+.experiment-tools #compare[aria-pressed=true],.experiment-tools .prompt-trigger[aria-expanded=true]{background:#f7e3db;color:#a8361f}
 .experiment-tools #compare:disabled{opacity:.4}
 #share-status{position:absolute;right:12px;top:100%;font-size:11px;color:var(--muted)}#share-status:empty{display:none}
 #compare-target{max-width:none;margin:4px 0 0}
 
-/* Chapters: a progress rule. The ink fills from the start to the current step. */
-.chapters{min-width:0}
-.rail-stops{position:relative;display:flex;gap:2px;padding:0 0 9px}
-.rail-stops:after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--line)}
-.rail-stops button{position:relative;min-width:40px;min-height:34px;padding:0 10px;border:0;border-radius:6px;background:transparent;color:var(--muted);font:500 13px/1 var(--sans);white-space:nowrap;transition:color 150ms ease-out,background 150ms ease-out}
-.rail-stops button:nth-child(3){margin-left:12px}
-.rail-stops button:nth-child(n+3){font-family:var(--mono);font-size:12px}
-.rail-stops button[aria-pressed=true]{color:var(--ink)}
-.rail-stops button:disabled{opacity:.35}
-.rail-marker{position:absolute;bottom:-1px;left:0;height:3px;border-radius:2px;background:var(--ink);z-index:1;pointer-events:none;transition:transform 260ms var(--ease-out),width 260ms var(--ease-out)}
-.rail-marker:after{content:'';position:absolute;right:-1px;top:50%;width:7px;height:7px;border-radius:50%;background:var(--accent);transform:translate(50%,-50%);box-shadow:0 0 0 2px var(--paper)}
+/* Timeline: a node per step on one line. Ink fills to the current step; done steps are filled. */
+.chapters{grid-area:steps;justify-self:center;min-width:0}
+.rail-stops{position:relative;display:flex;padding:0}
+.rail-stops:after{content:'';position:absolute;left:36px;right:36px;top:8px;height:2px;border-radius:2px;background:#d9d9cd}
+.rail-stops button{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:7px;min-width:72px;min-height:44px;padding:0 4px;border:0;border-radius:8px;background:transparent;color:var(--muted);font:500 13px/1 var(--sans);white-space:nowrap;transition:color 150ms ease-out}
+.rail-stops button:before{content:'';width:18px;height:18px;border-radius:50%;box-sizing:border-box;background:var(--paper);border:2px solid #c3c5b7;transition:background 180ms ease-out,border-color 180ms ease-out,box-shadow 220ms var(--ease-out),transform 220ms var(--ease-out)}
+.rail-stops button[data-done=true]:before{background:var(--ink);border-color:var(--ink)}
+.rail-stops button[aria-pressed=true]{color:var(--ink);font-weight:600}
+.rail-stops button[aria-pressed=true]:before{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 5px #c2432a24;transform:scale(1.12)}
+.rail-stops button:disabled{opacity:.4}
+.rail-marker{position:absolute;top:8px;left:0;height:2px;border-radius:2px;background:var(--ink);z-index:0;pointer-events:none;transition:transform 300ms var(--ease-out),width 300ms var(--ease-out)}
 
 /* Dice: two precise objects, one ink and one vermilion, sharing light, edge and type. */
 .dice .die .die-object{color:#f4f1e8}
-.dice .die:first-child .cube-face,.dice .die:nth-child(2) .cube-face{border-radius:18%;border:1px solid #0f1610;background:linear-gradient(150deg,#33423a 0%,#212c23 48%,#19221b 100%);box-shadow:inset 0 1px 0 #ffffff26,inset 0 0 0 1px #ffffff0a,inset 0 -6px 12px #00000026}
-.dice .die:nth-child(2) .cube-face{border-color:#8a2814;background:linear-gradient(150deg,#d9603d 0%,#c2432a 50%,#a83620 100%);box-shadow:inset 0 1px 0 #ffffff40,inset 0 0 0 1px #ffffff12,inset 0 -6px 12px #5a170a33}
-.dice .cube-face svg{width:54%;height:54%;margin-top:-6px;opacity:.96}
+.dice .die:first-child .cube-face,.dice .die:nth-child(2) .cube-face{inset:calc(var(--size)*.075);border-radius:3px;border:0;background:#243026;box-shadow:inset 0 0 0 1px #ffffff0d}
+.dice .die:nth-child(2) .cube-face{background:#c2432a;box-shadow:inset 0 0 0 1px #ffffff14}
+.cube-bevel,.cube-corner{position:absolute;left:50%;top:50%;background:#243026;backface-visibility:hidden}
+.dice .die:nth-child(2) .cube-bevel,.dice .die:nth-child(2) .cube-corner{background:#c2432a}
+.dice .cube-face svg{width:74%;height:74%;margin-top:-8px;opacity:1}
+.dice .die:first-child .die-object{--glyph-accent:#f06b48}.dice .die:nth-child(2) .die-object{--glyph-accent:#1d261e}
+.cube-face .ga{fill:var(--glyph-accent)}.cube-face .ga-s{stroke:var(--glyph-accent)}
 .dice .cube-face small{bottom:9%;font:500 9px/1 var(--mono);letter-spacing:.14em;opacity:.62}
-.dice .die-shadow{background:radial-gradient(closest-side,#1d261e5c,#1d261e00);filter:none}
-.dice .die-object[data-hover] .cube-face,.dice .die-object:focus-visible .cube-face{border-color:#000}
-.dice .die:nth-child(2) .die-object[data-hover] .cube-face{border-color:#6e1f0f}
+.dice .die-shadow{top:calc(50% + var(--size)*.5);background:radial-gradient(closest-side,#1d261e66,#1d261e00);filter:none}
+/* Ground: a slanted plane in the die's own perspective, so the landing has somewhere to happen. */
+.die-ground{position:absolute;left:50%;top:calc(50% + var(--size)*.5);width:calc(var(--size)*1.62);height:calc(var(--size)*1.62);z-index:-2;border-radius:22%;background:radial-gradient(closest-side,#ebe8dd 0%,#e6e3d6 70%,#e0ddcf 100%);border:1px solid #d6d3c5;box-shadow:inset 0 1px 0 #f7f5ee;transform:translate(-50%,-50%) rotateX(70deg) rotateZ(-14deg);pointer-events:none}
+.dice .die:nth-child(2) .die-ground{transform:translate(-50%,-50%) rotateX(70deg) rotateZ(14deg)}
 .die-object.is-demo-press .die-grip{transform:translateY(2px);transition-duration:65ms}
+
+/* Pointing label: a paper card at the end of a vermilion leader, with a dot on the object it names. */
+.pointer-note{position:absolute;left:0;top:0;z-index:4;margin:0;pointer-events:none}
+.pointer-card{display:grid;gap:3px;width:max-content;max-width:200px;padding:11px 14px 12px;border-radius:10px;background:#fffdf8;border:1px solid #e3e0d3;box-shadow:0 1px 2px #1d261e12,0 16px 30px -18px #1d261e66}
+#pointer-text{font:600 15px/1.2 var(--sans);letter-spacing:-.1px;color:var(--ink)}#pointer-sub{font:13px/1.35 var(--sans);color:var(--muted)}#pointer-sub:empty{display:none}
+.pointer-leader,.pointer-dot{position:absolute;display:block}
+.pointer-leader{background:var(--accent)}
+.pointer-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--paper),0 0 0 6px #c2432a26;transform:translate(-50%,-50%)}
+.pointer-note[data-side=left] .pointer-leader{left:100%;top:50%;width:26px;height:2px;margin-top:-1px;transform-origin:100% 50%}
+.pointer-note[data-side=left] .pointer-dot{left:calc(100% + 26px);top:50%}
+.pointer-note[data-side=right] .pointer-leader{right:100%;top:50%;width:26px;height:2px;margin-top:-1px;transform-origin:0 50%}
+.pointer-note[data-side=right] .pointer-dot{left:-26px;top:50%}
+.pointer-note[data-side=above] .pointer-leader{left:50%;top:100%;width:2px;height:26px;margin-left:-1px;transform-origin:50% 100%}
+.pointer-note[data-side=above] .pointer-dot{left:50%;top:calc(100% + 26px)}
+
+/* Each ingredient's name is set in the type that ingredient brings to the page. */
+.die>strong{transition:color 160ms ease-out}
+.die>strong[data-face=call]{display:inline-flex;align-items:center;justify-content:center;min-height:0;margin-top:2px;padding:7px 14px;border-radius:999px;background:var(--accent);color:#fff;font:650 14px/1 var(--sans);letter-spacing:.01em;box-shadow:0 3px 0 #8c2a16}
+.die>strong[data-face=cthulhu]{font:italic 500 21px/1.15 "Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;letter-spacing:.01em}
+.die>strong[data-face=greek-myths]{font:600 14px/1.3 Georgia,"Times New Roman",serif;letter-spacing:.22em;text-transform:uppercase}
+.die>strong[data-face=weather]{font:300 19px/1.2 var(--sans);letter-spacing:.05em}
+.die>strong[data-face=bureaucracy]{font:500 13px/1.3 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.die>strong[data-face=motorsport]{font:italic 900 18px/1.15 "Arial Black","Arial Bold",Arial,sans-serif;letter-spacing:-.01em;text-transform:uppercase}
+.die>strong[data-face=deep-sea-bioluminescence]{font:italic 300 17px/1.2 var(--sans);letter-spacing:.05em}
+.die>strong[data-face=tech]{font:500 17px/1.2 var(--mono);letter-spacing:-.02em}
+.die>strong[data-face=disco]{font:italic 900 21px/1.15 var(--sans);letter-spacing:.06em}
+.die>strong[data-face=fast-food]{font:900 18px/1.15 "Arial Black",Impact,"Arial Bold",sans-serif;letter-spacing:-.02em;text-transform:uppercase}
+.die>strong[data-face=opera]{font:italic 400 23px/1.1 Didot,"Bodoni MT","Bodoni 72",Georgia,serif;letter-spacing:.01em}
+.die>strong[data-face=luxury-hotel]{font:400 13px/1.35 Georgia,"Times New Roman",serif;letter-spacing:.26em;text-transform:uppercase}
+.die>strong[data-face=victorian-insect-collecting]{font:italic 400 17px/1.2 "Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif}
 
 /* Demo cursor: drawn above the page, never hit-testable. */
 .demo-cursor{position:fixed;left:0;top:0;z-index:60;pointer-events:none;will-change:transform}
@@ -163,17 +232,22 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  .die-object:hover .cube-face{border-color:currentColor}
  .matrix-cell:hover{border-color:var(--accent)}.matrix-cell:hover .matrix-select{background:#e9ecdf}
  summary:hover,.return-to-dice:hover,.topbar-link:hover{color:var(--ink)}
- .rail-stops button:not(:disabled):not([aria-pressed=true]):hover{color:var(--ink);background:#e7e8de}
- .demo-toggle:hover{background:#e7e8de;border-color:#b9bcad}
- .experiment-next:hover{background:#1e2c1f}
- .reset:hover,.experiment-tools>button:not(:disabled):hover,.experiment-tools .prompt-trigger:hover{background:#e5e9dd;color:var(--ink)}
+ .rail-stops button:not(:disabled):not([aria-pressed=true]):hover:before{border-color:var(--accent);transform:scale(1.18)}
+ .demo-toggle:hover{background:#f7e3db;border-color:#e6b9aa;color:#a8361f}
+ #compare:not([aria-pressed=true]):not(:disabled):hover{border-color:var(--accent);color:#a8361f;background:#f7e3db}
+ .reset:hover span{transform:rotate(-120deg)}
+ .experiment-next:hover{background:#d24e32;transform:translateY(-2px);box-shadow:0 6px 0 #8c2a16,0 20px 30px -14px #8c2a16cc}
+ .experiment-next:hover .next-cue{transform:translateX(2px);background:#00000033}
+ .experiment-next:active{transform:translateY(3px);box-shadow:0 1px 0 #8c2a16,0 6px 12px -8px #8c2a16b3;transition-duration:70ms}
+ .reset:hover,.experiment-tools>button:not(:disabled):hover,.experiment-tools .prompt-trigger:hover{background:#f7e3db;color:#a8361f}
+ .rail-stops button:not(:disabled):not([aria-pressed=true]):hover{color:var(--accent)}
  .prompt-panel header button:hover{background:#e9ecdf}
  .attempt-stepper button:not(:disabled):hover{background:#dce3d2}
 }
 @media(pointer:coarse){.attempt-stepper{min-height:44px;grid-template-columns:44px minmax(0,1fr) 44px}.rail-stops button{min-height:40px}}
 
-@media(max-width:1100px){.shell{padding-inline:24px}.workbench{grid-template-columns:minmax(132px,1fr) minmax(0,880px) minmax(132px,1fr);column-gap:16px}.die-object{--size:80px;height:156px}.die>strong{font-size:15px}}
-@media(max-width:1000px){#report-view.comparing{grid-template-columns:1fr}}
+@media(max-width:1100px){.shell{padding-inline:24px}.workbench{grid-template-columns:minmax(170px,1fr) minmax(0,860px) minmax(170px,1fr);column-gap:16px}.die-object{--size:96px;height:222px}.die>strong{font-size:15px}}
+@media(max-width:700px){#report-view.comparing{grid-template-columns:1fr}}
 
 /* Narrow: the dice sit side by side above the action, the report below. */
 @media(max-width:860px){
@@ -181,22 +255,27 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  .topbar{flex-wrap:wrap;gap:6px 16px;padding:10px 0 12px}
  .chapters{order:3;width:100%}.rail-stops button{flex:1;padding:0 4px;min-width:0}.rail-stops button:nth-child(3){margin-left:6px}
  .demo-toggle{min-height:34px;padding:0 12px 0 10px}
- .story{padding:16px 4px 10px}#story-title{font-size:30px}#story-text{font-size:14px;margin-top:6px}
- .workbench{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"left right" "bar bar" "report report" "tools tools";column-gap:12px;row-gap:12px}
- [data-journey=original] .dice-deck:not(.leaving) .die{display:none}
- .die-object{--size:64px;height:112px}.die>strong{font-size:15px;min-height:2.5em}
- .stage-bar{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"reset next";gap:10px}
- .experiment-next{min-width:0;width:100%}
- .experiment-tools{grid-area:tools;justify-self:center;margin-top:-4px}
+ .story{padding:24px 4px 12px}#story-title{font-size:30px}#story-text{font-size:14px;margin-top:6px}
+ .workbench{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"left right" "hint hint" "bar bar" "steps steps" "report report";column-gap:12px;row-gap:12px}
+ .pointer-note{grid-area:hint;position:static;justify-self:center;transform:none!important;margin-top:-4px}
+ .pointer-leader,.pointer-dot{display:none}
+ .pointer-card{max-width:none;text-align:center}
+ [data-journey=original] .die:nth-child(2):not(.leaving){visibility:hidden}
+ .die-object{--size:72px;height:150px}.die>strong{font-size:15px;min-height:2.5em}
+ .stage-bar{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"reset next compare";gap:8px}
+ #experiment-next{justify-self:stretch}
+ .experiment-next{min-width:0;width:100%;height:58px;font-size:17px}
+ .rail-stops button{min-width:0;flex:1}.rail-stops:after{left:10%;right:10%}
+
  .report-frame{height:560px}
  [data-view=plain] .workbench{grid-template-columns:minmax(0,1fr);grid-template-areas:"sidebar" "result";gap:12px;margin-top:16px}
  .plain-controls{position:relative;top:0}
  .prompt-panel,.plain-controls .prompt-panel{position:fixed;left:16px;right:16px;top:auto;bottom:16px;width:auto;max-height:65dvh}
  .prompt-panel pre{font-size:11px}
  .matrix{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
- #report-view.comparing{grid-template-columns:1fr;gap:18px}
+ #report-view.comparing{gap:12px}
 }
-@media(max-width:860px){[data-journey=original] .stage-bar{grid-template-columns:minmax(0,1fr);grid-template-areas:"next"}}
+
 @media(max-width:560px){.report-frame{height:520px}.matrix{gap:12px}.matrix-select{font-size:12px;gap:5px;padding:10px;min-height:48px}.notes pre{font-size:11px}}
 @media(max-width:400px){.atlas>header{display:block}#atlas-ingredient{display:block;width:100%;max-width:none;margin-top:12px}.topbar-link{display:none}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.die-grip{transform:none!important;transition:none!important}.matrix-cell,.rail-stops button,.rail-marker,.experiment-next,.reset,.experiment-tools>button,.report-frame,.demo-arrow,.demo-touch,.demo-glyph{transition:none!important}}
+@media(prefers-reduced-motion:reduce){.experiment-next:after{display:none}.reset span,.experiment-next .next-cue{transition:none}.version-stack i{transition:none}html{scroll-behavior:auto}.die-grip{transform:none!important;transition:none!important}.matrix-cell,.rail-stops button,.rail-marker,.experiment-next,.reset,.experiment-tools>button,.report-frame,.demo-arrow,.demo-touch,.demo-glyph{transition:none!important}}

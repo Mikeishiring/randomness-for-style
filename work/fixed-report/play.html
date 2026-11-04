@@ -19,27 +19,11 @@
 <body>
 <noscript>Enable JavaScript to roll the dice and compare reports.</noscript>
 <div class="shell">
- <header class="topbar">
-  <span class="brand">Randomness for Style</span>
-  <nav id="refinement-rail" class="chapters" aria-label="Experiment steps">
-   <div id="rail-stops" class="rail-stops">
-    <button type="button" id="stage-0" aria-pressed="true" aria-label="Plain page, brief only">Plain</button>
-    <button type="button" id="stage-1" aria-pressed="false" aria-label="Dice added, one-shot">Dice</button>
-    <button type="button" id="stage-2" aria-pressed="false" aria-label="Refinement 1">+1</button>
-    <button type="button" id="stage-3" aria-pressed="false" aria-label="Refinement 2">+2</button>
-    <button type="button" id="stage-4" aria-pressed="false" aria-label="Refinement 3">+3</button>
-    <span id="rail-marker" class="rail-marker" aria-hidden="true"></span>
-   </div>
-  </nav>
-  <div class="topbar-actions">
-   <button type="button" id="demo-toggle" class="demo-toggle" aria-pressed="false"><span class="demo-glyph" aria-hidden="true"></span><span id="demo-label">Watch demo</span></button>
-   <a class="topbar-link" href="#atlas">36 combinations ↓</a>
-  </div>
- </header>
  <main id="play">
   <h1 class="sr-only">Randomness for Style</h1>
   <div id="story" class="story" aria-live="polite" aria-atomic="true"><h2 id="story-title"></h2><p id="story-text"></p></div>
   <div class="workbench">
+   <p id="pointer-note" class="pointer-note" data-side="above" hidden><span class="pointer-card"><strong id="pointer-text"></strong><span id="pointer-sub"></span></span><i class="pointer-leader"></i><i class="pointer-dot"></i></p>
    <section id="dice-deck" class="dice-deck" aria-label="Ingredients">
     <div class="dice">
      <div class="die"><div class="die-top"><span>Ingredient 1</span></div><strong id="ingredient-a"></strong></div>
@@ -48,19 +32,23 @@
     <span id="dice-gesture-help" class="sr-only">Click or press Enter to roll. Drag slowly to choose the upper face; release quickly to throw. Arrow keys turn the die. Escape cancels a drag.</span>
    </section>
    <section id="dice-lab" class="result" aria-labelledby="pair-title"><h2 id="pair-title" class="sr-only" tabindex="-1"></h2>
-    <div id="report-view"><span class="report-sweep" aria-hidden="true"></span></div>
+    <div id="report-view" data-passes="0"><span class="version-stack" aria-hidden="true"><i></i><i></i><i></i></span><span class="report-sweep" aria-hidden="true"></span></div>
    </section>
    <div id="stage-bar" class="stage-bar">
     <button type="button" id="reset" class="reset" aria-label="Reset to the plain page"><span aria-hidden="true">↺</span> Reset</button>
     <button type="button" id="experiment-next" class="experiment-next" data-action="roll"><span id="next-label">Add randomness</span><span id="next-cue" class="next-cue" aria-hidden="true">→</span></button>
-   </div>
-   <div id="experiment-tools" class="experiment-tools">
-    <section id="dice-controls" class="controls" aria-label="Prompt">
-     <div id="prompt" class="prompt-peek"><button id="prompt-trigger" type="button" class="prompt-trigger" aria-expanded="false" aria-controls="prompt-panel">Prompt ↗</button><section id="prompt-panel" class="prompt-panel" aria-labelledby="prompt-title" hidden><header><h3 id="prompt-title">One-shot prompt</h3><button type="button" class="prompt-pin" aria-pressed="false">Pin</button><button type="button" class="prompt-close" aria-label="Close prompt">×</button></header><pre id="current-prompt"></pre><details id="critique" class="notes" hidden><summary>Critique</summary><pre id="current-critique"></pre></details><footer><button id="copy-prompt" type="button" class="text-button">Copy with data</button><p id="copy-status" role="status"></p></footer></section></div>
-    </section>
     <button type="button" id="compare" title="Compare with brief only" aria-pressed="false" aria-label="Compare with brief only" aria-controls="report-view compare-target">Compare</button>
-    <button type="button" id="copy-link">Share</button><span id="share-status" role="status"></span>
    </div>
+   <nav id="refinement-rail" class="chapters" aria-label="Experiment steps">
+    <div id="rail-stops" class="rail-stops">
+     <button type="button" id="stage-0" aria-pressed="true" aria-label="Plain page, brief only">Plain</button>
+     <button type="button" id="stage-1" aria-pressed="false" aria-label="Dice added, one-shot">Dice</button>
+     <button type="button" id="stage-2" aria-pressed="false" aria-label="Refinement 1">+1</button>
+     <button type="button" id="stage-3" aria-pressed="false" aria-label="Refinement 2">+2</button>
+     <button type="button" id="stage-4" aria-pressed="false" aria-label="Refinement 3">+3</button>
+     <span id="rail-marker" class="rail-marker" aria-hidden="true"></span>
+    </div>
+   </nav>
    <section id="plain-controls" class="controls plain-controls" aria-label="Plain prompt and refinement" hidden>
     <select id="plain-method" class="comparison-target" aria-label="Plain refinement prompt"><option value="original">Original prompt</option><option value="stronger" selected>Stronger prompt</option></select>
     <div class="refinement"><div class="attempt-stepper" role="group" aria-label="Refinement"><button id="plain-attempt-prev" type="button" aria-label="Previous attempt" aria-controls="plain-report" disabled>−</button><output id="plain-attempt-label" aria-live="polite">One-shot</output><button id="plain-attempt-next" type="button" aria-label="Refine more" aria-controls="plain-report">+</button></div><p id="plain-attempt-note" hidden>Kept the previous attempt. See critique.</p></div>
@@ -73,6 +61,16 @@
   <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>What we call AI slop is often recognition of familiar design patterns. This experiment explores how randomness can help break them: the same brief and data, two unexpected ingredients, then three refinements with the same prompt.</p><p>These are saved examples, not live generations. The stronger sequence restarts from the same one-shot in a fresh context. More refinement does not guarantee a better result.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Refinement prompt"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button></div>
     <p id="method-note" class="method-note">Both start from this one-shot.</p></div><select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">Brief only</option><option value="other" id="compare-other">Original prompt</option></select><div class="export-actions"><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Refine brief alone →</button><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
  </main>
+ <div class="page-footer">
+  <div id="experiment-tools" class="experiment-tools">
+   <section id="dice-controls" class="controls" aria-label="Prompt">
+    <div id="prompt" class="prompt-peek"><button id="prompt-trigger" type="button" class="prompt-trigger" aria-expanded="false" aria-controls="prompt-panel">Prompt ↗</button><section id="prompt-panel" class="prompt-panel" aria-labelledby="prompt-title" hidden><header><h3 id="prompt-title">One-shot prompt</h3><button type="button" class="prompt-pin" aria-pressed="false">Pin</button><button type="button" class="prompt-close" aria-label="Close prompt">×</button></header><pre id="current-prompt"></pre><details id="critique" class="notes" hidden><summary>Critique</summary><pre id="current-critique"></pre></details><footer><button id="copy-prompt" type="button" class="text-button">Copy with data</button><p id="copy-status" role="status"></p></footer></section></div>
+   </section>
+   <button type="button" id="copy-link">Share</button><span id="share-status" role="status"></span>
+   <button type="button" id="demo-toggle" class="demo-toggle" aria-pressed="false"><span class="demo-glyph" aria-hidden="true"></span><span id="demo-label">Watch demo</span></button>
+   <button type="button" id="sound-toggle" aria-pressed="true">Sound on</button>
+  </div>
+ </div>
  <footer><a href="previous-experiment.html">Earlier versions ↗</a></footer>
 </div>
 <p id="status" class="sr-only" role="status"></p>

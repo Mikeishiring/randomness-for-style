@@ -7,7 +7,7 @@ assert.equal(ingredientsA.length,6);assert.equal(ingredientsB.length,6);
 const html=read('../../outputs/index.html'),template=read('play.html');
 const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];assert.equal(scripts.length,1);new vm.Script(scripts[0][1]);
 assert.ok(!html.includes('/* APP_JS */'));assert.ok(!html.includes('/* SHELL_CSS */'));
-assert.ok(!/AudioContext|playDiceClatter|id="sound-toggle"/.test(html));
+assert.ok(/playDiceClatter/.test(html)&&/id="sound-toggle"/.test(html),'dice sound and its toggle ship');
 const ids=[...template.matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]);assert.equal(new Set(ids).size,ids.length);
 for(const id of ids)assert.ok(html.includes('id="'+id+'"'));
 const payload=scripts[0][1].slice(0,scripts[0][1].indexOf('// All six ingredients'));
@@ -19,4 +19,4 @@ assert.ok(context.built.EXPERIMENT.runs.every(run=>run.steps.length===4));
 assert.equal(context.built.STRONGER_BASELINE.steps.length,4);
 assert.equal(context.built.STRONGER_EXPERIMENT.runs.length,36);
 for(const run of context.built.STRONGER_EXPERIMENT.runs){assert.equal(run.steps.length,4);assert.equal(run.steps[0].html,context.built.EXPERIMENT.runs.find(old=>old.id===run.id).steps[0].html);}
-console.log('PASS: self-contained bundle; 36 original and stronger trajectories, identical one-shots, both plain trajectories, syntax, unique controls, no sound.');
+console.log('PASS: self-contained bundle; 36 original and stronger trajectories, identical one-shots, both plain trajectories, syntax, unique controls, dice sound with a toggle.');

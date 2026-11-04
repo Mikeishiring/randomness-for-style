@@ -44,72 +44,141 @@ body{font-family:var(--sans);overflow-x:clip}
 .demo-toggle{display:inline-flex;align-items:center;gap:9px;min-height:36px;padding:0 14px 0 12px;border:1px solid #cfd0c3;border-radius:999px;background:transparent;color:var(--ink);font:500 13px var(--sans);transition:background 150ms ease-out,border-color 150ms ease-out}
 .demo-glyph{width:8px;height:9px;background:currentColor;clip-path:polygon(0 0,100% 50%,0 100%);transition:clip-path 160ms var(--ease-out),background 160ms ease-out}
 .demo-toggle[aria-pressed=true] .demo-glyph{clip-path:polygon(0 0,100% 0,100% 100%,0 100%);background:var(--accent);width:8px;height:8px;border-radius:1px}
-.story{text-align:center;padding:22px 16px 18px}
+/* The step is announced to screen readers; on screen the pointing label carries it beside the control. */
+.story{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.shell{padding-top:28px}
 #story-title{font:400 clamp(34px,4vw,54px)/1.05 var(--serif);letter-spacing:-.02em;margin:0;text-wrap:balance}
 #story-text{margin:8px auto 0;max-width:620px;min-height:3em;font:15px/1.5 var(--sans);color:var(--muted);text-wrap:balance}
 
-.workbench{display:grid;grid-template-columns:minmax(150px,1fr) minmax(0,920px) minmax(150px,1fr);grid-template-areas:"left report right" ". bar .";column-gap:24px;row-gap:16px;align-items:center}
+.workbench{position:relative;display:grid;grid-template-columns:minmax(210px,1fr) minmax(0,860px) minmax(210px,1fr);grid-template-areas:"left report right" ". bar ." ". steps .";column-gap:24px;row-gap:12px;align-items:center}
 .dice-deck,.dice{display:contents}
 .die{min-width:0;text-align:center}
 .die:first-child{grid-area:left}.die:nth-child(2){grid-area:right}
 .die-top{height:0;overflow:hidden}
-.die-object{--size:92px;height:176px;border-radius:12px;user-select:none;touch-action:none;cursor:grab;--touch-x:0deg;--touch-z:0deg}
+.die-object{--size:116px;height:260px;border-radius:12px;user-select:none;touch-action:none;cursor:grab;--touch-x:0deg;--touch-z:0deg}
 .die-object:focus-visible{outline-offset:0}.die-object:active .cube-face{border-color:currentColor}
 .die>strong{display:block;font:500 17px/1.25 var(--sans);letter-spacing:-.3px;min-height:2.5em;padding:0 4px;text-wrap:balance;overflow-wrap:anywhere}
-[data-journey=original] .dice-deck:not(.leaving) .die{visibility:hidden}
+[data-journey=original] .die:nth-child(2):not(.leaving){visibility:hidden}
 #dice-lab{grid-area:report;min-width:0}
 .result{min-width:0}
-.report-frame{height:clamp(420px,calc(100dvh - 304px),900px);background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px #25301c0d,0 12px 32px -18px #25301c33}
+.report-frame{height:clamp(420px,calc(100dvh - 250px),880px);background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px #25301c0d,0 12px 32px -18px #25301c33}
 #report-view,#plain-report{position:relative;isolation:isolate}
+#report-view{margin-top:28px}
+/* Each refinement pass leaves a sheet behind the report, so the passes accumulate visibly. */
+.version-stack{position:absolute;inset:0;pointer-events:none}
+.version-stack i{position:absolute;left:0;right:0;top:0;height:min(100%,900px);border-radius:6px;background:#fbfaf6;border:1px solid #d7d6ca;opacity:0;transform:none;transform-origin:50% 0;transition:transform 520ms var(--ease-out) 120ms,opacity 320ms ease-out 120ms;pointer-events:none}
+.version-stack i:nth-child(1){z-index:-1}.version-stack i:nth-child(2){z-index:-2}.version-stack i:nth-child(3){z-index:-3}
+#report-view[data-passes='1'] .version-stack i:nth-child(-n+1),#report-view[data-passes='2'] .version-stack i:nth-child(-n+2),#report-view[data-passes='3'] .version-stack i:nth-child(-n+3){opacity:1}
+.version-stack i:nth-child(1){--lift:-10px;--shrink:.97;background:#f4f1e7}.version-stack i:nth-child(2){--lift:-19px;--shrink:.94;background:#ebe8dc}.version-stack i:nth-child(3){--lift:-27px;--shrink:.91;background:#e2dfd2}
+.version-stack i{box-shadow:0 -1px 0 #ffffffb3 inset,0 -2px 6px -3px #1d261e33}
+#report-view[data-passes='1'] .version-stack i:nth-child(-n+1),#report-view[data-passes='2'] .version-stack i:nth-child(-n+2),#report-view[data-passes='3'] .version-stack i:nth-child(-n+3){transform:translateY(var(--lift)) scaleX(var(--shrink))}
 .report-frame{transition:opacity 260ms ease-out}.report-frame:not([data-loaded=true]){opacity:0}
 /* The reveal line rides the boundary as the previous page is wiped away. */
 .report-sweep{position:absolute;left:-1px;right:-1px;top:0;height:2px;border-radius:2px;background:var(--accent);box-shadow:0 8px 18px -6px #c2432a99;opacity:0;z-index:3;pointer-events:none}
 .frame-section.report-outgoing{position:absolute;inset:0;z-index:2;pointer-events:none}
-#report-view.comparing{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#report-view.comparing{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+/* Comparing gives both pages the full width, side by side; the dice step aside. */
+[data-comparing=true] #dice-lab{grid-column:1/-1}
+[data-comparing=true] .die{visibility:hidden}
 .frame-section h3{font:500 12px var(--sans);margin:0 0 8px;min-height:16px;color:var(--muted)}
 
 /* One action, with reset and the occasional tools at its sides. */
-.stage-bar{grid-area:bar;display:grid;grid-template-columns:1fr auto 1fr;grid-template-areas:"reset next .";align-items:center;gap:16px;min-height:48px}
-.reset{grid-area:reset;justify-self:start;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px 0 8px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:500 14px var(--sans);transition:background 150ms ease-out,color 150ms ease-out}
+/* The bar under the report: Reset, the action in the centre, Compare beside it. */
+.stage-bar{grid-area:bar;display:grid;grid-template-columns:1fr auto 1fr;grid-template-areas:"reset next compare";align-items:center;gap:16px}
+#experiment-next{grid-area:next}
+#reset{grid-area:reset;justify-self:end}
+#compare{grid-area:compare;justify-self:start}
+/* While the dice are the action, the button steps back; it appears for refinement. */
+[data-journey=original] #experiment-next,[data-journey=half] #experiment-next,[data-journey=original] #compare,[data-journey=half] #compare{visibility:hidden}
+#compare{min-height:44px;padding:0 16px;border:1.5px solid #cfcdbf;border-radius:10px;background:transparent;color:var(--ink);font:600 14px var(--sans);transition:background 180ms ease-out,border-color 180ms ease-out,color 180ms ease-out}
+#compare[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--paper)}#compare:disabled{opacity:.4}
+.reset{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px 0 8px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:500 14px var(--sans);transition:background 180ms ease-out,color 180ms ease-out}
+.reset span{display:inline-block;transition:transform 260ms var(--ease-out)}
 .reset span{font-size:17px;line-height:1}
-.experiment-next{grid-area:next;display:flex;align-items:center;justify-content:space-between;gap:18px;min-width:230px;height:48px;padding:0 20px 0 24px;border:0;border-radius:999px;background:var(--ink);color:var(--paper);font:600 15px/1 var(--sans);box-shadow:0 1px 2px #1a24151f,0 6px 16px -8px #1a241566;transition:background 150ms ease-out,transform 120ms var(--ease-out)}
+/* The main action is a keycap: a raised vermilion block with a visible edge that presses down. */
+.experiment-next{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:22px;min-width:340px;height:62px;padding:0 12px 0 26px;border:0;border-radius:12px;background:var(--accent);color:#fff;font:650 18px/1 var(--sans);letter-spacing:-.2px;box-shadow:0 4px 0 #8c2a16,0 14px 24px -12px #8c2a16b3;transform:translateY(0);transition:background 180ms ease-out,transform 180ms var(--ease-out),box-shadow 180ms var(--ease-out)}
+.experiment-next .next-cue{transition:transform 180ms var(--ease-out),background 180ms ease-out}
+.experiment-next:active,.experiment-next.is-demo-press{transform:translateY(3px);box-shadow:0 1px 0 #8c2a16,0 6px 12px -8px #8c2a16b3}
+.experiment-next:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+/* A sheen crosses the button as it fires, so the press reads as starting something. */
+.experiment-next:after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,#fff0 30%,#ffffff2e 50%,#fff0 70%);transform:translateX(-100%);pointer-events:none}
+.experiment-next.is-firing:after{animation:next-sheen 520ms cubic-bezier(.3,.6,.2,1)}
+@keyframes next-sheen{to{transform:translateX(100%)}}
 .experiment-next:active{transform:scale(.97)}
 #next-label{display:block;white-space:nowrap}
-.next-cue{display:block;flex:none;min-width:30px;padding:5px 7px;border-radius:7px;background:#f4f2ea1f;text-align:center;font:600 12px/1 var(--mono);font-variant-numeric:tabular-nums}
-.experiment-next[data-action=roll] .next-cue{background:none;padding:0;font:400 18px/1 var(--sans);text-align:right}
-.experiment-next.is-demo-hover{background:#121a13}.experiment-next.is-demo-press{transform:scale(.97)}
-.experiment-tools{grid-area:bar;justify-self:end;align-self:center;position:relative;display:flex;align-items:center;gap:2px}
+.next-cue{display:grid;place-items:center;flex:none;min-width:46px;height:40px;padding:0 10px;border-radius:8px;background:#00000026;color:#fff;font:650 15px/1 var(--mono);font-variant-numeric:tabular-nums}
+.experiment-next[data-action=roll] .next-cue{font:400 21px/1 var(--sans)}
+.experiment-next.is-demo-hover{background:#d14c31}
+.page-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:8px;padding:14px 0;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.page-footer>a{font-size:12px;color:var(--muted);text-decoration:none}
+.experiment-tools{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.page-footer .prompt-panel{left:0;right:auto}
 .experiment-tools #dice-controls{display:block;padding:0}
 .experiment-tools .prompt-peek{position:static;margin:0;border:0}
-.experiment-tools>button,.experiment-tools .prompt-trigger{min-height:40px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:500 13px var(--sans);text-align:center;transition:background 150ms ease-out,color 150ms ease-out}
+.experiment-tools>button,.experiment-tools .prompt-trigger{min-height:40px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:500 13px var(--sans);text-align:center;transition:background 180ms ease-out,color 180ms ease-out}
 .experiment-tools .prompt-trigger{display:block;width:auto}
-.experiment-tools #compare[aria-pressed=true],.experiment-tools .prompt-trigger[aria-expanded=true]{background:#e2e7d8;color:var(--ink)}
+.experiment-tools #compare[aria-pressed=true],.experiment-tools .prompt-trigger[aria-expanded=true]{background:#f7e3db;color:#a8361f}
 .experiment-tools #compare:disabled{opacity:.4}
 #share-status{position:absolute;right:12px;top:100%;font-size:11px;color:var(--muted)}#share-status:empty{display:none}
 #compare-target{max-width:none;margin:4px 0 0}
 
-/* Chapters: a progress rule. The ink fills from the start to the current step. */
-.chapters{min-width:0}
-.rail-stops{position:relative;display:flex;gap:2px;padding:0 0 9px}
-.rail-stops:after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--line)}
-.rail-stops button{position:relative;min-width:40px;min-height:34px;padding:0 10px;border:0;border-radius:6px;background:transparent;color:var(--muted);font:500 13px/1 var(--sans);white-space:nowrap;transition:color 150ms ease-out,background 150ms ease-out}
-.rail-stops button:nth-child(3){margin-left:12px}
-.rail-stops button:nth-child(n+3){font-family:var(--mono);font-size:12px}
-.rail-stops button[aria-pressed=true]{color:var(--ink)}
-.rail-stops button:disabled{opacity:.35}
-.rail-marker{position:absolute;bottom:-1px;left:0;height:3px;border-radius:2px;background:var(--ink);z-index:1;pointer-events:none;transition:transform 260ms var(--ease-out),width 260ms var(--ease-out)}
-.rail-marker:after{content:'';position:absolute;right:-1px;top:50%;width:7px;height:7px;border-radius:50%;background:var(--accent);transform:translate(50%,-50%);box-shadow:0 0 0 2px var(--paper)}
+/* Timeline: a node per step on one line. Ink fills to the current step; done steps are filled. */
+.chapters{grid-area:steps;justify-self:center;min-width:0}
+.rail-stops{position:relative;display:flex;padding:0}
+.rail-stops:after{content:'';position:absolute;left:36px;right:36px;top:8px;height:2px;border-radius:2px;background:#d9d9cd}
+.rail-stops button{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:7px;min-width:72px;min-height:44px;padding:0 4px;border:0;border-radius:8px;background:transparent;color:var(--muted);font:500 13px/1 var(--sans);white-space:nowrap;transition:color 150ms ease-out}
+.rail-stops button:before{content:'';width:18px;height:18px;border-radius:50%;box-sizing:border-box;background:var(--paper);border:2px solid #c3c5b7;transition:background 180ms ease-out,border-color 180ms ease-out,box-shadow 220ms var(--ease-out),transform 220ms var(--ease-out)}
+.rail-stops button[data-done=true]:before{background:var(--ink);border-color:var(--ink)}
+.rail-stops button[aria-pressed=true]{color:var(--ink);font-weight:600}
+.rail-stops button[aria-pressed=true]:before{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 5px #c2432a24;transform:scale(1.12)}
+.rail-stops button:disabled{opacity:.4}
+.rail-marker{position:absolute;top:8px;left:0;height:2px;border-radius:2px;background:var(--ink);z-index:0;pointer-events:none;transition:transform 300ms var(--ease-out),width 300ms var(--ease-out)}
 
 /* Dice: two precise objects, one ink and one vermilion, sharing light, edge and type. */
 .dice .die .die-object{color:#f4f1e8}
-.dice .die:first-child .cube-face,.dice .die:nth-child(2) .cube-face{border-radius:18%;border:1px solid #0f1610;background:linear-gradient(150deg,#33423a 0%,#212c23 48%,#19221b 100%);box-shadow:inset 0 1px 0 #ffffff26,inset 0 0 0 1px #ffffff0a,inset 0 -6px 12px #00000026}
-.dice .die:nth-child(2) .cube-face{border-color:#8a2814;background:linear-gradient(150deg,#d9603d 0%,#c2432a 50%,#a83620 100%);box-shadow:inset 0 1px 0 #ffffff40,inset 0 0 0 1px #ffffff12,inset 0 -6px 12px #5a170a33}
-.dice .cube-face svg{width:54%;height:54%;margin-top:-6px;opacity:.96}
+.dice .die:first-child .cube-face,.dice .die:nth-child(2) .cube-face{inset:calc(var(--size)*.075);border-radius:3px;border:0;background:#243026;box-shadow:inset 0 0 0 1px #ffffff0d}
+.dice .die:nth-child(2) .cube-face{background:#c2432a;box-shadow:inset 0 0 0 1px #ffffff14}
+.cube-bevel,.cube-corner{position:absolute;left:50%;top:50%;background:#243026;backface-visibility:hidden}
+.dice .die:nth-child(2) .cube-bevel,.dice .die:nth-child(2) .cube-corner{background:#c2432a}
+.dice .cube-face svg{width:74%;height:74%;margin-top:-8px;opacity:1}
+.dice .die:first-child .die-object{--glyph-accent:#f06b48}.dice .die:nth-child(2) .die-object{--glyph-accent:#1d261e}
+.cube-face .ga{fill:var(--glyph-accent)}.cube-face .ga-s{stroke:var(--glyph-accent)}
 .dice .cube-face small{bottom:9%;font:500 9px/1 var(--mono);letter-spacing:.14em;opacity:.62}
-.dice .die-shadow{background:radial-gradient(closest-side,#1d261e5c,#1d261e00);filter:none}
-.dice .die-object[data-hover] .cube-face,.dice .die-object:focus-visible .cube-face{border-color:#000}
-.dice .die:nth-child(2) .die-object[data-hover] .cube-face{border-color:#6e1f0f}
+.dice .die-shadow{top:calc(50% + var(--size)*.5);background:radial-gradient(closest-side,#1d261e66,#1d261e00);filter:none}
+/* Ground: a slanted plane in the die's own perspective, so the landing has somewhere to happen. */
+.die-ground{position:absolute;left:50%;top:calc(50% + var(--size)*.5);width:calc(var(--size)*1.62);height:calc(var(--size)*1.62);z-index:-2;border-radius:22%;background:radial-gradient(closest-side,#ebe8dd 0%,#e6e3d6 70%,#e0ddcf 100%);border:1px solid #d6d3c5;box-shadow:inset 0 1px 0 #f7f5ee;transform:translate(-50%,-50%) rotateX(70deg) rotateZ(-14deg);pointer-events:none}
+.dice .die:nth-child(2) .die-ground{transform:translate(-50%,-50%) rotateX(70deg) rotateZ(14deg)}
 .die-object.is-demo-press .die-grip{transform:translateY(2px);transition-duration:65ms}
+
+/* Pointing label: a paper card at the end of a vermilion leader, with a dot on the object it names. */
+.pointer-note{position:absolute;left:0;top:0;z-index:4;margin:0;pointer-events:none}
+.pointer-card{display:grid;gap:3px;width:max-content;max-width:200px;padding:11px 14px 12px;border-radius:10px;background:#fffdf8;border:1px solid #e3e0d3;box-shadow:0 1px 2px #1d261e12,0 16px 30px -18px #1d261e66}
+#pointer-text{font:600 15px/1.2 var(--sans);letter-spacing:-.1px;color:var(--ink)}#pointer-sub{font:13px/1.35 var(--sans);color:var(--muted)}#pointer-sub:empty{display:none}
+.pointer-leader,.pointer-dot{position:absolute;display:block}
+.pointer-leader{background:var(--accent)}
+.pointer-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--paper),0 0 0 6px #c2432a26;transform:translate(-50%,-50%)}
+.pointer-note[data-side=left] .pointer-leader{left:100%;top:50%;width:26px;height:2px;margin-top:-1px;transform-origin:100% 50%}
+.pointer-note[data-side=left] .pointer-dot{left:calc(100% + 26px);top:50%}
+.pointer-note[data-side=right] .pointer-leader{right:100%;top:50%;width:26px;height:2px;margin-top:-1px;transform-origin:0 50%}
+.pointer-note[data-side=right] .pointer-dot{left:-26px;top:50%}
+.pointer-note[data-side=above] .pointer-leader{left:50%;top:100%;width:2px;height:26px;margin-left:-1px;transform-origin:50% 100%}
+.pointer-note[data-side=above] .pointer-dot{left:50%;top:calc(100% + 26px)}
+
+/* Each ingredient's name is set in the type that ingredient brings to the page. */
+.die>strong{transition:color 160ms ease-out}
+.die>strong[data-face=call]{display:inline-flex;align-items:center;justify-content:center;min-height:0;margin-top:2px;padding:7px 14px;border-radius:999px;background:var(--accent);color:#fff;font:650 14px/1 var(--sans);letter-spacing:.01em;box-shadow:0 3px 0 #8c2a16}
+.die>strong[data-face=cthulhu]{font:italic 500 21px/1.15 "Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;letter-spacing:.01em}
+.die>strong[data-face=greek-myths]{font:600 14px/1.3 Georgia,"Times New Roman",serif;letter-spacing:.22em;text-transform:uppercase}
+.die>strong[data-face=weather]{font:300 19px/1.2 var(--sans);letter-spacing:.05em}
+.die>strong[data-face=bureaucracy]{font:500 13px/1.3 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.die>strong[data-face=motorsport]{font:italic 900 18px/1.15 "Arial Black","Arial Bold",Arial,sans-serif;letter-spacing:-.01em;text-transform:uppercase}
+.die>strong[data-face=deep-sea-bioluminescence]{font:italic 300 17px/1.2 var(--sans);letter-spacing:.05em}
+.die>strong[data-face=tech]{font:500 17px/1.2 var(--mono);letter-spacing:-.02em}
+.die>strong[data-face=disco]{font:italic 900 21px/1.15 var(--sans);letter-spacing:.06em}
+.die>strong[data-face=fast-food]{font:900 18px/1.15 "Arial Black",Impact,"Arial Bold",sans-serif;letter-spacing:-.02em;text-transform:uppercase}
+.die>strong[data-face=opera]{font:italic 400 23px/1.1 Didot,"Bodoni MT","Bodoni 72",Georgia,serif;letter-spacing:.01em}
+.die>strong[data-face=luxury-hotel]{font:400 13px/1.35 Georgia,"Times New Roman",serif;letter-spacing:.26em;text-transform:uppercase}
+.die>strong[data-face=victorian-insect-collecting]{font:italic 400 17px/1.2 "Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif}
 
 /* Demo cursor: drawn above the page, never hit-testable. */
 .demo-cursor{position:fixed;left:0;top:0;z-index:60;pointer-events:none;will-change:transform}
@@ -198,17 +267,22 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  .die-object:hover .cube-face{border-color:currentColor}
  .matrix-cell:hover{border-color:var(--accent)}.matrix-cell:hover .matrix-select{background:#e9ecdf}
  summary:hover,.return-to-dice:hover,.topbar-link:hover{color:var(--ink)}
- .rail-stops button:not(:disabled):not([aria-pressed=true]):hover{color:var(--ink);background:#e7e8de}
- .demo-toggle:hover{background:#e7e8de;border-color:#b9bcad}
- .experiment-next:hover{background:#1e2c1f}
- .reset:hover,.experiment-tools>button:not(:disabled):hover,.experiment-tools .prompt-trigger:hover{background:#e5e9dd;color:var(--ink)}
+ .rail-stops button:not(:disabled):not([aria-pressed=true]):hover:before{border-color:var(--accent);transform:scale(1.18)}
+ .demo-toggle:hover{background:#f7e3db;border-color:#e6b9aa;color:#a8361f}
+ #compare:not([aria-pressed=true]):not(:disabled):hover{border-color:var(--accent);color:#a8361f;background:#f7e3db}
+ .reset:hover span{transform:rotate(-120deg)}
+ .experiment-next:hover{background:#d24e32;transform:translateY(-2px);box-shadow:0 6px 0 #8c2a16,0 20px 30px -14px #8c2a16cc}
+ .experiment-next:hover .next-cue{transform:translateX(2px);background:#00000033}
+ .experiment-next:active{transform:translateY(3px);box-shadow:0 1px 0 #8c2a16,0 6px 12px -8px #8c2a16b3;transition-duration:70ms}
+ .reset:hover,.experiment-tools>button:not(:disabled):hover,.experiment-tools .prompt-trigger:hover{background:#f7e3db;color:#a8361f}
+ .rail-stops button:not(:disabled):not([aria-pressed=true]):hover{color:var(--accent)}
  .prompt-panel header button:hover{background:#e9ecdf}
  .attempt-stepper button:not(:disabled):hover{background:#dce3d2}
 }
 @media(pointer:coarse){.attempt-stepper{min-height:44px;grid-template-columns:44px minmax(0,1fr) 44px}.rail-stops button{min-height:40px}}
 
-@media(max-width:1100px){.shell{padding-inline:24px}.workbench{grid-template-columns:minmax(132px,1fr) minmax(0,880px) minmax(132px,1fr);column-gap:16px}.die-object{--size:80px;height:156px}.die>strong{font-size:15px}}
-@media(max-width:1000px){#report-view.comparing{grid-template-columns:1fr}}
+@media(max-width:1100px){.shell{padding-inline:24px}.workbench{grid-template-columns:minmax(170px,1fr) minmax(0,860px) minmax(170px,1fr);column-gap:16px}.die-object{--size:96px;height:222px}.die>strong{font-size:15px}}
+@media(max-width:700px){#report-view.comparing{grid-template-columns:1fr}}
 
 /* Narrow: the dice sit side by side above the action, the report below. */
 @media(max-width:860px){
@@ -216,50 +290,39 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  .topbar{flex-wrap:wrap;gap:6px 16px;padding:10px 0 12px}
  .chapters{order:3;width:100%}.rail-stops button{flex:1;padding:0 4px;min-width:0}.rail-stops button:nth-child(3){margin-left:6px}
  .demo-toggle{min-height:34px;padding:0 12px 0 10px}
- .story{padding:16px 4px 10px}#story-title{font-size:30px}#story-text{font-size:14px;margin-top:6px}
- .workbench{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"left right" "bar bar" "report report" "tools tools";column-gap:12px;row-gap:12px}
- [data-journey=original] .dice-deck:not(.leaving) .die{display:none}
- .die-object{--size:64px;height:112px}.die>strong{font-size:15px;min-height:2.5em}
- .stage-bar{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"reset next";gap:10px}
- .experiment-next{min-width:0;width:100%}
- .experiment-tools{grid-area:tools;justify-self:center;margin-top:-4px}
+ .story{padding:24px 4px 12px}#story-title{font-size:30px}#story-text{font-size:14px;margin-top:6px}
+ .workbench{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"left right" "hint hint" "bar bar" "steps steps" "report report";column-gap:12px;row-gap:12px}
+ .pointer-note{grid-area:hint;position:static;justify-self:center;transform:none!important;margin-top:-4px}
+ .pointer-leader,.pointer-dot{display:none}
+ .pointer-card{max-width:none;text-align:center}
+ [data-journey=original] .die:nth-child(2):not(.leaving){visibility:hidden}
+ .die-object{--size:72px;height:150px}.die>strong{font-size:15px;min-height:2.5em}
+ .stage-bar{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"reset next compare";gap:8px}
+ #experiment-next{justify-self:stretch}
+ .experiment-next{min-width:0;width:100%;height:58px;font-size:17px}
+ .rail-stops button{min-width:0;flex:1}.rail-stops:after{left:10%;right:10%}
+
  .report-frame{height:560px}
  [data-view=plain] .workbench{grid-template-columns:minmax(0,1fr);grid-template-areas:"sidebar" "result";gap:12px;margin-top:16px}
  .plain-controls{position:relative;top:0}
  .prompt-panel,.plain-controls .prompt-panel{position:fixed;left:16px;right:16px;top:auto;bottom:16px;width:auto;max-height:65dvh}
  .prompt-panel pre{font-size:11px}
  .matrix{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
- #report-view.comparing{grid-template-columns:1fr;gap:18px}
+ #report-view.comparing{gap:12px}
 }
-@media(max-width:860px){[data-journey=original] .stage-bar{grid-template-columns:minmax(0,1fr);grid-template-areas:"next"}}
+
 @media(max-width:560px){.report-frame{height:520px}.matrix{gap:12px}.matrix-select{font-size:12px;gap:5px;padding:10px;min-height:48px}.notes pre{font-size:11px}}
 @media(max-width:400px){.atlas>header{display:block}#atlas-ingredient{display:block;width:100%;max-width:none;margin-top:12px}.topbar-link{display:none}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.die-grip{transform:none!important;transition:none!important}.matrix-cell,.rail-stops button,.rail-marker,.experiment-next,.reset,.experiment-tools>button,.report-frame,.demo-arrow,.demo-touch,.demo-glyph{transition:none!important}}
+@media(prefers-reduced-motion:reduce){.experiment-next:after{display:none}.reset span,.experiment-next .next-cue{transition:none}.version-stack i{transition:none}html{scroll-behavior:auto}.die-grip{transform:none!important;transition:none!important}.matrix-cell,.rail-stops button,.rail-marker,.experiment-next,.reset,.experiment-tools>button,.report-frame,.demo-arrow,.demo-touch,.demo-glyph{transition:none!important}}
 </style></head>
 <body>
 <noscript>Enable JavaScript to roll the dice and compare reports.</noscript>
 <div class="shell">
- <header class="topbar">
-  <span class="brand">Randomness for Style</span>
-  <nav id="refinement-rail" class="chapters" aria-label="Experiment steps">
-   <div id="rail-stops" class="rail-stops">
-    <button type="button" id="stage-0" aria-pressed="true" aria-label="Plain page, brief only">Plain</button>
-    <button type="button" id="stage-1" aria-pressed="false" aria-label="Dice added, one-shot">Dice</button>
-    <button type="button" id="stage-2" aria-pressed="false" aria-label="Refinement 1">+1</button>
-    <button type="button" id="stage-3" aria-pressed="false" aria-label="Refinement 2">+2</button>
-    <button type="button" id="stage-4" aria-pressed="false" aria-label="Refinement 3">+3</button>
-    <span id="rail-marker" class="rail-marker" aria-hidden="true"></span>
-   </div>
-  </nav>
-  <div class="topbar-actions">
-   <button type="button" id="demo-toggle" class="demo-toggle" aria-pressed="false"><span class="demo-glyph" aria-hidden="true"></span><span id="demo-label">Watch demo</span></button>
-   <a class="topbar-link" href="#atlas">36 combinations ↓</a>
-  </div>
- </header>
  <main id="play">
   <h1 class="sr-only">Randomness for Style</h1>
   <div id="story" class="story" aria-live="polite" aria-atomic="true"><h2 id="story-title"></h2><p id="story-text"></p></div>
   <div class="workbench">
+   <p id="pointer-note" class="pointer-note" data-side="above" hidden><span class="pointer-card"><strong id="pointer-text"></strong><span id="pointer-sub"></span></span><i class="pointer-leader"></i><i class="pointer-dot"></i></p>
    <section id="dice-deck" class="dice-deck" aria-label="Ingredients">
     <div class="dice">
      <div class="die"><div class="die-top"><span>Ingredient 1</span></div><strong id="ingredient-a"></strong></div>
@@ -268,19 +331,23 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
     <span id="dice-gesture-help" class="sr-only">Click or press Enter to roll. Drag slowly to choose the upper face; release quickly to throw. Arrow keys turn the die. Escape cancels a drag.</span>
    </section>
    <section id="dice-lab" class="result" aria-labelledby="pair-title"><h2 id="pair-title" class="sr-only" tabindex="-1"></h2>
-    <div id="report-view"><span class="report-sweep" aria-hidden="true"></span></div>
+    <div id="report-view" data-passes="0"><span class="version-stack" aria-hidden="true"><i></i><i></i><i></i></span><span class="report-sweep" aria-hidden="true"></span></div>
    </section>
    <div id="stage-bar" class="stage-bar">
     <button type="button" id="reset" class="reset" aria-label="Reset to the plain page"><span aria-hidden="true">↺</span> Reset</button>
     <button type="button" id="experiment-next" class="experiment-next" data-action="roll"><span id="next-label">Add randomness</span><span id="next-cue" class="next-cue" aria-hidden="true">→</span></button>
-   </div>
-   <div id="experiment-tools" class="experiment-tools">
-    <section id="dice-controls" class="controls" aria-label="Prompt">
-     <div id="prompt" class="prompt-peek"><button id="prompt-trigger" type="button" class="prompt-trigger" aria-expanded="false" aria-controls="prompt-panel">Prompt ↗</button><section id="prompt-panel" class="prompt-panel" aria-labelledby="prompt-title" hidden><header><h3 id="prompt-title">One-shot prompt</h3><button type="button" class="prompt-pin" aria-pressed="false">Pin</button><button type="button" class="prompt-close" aria-label="Close prompt">×</button></header><pre id="current-prompt"></pre><details id="critique" class="notes" hidden><summary>Critique</summary><pre id="current-critique"></pre></details><footer><button id="copy-prompt" type="button" class="text-button">Copy with data</button><p id="copy-status" role="status"></p></footer></section></div>
-    </section>
     <button type="button" id="compare" title="Compare with brief only" aria-pressed="false" aria-label="Compare with brief only" aria-controls="report-view compare-target">Compare</button>
-    <button type="button" id="copy-link">Share</button><span id="share-status" role="status"></span>
    </div>
+   <nav id="refinement-rail" class="chapters" aria-label="Experiment steps">
+    <div id="rail-stops" class="rail-stops">
+     <button type="button" id="stage-0" aria-pressed="true" aria-label="Plain page, brief only">Plain</button>
+     <button type="button" id="stage-1" aria-pressed="false" aria-label="Dice added, one-shot">Dice</button>
+     <button type="button" id="stage-2" aria-pressed="false" aria-label="Refinement 1">+1</button>
+     <button type="button" id="stage-3" aria-pressed="false" aria-label="Refinement 2">+2</button>
+     <button type="button" id="stage-4" aria-pressed="false" aria-label="Refinement 3">+3</button>
+     <span id="rail-marker" class="rail-marker" aria-hidden="true"></span>
+    </div>
+   </nav>
    <section id="plain-controls" class="controls plain-controls" aria-label="Plain prompt and refinement" hidden>
     <select id="plain-method" class="comparison-target" aria-label="Plain refinement prompt"><option value="original">Original prompt</option><option value="stronger" selected>Stronger prompt</option></select>
     <div class="refinement"><div class="attempt-stepper" role="group" aria-label="Refinement"><button id="plain-attempt-prev" type="button" aria-label="Previous attempt" aria-controls="plain-report" disabled>−</button><output id="plain-attempt-label" aria-live="polite">One-shot</output><button id="plain-attempt-next" type="button" aria-label="Refine more" aria-controls="plain-report">+</button></div><p id="plain-attempt-note" hidden>Kept the previous attempt. See critique.</p></div>
@@ -293,6 +360,16 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
   <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>What we call AI slop is often recognition of familiar design patterns. This experiment explores how randomness can help break them: the same brief and data, two unexpected ingredients, then three refinements with the same prompt.</p><p>These are saved examples, not live generations. The stronger sequence restarts from the same one-shot in a fresh context. More refinement does not guarantee a better result.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Refinement prompt"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button></div>
     <p id="method-note" class="method-note">Both start from this one-shot.</p></div><select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">Brief only</option><option value="other" id="compare-other">Original prompt</option></select><div class="export-actions"><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Refine brief alone →</button><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
  </main>
+ <div class="page-footer">
+  <div id="experiment-tools" class="experiment-tools">
+   <section id="dice-controls" class="controls" aria-label="Prompt">
+    <div id="prompt" class="prompt-peek"><button id="prompt-trigger" type="button" class="prompt-trigger" aria-expanded="false" aria-controls="prompt-panel">Prompt ↗</button><section id="prompt-panel" class="prompt-panel" aria-labelledby="prompt-title" hidden><header><h3 id="prompt-title">One-shot prompt</h3><button type="button" class="prompt-pin" aria-pressed="false">Pin</button><button type="button" class="prompt-close" aria-label="Close prompt">×</button></header><pre id="current-prompt"></pre><details id="critique" class="notes" hidden><summary>Critique</summary><pre id="current-critique"></pre></details><footer><button id="copy-prompt" type="button" class="text-button">Copy with data</button><p id="copy-status" role="status"></p></footer></section></div>
+   </section>
+   <button type="button" id="copy-link">Share</button><span id="share-status" role="status"></span>
+   <button type="button" id="demo-toggle" class="demo-toggle" aria-pressed="false"><span class="demo-glyph" aria-hidden="true"></span><span id="demo-label">Watch demo</span></button>
+   <button type="button" id="sound-toggle" aria-pressed="true">Sound on</button>
+  </div>
+ </div>
 </div>
 <p id="status" class="sr-only" role="status"></p>
 <div id="demo-cursor" class="demo-cursor" aria-hidden="true" hidden><svg class="demo-arrow" viewBox="0 0 24 24" width="24" height="24"><path d="M5.5 3.2v15.6l4.2-4.1 2.7 6.1 2.6-1.1-2.7-6h5.9z"/></svg><span class="demo-ring"></span><span class="demo-touch"></span></div>
@@ -384,15 +461,16 @@ function sampleDiePlan(plan,t){
  return {q,x,y:-air-dieSupportLift(q,plan.size),air};
 }
 
+// Die glyphs: bold strokes in the face ink, one accent detail each (eyes, bolt, lure, chip core...).
 const dieGlyphs=[
- '<path d="M21 37c-8-24 32-34 32-3v7H21Zm0 2c-18 2-7 20-19 17m26-15c-9 11 6 18-5 24m15-24c11 8-5 20 7 21m9-22c18-2 8 19 20 13"/><circle cx="30" cy="29" r="2"/><circle cx="44" cy="29" r="2"/>',
- '<path d="m7 20 29-13 29 13H7Zm7 8v27m15-27v27m15-27v27m15-27v27M8 63h56M5 57h62"/>',
- '<path d="M15 43c-17-9-4-27 8-21 2-20 31-20 34-1 18-1 22 26 5 28H18m2 8-3 8m20-8-3 8m20-8-3 8"/>',
- '<path d="M17 6h38v59H17Zm9 13h20m-20 10h20m-20 10h20m-20 10h13M9 14v57h37"/>',
- '<path d="m12 38 9-18h30l10 18 6 5v13H6V43Zm9-18 8 18h23M20 38h41M15 56v8m42-8v8M4 12h17m-17 9h9"/>',
- '<path d="M16 35c0-31 40-31 40 0Z M23 36c-9 11 10 16 0 27m13-27c9 9-9 17 0 29m13-29c-9 11 10 16 0 27M36 3v4M8 16l4 3m48-3 4-3"/><circle cx="9" cy="45" r="2"/><circle cx="63" cy="49" r="2"/><circle cx="29" cy="27" r="1"/><circle cx="43" cy="27" r="1"/>'
+ '<path fill="currentColor" stroke="none" d="M19 36c0-12 7.5-21 17-21s17 9 17 21v3H19Z"/><circle class="ga" stroke="none" cx="29.5" cy="30" r="3.2"/><circle class="ga" stroke="none" cx="42.5" cy="30" r="3.2"/><path d="M23 39c-1 9-9 9-9 17M31 39c0 8-4 12-2 19M41 39c0 8 4 12 2 19M49 39c1 9 9 9 9 17"/>',
+ '<path d="M13 17h46"/><path d="M19 17c-6 0-6.5 8-.5 8 3.5 0 4-4.5 1-4.5M53 17c6 0 6.5 8 .5 8-3.5 0-4-4.5-1-4.5"/><path d="M22 25h28M26 25v28M33 25v28M39 25v28M46 25v28"/><path class="ga-s" d="M20 53h32"/><path d="M15 60h42"/>',
+ '<path d="M21 44a10 10 0 0 1 1.5-19.8A14 14 0 0 1 49 25a9.5 9.5 0 0 1 1 19Z"/><path class="ga" stroke="none" d="M38 41 29 55h7.5l-4 12L45 50h-7.5l5-9Z"/>',
+ '<circle cx="36" cy="14" r="7"/><path d="M32.5 21 30 33h12l-2.5-12"/><rect fill="currentColor" stroke="none" x="14" y="33" width="44" height="10" rx="2.5"/><path class="ga-s" d="M15 53h42"/><path d="M21 61h30" opacity=".55"/>',
+ '<path d="M17 63V9"/><path d="M17 11h38v27H17"/><path fill="currentColor" stroke="none" d="M17 11h9.5v9H17ZM36 11h9.5v9H36ZM26.5 20H36v9h-9.5ZM45.5 20H55v9h-9.5ZM17 29h9.5v9H17ZM36 29h9.5v9H36Z"/>',
+ '<path d="M13 43c7-14 27-17 38-6l9-7v22l-9-7c-11 11-31 8-38-2Z"/><path d="M13 43l4 3 3.5-3 3.5 3"/><circle fill="currentColor" stroke="none" cx="25" cy="38" r="2.6"/><path d="M27 32c-2-11 6-17 15-15"/><circle class="ga" stroke="none" cx="44" cy="17" r="4.2"/><circle class="ga-s" cx="44" cy="17" r="8.5" opacity=".45" stroke-width="2"/>'
 ];
-const formatGlyphs={insects:'<path d="M7 7h58v58H7ZM36 13v46m-9-40-5-5m23 5 5-5M25 31l-9-4m31 4 9-4M24 42l-8 6m32-6 8 6M28 52l-5 7m21-7 5 7"/><ellipse cx="36" cy="39" rx="12" ry="17"/><circle cx="36" cy="21" r="5"/>',tech:'<circle cx="36" cy="36" r="24"/><path d="M36 4v17m0 30v17M4 36h17m30 0h17m-15-25-17 25h14"/>',disco:'<circle cx="36" cy="36" r="28"/><circle cx="36" cy="36" r="10"/><path d="M16 35a20 20 0 0 1 19-19m20 20a20 20 0 0 1-19 19"/>',diner:'<path d="M10 30c0-29 52-29 52 0H10Zm0 9h52M10 48h52c0 21-52 21-52 0ZM22 20h2m12-5h2m12 5h2"/>',opera:'<path d="M8 8h56v56H8ZM8 10q26 14 0 42m56-42q-26 14 0 42M23 64V43h26v21"/>',hotel:'<path d="M12 65V23h48v42M7 23h58L36 5Zm17 10h5m14 0h5M24 44h5m14 0h5M30 65V53h12v12"/>',swiss:'<path d="M7 7h58v58H7Zm0 20h58M27 7v58M7 48h58"/>',brutalist:'<path d="M9 7h54v15H9Zm0 24h20v34H9Zm31 0h23v34H40Z"/>',deco:'<path d="M9 62V29h9V17h9V8h18v9h9v12h9v33M20 62V37h11V24h10v13h11v25"/>',playful:'<path d="M8 27c-1-25 30-26 29-2 10-23 34-12 26 9-5 19-28 33-28 33S8 48 8 27Z"/>',editorial:'<path d="M7 9h58v54H7Zm9 11h40M16 29h18v23H16Zm28 0h12m-12 9h12m-12 9h12"/>',transit:'<path d="M10 58V14h24v23h26v25"/><circle cx="10" cy="14" r="4"/><circle cx="34" cy="37" r="6"/><circle cx="60" cy="62" r="4"/>',receipt:'<path d="m17 5 6 5 6-5 7 5 7-5 6 5 6-5v62l-6-5-6 5-7-5-7 5-6-5-6 5Zm9 18h20m-20 10h20m-20 10h20m-20 10h10"/>',guide:'<path d="M7 12q15-6 29 4 14-10 29-4v49q-16-5-29 4-14-9-29-4Zm29 4v49M16 24h11m-11 10h11m18-10h11m-11 10h11"/>',circuit:'<path d="M6 12h23v18h20v22h17M6 60h24V42h19V12h17"/><circle cx="29" cy="30" r="4"/><circle cx="49" cy="42" r="4"/>',quilt:'<path d="M7 7h58v58H7Zm29 0v58M7 36h58M7 7l58 58M7 65 65 7"/>'};
+const formatGlyphs={tech:'<rect x="19" y="19" width="34" height="34" rx="5"/><rect class="ga" stroke="none" x="28" y="28" width="16" height="16" rx="2.5"/><path d="M28 10v9M36 10v9M44 10v9M28 53v9M36 53v9M44 53v9M10 28h9M10 36h9M10 44h9M53 28h9M53 36h9M53 44h9"/>',disco:'<path d="M36 5v12"/><circle cx="36" cy="39" r="21"/><ellipse cx="36" cy="39" rx="9.5" ry="21"/><path d="M15 39h42M18 29h36M18 49h36"/><path class="ga-s" d="M60 9v10M55 14h10"/>',diner:'<path d="M15 33c0-10.5 9.5-17 21-17s21 6.5 21 17Z"/><path class="ga-s" d="M13 39c4 3.5 7.5-3.5 11.5 0s7.5 3.5 11.5 0 7.5-3.5 11.5 0 7.5 3.5 11.5 0"/><rect fill="currentColor" stroke="none" x="14" y="44" width="44" height="7" rx="3.5"/><path d="M15 56h42v1.5a6.5 6.5 0 0 1-6.5 6.5h-29A6.5 6.5 0 0 1 15 57.5Z"/>',opera:'<path d="M9 11h54"/><path d="M12 11c0 19 3.5 34 12 50M60 11c0 19-3.5 34-12 50M12 11c4 7 9 9 15 9M60 11c-4 7-9 9-15 9"/><path class="ga-s" d="M39 28v19M39 28l7 3"/><ellipse class="ga" stroke="none" cx="34.5" cy="48" rx="5" ry="4" transform="rotate(-20 34.5 48)"/>',hotel:'<path d="M36 25v-6M30.5 19h11"/><path d="M17 50a19 19 0 0 1 38 0"/><path d="M12 50h48M9 57h54"/><path class="ga-s" d="M25 43a12.5 12.5 0 0 1 6.5-9"/>',insects:'<ellipse cx="36" cy="43" rx="12" ry="15"/><path d="M36 28v30"/><circle cx="36" cy="23.5" r="5"/><path d="M33 19.5l-5-7.5M39 19.5l5-7.5M24 37l-9-4M24 45l-10 2M26 53l-8 7M48 37l9-4M48 45l10 2M46 53l8 7"/><path class="ga-s" d="M36 4v14"/><circle class="ga" stroke="none" cx="36" cy="4.5" r="3"/>'};
 const diceMotion=matchMedia('(prefers-reduced-motion: reduce)');
 const dieStates=[0,1].map(()=>({value:null,pose:{q:[0,0,0,1],x:0,y:0},running:null}));
 let activeDiceRoll=null;
@@ -406,14 +484,60 @@ function inviteDice(){
   animateDiePlan(i,{kind:'invitation',from:dieStates[i].pose,size,duration:850,contacts:[]},dieStates[i].value);
  },450+i*300)));
 }
-function diePicture(index,value){const path=index===0?dieGlyphs[value]:formatGlyphs[modes[active].options[value].layout];return `<svg viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${path}</svg>`;}
+function diePicture(index,value){const path=index===0?dieGlyphs[value]:formatGlyphs[modes[active].options[value].layout];return `<svg viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${path}</svg>`;}
 function dieFaceMarkup(index){return DIE_FACE_VALUES.map((choice,face)=>`<span class="cube-face face-${face}" data-choice="${choice}">${diePicture(index,choice)}<small>${String(choice+1).padStart(2,'0')}</small></span>`).join('');}
+// Solid die: six inset faces, twelve 45° bevels and eight corner facets close the cube, so it reads as
+// one bevelled object from any angle. Each piece keeps its cube-space normal for lighting.
+const DIE_CHAMFER=.075;
+const DIE_FACE_NORMALS=[[0,0,1],[1,0,0],[0,0,-1],[-1,0,0],[0,-1,0],[0,1,0]];
+const DIE_SOLIDS=(()=>{
+ const k=DIE_CHAMFER,r2=Math.SQRT2,deg=180/Math.PI,solids=[];
+ const bevel=(transform,normal,long)=>solids.push({kind:'bevel',transform:transform+` translateZ(calc(var(--size)*${((1-k)/r2).toFixed(5)}))`,normal:normal.map(v=>v/Math.hypot(...normal)),w:long==='x'?1-2*k:k*r2,h:long==='x'?k*r2:1-2*k});
+ bevel('rotateX(45deg)',[0,-1,1],'x');bevel('rotateX(-45deg)',[0,1,1],'x');bevel('rotateY(45deg)',[1,0,1],'y');bevel('rotateY(-45deg)',[-1,0,1],'y');
+ bevel('rotateY(180deg) rotateX(45deg)',[0,-1,-1],'x');bevel('rotateY(180deg) rotateX(-45deg)',[0,1,-1],'x');bevel('rotateY(135deg)',[1,0,-1],'y');bevel('rotateY(-135deg)',[-1,0,-1],'y');
+ bevel('rotateY(90deg) rotateX(45deg)',[1,-1,0],'x');bevel('rotateY(90deg) rotateX(-45deg)',[1,1,0],'x');bevel('rotateY(-90deg) rotateX(45deg)',[-1,-1,0],'x');bevel('rotateY(-90deg) rotateX(-45deg)',[-1,1,0],'x');
+ const h=.5,side=2*(k*r2/Math.sqrt(3))*1.1;
+ for(const sx of [-1,1])for(const sy of [-1,1])for(const sz of [-1,1]){
+  const phi=Math.atan2(sx,sz),theta=-Math.asin(sy/Math.sqrt(3));
+  const xl=[Math.cos(phi),0,-Math.sin(phi)],yl=[Math.sin(phi)*Math.sin(theta),Math.cos(theta),Math.cos(phi)*Math.sin(theta)];
+  const g=[sx*(h-2*k/3),sy*(h-2*k/3),sz*(h-2*k/3)];
+  const points=[[sx*(h-k),sy*(h-k),sz*h],[sx*(h-k),sy*h,sz*(h-k)],[sx*h,sy*(h-k),sz*(h-k)]].map(v=>{const d=v.map((c,i)=>c-g[i]);return [50+(d[0]*xl[0]+d[1]*xl[1]+d[2]*xl[2])/side*100,50+(d[0]*yl[0]+d[1]*yl[1]+d[2]*yl[2])/side*100];});
+  solids.push({kind:'corner',transform:`rotateY(${(phi*deg).toFixed(3)}deg) rotateX(${(theta*deg).toFixed(3)}deg) translateZ(calc(var(--size)*${((1.5-2*k)/Math.sqrt(3)).toFixed(5)}))`,normal:[sx,sy,sz].map(v=>v/Math.sqrt(3)),w:side,h:side,clip:'polygon('+points.map(([x,y])=>x.toFixed(2)+'% '+y.toFixed(2)+'%').join(',')+')'});
+ }
+ return solids;
+})();
+function dieSolidMarkup(){
+ return DIE_SOLIDS.map(({kind,transform,w,h,clip})=>`<span class="cube-${kind}" style="width:calc(var(--size)*${w.toFixed(5)});height:calc(var(--size)*${h.toFixed(5)});margin:calc(var(--size)*${(-h/2).toFixed(5)}) 0 0 calc(var(--size)*${(-w/2).toFixed(5)});transform:${transform}${clip?';clip-path:'+clip:''}"></span>`).join('');
+}
+// Light from the upper left, in front. Brightness follows each piece's normal through the pose and the
+// die's fixed camera, so faces brighten as they turn toward it and bevels catch it at the edges.
+const DIE_LIGHT=(()=>{const v=[-.42,-.78,.46],l=Math.hypot(...v);return v.map(c=>c/l);})(),DIE_HALF=(()=>{const v=[-.42,-.78,1.46],l=Math.hypot(...v);return v.map(c=>c/l);})();
+const dieShading=[null,null];
+function dieCameraMatrix(camera){
+ const read=name=>parseFloat(getComputedStyle(camera).getPropertyValue(name))*Math.PI/180||0;
+ const [x,y,z]=[read('--view-x'),read('--view-y'),read('--view-z')];
+ const mul=(a,b)=>a.map((row,i)=>[0,1,2].map(j=>row[0]*b[0][j]+row[1]*b[1][j]+row[2]*b[2][j]));
+ const rx=[[1,0,0],[0,Math.cos(x),-Math.sin(x)],[0,Math.sin(x),Math.cos(x)]],ry=[[Math.cos(y),0,Math.sin(y)],[0,1,0],[-Math.sin(y),0,Math.cos(y)]],rz=[[Math.cos(z),-Math.sin(z),0],[Math.sin(z),Math.cos(z),0],[0,0,1]];
+ return mul(mul(rx,ry),rz);
+}
+function dieBrightness(i,q){
+ const shade=dieShading[i];if(!shade)return [];
+ return shade.normals.map(normal=>{
+  const v=quatRotate(q,normal),m=shade.camera,n=[0,1,2].map(r=>m[r][0]*v[0]+m[r][1]*v[1]+m[r][2]*v[2]);
+  const diffuse=Math.max(0,n[0]*DIE_LIGHT[0]+n[1]*DIE_LIGHT[1]+n[2]*DIE_LIGHT[2]),gloss=Math.pow(Math.max(0,n[0]*DIE_HALF[0]+n[1]*DIE_HALF[1]+n[2]*DIE_HALF[2]),28);
+  return Math.round((.6+.52*diffuse+.32*gloss)*1000)/1000;
+ });
+}
+function shadeDie(i,q){const shade=dieShading[i];if(!shade)return;dieBrightness(i,q).forEach((b,n)=>{shade.pieces[n].style.filter=`brightness(${b})`;});}
 function initDice3D(){
  document.querySelectorAll('.die').forEach((die,i)=>{
   const button=document.createElement('button');button.className='die-object';button.type='button';button.id='throw-'+i;
   button.setAttribute('aria-describedby','dice-gesture-help');
-  button.innerHTML='<span class="die-shadow" aria-hidden="true"></span><span class="die-grip" aria-hidden="true"><span class="die-flight"><span class="die-camera"><span class="cube">'+dieFaceMarkup(i)+'</span></span></span></span>';
+  // A ground plane gives the die a surface to land on; a flat core fills the rounded corners so the cube reads solid.
+  button.innerHTML='<span class="die-ground" aria-hidden="true"></span><span class="die-shadow" aria-hidden="true"></span><span class="die-grip" aria-hidden="true"><span class="die-flight"><span class="die-camera"><span class="cube">'+dieSolidMarkup()+dieFaceMarkup(i)+'</span></span></span></span>';
   die.querySelector('.die-top').after(button);bindDieInteraction(button,i);
+  const faces=[...button.querySelectorAll('.cube-face')],pieces=[...button.querySelectorAll('.cube-bevel,.cube-corner'),...faces];
+  dieShading[i]={pieces,normals:[...DIE_SOLIDS.map(solid=>solid.normal),...faces.map((_,n)=>DIE_FACE_NORMALS[n])],camera:dieCameraMatrix(button.querySelector('.die-camera'))};
  });
  const settle=()=>[0,1].forEach(i=>stopDieMotion(i));
  diceMotion.addEventListener('change',()=>{if(diceMotion.matches)settle();});
@@ -422,7 +546,7 @@ function initDice3D(){
  [0,1].forEach(i=>observer.observe(document.querySelector('#throw-'+i)));
 }
 function paintDiePose(i,pose){
- $('#throw-'+i+' .cube').style.transform=quatCSS(pose.q);
+ $('#throw-'+i+' .cube').style.transform=quatCSS(pose.q);shadeDie(i,pose.q);
  $('#throw-'+i+' .die-flight').style.transform=`translate3d(${pose.x}px,${pose.y}px,0)`;
  const shadow=$('#throw-'+i+' .die-shadow'),height=Math.min(1,(pose.air??Math.max(0,-pose.y))/40);
  shadow.style.transform=`translateX(${pose.x}px) scale(${1-height*.32},${1-height*.44})`;shadow.style.opacity=String(1-height*.65);
@@ -456,7 +580,8 @@ function moveDieGrab(i,from,dx,dy=0){
  dieStates[i].pose=dieGrabPose(from,dx,dy,size);
  paintDiePose(i,dieStates[i].pose);
  const value=dieTopFace(dieStates[i].pose.q);
- $('#ingredient-'+(i?'b':'a')).textContent=i?modes[active].options[value].name:worlds[value].name;
+ const name=i?modes[active].options[value].name:worlds[value].name;
+ if(typeof setIngredientLabel==='function')setIngredientLabel(i,name);else $('#ingredient-'+(i?'b':'a')).textContent=name;
  return value;
 }
 function settleDieGrab(i,keepYaw=false){
@@ -474,6 +599,8 @@ function animateDiePlan(i,plan,value){
  for(const t of times){const pose=sampleDiePlan(plan,t),height=Math.min(1,pose.air/40);rotation.push({offset:t,transform:quatCSS(pose.q)});flight.push({offset:t,transform:`translate3d(${pose.x}px,${pose.y}px,0)`});shadow.push({offset:t,transform:`translateX(${pose.x}px) scale(${1-height*.32},${1-height*.44})`,opacity:1-height*.65});}
  const options={duration:plan.duration,easing:'linear',fill:'forwards'};
  const animations=[$('#throw-'+i+' .cube').animate(rotation,options),$('#throw-'+i+' .die-flight').animate(flight,options),$('#throw-'+i+' .die-shadow').animate(shadow,options)];
+ const shade=dieShading[i];
+ if(shade){const light=times.map(t=>dieBrightness(i,sampleDiePlan(plan,t).q));shade.pieces.forEach((piece,n)=>animations.push(piece.animate(times.map((t,m)=>({offset:t,filter:`brightness(${light[m][n]})`})),options)));}
  state.running={plan,animations,value};
  animations[0].onfinish=()=>{if(state.running?.animations===animations)finishDie(i);};
 }
@@ -488,8 +615,9 @@ function tumbleDice(indices,values,complete,gesture=null){
  }
  indices.forEach(i=>{
   clearDieInvitation(i);
-  const cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8)),plan=makeDiePlan(from[i],values[i],Math.random,width,Number.isFinite(travel)?travel:18,gesture);
+  const cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8)),plan=makeDiePlan(from[i],values[i],Math.random,width,Number.isFinite(travel)?travel:18,Array.isArray(gesture)?gesture[i]:gesture);
   animateDiePlan(i,plan,values[i]);
+  if(typeof playDiceClatter==='function')playDiceClatter(i,plan,performance.now());
   const name=i?modes[active].options[values[i]].name:worlds[values[i]].name;
   $('#throw-'+i).setAttribute('aria-label',`Roll ${i?'second':'first'} die again. ${name}`);
  });
@@ -563,6 +691,47 @@ function bindDieInteraction(button,index){
  button.addEventListener('blur',()=>reset());
  diceMotion.addEventListener('change',()=>reset());diceFinePointer.addEventListener('change',()=>reset());
  document.addEventListener('visibilitychange',()=>{if(document.hidden)reset();});
+}
+
+let diceAudioContext=null,diceNoise=null,diceSoundEnabled=true;
+const diceVoices=[new Set(),new Set()],diceSoundVersions=[0,0];
+try{diceSoundEnabled=localStorage.getItem('design-dice-sound')!=='off';}catch{/* File storage can be unavailable. */}
+function updateSoundButton(){const button=document.querySelector('#sound-toggle');button.textContent=diceSoundEnabled?'Sound on':'Sound off';button.setAttribute('aria-pressed',String(diceSoundEnabled));}
+function initDiceSound(){
+ const button=document.querySelector('#sound-toggle');updateSoundButton();
+ if(!(window.AudioContext||window.webkitAudioContext)){button.disabled=true;button.textContent='Sound unavailable';button.setAttribute('aria-pressed','false');return;}
+ button.addEventListener('click',()=>{diceSoundEnabled=!diceSoundEnabled;updateSoundButton();try{localStorage.setItem('design-dice-sound',diceSoundEnabled?'on':'off');}catch{}
+  if(diceSoundEnabled)primeDiceAudio();else [0,1].forEach(cancelDieSound);
+ });
+}
+async function primeDiceAudio(){
+ if(!diceSoundEnabled)return null;
+ try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return null;diceAudioContext??=new Audio();if(diceAudioContext.state==='suspended')await diceAudioContext.resume();return diceAudioContext.state==='running'?diceAudioContext:null;}catch{return null;}
+}
+function cancelDieSound(index){
+ diceSoundVersions[index]++;
+ for(const voice of diceVoices[index]){for(const source of voice.sources){try{source.stop();}catch{}}voice.nodes.forEach(node=>node.disconnect());}
+ diceVoices[index].clear();
+}
+function diceImpact(context,index,time,strength){
+ if(!diceNoise){diceNoise=context.createBuffer(1,Math.ceil(context.sampleRate*.075),context.sampleRate);const samples=diceNoise.getChannelData(0);for(let i=0;i<samples.length;i++)samples[i]=Math.random()*2-1;}
+ const noise=context.createBufferSource(),filter=context.createBiquadFilter(),noiseGain=context.createGain(),body=context.createOscillator(),bodyGain=context.createGain(),pan=context.createStereoPanner();
+ const nodes=[noise,filter,noiseGain,body,bodyGain,pan],voice={sources:[noise,body],nodes};diceVoices[index].add(voice);
+ noise.buffer=diceNoise;noise.playbackRate.value=.88+Math.random()*.3;filter.type='bandpass';filter.frequency.value=1500+Math.random()*1400;filter.Q.value=.9;
+ noiseGain.gain.setValueAtTime(.0001,time);noiseGain.gain.linearRampToValueAtTime(.17*strength,time+.001);noiseGain.gain.exponentialRampToValueAtTime(.0001,time+.052);
+ body.type='triangle';body.frequency.setValueAtTime(310+Math.random()*160,time);body.frequency.exponentialRampToValueAtTime(180,time+.035);bodyGain.gain.setValueAtTime(.055*strength,time);bodyGain.gain.exponentialRampToValueAtTime(.0001,time+.037);
+ pan.pan.value=(index?1:-1)*(.25+Math.random()*.15);
+ noise.connect(filter);filter.connect(noiseGain);noiseGain.connect(pan);body.connect(bodyGain);bodyGain.connect(pan);pan.connect(context.destination);
+ noise.onended=()=>{diceVoices[index].delete(voice);nodes.forEach(node=>node.disconnect());};
+ noise.start(time);noise.stop(time+.07);body.start(time);body.stop(time+.045);
+}
+function playDiceClatter(index,plan,startedAt){
+ const version=diceSoundVersions[index];
+ primeDiceAudio().then(context=>{
+  if(!context||!diceSoundEnabled||document.hidden||diceSoundVersions[index]!==version)return;
+  const elapsed=(performance.now()-startedAt)/1000;
+  plan.contacts.forEach((contact,n)=>{const delay=contact*plan.duration/1000-elapsed;if(delay>=0)diceImpact(context,index,context.currentTime+delay,[1,.58,.28][n]);});
+ }).catch(()=>{/* Audio failure must not interrupt a throw. */});
 }
 
 // Hover/focus previews; a click keeps the exact prompt available to inspect.
@@ -663,7 +832,8 @@ const previewCaches=new WeakMap();
 const matrixButtons=new Map();
 const matrixCells=new Map();
 const promptPeeks=[$('#prompt'),$('#plain-prompt-details')].map(bindPromptPeek);
-let ingredientsChosen=!introMode,paintedStep=null;
+// halfway: the first die has landed; the page waits for the second ingredient.
+let ingredientsChosen=!introMode,paintedStep=null,halfway=false;
 const actionAnimations=new Map();
 function updateActionText(node,text,animate){
  if(node.textContent===text)return;
@@ -678,16 +848,19 @@ function syncRailMarker(animate=false){
  const button=$('#stage-'+(introMode?0:stage)),marker=$('#rail-marker');
  const target=button.getBoundingClientRect?.(),track=$('#rail-stops').getBoundingClientRect?.();
  if(!target?.width||!track)return;
- marker.style.transitionDuration=animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches?'220ms':'0ms';
- const first=$('#stage-0').getBoundingClientRect?.()||target;
- marker.style.width=(target.right-first.left)+'px';marker.style.transform='translateX('+(first.left-track.left)+'px)';
+ const moving=animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches;
+ // The timeline advances once the page has begun to change, not at the same instant as the press.
+ marker.style.transitionDuration=moving?'380ms':'0ms';marker.style.transitionDelay=moving?'260ms':'0ms';
+ // The line runs from the first node's centre to the current node's centre.
+ const first=$('#stage-0').getBoundingClientRect?.()||target,start=first.left+first.width/2;
+ marker.style.width=Math.max(0,target.left+target.width/2-start)+'px';marker.style.transform='translateX('+(start-track.left)+'px)';
 }
 const railResize=new ResizeObserver(()=>syncRailMarker());railResize.observe($('#rail-stops'));
 function settlePresentation(){settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
 // The page tells its story in one headline per step; every step stays reachable from the chapters.
 const storyBeats=[
  ['One prompt. One page.','“Create a one-page website that helps its owner understand this week’s website performance.”'],
- ['Now add randomness.','Same prompt, plus two ingredients. Click a die to swap one.'],
+ ['Now add randomness.','Same prompt, plus two ingredients.'],
  ['Now refine it.','Critique harshly, then commit harder to both ingredients.'],
  ['Again.','The same prompt, run on the last result.'],
  ['And again.','More distinct, or just more?']
@@ -701,37 +874,127 @@ function showStory(){
  const changed=$('#story-title').textContent!==title;
  $('#story-title').textContent=title;$('#story-text').textContent=text;
  $('#refinement-rail').style.setProperty('--step',String(value));
- if(changed&&paintedStep!==null&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)$('#story').animate?.([{opacity:.15},{opacity:1}],{duration:200,easing:'ease-out'});
+ // A new beat rises into place; the line under it follows a moment later.
+ if(changed&&paintedStep!==null&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)[['#story-title',0],['#story-text',50]].forEach(([id,delay])=>$(id).animate?.([{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:280,delay,easing:'cubic-bezier(.23,1,.32,1)',fill:'backwards'}));
 }
-// The dice enter from either side when ingredients are added, and leave the same way on reset.
+// The dice are thrown in from either side when ingredients are added and roll back out on reset.
+// The slide spans the tumble's flight and bounces, so each die stops spinning as it arrives.
+const DICE_THROW={enter:[{direction:1,strength:.8},{direction:-1,strength:.8}],exit:[{direction:-1,strength:.55},{direction:1,strength:.55}]};
+const LABEL_LAND={roll:250,enter:330};
 let diceStageAnimations=[];
-function moveDice(entering){
- diceStageAnimations.forEach(animation=>animation.cancel());diceStageAnimations=[];
- const deck=$('#dice-deck');deck.classList?.toggle('leaving',false);
+const labelAnimations=new Map();
+function landLabels(indices,delay){
  if(document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
- if(!entering)deck.classList?.toggle('leaving',true);
- document.querySelectorAll('.die').forEach((die,i)=>{
-  const object=die.querySelector('.die-object'),label=die.querySelector('strong'),rect=object?.getBoundingClientRect?.();
-  if(!rect?.width||!object.animate)return;
-  const away=i?Math.max(180,innerWidth-rect.left+24):-Math.max(180,rect.right+24);
-  if(entering){
-   diceStageAnimations.push(object.animate([{transform:`translateX(${away}px)`},{transform:'translateX(0)'}],{duration:720,delay:i*110,easing:'cubic-bezier(.16,1,.3,1)',fill:'backwards'}));
-   diceStageAnimations.push(label.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:240,delay:520+i*110,easing:'ease-out',fill:'backwards'}));
-  }else{
-   const exit=object.animate([{transform:'translateX(0)'},{transform:`translateX(${away}px)`}],{duration:380,delay:i*50,easing:'cubic-bezier(.55,0,.8,.2)',fill:'forwards'});
-   diceStageAnimations.push(exit,label.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease-in',fill:'forwards'}));
-   if(i)exit.onfinish=()=>{if(diceStageAnimations.includes(exit)){deck.classList.toggle('leaving',false);diceStageAnimations.forEach(animation=>animation.cancel());diceStageAnimations=[];}};
-  }
+ // The name clears when the die leaves the table and rises in as it makes first contact.
+ indices.forEach(i=>{
+  const label=$('#ingredient-'+(i?'b':'a'));if(!label?.animate)return;
+  labelAnimations.get(i)?.cancel();
+  labelAnimations.set(i,label.animate([{opacity:0,transform:'translateY(7px)'},{opacity:1,transform:'none'}],{duration:240,delay,easing:'cubic-bezier(.23,1,.32,1)',fill:'backwards'}));
  });
 }
-function showBrief(){if(introMode)return;settlePresentation();cancelDiceRoll();introMode=true;stage=1;comparing=false;render();}
+function moveDice(entering,which=[0,1]){
+ diceStageAnimations.forEach(animation=>animation.cancel());diceStageAnimations=[];
+ document.querySelectorAll('.die').forEach(die=>die.classList.toggle('leaving',false));
+ if(document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ let moved=false;
+ document.querySelectorAll('.die').forEach((die,i)=>{
+  if(!which.includes(i))return;
+  const object=die.querySelector('.die-object'),label=die.querySelector('strong'),rect=object?.getBoundingClientRect?.();
+  if(!rect?.width||!object.animate)return;
+  if(!entering)die.classList.toggle('leaving',true);
+  moved=true;
+  const away=i?Math.max(180,innerWidth-rect.left+24):-Math.max(180,rect.right+24);
+  if(entering){
+   diceStageAnimations.push(object.animate([{transform:`translateX(${away}px)`},{transform:'translateX(0)'}],{duration:560,delay:which.length>1?i*50:0,easing:'cubic-bezier(.2,.8,.25,1)',fill:'backwards'}));
+  }else{
+   const exit=object.animate([{transform:'translateX(0)'},{transform:`translateX(${away}px)`}],{duration:460,delay:i*40,easing:'cubic-bezier(.55,0,.75,.2)',fill:'forwards'});
+   diceStageAnimations.push(exit,label.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease-in',fill:'forwards'}));
+   if(i===which.at(-1))exit.onfinish=()=>{if(diceStageAnimations.includes(exit)){document.querySelectorAll('.die').forEach(die=>die.classList.toggle('leaving',false));diceStageAnimations.forEach(animation=>animation.cancel());diceStageAnimations=[];}};
+  }
+ });
+ if(moved&&!entering)tumbleDice(which,[a,b],()=>{},DICE_THROW.exit);
+}
+// Pointing labels name what can be done with an object, beside the object. The die label stays
+// until a die has been rolled; the demo can point at other things with the same label.
+const pointer={custom:null,dieHintUsed:false,key:''};
+// Each step names its next action beside the control that does it, so the instructions follow through.
+const POINTER_BEATS={
+ plain:['Plain prompt report.','Standard, forgettable.'],
+ half:['Now another.','The page needs both ingredients.'],
+ pair:['A new page.','Same prompt, two ingredients. Now refine it.'],
+ same:['No change this pass.','The model kept the last result.']
+};
+function pointerSpec(){
+ if(pointer.custom)return pointer.custom;
+ if(view!=='dice'||comparing)return null;
+ const next=$('#experiment-next');
+ if(introMode&&!halfway)return {target:$('#dice-lab'),title:POINTER_BEATS.plain[0],sub:POINTER_BEATS.plain[1],side:'right'};
+ if(introMode)return {target:document.querySelector('#throw-1 .cube'),title:POINTER_BEATS.half[0],sub:POINTER_BEATS.half[1],side:'above'};
+ if(stage===1)return {target:next,title:POINTER_BEATS.pair[0],sub:POINTER_BEATS.pair[1],side:'left'};
+ if(selected.steps[stage-1].html===selected.steps[stage-2].html)return {target:next,title:POINTER_BEATS.same[0],sub:POINTER_BEATS.same[1],side:'left'};
+ // Refinement names the directions it leans into: the two ingredients on the dice.
+ const directions=INGREDIENTS_A[a]+' and '+INGREDIENTS_B[b];
+ if(stage===2)return {target:next,title:'Now refine.',sub:'A harsh critique, then lean into '+directions+'.',side:'left'};
+ if(stage===3)return {target:next,title:'Again.',sub:'Further into '+directions+'.',side:'left'};
+ return {target:$('#compare'),title:'Three passes in.',sub:'More distinct, or just more? Compare it.',side:'right'};
+}
+// The label arrives in the order the eye should travel: a dot lands on the target, the leader draws out
+// from it, then the card settles at the end of the line. It waits for the change it follows to finish.
+let pointerAnimations=[];
+function updatePointer(delay=0){
+ const note=$('#pointer-note'),spec=pointerSpec(),stageBox=document.querySelector('.workbench');
+ if(!spec||!spec.target?.getBoundingClientRect||!stageBox?.getBoundingClientRect){pointerAnimations.forEach(animation=>animation.cancel());note.hidden=true;pointer.key='';return;}
+ const key=spec.title+spec.sub+spec.side,changed=pointer.key!==key;
+ if(changed){pointerAnimations.forEach(animation=>animation.cancel());pointerAnimations=[];$('#pointer-text').textContent=spec.title;$('#pointer-sub').textContent=spec.sub||'';note.dataset.side=spec.side;}
+ note.hidden=false;
+ // A die is placed from its column, which never moves sideways, so a label set during a throw or entrance
+ // lands where the die will rest. Entrances only move dice sideways, so the height comes from the die's box.
+ const column=spec.target.classList?.contains('cube')?spec.target.closest('.die'):null;
+ let target;
+ if(column){const rect=column.getBoundingClientRect(),object=column.querySelector('.die-object'),size=spec.target.offsetWidth||100,objectBox=object?.getBoundingClientRect(),middle=objectBox?objectBox.top+objectBox.height/2:rect.top+rect.height/2,centre=rect.left+rect.width/2;target={left:centre-size/2,right:centre+size/2,top:middle-size*.92,bottom:middle+size*.5};}
+ else target=spec.target.getBoundingClientRect();
+ const width=target.right-target.left,height=target.bottom-target.top;
+ const box=stageBox.getBoundingClientRect(),own=note.getBoundingClientRect(),leader=26;
+ const x=Math.round(spec.side==='left'?target.left-box.left-leader-own.width:spec.side==='right'?target.right-box.left+leader:target.left+width/2-box.left-own.width/2);
+ const y=Math.round(spec.side==='above'?target.top-box.top-own.height-leader:target.top+height/2-box.top-own.height/2);
+ note.style.transform=`translate(${x}px,${y}px)`;
+ if(!changed)return;
+ pointer.key=key;
+ const card=note.querySelector?.('.pointer-card'),line=note.querySelector?.('.pointer-leader'),dot=note.querySelector?.('.pointer-dot');
+ if(!card?.animate||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const ease='cubic-bezier(.23,1,.32,1)',along=spec.side==='above'?'scaleY':'scaleX',drift=spec.side==='left'?'translateX(-8px)':spec.side==='right'?'translateX(8px)':'translateY(-6px)';
+ pointerAnimations=[
+  dot.animate([{transform:'translate(-50%,-50%) scale(0)'},{transform:'translate(-50%,-50%) scale(1.25)',offset:.7},{transform:'translate(-50%,-50%) scale(1)'}],{duration:240,delay,easing:ease,fill:'backwards'}),
+  line.animate([{transform:along+'(0)'},{transform:along+'(1)'}],{duration:240,delay:delay+110,easing:ease,fill:'backwards'}),
+  card.animate([{opacity:0,transform:drift},{opacity:1,transform:'none'}],{duration:300,delay:delay+260,easing:ease,fill:'backwards'})
+ ];
+}
+function showPointer(target,title,sub='',side='above'){pointer.custom={target,title,sub,side};updatePointer();}
+function clearPointer(){pointer.custom=null;updatePointer();}
+window.addEventListener('resize',()=>updatePointer());
+// An ingredient's name carries a face slug, so it can be set in the type that ingredient brings.
+function setDieCall(index){const label=$('#ingredient-'+(index?'b':'a'));label.textContent='Click me';label.dataset.face='call';}
+function setIngredientLabel(index,name){const label=$('#ingredient-'+(index?'b':'a'));label.textContent=name;label.dataset.face=name.toLowerCase().replace(/[^a-z]+/g,'-');}
+function showBrief(){if(introMode&&!halfway)return;settlePresentation();cancelDiceRoll();introMode=true;halfway=false;stage=1;comparing=false;render();}
+// The first ingredient lands alone. Every saved page needs both, so the plain page stays until the second.
+function addFirstIngredient(forced=null){
+ settlePresentation();halfway=true;ingredientsChosen=true;
+ const value=forced??randomIndex(INGREDIENTS_A.length);
+ selected=currentExperiment().runs.find(run=>run.a===value&&run.b===selected.b);
+ render(false);
+ tumbleDice([0],[value,selected.b],()=>{syncDice3D();},DICE_THROW.enter);
+ landLabels([0],LABEL_LAND.enter);
+}
 function showIngredients(){
  if(!ingredientsChosen){roll();return;}
  settlePresentation();introMode=false;stage=1;render();
 }
+function fireNextButton(){
+ const button=$('#experiment-next');button.classList.toggle('is-firing',false);void button.offsetWidth;button.classList.toggle('is-firing',true);
+}
 function nextExperimentStep(){
- promptPeeks.forEach(peek=>peek.close());
- if(introMode){roll();}
+ promptPeeks.forEach(peek=>peek.close());fireNextButton();
+ if(introMode){if(halfway)roll();else addFirstIngredient();}
  else if(stage<4){setAttempt(stage+1);}
  else{stage=1;comparing=false;roll();}
 }
@@ -779,7 +1042,11 @@ function showReports(container,entries){
   section.querySelector('iframe').title=label||(/^(stronger-)?plain-/.test(item.file)?'Plain weekly report':selected.label);
   section.style.order=String(order);section.hidden=false;
   const frame=section.querySelector('iframe');if(frame.dataset.loaded==='true')scrollReport(frame,reportScroll.get(container)||0);
-  if(entries.length===1&&!label&&previous.length===1)handoffReport(container,previous[0],section);
+  if(entries.length===1&&!label&&previous.length===1&&previous[0]!==section){
+   handoffReport(container,previous[0],section);
+   // The new page settles into place as the old one is wiped away: a small drop, not a slide.
+   if(section.animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)section.animate([{transform:'translateY(-12px) scale(.985)'},{transform:'none'}],{duration:560,easing:'cubic-bezier(.23,1,.32,1)'});
+  }
  });
 }
 function attemptName(value){return value===1?'One-shot':'Refinement '+(value-1);}
@@ -793,11 +1060,11 @@ function renderRail(){
  const value=introMode?0:stage;
  const animate=paintedStep!==null&&paintedStep!==value;
  for(let n=0;n<=4;n++){
-  const button=$('#stage-'+n);button.setAttribute('aria-pressed',String(n===value));
+  const button=$('#stage-'+n);button.setAttribute('aria-pressed',String(n===value));button.setAttribute('data-done',String(n<value));
   button.disabled=introMode&&n>1;
  }
  const refining=!introMode&&stage<4;
- const label=introMode?'Add randomness':stage===1?'Refine it':stage<4?'Again, same prompt':'Roll a new pair';
+ const label=introMode?(halfway?'Add another':'Add randomness'):stage===1?'Refine it':stage<4?'Again, same prompt':'Roll a new pair';
  const cue=refining?'+'+stage:'→';
  $('#experiment-next').dataset.action=refining?'refine':'roll';
  $('#experiment-next').setAttribute('aria-label',refining?label+'. Refinement '+stage:label);
@@ -813,7 +1080,8 @@ function renderResult(){
  if(comparing&&comparison==='plain')entries=[{item:currentBaseline().steps[stage-1],label:'Brief only'},{item:current,label:'+ Two ingredients'}];
  if(comparing&&comparison==='other')entries=stage===1?[{item:current,label:'Shared one-shot'}]:method==='stronger'?[{item:other,label:otherLabel},{item:current,label:currentLabel}]:[{item:current,label:currentLabel},{item:other,label:otherLabel}];
  if(introMode)entries=[{item:current,label:''}];
- container.classList.toggle('comparing',entries.length>1);
+ container.classList.toggle('comparing',entries.length>1);document.documentElement.dataset.comparing=String(entries.length>1);
+ container.dataset.passes=String(!introMode&&entries.length===1?stage-1:0);
  showReports(container,entries);
  $('#pair-title').textContent=introMode?'Brief only':selected.label;
  $('#compare').disabled=introMode;
@@ -849,10 +1117,12 @@ function buildMatrix(){
 }
 function render(sync=true){
  a=selected.a;b=selected.b;stage=Math.min(stage,selected.steps.length);
- const journey=introMode?'original':'ingredients',previousJourney=document.documentElement.dataset.journey;
- document.documentElement.dataset.journey=journey;$('#reset').hidden=introMode;
+ const journey=introMode?(halfway?'half':'original'):'ingredients',previousJourney=document.documentElement.dataset.journey;
+ document.documentElement.dataset.journey=journey;$('#reset').hidden=journey==='original';
  // In the plain step the dice are away; they keep their last names so an exit never shows placeholder labels.
- if(!introMode){$('#ingredient-a').textContent=INGREDIENTS_A[a];$('#ingredient-b').textContent=INGREDIENTS_B[b];}
+ // A die that is waiting to be rolled says so; a rolled die shows its ingredient in that ingredient's type.
+ if(!introMode||halfway)setIngredientLabel(0,INGREDIENTS_A[a]);else setDieCall(0);
+ if(!introMode)setIngredientLabel(1,INGREDIENTS_B[b]);else setDieCall(1);
  matrixButtons.forEach((button,id)=>{button.setAttribute('aria-pressed',String(!introMode&&id===selected.id));const run=currentExperiment().runs.find(item=>item.id===id);button.setAttribute('aria-label',run.label+' — '+attemptName(stage));});
  matrixCells.forEach((cell,id)=>{
   cell.hidden=Number(id.split('-')[0])!==a;if(cell.hidden)return;
@@ -861,12 +1131,23 @@ function render(sync=true){
  });
  $('#atlas-ingredient').value=String(a);
  renderResult();if(sync)syncDice3D();updateURL();
- if(previousJourney&&previousJourney!==journey&&view==='dice')moveDice(!introMode);
- $('#status').textContent=introMode?'Brief only. Roll the dice to add two ingredients.':selected.label+'. '+attemptName(stage)+'.';
+ const entering=previousJourney!==journey&&journey!=='original'&&view==='dice';
+ // Beat order: the press, then the page or dice, then the timeline, then the next label.
+ updatePointer(entering?900:paintedStep===null?500:760);
+ if(previousJourney&&previousJourney!==journey&&view==='dice'){
+  const order=['original','half','ingredients'],from=order.indexOf(previousJourney),to=order.indexOf(journey);
+  if(from===1&&to===2){/* the second die is already on the table */}
+  // Dice enter one at a time as the story adds them, and leave together on reset.
+  // The first die waits on the plain page; the second enters when the first has landed, and leaves on reset.
+  if(from===0&&to>0)moveDice(true,[1]);else if(to===0&&from>0)moveDice(false,[1]);
+ }
+ $('#status').textContent=introMode?(halfway?'First ingredient: '+INGREDIENTS_A[a]+'. Add a second to make the page.':'Brief only. Roll the dice to add two ingredients.'):selected.label+'. '+attemptName(stage)+'.';
 }
-function selectPair(run){settlePresentation();introMode=false;ingredientsChosen=true;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();}
+function selectPair(run){settlePresentation();introMode=false;halfway=false;ingredientsChosen=true;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();}
 function chooseDieFace(index,value){
- settlePresentation();const introducing=introMode;introMode=false;ingredientsChosen=true;
+ settlePresentation();pointer.dieHintUsed=true;
+ if(introMode&&halfway&&index===0){selected=currentExperiment().runs.find(run=>run.a===value&&run.b===selected.b);render(false);settleDieGrab(index,true);syncDice3D();return;}
+ const introducing=introMode;introMode=false;halfway=false;ingredientsChosen=true;
  if(introducing){stage=1;comparing=false;}
  const values=[selected.a,selected.b];values[index]=value;
  // A deliberate choice keeps the other face, even on the first interaction.
@@ -886,16 +1167,22 @@ function nextIngredient(index,current){
  return bag.splice(position,1)[0];
 }
 function roll(index,gesture=null,forced=null){
+ // On the plain page the first die is the action: it lands alone, then the second die joins.
+ if(introMode&&!halfway&&index===0){addFirstIngredient(forced?.[0]);return;}
+ if(introMode&&!halfway&&index===1)return;
+ if(introMode&&halfway&&index===0){addFirstIngredient(forced?.[0]??nextIngredient(0,selected.a));return;}
  settlePresentation();
- const introduce=introMode;introMode=false;ingredientsChosen=true;
+ const introduce=introMode,completing=introduce&&halfway;introMode=false;halfway=false;ingredientsChosen=true;
  if(introduce){stage=1;comparing=false;}
- const before=selected,indices=introduce?[0,1]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
+ if(index===0||index===1)pointer.dieHintUsed=true;
+ const before=selected,indices=completing?[1]:introduce?[0,1]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
  // The demo passes authored faces; every visitor roll stays random.
  indices.forEach(i=>{values[i]=forced?.[i]??(introduce?randomIndex(i?INGREDIENTS_B.length:INGREDIENTS_A.length):nextIngredient(i,values[i]));});
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  // Selection is immediate. The dice acknowledge it without gating the report.
  render(false);
- tumbleDice(indices,values,()=>{syncDice3D();},gesture);
+ tumbleDice(indices,values,()=>{syncDice3D();},gesture||(introduce?DICE_THROW.enter:null));
+ landLabels(indices,introduce?LABEL_LAND.enter:LABEL_LAND.roll);
 }
 async function copyText(text,pre,status){
  try{await navigator.clipboard.writeText(text);status.textContent='Copied.';}catch{pre.hidden=false;pre.textContent=text;const details=pre.closest?.('details');if(details)details.open=true;const range=document.createRange();range.selectNodeContents(pre);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);status.textContent='Text selected. Press Ctrl+C or use Copy.';}
@@ -913,6 +1200,7 @@ for(let value=1;value<=4;value++)$('#stage-'+value).addEventListener('click',()=
  else setAttempt(value);
 });
 $('#experiment-next').addEventListener('click',nextExperimentStep);
+$('#experiment-next').addEventListener('animationend',()=>$('#experiment-next').classList.toggle('is-firing',false));
 $('#reset').addEventListener('click',()=>{showBrief();$('#experiment-next').focus({preventScroll:true});});
 function settleControlMotion(){actionAnimations.forEach(animation=>animation.cancel());actionAnimations.clear();syncRailMarker();}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){settlePresentation();settleControlMotion();}});
@@ -948,7 +1236,7 @@ function changePlainAttempt(delta){const next=plainStage+delta;if(currentBaselin
 $('#plain-attempt-prev').addEventListener('click',()=>changePlainAttempt(-1));
 $('#plain-attempt-next').addEventListener('click',()=>changePlainAttempt(1));
 $('#plain-copy').addEventListener('click',()=>copyText(currentBaseline().steps[plainStage-1].fullPrompt,$('#plain-prompt'),$('#plain-copy-status')));
-initDice3D();buildMatrix();render();selectView(view);
+initDice3D();if(typeof initDiceSound==='function')initDiceSound();buildMatrix();render();selectView(view);
 
 // Authored demo: a cursor runs the story once on the real controls. Every state it reaches is the
 // real page state, so any visitor input takes over at once from exactly what is on screen.
@@ -972,16 +1260,21 @@ function demoHover(target){
  demo.hovered=target;if(!target)return;
  target.classList.add('is-demo-hover');if(target.classList.contains('die-object'))target.dataset.hover='true';
 }
-async function demoMoveTo(target,fx=.6,fy=.62){
- const rect=target.getBoundingClientRect(),x=rect.left+rect.width*fx,y=rect.top+rect.height*fy;
- const from=`translate(${demo.x}px,${demo.y}px)`,distance=Math.hypot(x-demo.x,y-demo.y);
+// Where the cursor aims: inside the target, off its words.
+const DEMO_AIM={action:[.9,.55],die:[.5,.42]};
+async function demoMoveToPoint(x,y){
+ const from=[demo.x,demo.y],distance=Math.hypot(x-demo.x,y-demo.y);
  demo.x=x;demo.y=y;placeCursor();
- if(demoReduced()||!demoCursor.animate)return;
- // Travel time follows distance; the path eases out of rest and settles onto the target.
- demo.move=demoCursor.animate([{transform:from},{transform:`translate(${x}px,${y}px)`}],{duration:Math.round(Math.min(980,Math.max(420,280+distance*.7))),easing:'cubic-bezier(.45,0,.12,1)'});
+ if(demoReduced()||!demoCursor.animate||distance<2)return;
+ // A hand travels on a slight arc, easing out of rest and settling onto the target.
+ const bend=Math.min(40,distance*.08),mx=(from[0]+x)/2+(y-from[1])/distance*bend,my=(from[1]+y)/2-(x-from[0])/distance*bend;
+ demo.move=demoCursor.animate([{transform:`translate(${from[0]}px,${from[1]}px)`},{transform:`translate(${mx}px,${my}px)`},{transform:`translate(${x}px,${y}px)`}],{duration:Math.round(Math.min(900,Math.max(380,240+distance*.65))),easing:'cubic-bezier(.45,0,.15,1)'});
  if(document.hidden)demo.move.pause();
  await demo.move.finished.catch(()=>{});demo.move=null;
 }
+function demoMoveTo(target,[fx,fy]=DEMO_AIM.action){const rect=target.getBoundingClientRect();return demoMoveToPoint(rect.left+rect.width*fx,rect.top+rect.height*fy);}
+// Between beats the cursor rests on empty surface beside what it will touch next.
+function demoRestBeside(target,dx,dy){const rect=target.getBoundingClientRect();return demoMoveToPoint(rect.left+rect.width/2+dx,rect.top+rect.height/2+dy);}
 async function demoPress(target){
  demoCursor.classList.add('pressing');target.classList.add('is-demo-press');
  if(!demoReduced())demoCursor.querySelector('.demo-ring').animate?.([{transform:'translate(-50%,-50%) scale(.35)',opacity:.55},{transform:'translate(-50%,-50%) scale(1.5)',opacity:0}],{duration:460,easing:'cubic-bezier(.23,1,.32,1)'});
@@ -1005,8 +1298,10 @@ function stopDemo(){
  // Freeze the cursor where it is, then let it fade; the page keeps the state it reached.
  if(demo.move){const transform=getComputedStyle(demoCursor).transform;demo.move.cancel();demo.move=null;demoCursor.style.transform=transform;}
  demoCursor.classList.remove('pressing');document.querySelectorAll('.is-demo-press').forEach(node=>node.classList.remove('is-demo-press'));
- demoHover(null);showDemoCursor(false);renderDemoToggle();
+ demoHover(null);showDemoCursor(false);renderDemoToggle();clearPointer();
 }
+// Beat timing: each hold is the reading time its result needs; the payoff holds longest.
+const DEMO_BEATS={enter:900,readPlain:1900,hover:320,readFirst:1700,readPair:2300,refine:[2100,1800,2000],readCompare:3000,readPrompt:2200,handover:500,yourTurn:5000,invite:4000};
 async function runDemo(){
  stopDemo();
  const token=++demo.token,live=()=>token===demo.token;
@@ -1015,39 +1310,62 @@ async function runDemo(){
  if(view!=='dice')selectView('dice');
  if(!introMode)showBrief();
  scrollTo({top:0,behavior:'instant'});
- const next=$('#experiment-next'),start=next.getBoundingClientRect();
- demo.x=Math.min(innerWidth-24,start.right+140);demo.y=Math.min(innerHeight-24,start.bottom+80);showDemoCursor(true);
- // 1. Read the plain page, then add randomness.
- await demoWait(1300);if(!live())return;
- await demoMoveTo(next);if(!live())return;demoHover(next);
- await demoWait(380);if(!live())return;
- await demoPress(next);if(!live())return;demoHover(null);
- roll(undefined,null,[5,2]);
- // 2. Let the dice land and the page be read, then swap one ingredient.
- await demoWait(2500);if(!live())return;
- const die=$('#throw-0');
- await demoMoveTo(die,.5,.42);if(!live())return;demoHover(die);
- await demoWait(460);if(!live())return;
+ const next=$('#experiment-next'),die=$('#throw-0'),start=next.getBoundingClientRect();
+ demo.x=Math.min(innerWidth-24,start.right+120);demo.y=Math.min(innerHeight-24,start.bottom+70);
+ await demoWait(DEMO_BEATS.enter);if(!live())return;
+ showDemoCursor(true);
+ // 1. Read the plain page, then click the first die.
+ const second=$('#throw-1');
+ await demoWait(DEMO_BEATS.readPlain);if(!live())return;
+ await demoMoveTo(die,DEMO_AIM.die);if(!live())return;demoHover(die);
+ await demoWait(DEMO_BEATS.hover+80);if(!live())return;
  await demoPress(die);if(!live())return;demoHover(null);
  roll(0,null,[0]);
- await demoWait(2400);if(!live())return;
+ // 2. One ingredient lands; the second die arrives. Click it, and the page changes.
+ await demoWait(160);if(!live())return;
+ await demoRestBeside(die,narrow?60:0,narrow?70:120);if(!live())return;
+ await demoWait(DEMO_BEATS.readFirst);if(!live())return;
+ await demoMoveTo(second,DEMO_AIM.die);if(!live())return;demoHover(second);
+ await demoWait(DEMO_BEATS.hover+80);if(!live())return;
+ await demoPress(second);if(!live())return;demoHover(null);
+ roll(1,null,[undefined,2]);
+ await demoWait(160);if(!live())return;
+ await demoRestBeside(second,narrow?-60:0,narrow?70:120);if(!live())return;
+ await demoWait(DEMO_BEATS.readPair);if(!live())return;
  // 3. Refine the same pair three times with the same prompt.
  await demoMoveTo(next);if(!live())return;demoHover(next);
- for(const hold of [2500,2200,2600]){
-  await demoWait(340);if(!live())return;
+ for(const hold of DEMO_BEATS.refine){
+  await demoWait(DEMO_BEATS.hover);if(!live())return;
   await demoPress(next);if(!live())return;
   next.click();
   await demoWait(hold);if(!live())return;
  }
- // 4. Step aside onto empty surface and hand over.
+ // 4. Compare the third pass with the plain page, side by side, then return.
  demoHover(null);
- await demoMoveTo(next,1.45,.5);if(!live())return;
- await demoWait(500);if(!live())return;
+ const compareButton=$('#compare');
+ await demoMoveTo(compareButton,[.5,.62]);if(!live())return;demoHover(compareButton);
+ await demoWait(DEMO_BEATS.hover);if(!live())return;
+ await demoPress(compareButton);if(!live())return;compareButton.click();demoHover(null);
+ await demoRestBeside(compareButton,narrow?0:-150,narrow?50:40);if(!live())return;
+ await demoWait(DEMO_BEATS.readCompare);if(!live())return;
+ await demoMoveTo(compareButton,[.5,.62]);if(!live())return;
+ await demoPress(compareButton);if(!live())return;compareButton.click();
+ // 5. Step aside, hand over, and point at what to try next.
+ await demoRestBeside(compareButton,narrow?0:90,narrow?56:0);if(!live())return;
+ await demoWait(DEMO_BEATS.handover);if(!live())return;
  demo.running=false;demo.token++;showDemoCursor(false);renderDemoToggle();
+ if(innerWidth>860)showPointer($('#throw-0 .cube'),'Your turn.','Roll a die, or drag it to choose a face.','above');
+ // One quiet invitation if the visitor has not touched anything yet: the dice hop once.
+ const handover=demo.token;
+ setTimeout(()=>{if(handover===demo.token&&!demo.running&&!introMode&&!document.hidden)inviteDice();},DEMO_BEATS.invite);
+ setTimeout(()=>{if(pointer.custom?.title==='Your turn.')clearPointer();},DEMO_BEATS.yourTurn);
 }
 $('#demo-toggle').addEventListener('click',()=>demo.running?stopDemo():runDemo());
 // Real input from the visitor ends the demo immediately; synthetic clicks from the demo do not.
-const demoTakeover=event=>{if(event.isTrusted&&demo.running&&!event.target?.closest?.('#demo-toggle'))stopDemo();};
+const demoTakeover=event=>{
+ if(!event.isTrusted||event.target?.closest?.('#demo-toggle'))return;
+ if(demo.running)stopDemo();else{demo.token++;if(pointer.custom)clearPointer();}
+};
 ['pointerdown','keydown','wheel','touchstart'].forEach(type=>addEventListener(type,demoTakeover,{capture:true,passive:true}));
 document.addEventListener('visibilitychange',()=>{if(!demo.running)return;if(document.hidden)demoHold();else demoContinue();});
 // A width change moves every target; a phone's toolbar changing the height does not.

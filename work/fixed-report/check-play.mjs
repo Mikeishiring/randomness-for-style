@@ -146,7 +146,8 @@ assert.equal(nodes.get('#next-label').textContent,'Roll a new pair');assert.equa
 const finishedPair=selected;nodes.get('#experiment-next').click();assert.equal(stage,1);assert.notEqual(selected,finishedPair);
 const resetPair=selected;nodes.get('#reset').click();assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#story-title').textContent,'One prompt. One page.');assert.equal(document.activeElement,nodes.get('#experiment-next'));
 assert.equal(nodes.get('#next-label').textContent,'Add randomness');
-nodes.get('#experiment-next').click();assert.equal(introMode,false);assert.equal(stage,1);
+nodes.get('#experiment-next').click();assert.equal(introMode,true);assert.equal(halfway,true);assert.equal(nodes.get('#next-label').textContent,'Add another');assert.equal(document.documentElement.dataset.journey,'half');
+const halfPair=selected;nodes.get('#experiment-next').click();assert.equal(introMode,false);assert.equal(halfway,false);assert.equal(stage,1);assert.equal(selected.a,halfPair.a);
 nodes.get('#stage-3').click();assert.equal(stage,3);
 const closedPair=selected;nodes.get('#stage-0').click();nodes.get('#stage-1').click();assert.equal(selected,closedPair);assert.equal(stage,1);
 const priorMethod=method,priorPair=selected;method='original';
@@ -165,7 +166,7 @@ for(let pass=1;pass<=4;pass++){
  await nodes.get('#plain-copy').click();assert.equal(copies.at(-1),stronger.baseline.steps[pass-1].fullPrompt);
 }
 assert.ok(nodes.get('#matrix').querySelector('iframe').style.transform.includes('0.16666'));
-assert.ok(!/id="roll"|id="view-dice"|lab-switch|sound-toggle|AudioContext|playDiceClatter/.test(read('play.js')+read('play.html')+read('dice.js')));
+assert.ok(!/id="roll"|id="view-dice"|lab-switch/.test(read('play.js')+read('play.html')+read('dice.js')));
 assert.ok(!/id="expand"|id="plain-expand"|id="expanded"|attempt-select|Full size/.test(read('play.html')+read('play.js')));
 await nodes.get('#copy-link').click();assert.equal(copies.at(-1),context.location.href);assert.equal(nodes.get('#share-status').textContent,'Copied');
 await nodes.get('#copy-refinement').click();assert.equal(copies.at(-1),plainStrongerPrompt);
@@ -183,7 +184,7 @@ assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#stag
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,STRONGER_BASELINE.steps[0].html);
 assert.equal(nodes.get('#current-prompt').textContent,STRONGER_BASELINE.steps[0].prompt);
 assert.ok(history.url.includes('start=original'));assert.ok([...matrixButtons.values()].every(button=>button.attrs['aria-pressed']==='false'));
-setAttempt(4);assert.equal(stage,1);rollout.defer=false;const initial=selected;roll(0);
+setAttempt(4);assert.equal(stage,1);rollout.defer=false;const initial=selected;roll();
 assert.equal(introMode,false);assert.equal(stage,1);assert.deepEqual(rollout.indices,[0,1]);
 assert.equal(nodes.get('#stage-2').disabled,false);
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);assert.ok(!history.url.includes('start=original'));
@@ -194,7 +195,7 @@ vm.runInContext(`introMode=true;stage=1;render();selectPair(currentExperiment().
 vm.runInContext(`
 const secureDraw=randomIndex;
 for(let left=0;left<6;left++)for(let right=0;right<6;right++){
- introMode=true;stage=1;selected=currentExperiment().runs[2];const draws=[left,right];randomIndex=length=>{assert.equal(length,6);return draws.shift()};roll(0);assert.equal(selected.id,left+'-'+right);assert.equal(stage,1);
+ introMode=true;stage=1;selected=currentExperiment().runs[2];const draws=[left,right];randomIndex=length=>{assert.equal(length,6);return draws.shift()};roll();assert.equal(selected.id,left+'-'+right);assert.equal(stage,1);
 }
 randomIndex=secureDraw;
 `,home);

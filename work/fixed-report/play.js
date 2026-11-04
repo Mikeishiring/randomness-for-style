@@ -20,7 +20,8 @@ const previewCaches=new WeakMap();
 const matrixButtons=new Map();
 const matrixCells=new Map();
 const promptPeeks=[$('#prompt'),$('#plain-prompt-details')].map(bindPromptPeek);
-let ingredientsChosen=!introMode,paintedStep=null;
+// halfway: the first die has landed; the page waits for the second ingredient.
+let ingredientsChosen=!introMode,paintedStep=null,halfway=false;
 const actionAnimations=new Map();
 function updateActionText(node,text,animate){
  if(node.textContent===text)return;
@@ -35,16 +36,19 @@ function syncRailMarker(animate=false){
  const button=$('#stage-'+(introMode?0:stage)),marker=$('#rail-marker');
  const target=button.getBoundingClientRect?.(),track=$('#rail-stops').getBoundingClientRect?.();
  if(!target?.width||!track)return;
- marker.style.transitionDuration=animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches?'220ms':'0ms';
- const first=$('#stage-0').getBoundingClientRect?.()||target;
- marker.style.width=(target.right-first.left)+'px';marker.style.transform='translateX('+(first.left-track.left)+'px)';
+ const moving=animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches;
+ // The timeline advances once the page has begun to change, not at the same instant as the press.
+ marker.style.transitionDuration=moving?'380ms':'0ms';marker.style.transitionDelay=moving?'260ms':'0ms';
+ // The line runs from the first node's centre to the current node's centre.
+ const first=$('#stage-0').getBoundingClientRect?.()||target,start=first.left+first.width/2;
+ marker.style.width=Math.max(0,target.left+target.width/2-start)+'px';marker.style.transform='translateX('+(start-track.left)+'px)';
 }
 const railResize=new ResizeObserver(()=>syncRailMarker());railResize.observe($('#rail-stops'));
 function settlePresentation(){settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
 // The page tells its story in one headline per step; every step stays reachable from the chapters.
 const storyBeats=[
  ['One prompt. One page.','“Create a one-page website that helps its owner understand this week’s website performance.”'],
- ['Now add randomness.','Same prompt, plus two ingredients. Click a die to swap one.'],
+ ['Now add randomness.','Same prompt, plus two ingredients.'],
  ['Now refine it.','Critique harshly, then commit harder to both ingredients.'],
  ['Again.','The same prompt, run on the last result.'],
  ['And again.','More distinct, or just more?']
@@ -58,37 +62,127 @@ function showStory(){
  const changed=$('#story-title').textContent!==title;
  $('#story-title').textContent=title;$('#story-text').textContent=text;
  $('#refinement-rail').style.setProperty('--step',String(value));
- if(changed&&paintedStep!==null&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)$('#story').animate?.([{opacity:.15},{opacity:1}],{duration:200,easing:'ease-out'});
+ // A new beat rises into place; the line under it follows a moment later.
+ if(changed&&paintedStep!==null&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)[['#story-title',0],['#story-text',50]].forEach(([id,delay])=>$(id).animate?.([{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:280,delay,easing:'cubic-bezier(.23,1,.32,1)',fill:'backwards'}));
 }
-// The dice enter from either side when ingredients are added, and leave the same way on reset.
+// The dice are thrown in from either side when ingredients are added and roll back out on reset.
+// The slide spans the tumble's flight and bounces, so each die stops spinning as it arrives.
+const DICE_THROW={enter:[{direction:1,strength:.8},{direction:-1,strength:.8}],exit:[{direction:-1,strength:.55},{direction:1,strength:.55}]};
+const LABEL_LAND={roll:250,enter:330};
 let diceStageAnimations=[];
-function moveDice(entering){
- diceStageAnimations.forEach(animation=>animation.cancel());diceStageAnimations=[];
- const deck=$('#dice-deck');deck.classList?.toggle('leaving',false);
+const labelAnimations=new Map();
+function landLabels(indices,delay){
  if(document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
- if(!entering)deck.classList?.toggle('leaving',true);
- document.querySelectorAll('.die').forEach((die,i)=>{
-  const object=die.querySelector('.die-object'),label=die.querySelector('strong'),rect=object?.getBoundingClientRect?.();
-  if(!rect?.width||!object.animate)return;
-  const away=i?Math.max(180,innerWidth-rect.left+24):-Math.max(180,rect.right+24);
-  if(entering){
-   diceStageAnimations.push(object.animate([{transform:`translateX(${away}px)`},{transform:'translateX(0)'}],{duration:720,delay:i*110,easing:'cubic-bezier(.16,1,.3,1)',fill:'backwards'}));
-   diceStageAnimations.push(label.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:240,delay:520+i*110,easing:'ease-out',fill:'backwards'}));
-  }else{
-   const exit=object.animate([{transform:'translateX(0)'},{transform:`translateX(${away}px)`}],{duration:380,delay:i*50,easing:'cubic-bezier(.55,0,.8,.2)',fill:'forwards'});
-   diceStageAnimations.push(exit,label.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease-in',fill:'forwards'}));
-   if(i)exit.onfinish=()=>{if(diceStageAnimations.includes(exit)){deck.classList.toggle('leaving',false);diceStageAnimations.forEach(animation=>animation.cancel());diceStageAnimations=[];}};
-  }
+ // The name clears when the die leaves the table and rises in as it makes first contact.
+ indices.forEach(i=>{
+  const label=$('#ingredient-'+(i?'b':'a'));if(!label?.animate)return;
+  labelAnimations.get(i)?.cancel();
+  labelAnimations.set(i,label.animate([{opacity:0,transform:'translateY(7px)'},{opacity:1,transform:'none'}],{duration:240,delay,easing:'cubic-bezier(.23,1,.32,1)',fill:'backwards'}));
  });
 }
-function showBrief(){if(introMode)return;settlePresentation();cancelDiceRoll();introMode=true;stage=1;comparing=false;render();}
+function moveDice(entering,which=[0,1]){
+ diceStageAnimations.forEach(animation=>animation.cancel());diceStageAnimations=[];
+ document.querySelectorAll('.die').forEach(die=>die.classList.toggle('leaving',false));
+ if(document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ let moved=false;
+ document.querySelectorAll('.die').forEach((die,i)=>{
+  if(!which.includes(i))return;
+  const object=die.querySelector('.die-object'),label=die.querySelector('strong'),rect=object?.getBoundingClientRect?.();
+  if(!rect?.width||!object.animate)return;
+  if(!entering)die.classList.toggle('leaving',true);
+  moved=true;
+  const away=i?Math.max(180,innerWidth-rect.left+24):-Math.max(180,rect.right+24);
+  if(entering){
+   diceStageAnimations.push(object.animate([{transform:`translateX(${away}px)`},{transform:'translateX(0)'}],{duration:560,delay:which.length>1?i*50:0,easing:'cubic-bezier(.2,.8,.25,1)',fill:'backwards'}));
+  }else{
+   const exit=object.animate([{transform:'translateX(0)'},{transform:`translateX(${away}px)`}],{duration:460,delay:i*40,easing:'cubic-bezier(.55,0,.75,.2)',fill:'forwards'});
+   diceStageAnimations.push(exit,label.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease-in',fill:'forwards'}));
+   if(i===which.at(-1))exit.onfinish=()=>{if(diceStageAnimations.includes(exit)){document.querySelectorAll('.die').forEach(die=>die.classList.toggle('leaving',false));diceStageAnimations.forEach(animation=>animation.cancel());diceStageAnimations=[];}};
+  }
+ });
+ if(moved&&!entering)tumbleDice(which,[a,b],()=>{},DICE_THROW.exit);
+}
+// Pointing labels name what can be done with an object, beside the object. The die label stays
+// until a die has been rolled; the demo can point at other things with the same label.
+const pointer={custom:null,dieHintUsed:false,key:''};
+// Each step names its next action beside the control that does it, so the instructions follow through.
+const POINTER_BEATS={
+ plain:['Plain prompt report.','Standard, forgettable.'],
+ half:['Now another.','The page needs both ingredients.'],
+ pair:['A new page.','Same prompt, two ingredients. Now refine it.'],
+ same:['No change this pass.','The model kept the last result.']
+};
+function pointerSpec(){
+ if(pointer.custom)return pointer.custom;
+ if(view!=='dice'||comparing)return null;
+ const next=$('#experiment-next');
+ if(introMode&&!halfway)return {target:$('#dice-lab'),title:POINTER_BEATS.plain[0],sub:POINTER_BEATS.plain[1],side:'right'};
+ if(introMode)return {target:document.querySelector('#throw-1 .cube'),title:POINTER_BEATS.half[0],sub:POINTER_BEATS.half[1],side:'above'};
+ if(stage===1)return {target:next,title:POINTER_BEATS.pair[0],sub:POINTER_BEATS.pair[1],side:'left'};
+ if(selected.steps[stage-1].html===selected.steps[stage-2].html)return {target:next,title:POINTER_BEATS.same[0],sub:POINTER_BEATS.same[1],side:'left'};
+ // Refinement names the directions it leans into: the two ingredients on the dice.
+ const directions=INGREDIENTS_A[a]+' and '+INGREDIENTS_B[b];
+ if(stage===2)return {target:next,title:'Now refine.',sub:'A harsh critique, then lean into '+directions+'.',side:'left'};
+ if(stage===3)return {target:next,title:'Again.',sub:'Further into '+directions+'.',side:'left'};
+ return {target:$('#compare'),title:'Three passes in.',sub:'More distinct, or just more? Compare it.',side:'right'};
+}
+// The label arrives in the order the eye should travel: a dot lands on the target, the leader draws out
+// from it, then the card settles at the end of the line. It waits for the change it follows to finish.
+let pointerAnimations=[];
+function updatePointer(delay=0){
+ const note=$('#pointer-note'),spec=pointerSpec(),stageBox=document.querySelector('.workbench');
+ if(!spec||!spec.target?.getBoundingClientRect||!stageBox?.getBoundingClientRect){pointerAnimations.forEach(animation=>animation.cancel());note.hidden=true;pointer.key='';return;}
+ const key=spec.title+spec.sub+spec.side,changed=pointer.key!==key;
+ if(changed){pointerAnimations.forEach(animation=>animation.cancel());pointerAnimations=[];$('#pointer-text').textContent=spec.title;$('#pointer-sub').textContent=spec.sub||'';note.dataset.side=spec.side;}
+ note.hidden=false;
+ // A die is placed from its column, which never moves sideways, so a label set during a throw or entrance
+ // lands where the die will rest. Entrances only move dice sideways, so the height comes from the die's box.
+ const column=spec.target.classList?.contains('cube')?spec.target.closest('.die'):null;
+ let target;
+ if(column){const rect=column.getBoundingClientRect(),object=column.querySelector('.die-object'),size=spec.target.offsetWidth||100,objectBox=object?.getBoundingClientRect(),middle=objectBox?objectBox.top+objectBox.height/2:rect.top+rect.height/2,centre=rect.left+rect.width/2;target={left:centre-size/2,right:centre+size/2,top:middle-size*.92,bottom:middle+size*.5};}
+ else target=spec.target.getBoundingClientRect();
+ const width=target.right-target.left,height=target.bottom-target.top;
+ const box=stageBox.getBoundingClientRect(),own=note.getBoundingClientRect(),leader=26;
+ const x=Math.round(spec.side==='left'?target.left-box.left-leader-own.width:spec.side==='right'?target.right-box.left+leader:target.left+width/2-box.left-own.width/2);
+ const y=Math.round(spec.side==='above'?target.top-box.top-own.height-leader:target.top+height/2-box.top-own.height/2);
+ note.style.transform=`translate(${x}px,${y}px)`;
+ if(!changed)return;
+ pointer.key=key;
+ const card=note.querySelector?.('.pointer-card'),line=note.querySelector?.('.pointer-leader'),dot=note.querySelector?.('.pointer-dot');
+ if(!card?.animate||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const ease='cubic-bezier(.23,1,.32,1)',along=spec.side==='above'?'scaleY':'scaleX',drift=spec.side==='left'?'translateX(-8px)':spec.side==='right'?'translateX(8px)':'translateY(-6px)';
+ pointerAnimations=[
+  dot.animate([{transform:'translate(-50%,-50%) scale(0)'},{transform:'translate(-50%,-50%) scale(1.25)',offset:.7},{transform:'translate(-50%,-50%) scale(1)'}],{duration:240,delay,easing:ease,fill:'backwards'}),
+  line.animate([{transform:along+'(0)'},{transform:along+'(1)'}],{duration:240,delay:delay+110,easing:ease,fill:'backwards'}),
+  card.animate([{opacity:0,transform:drift},{opacity:1,transform:'none'}],{duration:300,delay:delay+260,easing:ease,fill:'backwards'})
+ ];
+}
+function showPointer(target,title,sub='',side='above'){pointer.custom={target,title,sub,side};updatePointer();}
+function clearPointer(){pointer.custom=null;updatePointer();}
+window.addEventListener('resize',()=>updatePointer());
+// An ingredient's name carries a face slug, so it can be set in the type that ingredient brings.
+function setDieCall(index){const label=$('#ingredient-'+(index?'b':'a'));label.textContent='Click me';label.dataset.face='call';}
+function setIngredientLabel(index,name){const label=$('#ingredient-'+(index?'b':'a'));label.textContent=name;label.dataset.face=name.toLowerCase().replace(/[^a-z]+/g,'-');}
+function showBrief(){if(introMode&&!halfway)return;settlePresentation();cancelDiceRoll();introMode=true;halfway=false;stage=1;comparing=false;render();}
+// The first ingredient lands alone. Every saved page needs both, so the plain page stays until the second.
+function addFirstIngredient(forced=null){
+ settlePresentation();halfway=true;ingredientsChosen=true;
+ const value=forced??randomIndex(INGREDIENTS_A.length);
+ selected=currentExperiment().runs.find(run=>run.a===value&&run.b===selected.b);
+ render(false);
+ tumbleDice([0],[value,selected.b],()=>{syncDice3D();},DICE_THROW.enter);
+ landLabels([0],LABEL_LAND.enter);
+}
 function showIngredients(){
  if(!ingredientsChosen){roll();return;}
  settlePresentation();introMode=false;stage=1;render();
 }
+function fireNextButton(){
+ const button=$('#experiment-next');button.classList.toggle('is-firing',false);void button.offsetWidth;button.classList.toggle('is-firing',true);
+}
 function nextExperimentStep(){
- promptPeeks.forEach(peek=>peek.close());
- if(introMode){roll();}
+ promptPeeks.forEach(peek=>peek.close());fireNextButton();
+ if(introMode){if(halfway)roll();else addFirstIngredient();}
  else if(stage<4){setAttempt(stage+1);}
  else{stage=1;comparing=false;roll();}
 }
@@ -136,7 +230,11 @@ function showReports(container,entries){
   section.querySelector('iframe').title=label||(/^(stronger-)?plain-/.test(item.file)?'Plain weekly report':selected.label);
   section.style.order=String(order);section.hidden=false;
   const frame=section.querySelector('iframe');if(frame.dataset.loaded==='true')scrollReport(frame,reportScroll.get(container)||0);
-  if(entries.length===1&&!label&&previous.length===1)handoffReport(container,previous[0],section);
+  if(entries.length===1&&!label&&previous.length===1&&previous[0]!==section){
+   handoffReport(container,previous[0],section);
+   // The new page settles into place as the old one is wiped away: a small drop, not a slide.
+   if(section.animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)section.animate([{transform:'translateY(-12px) scale(.985)'},{transform:'none'}],{duration:560,easing:'cubic-bezier(.23,1,.32,1)'});
+  }
  });
 }
 function attemptName(value){return value===1?'One-shot':'Refinement '+(value-1);}
@@ -150,11 +248,11 @@ function renderRail(){
  const value=introMode?0:stage;
  const animate=paintedStep!==null&&paintedStep!==value;
  for(let n=0;n<=4;n++){
-  const button=$('#stage-'+n);button.setAttribute('aria-pressed',String(n===value));
+  const button=$('#stage-'+n);button.setAttribute('aria-pressed',String(n===value));button.setAttribute('data-done',String(n<value));
   button.disabled=introMode&&n>1;
  }
  const refining=!introMode&&stage<4;
- const label=introMode?'Add randomness':stage===1?'Refine it':stage<4?'Again, same prompt':'Roll a new pair';
+ const label=introMode?(halfway?'Add another':'Add randomness'):stage===1?'Refine it':stage<4?'Again, same prompt':'Roll a new pair';
  const cue=refining?'+'+stage:'→';
  $('#experiment-next').dataset.action=refining?'refine':'roll';
  $('#experiment-next').setAttribute('aria-label',refining?label+'. Refinement '+stage:label);
@@ -170,7 +268,8 @@ function renderResult(){
  if(comparing&&comparison==='plain')entries=[{item:currentBaseline().steps[stage-1],label:'Brief only'},{item:current,label:'+ Two ingredients'}];
  if(comparing&&comparison==='other')entries=stage===1?[{item:current,label:'Shared one-shot'}]:method==='stronger'?[{item:other,label:otherLabel},{item:current,label:currentLabel}]:[{item:current,label:currentLabel},{item:other,label:otherLabel}];
  if(introMode)entries=[{item:current,label:''}];
- container.classList.toggle('comparing',entries.length>1);
+ container.classList.toggle('comparing',entries.length>1);document.documentElement.dataset.comparing=String(entries.length>1);
+ container.dataset.passes=String(!introMode&&entries.length===1?stage-1:0);
  showReports(container,entries);
  $('#pair-title').textContent=introMode?'Brief only':selected.label;
  $('#compare').disabled=introMode;
@@ -206,10 +305,12 @@ function buildMatrix(){
 }
 function render(sync=true){
  a=selected.a;b=selected.b;stage=Math.min(stage,selected.steps.length);
- const journey=introMode?'original':'ingredients',previousJourney=document.documentElement.dataset.journey;
- document.documentElement.dataset.journey=journey;$('#reset').hidden=introMode;
+ const journey=introMode?(halfway?'half':'original'):'ingredients',previousJourney=document.documentElement.dataset.journey;
+ document.documentElement.dataset.journey=journey;$('#reset').hidden=journey==='original';
  // In the plain step the dice are away; they keep their last names so an exit never shows placeholder labels.
- if(!introMode){$('#ingredient-a').textContent=INGREDIENTS_A[a];$('#ingredient-b').textContent=INGREDIENTS_B[b];}
+ // A die that is waiting to be rolled says so; a rolled die shows its ingredient in that ingredient's type.
+ if(!introMode||halfway)setIngredientLabel(0,INGREDIENTS_A[a]);else setDieCall(0);
+ if(!introMode)setIngredientLabel(1,INGREDIENTS_B[b]);else setDieCall(1);
  matrixButtons.forEach((button,id)=>{button.setAttribute('aria-pressed',String(!introMode&&id===selected.id));const run=currentExperiment().runs.find(item=>item.id===id);button.setAttribute('aria-label',run.label+' — '+attemptName(stage));});
  matrixCells.forEach((cell,id)=>{
   cell.hidden=Number(id.split('-')[0])!==a;if(cell.hidden)return;
@@ -218,12 +319,23 @@ function render(sync=true){
  });
  $('#atlas-ingredient').value=String(a);
  renderResult();if(sync)syncDice3D();updateURL();
- if(previousJourney&&previousJourney!==journey&&view==='dice')moveDice(!introMode);
- $('#status').textContent=introMode?'Brief only. Roll the dice to add two ingredients.':selected.label+'. '+attemptName(stage)+'.';
+ const entering=previousJourney!==journey&&journey!=='original'&&view==='dice';
+ // Beat order: the press, then the page or dice, then the timeline, then the next label.
+ updatePointer(entering?900:paintedStep===null?500:760);
+ if(previousJourney&&previousJourney!==journey&&view==='dice'){
+  const order=['original','half','ingredients'],from=order.indexOf(previousJourney),to=order.indexOf(journey);
+  if(from===1&&to===2){/* the second die is already on the table */}
+  // Dice enter one at a time as the story adds them, and leave together on reset.
+  // The first die waits on the plain page; the second enters when the first has landed, and leaves on reset.
+  if(from===0&&to>0)moveDice(true,[1]);else if(to===0&&from>0)moveDice(false,[1]);
+ }
+ $('#status').textContent=introMode?(halfway?'First ingredient: '+INGREDIENTS_A[a]+'. Add a second to make the page.':'Brief only. Roll the dice to add two ingredients.'):selected.label+'. '+attemptName(stage)+'.';
 }
-function selectPair(run){settlePresentation();introMode=false;ingredientsChosen=true;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();}
+function selectPair(run){settlePresentation();introMode=false;halfway=false;ingredientsChosen=true;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();}
 function chooseDieFace(index,value){
- settlePresentation();const introducing=introMode;introMode=false;ingredientsChosen=true;
+ settlePresentation();pointer.dieHintUsed=true;
+ if(introMode&&halfway&&index===0){selected=currentExperiment().runs.find(run=>run.a===value&&run.b===selected.b);render(false);settleDieGrab(index,true);syncDice3D();return;}
+ const introducing=introMode;introMode=false;halfway=false;ingredientsChosen=true;
  if(introducing){stage=1;comparing=false;}
  const values=[selected.a,selected.b];values[index]=value;
  // A deliberate choice keeps the other face, even on the first interaction.
@@ -243,16 +355,22 @@ function nextIngredient(index,current){
  return bag.splice(position,1)[0];
 }
 function roll(index,gesture=null,forced=null){
+ // On the plain page the first die is the action: it lands alone, then the second die joins.
+ if(introMode&&!halfway&&index===0){addFirstIngredient(forced?.[0]);return;}
+ if(introMode&&!halfway&&index===1)return;
+ if(introMode&&halfway&&index===0){addFirstIngredient(forced?.[0]??nextIngredient(0,selected.a));return;}
  settlePresentation();
- const introduce=introMode;introMode=false;ingredientsChosen=true;
+ const introduce=introMode,completing=introduce&&halfway;introMode=false;halfway=false;ingredientsChosen=true;
  if(introduce){stage=1;comparing=false;}
- const before=selected,indices=introduce?[0,1]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
+ if(index===0||index===1)pointer.dieHintUsed=true;
+ const before=selected,indices=completing?[1]:introduce?[0,1]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
  // The demo passes authored faces; every visitor roll stays random.
  indices.forEach(i=>{values[i]=forced?.[i]??(introduce?randomIndex(i?INGREDIENTS_B.length:INGREDIENTS_A.length):nextIngredient(i,values[i]));});
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  // Selection is immediate. The dice acknowledge it without gating the report.
  render(false);
- tumbleDice(indices,values,()=>{syncDice3D();},gesture);
+ tumbleDice(indices,values,()=>{syncDice3D();},gesture||(introduce?DICE_THROW.enter:null));
+ landLabels(indices,introduce?LABEL_LAND.enter:LABEL_LAND.roll);
 }
 async function copyText(text,pre,status){
  try{await navigator.clipboard.writeText(text);status.textContent='Copied.';}catch{pre.hidden=false;pre.textContent=text;const details=pre.closest?.('details');if(details)details.open=true;const range=document.createRange();range.selectNodeContents(pre);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);status.textContent='Text selected. Press Ctrl+C or use Copy.';}
@@ -270,6 +388,7 @@ for(let value=1;value<=4;value++)$('#stage-'+value).addEventListener('click',()=
  else setAttempt(value);
 });
 $('#experiment-next').addEventListener('click',nextExperimentStep);
+$('#experiment-next').addEventListener('animationend',()=>$('#experiment-next').classList.toggle('is-firing',false));
 $('#reset').addEventListener('click',()=>{showBrief();$('#experiment-next').focus({preventScroll:true});});
 function settleControlMotion(){actionAnimations.forEach(animation=>animation.cancel());actionAnimations.clear();syncRailMarker();}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){settlePresentation();settleControlMotion();}});
@@ -305,4 +424,4 @@ function changePlainAttempt(delta){const next=plainStage+delta;if(currentBaselin
 $('#plain-attempt-prev').addEventListener('click',()=>changePlainAttempt(-1));
 $('#plain-attempt-next').addEventListener('click',()=>changePlainAttempt(1));
 $('#plain-copy').addEventListener('click',()=>copyText(currentBaseline().steps[plainStage-1].fullPrompt,$('#plain-prompt'),$('#plain-copy-status')));
-initDice3D();buildMatrix();render();selectView(view);
+initDice3D();if(typeof initDiceSound==='function')initDiceSound();buildMatrix();render();selectView(view);

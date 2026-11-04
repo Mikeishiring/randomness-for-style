@@ -20,16 +20,21 @@ function demoHover(target){
  demo.hovered=target;if(!target)return;
  target.classList.add('is-demo-hover');if(target.classList.contains('die-object'))target.dataset.hover='true';
 }
-async function demoMoveTo(target,fx=.6,fy=.62){
- const rect=target.getBoundingClientRect(),x=rect.left+rect.width*fx,y=rect.top+rect.height*fy;
- const from=`translate(${demo.x}px,${demo.y}px)`,distance=Math.hypot(x-demo.x,y-demo.y);
+// Where the cursor aims: inside the target, off its words.
+const DEMO_AIM={action:[.9,.55],die:[.5,.42]};
+async function demoMoveToPoint(x,y){
+ const from=[demo.x,demo.y],distance=Math.hypot(x-demo.x,y-demo.y);
  demo.x=x;demo.y=y;placeCursor();
- if(demoReduced()||!demoCursor.animate)return;
- // Travel time follows distance; the path eases out of rest and settles onto the target.
- demo.move=demoCursor.animate([{transform:from},{transform:`translate(${x}px,${y}px)`}],{duration:Math.round(Math.min(980,Math.max(420,280+distance*.7))),easing:'cubic-bezier(.45,0,.12,1)'});
+ if(demoReduced()||!demoCursor.animate||distance<2)return;
+ // A hand travels on a slight arc, easing out of rest and settling onto the target.
+ const bend=Math.min(40,distance*.08),mx=(from[0]+x)/2+(y-from[1])/distance*bend,my=(from[1]+y)/2-(x-from[0])/distance*bend;
+ demo.move=demoCursor.animate([{transform:`translate(${from[0]}px,${from[1]}px)`},{transform:`translate(${mx}px,${my}px)`},{transform:`translate(${x}px,${y}px)`}],{duration:Math.round(Math.min(900,Math.max(380,240+distance*.65))),easing:'cubic-bezier(.45,0,.15,1)'});
  if(document.hidden)demo.move.pause();
  await demo.move.finished.catch(()=>{});demo.move=null;
 }
+function demoMoveTo(target,[fx,fy]=DEMO_AIM.action){const rect=target.getBoundingClientRect();return demoMoveToPoint(rect.left+rect.width*fx,rect.top+rect.height*fy);}
+// Between beats the cursor rests on empty surface beside what it will touch next.
+function demoRestBeside(target,dx,dy){const rect=target.getBoundingClientRect();return demoMoveToPoint(rect.left+rect.width/2+dx,rect.top+rect.height/2+dy);}
 async function demoPress(target){
  demoCursor.classList.add('pressing');target.classList.add('is-demo-press');
  if(!demoReduced())demoCursor.querySelector('.demo-ring').animate?.([{transform:'translate(-50%,-50%) scale(.35)',opacity:.55},{transform:'translate(-50%,-50%) scale(1.5)',opacity:0}],{duration:460,easing:'cubic-bezier(.23,1,.32,1)'});
@@ -53,8 +58,10 @@ function stopDemo(){
  // Freeze the cursor where it is, then let it fade; the page keeps the state it reached.
  if(demo.move){const transform=getComputedStyle(demoCursor).transform;demo.move.cancel();demo.move=null;demoCursor.style.transform=transform;}
  demoCursor.classList.remove('pressing');document.querySelectorAll('.is-demo-press').forEach(node=>node.classList.remove('is-demo-press'));
- demoHover(null);showDemoCursor(false);renderDemoToggle();
+ demoHover(null);showDemoCursor(false);renderDemoToggle();clearPointer();
 }
+// Beat timing: each hold is the reading time its result needs; the payoff holds longest.
+const DEMO_BEATS={enter:900,readPlain:1900,hover:320,readFirst:1700,readPair:2300,refine:[2100,1800,2000],readCompare:3000,readPrompt:2200,handover:500,yourTurn:5000,invite:4000};
 async function runDemo(){
  stopDemo();
  const token=++demo.token,live=()=>token===demo.token;
@@ -63,39 +70,62 @@ async function runDemo(){
  if(view!=='dice')selectView('dice');
  if(!introMode)showBrief();
  scrollTo({top:0,behavior:'instant'});
- const next=$('#experiment-next'),start=next.getBoundingClientRect();
- demo.x=Math.min(innerWidth-24,start.right+140);demo.y=Math.min(innerHeight-24,start.bottom+80);showDemoCursor(true);
- // 1. Read the plain page, then add randomness.
- await demoWait(1300);if(!live())return;
- await demoMoveTo(next);if(!live())return;demoHover(next);
- await demoWait(380);if(!live())return;
- await demoPress(next);if(!live())return;demoHover(null);
- roll(undefined,null,[5,2]);
- // 2. Let the dice land and the page be read, then swap one ingredient.
- await demoWait(2500);if(!live())return;
- const die=$('#throw-0');
- await demoMoveTo(die,.5,.42);if(!live())return;demoHover(die);
- await demoWait(460);if(!live())return;
+ const next=$('#experiment-next'),die=$('#throw-0'),start=next.getBoundingClientRect();
+ demo.x=Math.min(innerWidth-24,start.right+120);demo.y=Math.min(innerHeight-24,start.bottom+70);
+ await demoWait(DEMO_BEATS.enter);if(!live())return;
+ showDemoCursor(true);
+ // 1. Read the plain page, then click the first die.
+ const second=$('#throw-1');
+ await demoWait(DEMO_BEATS.readPlain);if(!live())return;
+ await demoMoveTo(die,DEMO_AIM.die);if(!live())return;demoHover(die);
+ await demoWait(DEMO_BEATS.hover+80);if(!live())return;
  await demoPress(die);if(!live())return;demoHover(null);
  roll(0,null,[0]);
- await demoWait(2400);if(!live())return;
+ // 2. One ingredient lands; the second die arrives. Click it, and the page changes.
+ await demoWait(160);if(!live())return;
+ await demoRestBeside(die,narrow?60:0,narrow?70:120);if(!live())return;
+ await demoWait(DEMO_BEATS.readFirst);if(!live())return;
+ await demoMoveTo(second,DEMO_AIM.die);if(!live())return;demoHover(second);
+ await demoWait(DEMO_BEATS.hover+80);if(!live())return;
+ await demoPress(second);if(!live())return;demoHover(null);
+ roll(1,null,[undefined,2]);
+ await demoWait(160);if(!live())return;
+ await demoRestBeside(second,narrow?-60:0,narrow?70:120);if(!live())return;
+ await demoWait(DEMO_BEATS.readPair);if(!live())return;
  // 3. Refine the same pair three times with the same prompt.
  await demoMoveTo(next);if(!live())return;demoHover(next);
- for(const hold of [2500,2200,2600]){
-  await demoWait(340);if(!live())return;
+ for(const hold of DEMO_BEATS.refine){
+  await demoWait(DEMO_BEATS.hover);if(!live())return;
   await demoPress(next);if(!live())return;
   next.click();
   await demoWait(hold);if(!live())return;
  }
- // 4. Step aside onto empty surface and hand over.
+ // 4. Compare the third pass with the plain page, side by side, then return.
  demoHover(null);
- await demoMoveTo(next,1.45,.5);if(!live())return;
- await demoWait(500);if(!live())return;
+ const compareButton=$('#compare');
+ await demoMoveTo(compareButton,[.5,.62]);if(!live())return;demoHover(compareButton);
+ await demoWait(DEMO_BEATS.hover);if(!live())return;
+ await demoPress(compareButton);if(!live())return;compareButton.click();demoHover(null);
+ await demoRestBeside(compareButton,narrow?0:-150,narrow?50:40);if(!live())return;
+ await demoWait(DEMO_BEATS.readCompare);if(!live())return;
+ await demoMoveTo(compareButton,[.5,.62]);if(!live())return;
+ await demoPress(compareButton);if(!live())return;compareButton.click();
+ // 5. Step aside, hand over, and point at what to try next.
+ await demoRestBeside(compareButton,narrow?0:90,narrow?56:0);if(!live())return;
+ await demoWait(DEMO_BEATS.handover);if(!live())return;
  demo.running=false;demo.token++;showDemoCursor(false);renderDemoToggle();
+ if(innerWidth>860)showPointer($('#throw-0 .cube'),'Your turn.','Roll a die, or drag it to choose a face.','above');
+ // One quiet invitation if the visitor has not touched anything yet: the dice hop once.
+ const handover=demo.token;
+ setTimeout(()=>{if(handover===demo.token&&!demo.running&&!introMode&&!document.hidden)inviteDice();},DEMO_BEATS.invite);
+ setTimeout(()=>{if(pointer.custom?.title==='Your turn.')clearPointer();},DEMO_BEATS.yourTurn);
 }
 $('#demo-toggle').addEventListener('click',()=>demo.running?stopDemo():runDemo());
 // Real input from the visitor ends the demo immediately; synthetic clicks from the demo do not.
-const demoTakeover=event=>{if(event.isTrusted&&demo.running&&!event.target?.closest?.('#demo-toggle'))stopDemo();};
+const demoTakeover=event=>{
+ if(!event.isTrusted||event.target?.closest?.('#demo-toggle'))return;
+ if(demo.running)stopDemo();else{demo.token++;if(pointer.custom)clearPointer();}
+};
 ['pointerdown','keydown','wheel','touchstart'].forEach(type=>addEventListener(type,demoTakeover,{capture:true,passive:true}));
 document.addEventListener('visibilitychange',()=>{if(!demo.running)return;if(document.hidden)demoHold();else demoContinue();});
 // A width change moves every target; a phone's toolbar changing the height does not.

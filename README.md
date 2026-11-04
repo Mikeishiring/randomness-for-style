@@ -37,10 +37,12 @@ The recorded reports here use no personal design skills or supplied visual refer
 ## Explore
 
 - A first visit plays the story once with a demo cursor on the real controls. Any click, tap, key or scroll takes over from exactly where it is; **Watch demo** replays it.
-- The page opens on the plain one-shot: one prompt, one page. **Add randomness** rolls two dice in from either side of the report.
+- The page opens on the plain one-shot: the report everyone gets from one prompt. The first die waits beside it saying **Click me**. Roll it, and the second die arrives; roll that, and the page changes, because every saved result needs both ingredients. **Refine it** then appears.
 - Click a die to roll it, drag slowly to choose its upper face, or flick to throw. Arrow keys turn it; Escape cancels a drag.
+- Each throw makes a short synthesized clatter timed to the die's landing and bounces, after your first click. **Sound** turns it off.
 - **Refine it** runs the same refinement prompt up to three times, one pass per click; nothing advances on a timer. **Reset** returns to the plain page.
-- The chapters at the top (Plain, Dice, +1, +2, +3) jump to any step without losing your pair.
+- The step track under the action (Plain, Dice, +1, +2, +3) jumps to any step without losing your pair.
+- **Compare** sits beside the action and shows both pages side by side at full width. Prompt, Share, Watch demo and Sound are in the bar at the bottom of the page.
 - Compare with the brief-only result, inspect the exact prompt and critique, browse all 36 combinations, or share a selected state.
 
 These are saved results, not live model calls. The original and stronger refinement sequences are both preserved. The stronger sequence restarts from the same one-shot in a fresh context. Generated reports were not manually restyled; unchanged passes and rough edges remain visible. The exact prompts and critiques are available so someone else can repeat the procedure.

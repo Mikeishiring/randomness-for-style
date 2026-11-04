@@ -90,6 +90,6 @@ settling.animations[0].onfinish();assert.equal(dieStates[0].value,a);near(dieSta
 const invitation={kind:'invitation',from:{q:dieLanding(a),x:0,y:0},size:104,duration:850,contacts:[]};
 assert.ok(Math.abs(sampleDiePlan(invitation,.25).y)>0);near(sampleDiePlan(invitation,1).y,0);
 motion.matches=true;const beforeReduced={...dieStates[0].pose};moveDieGrab(0,beforeReduced,104);assert.notEqual(dieTopFace(dieStates[0].pose.q),dieTopFace(beforeReduced.q));settleDieGrab(0);assert.equal(dieStates[0].running,null);
-assert.equal(soundCalls.length,0);
+assert.ok(soundCalls.length>0&&soundCalls.every(call=>call[0]==='play'),'every throw schedules its contact sounds');
 console.log('PASS: 96 exact face-up orientations/CSS matrices; 500 varied rigid tumbles; stable face markup; landing/rebound contacts; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion.');
 `,context);

@@ -1,12 +1,13 @@
+// Die glyphs: bold strokes in the face ink, one accent detail each (eyes, bolt, lure, chip core...).
 const dieGlyphs=[
- '<path d="M21 37c-8-24 32-34 32-3v7H21Zm0 2c-18 2-7 20-19 17m26-15c-9 11 6 18-5 24m15-24c11 8-5 20 7 21m9-22c18-2 8 19 20 13"/><circle cx="30" cy="29" r="2"/><circle cx="44" cy="29" r="2"/>',
- '<path d="m7 20 29-13 29 13H7Zm7 8v27m15-27v27m15-27v27m15-27v27M8 63h56M5 57h62"/>',
- '<path d="M15 43c-17-9-4-27 8-21 2-20 31-20 34-1 18-1 22 26 5 28H18m2 8-3 8m20-8-3 8m20-8-3 8"/>',
- '<path d="M17 6h38v59H17Zm9 13h20m-20 10h20m-20 10h20m-20 10h13M9 14v57h37"/>',
- '<path d="m12 38 9-18h30l10 18 6 5v13H6V43Zm9-18 8 18h23M20 38h41M15 56v8m42-8v8M4 12h17m-17 9h9"/>',
- '<path d="M16 35c0-31 40-31 40 0Z M23 36c-9 11 10 16 0 27m13-27c9 9-9 17 0 29m13-29c-9 11 10 16 0 27M36 3v4M8 16l4 3m48-3 4-3"/><circle cx="9" cy="45" r="2"/><circle cx="63" cy="49" r="2"/><circle cx="29" cy="27" r="1"/><circle cx="43" cy="27" r="1"/>'
+ '<path fill="currentColor" stroke="none" d="M19 36c0-12 7.5-21 17-21s17 9 17 21v3H19Z"/><circle class="ga" stroke="none" cx="29.5" cy="30" r="3.2"/><circle class="ga" stroke="none" cx="42.5" cy="30" r="3.2"/><path d="M23 39c-1 9-9 9-9 17M31 39c0 8-4 12-2 19M41 39c0 8 4 12 2 19M49 39c1 9 9 9 9 17"/>',
+ '<path d="M13 17h46"/><path d="M19 17c-6 0-6.5 8-.5 8 3.5 0 4-4.5 1-4.5M53 17c6 0 6.5 8 .5 8-3.5 0-4-4.5-1-4.5"/><path d="M22 25h28M26 25v28M33 25v28M39 25v28M46 25v28"/><path class="ga-s" d="M20 53h32"/><path d="M15 60h42"/>',
+ '<path d="M21 44a10 10 0 0 1 1.5-19.8A14 14 0 0 1 49 25a9.5 9.5 0 0 1 1 19Z"/><path class="ga" stroke="none" d="M38 41 29 55h7.5l-4 12L45 50h-7.5l5-9Z"/>',
+ '<circle cx="36" cy="14" r="7"/><path d="M32.5 21 30 33h12l-2.5-12"/><rect fill="currentColor" stroke="none" x="14" y="33" width="44" height="10" rx="2.5"/><path class="ga-s" d="M15 53h42"/><path d="M21 61h30" opacity=".55"/>',
+ '<path d="M17 63V9"/><path d="M17 11h38v27H17"/><path fill="currentColor" stroke="none" d="M17 11h9.5v9H17ZM36 11h9.5v9H36ZM26.5 20H36v9h-9.5ZM45.5 20H55v9h-9.5ZM17 29h9.5v9H17ZM36 29h9.5v9H36Z"/>',
+ '<path d="M13 43c7-14 27-17 38-6l9-7v22l-9-7c-11 11-31 8-38-2Z"/><path d="M13 43l4 3 3.5-3 3.5 3"/><circle fill="currentColor" stroke="none" cx="25" cy="38" r="2.6"/><path d="M27 32c-2-11 6-17 15-15"/><circle class="ga" stroke="none" cx="44" cy="17" r="4.2"/><circle class="ga-s" cx="44" cy="17" r="8.5" opacity=".45" stroke-width="2"/>'
 ];
-const formatGlyphs={insects:'<path d="M7 7h58v58H7ZM36 13v46m-9-40-5-5m23 5 5-5M25 31l-9-4m31 4 9-4M24 42l-8 6m32-6 8 6M28 52l-5 7m21-7 5 7"/><ellipse cx="36" cy="39" rx="12" ry="17"/><circle cx="36" cy="21" r="5"/>',tech:'<circle cx="36" cy="36" r="24"/><path d="M36 4v17m0 30v17M4 36h17m30 0h17m-15-25-17 25h14"/>',disco:'<circle cx="36" cy="36" r="28"/><circle cx="36" cy="36" r="10"/><path d="M16 35a20 20 0 0 1 19-19m20 20a20 20 0 0 1-19 19"/>',diner:'<path d="M10 30c0-29 52-29 52 0H10Zm0 9h52M10 48h52c0 21-52 21-52 0ZM22 20h2m12-5h2m12 5h2"/>',opera:'<path d="M8 8h56v56H8ZM8 10q26 14 0 42m56-42q-26 14 0 42M23 64V43h26v21"/>',hotel:'<path d="M12 65V23h48v42M7 23h58L36 5Zm17 10h5m14 0h5M24 44h5m14 0h5M30 65V53h12v12"/>',swiss:'<path d="M7 7h58v58H7Zm0 20h58M27 7v58M7 48h58"/>',brutalist:'<path d="M9 7h54v15H9Zm0 24h20v34H9Zm31 0h23v34H40Z"/>',deco:'<path d="M9 62V29h9V17h9V8h18v9h9v12h9v33M20 62V37h11V24h10v13h11v25"/>',playful:'<path d="M8 27c-1-25 30-26 29-2 10-23 34-12 26 9-5 19-28 33-28 33S8 48 8 27Z"/>',editorial:'<path d="M7 9h58v54H7Zm9 11h40M16 29h18v23H16Zm28 0h12m-12 9h12m-12 9h12"/>',transit:'<path d="M10 58V14h24v23h26v25"/><circle cx="10" cy="14" r="4"/><circle cx="34" cy="37" r="6"/><circle cx="60" cy="62" r="4"/>',receipt:'<path d="m17 5 6 5 6-5 7 5 7-5 6 5 6-5v62l-6-5-6 5-7-5-7 5-6-5-6 5Zm9 18h20m-20 10h20m-20 10h20m-20 10h10"/>',guide:'<path d="M7 12q15-6 29 4 14-10 29-4v49q-16-5-29 4-14-9-29-4Zm29 4v49M16 24h11m-11 10h11m18-10h11m-11 10h11"/>',circuit:'<path d="M6 12h23v18h20v22h17M6 60h24V42h19V12h17"/><circle cx="29" cy="30" r="4"/><circle cx="49" cy="42" r="4"/>',quilt:'<path d="M7 7h58v58H7Zm29 0v58M7 36h58M7 7l58 58M7 65 65 7"/>'};
+const formatGlyphs={tech:'<rect x="19" y="19" width="34" height="34" rx="5"/><rect class="ga" stroke="none" x="28" y="28" width="16" height="16" rx="2.5"/><path d="M28 10v9M36 10v9M44 10v9M28 53v9M36 53v9M44 53v9M10 28h9M10 36h9M10 44h9M53 28h9M53 36h9M53 44h9"/>',disco:'<path d="M36 5v12"/><circle cx="36" cy="39" r="21"/><ellipse cx="36" cy="39" rx="9.5" ry="21"/><path d="M15 39h42M18 29h36M18 49h36"/><path class="ga-s" d="M60 9v10M55 14h10"/>',diner:'<path d="M15 33c0-10.5 9.5-17 21-17s21 6.5 21 17Z"/><path class="ga-s" d="M13 39c4 3.5 7.5-3.5 11.5 0s7.5 3.5 11.5 0 7.5-3.5 11.5 0 7.5 3.5 11.5 0"/><rect fill="currentColor" stroke="none" x="14" y="44" width="44" height="7" rx="3.5"/><path d="M15 56h42v1.5a6.5 6.5 0 0 1-6.5 6.5h-29A6.5 6.5 0 0 1 15 57.5Z"/>',opera:'<path d="M9 11h54"/><path d="M12 11c0 19 3.5 34 12 50M60 11c0 19-3.5 34-12 50M12 11c4 7 9 9 15 9M60 11c-4 7-9 9-15 9"/><path class="ga-s" d="M39 28v19M39 28l7 3"/><ellipse class="ga" stroke="none" cx="34.5" cy="48" rx="5" ry="4" transform="rotate(-20 34.5 48)"/>',hotel:'<path d="M36 25v-6M30.5 19h11"/><path d="M17 50a19 19 0 0 1 38 0"/><path d="M12 50h48M9 57h54"/><path class="ga-s" d="M25 43a12.5 12.5 0 0 1 6.5-9"/>',insects:'<ellipse cx="36" cy="43" rx="12" ry="15"/><path d="M36 28v30"/><circle cx="36" cy="23.5" r="5"/><path d="M33 19.5l-5-7.5M39 19.5l5-7.5M24 37l-9-4M24 45l-10 2M26 53l-8 7M48 37l9-4M48 45l10 2M46 53l8 7"/><path class="ga-s" d="M36 4v14"/><circle class="ga" stroke="none" cx="36" cy="4.5" r="3"/>'};
 const diceMotion=matchMedia('(prefers-reduced-motion: reduce)');
 const dieStates=[0,1].map(()=>({value:null,pose:{q:[0,0,0,1],x:0,y:0},running:null}));
 let activeDiceRoll=null;
@@ -20,14 +21,60 @@ function inviteDice(){
   animateDiePlan(i,{kind:'invitation',from:dieStates[i].pose,size,duration:850,contacts:[]},dieStates[i].value);
  },450+i*300)));
 }
-function diePicture(index,value){const path=index===0?dieGlyphs[value]:formatGlyphs[modes[active].options[value].layout];return `<svg viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${path}</svg>`;}
+function diePicture(index,value){const path=index===0?dieGlyphs[value]:formatGlyphs[modes[active].options[value].layout];return `<svg viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${path}</svg>`;}
 function dieFaceMarkup(index){return DIE_FACE_VALUES.map((choice,face)=>`<span class="cube-face face-${face}" data-choice="${choice}">${diePicture(index,choice)}<small>${String(choice+1).padStart(2,'0')}</small></span>`).join('');}
+// Solid die: six inset faces, twelve 45° bevels and eight corner facets close the cube, so it reads as
+// one bevelled object from any angle. Each piece keeps its cube-space normal for lighting.
+const DIE_CHAMFER=.075;
+const DIE_FACE_NORMALS=[[0,0,1],[1,0,0],[0,0,-1],[-1,0,0],[0,-1,0],[0,1,0]];
+const DIE_SOLIDS=(()=>{
+ const k=DIE_CHAMFER,r2=Math.SQRT2,deg=180/Math.PI,solids=[];
+ const bevel=(transform,normal,long)=>solids.push({kind:'bevel',transform:transform+` translateZ(calc(var(--size)*${((1-k)/r2).toFixed(5)}))`,normal:normal.map(v=>v/Math.hypot(...normal)),w:long==='x'?1-2*k:k*r2,h:long==='x'?k*r2:1-2*k});
+ bevel('rotateX(45deg)',[0,-1,1],'x');bevel('rotateX(-45deg)',[0,1,1],'x');bevel('rotateY(45deg)',[1,0,1],'y');bevel('rotateY(-45deg)',[-1,0,1],'y');
+ bevel('rotateY(180deg) rotateX(45deg)',[0,-1,-1],'x');bevel('rotateY(180deg) rotateX(-45deg)',[0,1,-1],'x');bevel('rotateY(135deg)',[1,0,-1],'y');bevel('rotateY(-135deg)',[-1,0,-1],'y');
+ bevel('rotateY(90deg) rotateX(45deg)',[1,-1,0],'x');bevel('rotateY(90deg) rotateX(-45deg)',[1,1,0],'x');bevel('rotateY(-90deg) rotateX(45deg)',[-1,-1,0],'x');bevel('rotateY(-90deg) rotateX(-45deg)',[-1,1,0],'x');
+ const h=.5,side=2*(k*r2/Math.sqrt(3))*1.1;
+ for(const sx of [-1,1])for(const sy of [-1,1])for(const sz of [-1,1]){
+  const phi=Math.atan2(sx,sz),theta=-Math.asin(sy/Math.sqrt(3));
+  const xl=[Math.cos(phi),0,-Math.sin(phi)],yl=[Math.sin(phi)*Math.sin(theta),Math.cos(theta),Math.cos(phi)*Math.sin(theta)];
+  const g=[sx*(h-2*k/3),sy*(h-2*k/3),sz*(h-2*k/3)];
+  const points=[[sx*(h-k),sy*(h-k),sz*h],[sx*(h-k),sy*h,sz*(h-k)],[sx*h,sy*(h-k),sz*(h-k)]].map(v=>{const d=v.map((c,i)=>c-g[i]);return [50+(d[0]*xl[0]+d[1]*xl[1]+d[2]*xl[2])/side*100,50+(d[0]*yl[0]+d[1]*yl[1]+d[2]*yl[2])/side*100];});
+  solids.push({kind:'corner',transform:`rotateY(${(phi*deg).toFixed(3)}deg) rotateX(${(theta*deg).toFixed(3)}deg) translateZ(calc(var(--size)*${((1.5-2*k)/Math.sqrt(3)).toFixed(5)}))`,normal:[sx,sy,sz].map(v=>v/Math.sqrt(3)),w:side,h:side,clip:'polygon('+points.map(([x,y])=>x.toFixed(2)+'% '+y.toFixed(2)+'%').join(',')+')'});
+ }
+ return solids;
+})();
+function dieSolidMarkup(){
+ return DIE_SOLIDS.map(({kind,transform,w,h,clip})=>`<span class="cube-${kind}" style="width:calc(var(--size)*${w.toFixed(5)});height:calc(var(--size)*${h.toFixed(5)});margin:calc(var(--size)*${(-h/2).toFixed(5)}) 0 0 calc(var(--size)*${(-w/2).toFixed(5)});transform:${transform}${clip?';clip-path:'+clip:''}"></span>`).join('');
+}
+// Light from the upper left, in front. Brightness follows each piece's normal through the pose and the
+// die's fixed camera, so faces brighten as they turn toward it and bevels catch it at the edges.
+const DIE_LIGHT=(()=>{const v=[-.42,-.78,.46],l=Math.hypot(...v);return v.map(c=>c/l);})(),DIE_HALF=(()=>{const v=[-.42,-.78,1.46],l=Math.hypot(...v);return v.map(c=>c/l);})();
+const dieShading=[null,null];
+function dieCameraMatrix(camera){
+ const read=name=>parseFloat(getComputedStyle(camera).getPropertyValue(name))*Math.PI/180||0;
+ const [x,y,z]=[read('--view-x'),read('--view-y'),read('--view-z')];
+ const mul=(a,b)=>a.map((row,i)=>[0,1,2].map(j=>row[0]*b[0][j]+row[1]*b[1][j]+row[2]*b[2][j]));
+ const rx=[[1,0,0],[0,Math.cos(x),-Math.sin(x)],[0,Math.sin(x),Math.cos(x)]],ry=[[Math.cos(y),0,Math.sin(y)],[0,1,0],[-Math.sin(y),0,Math.cos(y)]],rz=[[Math.cos(z),-Math.sin(z),0],[Math.sin(z),Math.cos(z),0],[0,0,1]];
+ return mul(mul(rx,ry),rz);
+}
+function dieBrightness(i,q){
+ const shade=dieShading[i];if(!shade)return [];
+ return shade.normals.map(normal=>{
+  const v=quatRotate(q,normal),m=shade.camera,n=[0,1,2].map(r=>m[r][0]*v[0]+m[r][1]*v[1]+m[r][2]*v[2]);
+  const diffuse=Math.max(0,n[0]*DIE_LIGHT[0]+n[1]*DIE_LIGHT[1]+n[2]*DIE_LIGHT[2]),gloss=Math.pow(Math.max(0,n[0]*DIE_HALF[0]+n[1]*DIE_HALF[1]+n[2]*DIE_HALF[2]),28);
+  return Math.round((.6+.52*diffuse+.32*gloss)*1000)/1000;
+ });
+}
+function shadeDie(i,q){const shade=dieShading[i];if(!shade)return;dieBrightness(i,q).forEach((b,n)=>{shade.pieces[n].style.filter=`brightness(${b})`;});}
 function initDice3D(){
  document.querySelectorAll('.die').forEach((die,i)=>{
   const button=document.createElement('button');button.className='die-object';button.type='button';button.id='throw-'+i;
   button.setAttribute('aria-describedby','dice-gesture-help');
-  button.innerHTML='<span class="die-shadow" aria-hidden="true"></span><span class="die-grip" aria-hidden="true"><span class="die-flight"><span class="die-camera"><span class="cube">'+dieFaceMarkup(i)+'</span></span></span></span>';
+  // A ground plane gives the die a surface to land on; a flat core fills the rounded corners so the cube reads solid.
+  button.innerHTML='<span class="die-ground" aria-hidden="true"></span><span class="die-shadow" aria-hidden="true"></span><span class="die-grip" aria-hidden="true"><span class="die-flight"><span class="die-camera"><span class="cube">'+dieSolidMarkup()+dieFaceMarkup(i)+'</span></span></span></span>';
   die.querySelector('.die-top').after(button);bindDieInteraction(button,i);
+  const faces=[...button.querySelectorAll('.cube-face')],pieces=[...button.querySelectorAll('.cube-bevel,.cube-corner'),...faces];
+  dieShading[i]={pieces,normals:[...DIE_SOLIDS.map(solid=>solid.normal),...faces.map((_,n)=>DIE_FACE_NORMALS[n])],camera:dieCameraMatrix(button.querySelector('.die-camera'))};
  });
  const settle=()=>[0,1].forEach(i=>stopDieMotion(i));
  diceMotion.addEventListener('change',()=>{if(diceMotion.matches)settle();});
@@ -36,7 +83,7 @@ function initDice3D(){
  [0,1].forEach(i=>observer.observe(document.querySelector('#throw-'+i)));
 }
 function paintDiePose(i,pose){
- $('#throw-'+i+' .cube').style.transform=quatCSS(pose.q);
+ $('#throw-'+i+' .cube').style.transform=quatCSS(pose.q);shadeDie(i,pose.q);
  $('#throw-'+i+' .die-flight').style.transform=`translate3d(${pose.x}px,${pose.y}px,0)`;
  const shadow=$('#throw-'+i+' .die-shadow'),height=Math.min(1,(pose.air??Math.max(0,-pose.y))/40);
  shadow.style.transform=`translateX(${pose.x}px) scale(${1-height*.32},${1-height*.44})`;shadow.style.opacity=String(1-height*.65);
@@ -70,7 +117,8 @@ function moveDieGrab(i,from,dx,dy=0){
  dieStates[i].pose=dieGrabPose(from,dx,dy,size);
  paintDiePose(i,dieStates[i].pose);
  const value=dieTopFace(dieStates[i].pose.q);
- $('#ingredient-'+(i?'b':'a')).textContent=i?modes[active].options[value].name:worlds[value].name;
+ const name=i?modes[active].options[value].name:worlds[value].name;
+ if(typeof setIngredientLabel==='function')setIngredientLabel(i,name);else $('#ingredient-'+(i?'b':'a')).textContent=name;
  return value;
 }
 function settleDieGrab(i,keepYaw=false){
@@ -88,6 +136,8 @@ function animateDiePlan(i,plan,value){
  for(const t of times){const pose=sampleDiePlan(plan,t),height=Math.min(1,pose.air/40);rotation.push({offset:t,transform:quatCSS(pose.q)});flight.push({offset:t,transform:`translate3d(${pose.x}px,${pose.y}px,0)`});shadow.push({offset:t,transform:`translateX(${pose.x}px) scale(${1-height*.32},${1-height*.44})`,opacity:1-height*.65});}
  const options={duration:plan.duration,easing:'linear',fill:'forwards'};
  const animations=[$('#throw-'+i+' .cube').animate(rotation,options),$('#throw-'+i+' .die-flight').animate(flight,options),$('#throw-'+i+' .die-shadow').animate(shadow,options)];
+ const shade=dieShading[i];
+ if(shade){const light=times.map(t=>dieBrightness(i,sampleDiePlan(plan,t).q));shade.pieces.forEach((piece,n)=>animations.push(piece.animate(times.map((t,m)=>({offset:t,filter:`brightness(${light[m][n]})`})),options)));}
  state.running={plan,animations,value};
  animations[0].onfinish=()=>{if(state.running?.animations===animations)finishDie(i);};
 }
@@ -102,8 +152,9 @@ function tumbleDice(indices,values,complete,gesture=null){
  }
  indices.forEach(i=>{
   clearDieInvitation(i);
-  const cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8)),plan=makeDiePlan(from[i],values[i],Math.random,width,Number.isFinite(travel)?travel:18,gesture);
+  const cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8)),plan=makeDiePlan(from[i],values[i],Math.random,width,Number.isFinite(travel)?travel:18,Array.isArray(gesture)?gesture[i]:gesture);
   animateDiePlan(i,plan,values[i]);
+  if(typeof playDiceClatter==='function')playDiceClatter(i,plan,performance.now());
   const name=i?modes[active].options[values[i]].name:worlds[values[i]].name;
   $('#throw-'+i).setAttribute('aria-label',`Roll ${i?'second':'first'} die again. ${name}`);
  });
