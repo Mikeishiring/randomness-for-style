@@ -20,7 +20,7 @@ const previewCaches=new WeakMap();
 const matrixButtons=new Map();
 const matrixCells=new Map();
 const promptPeeks=[$('#prompt'),$('#plain-prompt-details')].map(bindPromptPeek);
-let hintsOpen=introMode,ingredientsChosen=!introMode,paintedStep=null;
+let ingredientsChosen=!introMode,paintedStep=null;
 const actionAnimations=new Map();
 function updateActionText(node,text,animate){
  if(node.textContent===text)return;
@@ -40,34 +40,54 @@ function syncRailMarker(animate=false){
 }
 const railResize=new ResizeObserver(()=>syncRailMarker());railResize.observe($('#rail-stops'));
 function settlePresentation(){settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
-const walkthroughBeats=[
- ['Brief only','One prompt, no added ingredients. The brief and data stay fixed.'],
- ['Dice added','The same prompt, now with these two ingredients. Still one shot.'],
- ['Refinement 1','Critique the result. Commit to both ingredients. Keep it simple.'],
- ['Refinement 2','Same prompt. This time, refine the first refinement.'],
- ['Refinement 3','Same prompt, third pass. More distinct—or just more?']
+// The page tells its story in one headline per step; every step stays reachable from the chapters.
+const storyBeats=[
+ ['One prompt. One page.','“Create a one-page website that helps its owner understand this week’s website performance.”'],
+ ['Now add randomness.','Same prompt, plus two ingredients. Click a die to swap one.'],
+ ['Now refine it.','Critique harshly, then commit harder to both ingredients.'],
+ ['Again.','The same prompt, run on the last result.'],
+ ['And again.','More distinct, or just more?']
 ];
-function showWalkthrough(){
- const value=introMode?0:stage,note=$('#walkthrough-note');
- const unchanged=value>1&&selected.steps[value-1].html===selected.steps[value-2].html;
- const [title,text]=unchanged?['No change this pass','The refinement prompt was repeated, but this result stayed unchanged.']:walkthroughBeats[value];
- const changed=$('#walkthrough-title').textContent!==title;
- $('#walkthrough-count').textContent=(value+1)+' / 5';
- $('#walkthrough-count').setAttribute('aria-label','Step '+(value+1)+' of 5');
- $('#walkthrough-title').textContent=title;$('#walkthrough-text').textContent=text;
- note.hidden=!hintsOpen;$('#guide-toggle').setAttribute('aria-expanded',String(hintsOpen));
- $('#refinement-rail').style.setProperty('--step',String(value));
- if(changed&&hintsOpen&&!matchMedia('(prefers-reduced-motion: reduce)').matches)$('#walkthrough-copy').animate?.([{opacity:.25,transform:'translateY(3px)'},{opacity:1,transform:'translateY(0)'}],{duration:160,easing:'ease-out'});
+function storyFor(value){
+ if(value>1&&selected.steps[value-1].html===selected.steps[value-2].html)return ['No change this pass.','The same prompt ran again; the model kept the last result.'];
+ return storyBeats[value];
 }
-function setHints(open){hintsOpen=open;showWalkthrough();}
-function showBrief(){settlePresentation();cancelDiceRoll();introMode=true;stage=1;comparing=false;render();}
+function showStory(){
+ const value=introMode?0:stage,[title,text]=storyFor(value);
+ const changed=$('#story-title').textContent!==title;
+ $('#story-title').textContent=title;$('#story-text').textContent=text;
+ $('#refinement-rail').style.setProperty('--step',String(value));
+ if(changed&&paintedStep!==null&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)$('#story').animate?.([{opacity:.15},{opacity:1}],{duration:200,easing:'ease-out'});
+}
+// The dice enter from either side when ingredients are added, and leave the same way on reset.
+let diceStageAnimations=[];
+function moveDice(entering){
+ diceStageAnimations.forEach(animation=>animation.cancel());diceStageAnimations=[];
+ const deck=$('#dice-deck');deck.classList?.toggle('leaving',false);
+ if(document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ if(!entering)deck.classList?.toggle('leaving',true);
+ document.querySelectorAll('.die').forEach((die,i)=>{
+  const object=die.querySelector('.die-object'),label=die.querySelector('strong'),rect=object?.getBoundingClientRect?.();
+  if(!rect?.width||!object.animate)return;
+  const away=i?Math.max(180,innerWidth-rect.left+24):-Math.max(180,rect.right+24);
+  if(entering){
+   diceStageAnimations.push(object.animate([{transform:`translateX(${away}px)`},{transform:'translateX(0)'}],{duration:720,delay:i*110,easing:'cubic-bezier(.16,1,.3,1)',fill:'backwards'}));
+   diceStageAnimations.push(label.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:240,delay:520+i*110,easing:'ease-out',fill:'backwards'}));
+  }else{
+   const exit=object.animate([{transform:'translateX(0)'},{transform:`translateX(${away}px)`}],{duration:380,delay:i*50,easing:'cubic-bezier(.55,0,.8,.2)',fill:'forwards'});
+   diceStageAnimations.push(exit,label.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease-in',fill:'forwards'}));
+   if(i)exit.onfinish=()=>{if(diceStageAnimations.includes(exit)){deck.classList.toggle('leaving',false);diceStageAnimations.forEach(animation=>animation.cancel());diceStageAnimations=[];}};
+  }
+ });
+}
+function showBrief(){if(introMode)return;settlePresentation();cancelDiceRoll();introMode=true;stage=1;comparing=false;render();}
 function showIngredients(){
  if(!ingredientsChosen){roll();return;}
  settlePresentation();introMode=false;stage=1;render();
 }
 function nextExperimentStep(){
  promptPeeks.forEach(peek=>peek.close());
- if(introMode){showIngredients();}
+ if(introMode){roll();}
  else if(stage<4){setAttempt(stage+1);}
  else{stage=1;comparing=false;roll();}
 }
@@ -133,19 +153,16 @@ function renderRail(){
   button.disabled=introMode&&n>1;
  }
  const refining=!introMode&&stage<4;
- const label=introMode?(ingredientsChosen?'Back to ingredients':'Roll ingredients'):stage===1?'Lean into it':stage<4?'Again, same prompt':'Roll a new pair';
+ const label=introMode?'Add randomness':stage===1?'Refine it':stage<4?'Again, same prompt':'Roll a new pair';
  const cue=refining?'+'+stage:'→';
  $('#experiment-next').dataset.action=refining?'refine':'roll';
  $('#experiment-next').setAttribute('aria-label',refining?label+'. Refinement '+stage:label);
  updateActionText($('#next-label'),label,animate);updateActionText($('#next-cue'),cue,animate);
- syncRailMarker(animate);paintedStep=value;
- showWalkthrough();
+ showStory();syncRailMarker(animate);paintedStep=value;
 }
 function renderResult(){
  const container=$('#report-view');container.classList.toggle('comparing',comparing);
  const current=introMode?currentBaseline().steps[0]:selected.steps[stage-1];
- const unchanged=stage>1&&current.html===selected.steps[stage-2].html;
- $('#attempt-note').hidden=!unchanged;$('#attempt-note').textContent=unchanged?'Kept '+(stage===2?'the first attempt':'refinement '+(stage-2))+'. See critique.':'';
  const other=(method==='stronger'?EXPERIMENT:STRONGER_EXPERIMENT).runs.find(run=>run.id===selected.id).steps[stage-1];
  const currentLabel=method==='stronger'?'Stronger prompt':'Original prompt',otherLabel=method==='stronger'?'Original prompt':'Stronger prompt';
  let entries=[{item:current,label:''}];
@@ -160,7 +177,6 @@ function renderResult(){
  $('#compare').setAttribute('aria-label',comparing&&comparison==='other'?'Compare refinement prompts':'Compare with brief only');
  $('#compare-target').hidden=introMode||!comparing;$('#compare-target').value=comparison;$('#compare-other').textContent=otherLabel;
  $('#view-plain').disabled=false;$('#view-plain').textContent='Refine brief alone →';
- $('#copy-link').textContent=introMode?'Share example ↗':'Share this roll ↗';
  $('#method-original').setAttribute('aria-pressed',String(method==='original'));$('#method-stronger').setAttribute('aria-pressed',String(method==='stronger'));
  $('#method-note').hidden=stage!==1;
  renderRail();
@@ -189,8 +205,10 @@ function buildMatrix(){
 }
 function render(sync=true){
  a=selected.a;b=selected.b;stage=Math.min(stage,selected.steps.length);
- document.documentElement.dataset.journey=introMode?'original':'ingredients';
- $('#ingredient-a').textContent=introMode?'Ingredient 1':INGREDIENTS_A[a];$('#ingredient-b').textContent=introMode?'Ingredient 2':INGREDIENTS_B[b];
+ const journey=introMode?'original':'ingredients',previousJourney=document.documentElement.dataset.journey;
+ document.documentElement.dataset.journey=journey;$('#reset').hidden=introMode;
+ // In the plain step the dice are away; they keep their last names so an exit never shows placeholder labels.
+ if(!introMode){$('#ingredient-a').textContent=INGREDIENTS_A[a];$('#ingredient-b').textContent=INGREDIENTS_B[b];}
  matrixButtons.forEach((button,id)=>{button.setAttribute('aria-pressed',String(!introMode&&id===selected.id));const run=currentExperiment().runs.find(item=>item.id===id);button.setAttribute('aria-label',run.label+' — '+attemptName(stage));});
  matrixCells.forEach((cell,id)=>{
   cell.hidden=Number(id.split('-')[0])!==a;if(cell.hidden)return;
@@ -199,9 +217,10 @@ function render(sync=true){
  });
  $('#atlas-ingredient').value=String(a);
  renderResult();if(sync)syncDice3D();updateURL();
+ if(previousJourney&&previousJourney!==journey&&view==='dice')moveDice(!introMode);
  $('#status').textContent=introMode?'Brief only. Roll the dice to add two ingredients.':selected.label+'. '+attemptName(stage)+'.';
 }
-function selectPair(run){settlePresentation();hintsOpen=false;introMode=false;ingredientsChosen=true;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();}
+function selectPair(run){settlePresentation();introMode=false;ingredientsChosen=true;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();}
 function chooseDieFace(index,value){
  settlePresentation();const introducing=introMode;introMode=false;ingredientsChosen=true;
  if(introducing){stage=1;comparing=false;}
@@ -236,7 +255,7 @@ function roll(index,gesture=null){
 async function copyText(text,pre,status){
  try{await navigator.clipboard.writeText(text);status.textContent='Copied.';}catch{pre.hidden=false;pre.textContent=text;const details=pre.closest?.('details');if(details)details.open=true;const range=document.createRange();range.selectNodeContents(pre);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);status.textContent='Text selected. Press Ctrl+C or use Copy.';}
 }
-$('#compare').addEventListener('click',()=>{if(introMode)return;comparing=!comparing;setHints(false);renderResult();updateURL();});
+$('#compare').addEventListener('click',()=>{if(introMode)return;comparing=!comparing;renderResult();updateURL();});
 $('#compare-target').addEventListener('change',event=>{comparison=event.target.value==='other'?'other':'plain';renderResult();updateURL();});
 function changeMethod(next){settlePresentation();method=next;promptPeeks.forEach(peek=>peek.close());selected=currentExperiment().runs.find(run=>run.id===selected.id);render();if(view==='plain')renderPlain();}
 $('#method-original').addEventListener('click',()=>changeMethod('original'));
@@ -249,9 +268,7 @@ for(let value=1;value<=4;value++)$('#stage-'+value).addEventListener('click',()=
  else setAttempt(value);
 });
 $('#experiment-next').addEventListener('click',nextExperimentStep);
-$('#guide-toggle').addEventListener('click',()=>setHints(!hintsOpen));
-$('#walkthrough-close').addEventListener('click',()=>{setHints(false);$('#guide-toggle').focus({preventScroll:true});});
-document.addEventListener('keydown',event=>{if(event.key==='Escape'&&hintsOpen){setHints(false);$('#guide-toggle').focus({preventScroll:true});}});
+$('#reset').addEventListener('click',()=>{showBrief();$('#experiment-next').focus({preventScroll:true});});
 function settleControlMotion(){actionAnimations.forEach(animation=>animation.cancel());actionAnimations.clear();syncRailMarker();}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){settlePresentation();settleControlMotion();}});
 matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',()=>{settlePresentation();settleControlMotion();});
@@ -259,7 +276,7 @@ $('#copy-prompt').addEventListener('click',()=>copyText((introMode?currentBaseli
 $('#refinement-prompt').textContent=EXPERIMENT.refinementPrompt;
 const exportPrompt=document.createElement('pre');exportPrompt.hidden=true;$('#export-status').after(exportPrompt);
 $('#copy-plain').addEventListener('click',()=>copyText(EXPERIMENT.plain.fullPrompt,exportPrompt,$('#export-status')));
-$('#copy-link').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(location.href);$('#share-status').textContent='Link copied';}catch{$('#share-status').textContent='Copy the address to share this roll.';}});
+$('#copy-link').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(location.href);$('#share-status').textContent='Copied';}catch{$('#share-status').textContent='Copy the address to share this roll.';}});
 $('#copy-refinement').addEventListener('click',()=>copyText(view==='plain'?currentBaseline().protocol.refinementPrompt:currentExperiment().refinementPrompt,$('#refinement-prompt'),$('#export-status')));
 function renderPlain(){
  const baseline=currentBaseline(),item=baseline.steps[plainStage-1];showReports($('#plain-report'),[{item,label:''}]);
@@ -272,10 +289,9 @@ function renderPlain(){
 }
 function selectView(next,focus=false){
  settlePresentation();
- if(next==='plain')setHints(false);
  promptPeeks.forEach(peek=>peek.close());
  cancelDiceRoll();view=next==='dice'?'dice':'plain';document.documentElement.dataset.view=view;
- ['#dice-lab','#dice-controls','#dice-deck','#atlas','#refinement-rail'].forEach(id=>$(id).hidden=view!=='dice');
+ ['#dice-lab','#stage-bar','#experiment-tools','#dice-deck','#atlas','#refinement-rail','#story'].forEach(id=>$(id).hidden=view!=='dice');
  ['#plain-lab','#plain-controls'].forEach(id=>$(id).hidden=view!=='plain');
  if(view==='plain')renderPlain();else{render();}
  if(focus)$(view==='plain'?'#plain-title':'#pair-title').focus({preventScroll:false});
@@ -287,4 +303,4 @@ function changePlainAttempt(delta){const next=plainStage+delta;if(currentBaselin
 $('#plain-attempt-prev').addEventListener('click',()=>changePlainAttempt(-1));
 $('#plain-attempt-next').addEventListener('click',()=>changePlainAttempt(1));
 $('#plain-copy').addEventListener('click',()=>copyText(currentBaseline().steps[plainStage-1].fullPrompt,$('#plain-prompt'),$('#plain-copy-status')));
-initDice3D();buildMatrix();render();selectView(view);if(introMode)inviteDice();
+initDice3D();buildMatrix();render();selectView(view);

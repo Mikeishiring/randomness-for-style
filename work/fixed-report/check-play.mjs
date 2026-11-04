@@ -96,14 +96,14 @@ const cached=visibleFrames(nodes.get('#report-view'))[0];selectPair(EXPERIMENT.r
 await nodes.get('#copy-prompt').click();assert.equal(copies.at(-1),experiment.runs[0].steps[0].fullPrompt);
 await nodes.get('#copy-plain').click();assert.equal(copies.at(-1),experiment.plain.fullPrompt);
 await nodes.get('#copy-refinement').click();assert.equal(copies.at(-1),experiment.refinementPrompt);
-nodes.get('#view-plain').click();assert.equal(nodes.get('#dice-lab').hidden,true);assert.equal(nodes.get('#dice-deck').hidden,true);assert.equal(nodes.get('#dice-controls').hidden,true);assert.equal(nodes.get('#atlas').hidden,true);assert.equal(nodes.get('#plain-lab').hidden,false);assert.equal(nodes.get('#plain-controls').hidden,false);assert.equal(document.activeElement,nodes.get('#plain-title'));
+nodes.get('#view-plain').click();assert.equal(nodes.get('#dice-lab').hidden,true);assert.equal(nodes.get('#dice-deck').hidden,true);assert.equal(nodes.get('#stage-bar').hidden,true);assert.equal(nodes.get('#atlas').hidden,true);assert.equal(nodes.get('#plain-lab').hidden,false);assert.equal(nodes.get('#plain-controls').hidden,false);assert.equal(document.activeElement,nodes.get('#plain-title'));
 for(let i=0;i<4;i++){
  if(i)nodes.get('#plain-attempt-next').click();assert.equal(visibleFrames(nodes.get('#plain-report'))[0].srcdoc,baseline.steps[i].html);assert.equal(nodes.get('#plain-attempt-label').textContent,i===0?'One-shot':'Refinement '+i);
  await nodes.get('#plain-copy').click();assert.equal(copies.at(-1),baseline.steps[i].fullPrompt);
 }
 assert.equal(nodes.get('#plain-attempt-next').disabled,true);nodes.get('#plain-attempt-next').click();assert.equal(nodes.get('#plain-attempt-label').textContent,'Refinement 3');
 for(let i=0;i<3;i++)nodes.get('#plain-attempt-prev').click();assert.equal(nodes.get('#plain-attempt-prev').disabled,true);nodes.get('#plain-attempt-prev').click();assert.equal(nodes.get('#plain-attempt-label').textContent,'One-shot');
-nodes.get('#add-ingredients').click();assert.equal(nodes.get('#dice-lab').hidden,false);assert.equal(nodes.get('#plain-lab').hidden,true);assert.equal(nodes.get('#dice-deck').hidden,false);assert.equal(nodes.get('#dice-controls').hidden,false);assert.equal(nodes.get('#atlas').hidden,false);assert.equal(document.activeElement,nodes.get('#pair-title'));
+nodes.get('#add-ingredients').click();assert.equal(nodes.get('#dice-lab').hidden,false);assert.equal(nodes.get('#plain-lab').hidden,true);assert.equal(nodes.get('#dice-deck').hidden,false);assert.equal(nodes.get('#stage-bar').hidden,false);assert.equal(nodes.get('#atlas').hidden,false);assert.equal(document.activeElement,nodes.get('#pair-title'));
 for(const observer of observers)observer.callback(observer.observed.map(target=>({target,contentRect:{width:140}})));
 vm.runInContext(`
 for(const track of ['stronger','original']){
@@ -132,25 +132,27 @@ nodes.get('#stage-0').click();assert.equal(introMode,true);assert.equal(stage,1)
 assert.equal(nodes.get('#stage-0').attrs['aria-pressed'],'true');assert.equal(nodes.get('#compare').disabled,true);
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,currentBaseline().steps[0].html);
 const rememberedPair=selected;
-nodes.get('#experiment-next').click();assert.equal(introMode,false);assert.equal(selected,rememberedPair);assert.equal(stage,1);
-nodes.get('#guide-toggle').click();assert.equal(hintsOpen,true);assert.equal(nodes.get('#walkthrough-title').textContent,'Dice added');
+// Adding randomness from the plain page rolls a fresh pair; the Dice chapter returns to the last one.
+nodes.get('#stage-1').click();assert.equal(introMode,false);assert.equal(selected,rememberedPair);assert.equal(stage,1);
+assert.equal(nodes.get('#story-title').textContent,'Now add randomness.');assert.equal(nodes.get('#reset').hidden,false);
 for(let next=2;next<=4;next++){
- assert.equal(nodes.get('#next-label').textContent,next===2?'Lean into it':'Again, same prompt');
+ assert.equal(nodes.get('#next-label').textContent,next===2?'Refine it':'Again, same prompt');
  assert.equal(nodes.get('#next-cue').textContent,'+'+(next-1));
  nodes.get('#experiment-next').click();assert.equal(stage,next);assert.equal(selected,rememberedPair);
- assert.equal(nodes.get('#walkthrough-count').textContent,(next+1)+' / 5');
  assert.equal(nodes.get('#stage-'+next).attrs['aria-pressed'],'true');
+ if(selected.steps[next-1].html!==selected.steps[next-2].html)assert.equal(nodes.get('#story-title').textContent,['','','Now refine it.','Again.','And again.'][next]);
 }
 assert.equal(nodes.get('#next-label').textContent,'Roll a new pair');assert.equal(nodes.get('#next-cue').textContent,'→');
 const finishedPair=selected;nodes.get('#experiment-next').click();assert.equal(stage,1);assert.notEqual(selected,finishedPair);
-nodes.get('#walkthrough-close').click();assert.equal(hintsOpen,false);assert.equal(document.activeElement,nodes.get('#guide-toggle'));
-const closedPair=selected;nodes.get('#guide-toggle').click();assert.equal(hintsOpen,true);assert.equal(selected,closedPair);assert.equal(stage,1);
-nodes.get('#stage-3').click();assert.equal(stage,3);assert.equal(nodes.get('#walkthrough-title').textContent,'Refinement 2');
-nodes.get('#stage-0').click();nodes.get('#stage-1').click();assert.equal(selected,closedPair);assert.equal(stage,1);
+const resetPair=selected;nodes.get('#reset').click();assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#story-title').textContent,'One prompt. One page.');assert.equal(document.activeElement,nodes.get('#experiment-next'));
+assert.equal(nodes.get('#next-label').textContent,'Add randomness');
+nodes.get('#experiment-next').click();assert.equal(introMode,false);assert.equal(stage,1);
+nodes.get('#stage-3').click();assert.equal(stage,3);
+const closedPair=selected;nodes.get('#stage-0').click();nodes.get('#stage-1').click();assert.equal(selected,closedPair);assert.equal(stage,1);
 const priorMethod=method,priorPair=selected;method='original';
 const repeated=EXPERIMENT.runs.find(run=>run.steps.some((step,i)=>i>0&&step.html===run.steps[i-1].html));
-if(repeated){selected=repeated;stage=repeated.steps.findIndex((step,i)=>i>0&&step.html===repeated.steps[i-1].html)+1;showWalkthrough();assert.equal(nodes.get('#walkthrough-title').textContent,'No change this pass');}
-method=priorMethod;selected=priorPair;setHints(false);
+if(repeated){selected=repeated;stage=repeated.steps.findIndex((step,i)=>i>0&&step.html===repeated.steps[i-1].html)+1;showStory();assert.equal(nodes.get('#story-title').textContent,'No change this pass.');}
+method=priorMethod;selected=priorPair;
 stage=3;render();matrixButtons.get('0-4').click();assert.equal(stage,3);assert.equal(selected.id,'0-4');
 nodes.get('#atlas-ingredient').events.change({target:{value:'5'}});assert.equal(stage,3);assert.equal(selected.id,'5-4');
 stage=2;render();
@@ -165,7 +167,7 @@ for(let pass=1;pass<=4;pass++){
 assert.ok(nodes.get('#matrix').querySelector('iframe').style.transform.includes('0.16666'));
 assert.ok(!/id="roll"|id="view-dice"|lab-switch|sound-toggle|AudioContext|playDiceClatter/.test(read('play.js')+read('play.html')+read('dice.js')));
 assert.ok(!/id="expand"|id="plain-expand"|id="expanded"|attempt-select|Full size/.test(read('play.html')+read('play.js')));
-await nodes.get('#copy-link').click();assert.equal(copies.at(-1),context.location.href);assert.equal(nodes.get('#share-status').textContent,'Link copied');
+await nodes.get('#copy-link').click();assert.equal(copies.at(-1),context.location.href);assert.equal(nodes.get('#share-status').textContent,'Copied');
 await nodes.get('#copy-refinement').click();assert.equal(copies.at(-1),plainStrongerPrompt);
 assert.ok(!/Astra|Codex|Download HTML|Download experiment|Generation setup|generation-wrapper/.test(read('play.html')));
 console.log('PASS: both prompt trajectories and baselines, independent dice, all 288 ingredient stage views, exact prompts and share links, shared one-shots, stable comparison order and stage retention. '+(completedStronger?'All saved stronger outputs checked.':'Stronger fixtures used while generation is pending.'));
@@ -177,7 +179,7 @@ const guideTasks=new Map();let guideID=0;
 const home=vm.createContext({...context,document:homeDocument,nodes:homeNodes,location:{search:'',pathname:'/',href:'https://randomness-for-style.vercel.app/'},history:{replaceState(_a,_b,url){this.url=url}},setTimeout(fn,delay){const id=++guideID;guideTasks.set(id,{fn,delay});return id},clearTimeout(id){guideTasks.delete(id)}});
 vm.runInContext(read('report-handoff.js')+'\n'+read('play.js'),home);
 vm.runInContext(`
-assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#stage-2').disabled,true);assert.equal(hintsOpen,true);
+assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#stage-2').disabled,true);assert.equal(nodes.get('#story-title').textContent,'One prompt. One page.');assert.equal(nodes.get('#reset').hidden,true);
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,STRONGER_BASELINE.steps[0].html);
 assert.equal(nodes.get('#current-prompt').textContent,STRONGER_BASELINE.steps[0].prompt);
 assert.ok(history.url.includes('start=original'));assert.ok([...matrixButtons.values()].every(button=>button.attrs['aria-pressed']==='false'));
@@ -196,7 +198,7 @@ for(let left=0;left<6;left++)for(let right=0;right<6;right++){
 }
 randomIndex=secureDraw;
 `,home);
-console.log('PASS: plain-first home, shared later-stage bypass, original prompt identity, first two-die reveal, self-paced five-step hints without timers, subsequent independent rolls and gallery bypass.');
+console.log('PASS: plain-first home, shared later-stage bypass, original prompt identity, first two-die reveal, a five-step story headline without timers, reset to the plain page, subsequent independent rolls and gallery bypass.');
 vm.runInContext(`
 introMode=true;stage=1;selected=currentExperiment().runs[2];render();chooseDieFace(0,5);
 assert.equal(introMode,false);assert.equal(selected.id,'5-2');assert.equal(stage,1);

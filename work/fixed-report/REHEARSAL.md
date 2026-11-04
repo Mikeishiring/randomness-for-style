@@ -1,29 +1,24 @@
-# Rehearsal: repeated refinement
+# Rehearsal: narrative stage
 
-This is the working, user-paced experiment. Stage Show Demo's choreography and panel-annotation examples informed the fixed control footprint, changing text, persistent selection marker and contextual hint. Stage Show's working-interface rules govern the implementation. No simulated cursor or timed playback was added.
+A working, user-paced experience, not a recorded demo. Stage Show 1.1.0 (benjitaylor/skills) guided the working-UI craft: a sliding segmented selection, labels that change on the same button, and state changes that ease in. No simulated cursor or timed playback.
 
 ## Story
 
-Brief only → roll two ingredients → ingredient one-shot → three refinements. The first refinement action says “Lean into it · +1”; the next two say “Again, same prompt · +2 / +3.” The current step and next action remain distinct. The final result holds until the visitor acts.
+One headline per step, the report in the middle, one action below it.
 
-The report remains the focal object. The sidebar supplies the inputs and one next action. Exact prompts, comparison and hints remain accessible; the saved examples and prompts were not edited.
+1. **One prompt. One page.** The plain report and the brief it came from. Action: Add randomness.
+2. **Now add randomness.** The dice roll in from either side of the report and land on two ingredients. Click a die to swap that ingredient. Reset returns to the plain page; the dice leave the way they came.
+3. **Now refine it. / Again. / And again.** The same refinement prompt, three times. A pass that changed nothing says so.
+4. **Explore.** The chapters (Plain, Dice, +1, +2, +3) jump anywhere; Prompt, Compare and Share sit beside the action; all 36 combinations are below.
+
+Adding randomness from the plain page rolls a fresh pair. The Dice chapter returns to the last pair.
 
 ## Rehearsed
 
-- In-app browser at 1280 × 720 and 390 × 844: opening, dice result, all three refinements and held finale. Settled screenshots saved locally for each beat.
-- 320 × 760 and 820 × 760: longest ingredient names, longest action label, step-marker placement and no viewer horizontal overflow.
-- Keyboard activation and Escape dismissal; rapid jumps between stages; return to the brief and back; resize between phone and desktop.
-- Desktop action height stays 48px; phone action height stays 44px. The hint holds a 124px footprint. Desktop report top remains 24px throughout the sequence.
-- The marker uses measured button bounds, including fractional widths. Its transition can retarget; label motion only runs when that text changes. Reduced-motion and hidden-document paths cancel presentation motion.
-
-## Findings resolved
-
-- “Refine again” hid the repeated-input idea: the button now names the same prompt and the next pass number.
-- The selection underline jumped between buttons: one persistent marker now moves between them.
-- Action labels changed abruptly: changed spans settle within the same button footprint; repeated words stay still.
-- A long ingredient name wrapped its last letter onto a separate desktop line: adjusted label size and horizontal inset.
-- Hint size varied with its copy: its minimum height now holds the longest current message without shifting the report.
+- In-app browser at 1280 × 800: each beat, a die swap during refinement, Reset with the dice exit, the prompt panel and Compare.
+- 375 × 812: plain and dice steps; the dice sit side by side above the action and the report starts at 441px; no horizontal overflow.
+- Reports keep their reading position across steps and scroll together in Compare.
 
 ## Limits
 
-Browser screenshots and direct interaction were used, not a Stage-kit film or frame-by-frame gate. No physical touch device or browser reduced-motion emulation was used; motion guards and existing reduced-motion paths are covered by source and automated checks. Some untouched generated reports overflow inside their own narrow frames. These are preserved experimental outputs, not viewer layout regressions.
+The browser pane painted newly loaded report frames late, so several stills show a blank frame that filled in on the next capture. No physical touch device or reduced-motion emulation was used; the dice entrance and exit are skipped under reduced motion and when the page is hidden.

@@ -36,10 +36,10 @@ The recorded reports here use no personal design skills or supplied visual refer
 
 ## Explore
 
-- New visitors start with the plain one-shot. The first roll reveals two ingredients and their result.
-- Click a die to roll, drag slowly to choose its upper face, or flick to throw. Arrow keys turn it; Escape cancels a drag.
-- Follow the five steps beneath the dice: Brief only, Dice added, then +1, +2 and +3 refinements. The next-action button advances one step at a time; nothing advances on a timer.
-- Jump to any available step, or return to Brief only and back without losing your pair. Optional floating hints explain the current step without resizing the result.
+- The page opens on the plain one-shot: one prompt, one page. **Add randomness** rolls two dice in from either side of the report.
+- Click a die to roll it, drag slowly to choose its upper face, or flick to throw. Arrow keys turn it; Escape cancels a drag.
+- **Refine it** runs the same refinement prompt up to three times, one pass per click; nothing advances on a timer. **Reset** returns to the plain page.
+- The chapters at the top (Plain, Dice, +1, +2, +3) jump to any step without losing your pair.
 - Compare with the brief-only result, inspect the exact prompt and critique, browse all 36 combinations, or share a selected state.
 
 These are saved results, not live model calls. The original and stronger refinement sequences are both preserved. The stronger sequence restarts from the same one-shot in a fresh context. Generated reports were not manually restyled; unchanged passes and rough edges remain visible. The exact prompts and critiques are available so someone else can repeat the procedure.
