@@ -29,6 +29,9 @@ class Element{
  showModal(){this.open=true;}
  close(){this.open=false;this.events.close?.();}
  scrollIntoView(){}
+ // Report frames carry the saved document followed by the scroll bridge; assertions read the saved part.
+ set srcdoc(value){this.rawSrcdoc=value;}
+ get srcdoc(){return this.rawSrcdoc?.split('<script data-report-scroll>')[0];}
  click(){if(!this.disabled)return this.events.click?.();}
 }
 const nodes=new Map([...read('play.html').matchAll(/\bid="([^"]+)"/g)].map(m=>['#'+m[1],new Element()]));
@@ -37,7 +40,7 @@ nodes.set('#plain-prompt-details>summary',new Element('summary'));
 const visibleFrames=node=>node.children.filter(child=>!child.hidden).flatMap(child=>[...(child.tagName==='iframe'?[child]:[]),...visibleFrames(child)]);
 document={documentElement:{dataset:{}},events:{},addEventListener(k,v){(this.events[k]||=[]).push(v)},activeElement:null,querySelector:s=>nodes.get(s),querySelectorAll:()=>[],createElement:tag=>new Element(tag)};
 const observers=[],copies=[],downloads=[],rollout={defer:false,complete:null};
-const context=vm.createContext({assert,console,reduced:false,document,window:{addEventListener(){}},history:{replaceState(){}},navigator:{clipboard:{async writeText(text){copies.push(text)}}},URLSearchParams,location:{search:'?stage=4',pathname:'/index.html',href:'https://randomness-for-style.vercel.app/?pair=0-2&stage=2&prompt=stronger'},crypto:webcrypto,EXPERIMENT:experiment,BASELINE:baseline,STRONGER_EXPERIMENT:stronger.experiment,STRONGER_BASELINE:stronger.baseline,INGREDIENTS_A:ingredientsA,INGREDIENTS_B:ingredientsB,IntersectionObserver:function(){this.observe=()=>{}},ResizeObserver:function(callback){this.callback=callback;this.observed=[];this.observe=e=>this.observed.push(e);this.disconnect=()=>{this.observed=[]};observers.push(this)},inviteDice(){},bindPromptPeek(){return {close(){}}},showPrompt(pre,text){pre.textContent=text},matchMedia(query){return {matches:query.includes('prefers-reduced-motion')&&context.reduced,addEventListener(){}}},initDice3D(){},syncDice3D(){},cancelDiceRoll(){rollout.complete=null;},tumbleDice(indices,values,complete,gesture){rollout.indices=indices;rollout.values=values;rollout.gesture=gesture;if(rollout.defer)rollout.complete=complete;else complete();},Blob,URL:{createObjectURL(blob){downloads.push(blob);return 'blob:html'},revokeObjectURL(){}},setTimeout(){},clearTimeout(){},nodes,visibleFrames,rollout});
+const context=vm.createContext({assert,console,reduced:false,document,window:{listeners:{},addEventListener(k,v){(this.listeners[k]||=[]).push(v)}},history:{replaceState(){}},navigator:{clipboard:{async writeText(text){copies.push(text)}}},URLSearchParams,location:{search:'?stage=4',pathname:'/index.html',href:'https://randomness-for-style.vercel.app/?pair=0-2&stage=2&prompt=stronger'},crypto:webcrypto,EXPERIMENT:experiment,BASELINE:baseline,STRONGER_EXPERIMENT:stronger.experiment,STRONGER_BASELINE:stronger.baseline,INGREDIENTS_A:ingredientsA,INGREDIENTS_B:ingredientsB,IntersectionObserver:function(){this.observe=()=>{}},ResizeObserver:function(callback){this.callback=callback;this.observed=[];this.observe=e=>this.observed.push(e);this.disconnect=()=>{this.observed=[]};observers.push(this)},inviteDice(){},bindPromptPeek(){return {close(){}}},showPrompt(pre,text){pre.textContent=text},matchMedia(query){return {matches:query.includes('prefers-reduced-motion')&&context.reduced,addEventListener(){}}},initDice3D(){},syncDice3D(){},cancelDiceRoll(){rollout.complete=null;},tumbleDice(indices,values,complete,gesture){rollout.indices=indices;rollout.values=values;rollout.gesture=gesture;if(rollout.defer)rollout.complete=complete;else complete();},Blob,URL:{createObjectURL(blob){downloads.push(blob);return 'blob:html'},revokeObjectURL(){}},setTimeout(){},clearTimeout(){},nodes,visibleFrames,rollout});
 context.settleDieGrab=()=>{};
 vm.runInContext(read('report-handoff.js')+'\n'+read('play.js'),context);
 vm.runInContext(`
@@ -202,3 +205,20 @@ assert.equal(nodes.get('#refinement-rail').style['--step'],'4');
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[3].html);
 `,home);
 console.log('PASS: deliberate face choice preserves the other ingredient and refinement, bypasses the intro and updates the report and rail together.');
+vm.runInContext(`{
+comparing=false;introMode=false;view='dice';selected=currentExperiment().runs[0];stage=1;render();
+const message=(frame,data)=>window.listeners.message.forEach(fn=>fn({source:frame.contentWindow,data}));
+const listen=frame=>{const posts=[];frame.contentWindow={postMessage:m=>posts.push(m)};return posts;};
+const first=visibleFrames(nodes.get('#report-view'))[0];
+assert.ok(first.rawSrcdoc.startsWith(selected.steps[0].html));assert.ok(first.rawSrcdoc.includes('<script data-report-scroll>'));
+listen(first);message(first,{type:'report-scroll',ratio:.6});
+setAttempt(2);const second=visibleFrames(nodes.get('#report-view'))[0];assert.notEqual(second,first);
+const received=listen(second);message(second,{type:'report-ready'});
+assert.equal(received.length,1);assert.equal(received[0].type,'report-scroll-to');assert.equal(received[0].ratio,.6);
+comparing=true;comparison='plain';renderResult();const pair=visibleFrames(nodes.get('#report-view'));assert.equal(pair.length,2);
+const left=listen(pair[0]),right=listen(pair[1]);message(pair[0],{type:'report-scroll',ratio:.25});
+assert.equal(left.length,0);assert.equal(right.length,1);assert.equal(right[0].ratio,.25);
+message(pair[1],{type:'report-scroll',ratio:7});assert.equal(left[0].ratio,1);
+comparing=false;renderResult();
+}`,context);
+console.log('PASS: reports keep the reading position across steps and scroll together in comparison.');

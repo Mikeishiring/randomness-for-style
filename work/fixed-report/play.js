@@ -78,10 +78,28 @@ function updateURL(){
  if(introMode)query.set('start','original');
  try{history.replaceState(null,'',location.pathname+'?'+query);}catch{}
 }
+// Saved reports scroll inside sandboxed frames. A small bridge, appended after the saved
+// document, shares the reading position so a new step or a comparison opens at the same place.
+// A requested position is re-applied while the report's own layout settles, until the reader scrolls.
+const REPORT_SCROLL_BRIDGE='<script data-report-scroll>(()=>{let quietUntil=0,queued=false,target=null;const room=()=>Math.max(0,document.documentElement.scrollHeight-innerHeight);const apply=()=>{if(target===null)return;quietUntil=performance.now()+150;scrollTo({top:Math.round(target*room()),behavior:"instant"});};addEventListener("message",e=>{if(e.source!==parent||e.data?.type!=="report-scroll-to")return;target=e.data.ratio;apply();});addEventListener("scroll",()=>{if(performance.now()<quietUntil)return;target=null;if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;const r=room();parent.postMessage({type:"report-scroll",ratio:r?scrollY/r:0},"*");});},{passive:true});const settle=new ResizeObserver(apply);settle.observe(document.documentElement);if(document.body)settle.observe(document.body);addEventListener("load",()=>parent.postMessage({type:"report-ready"},"*"),{once:true});})();<\/script>';
+const reportScroll=new Map();
+function visibleReportFrames(container){const cache=previewCaches.get(container);return cache?[...cache.values()].filter(section=>!section.hidden).map(section=>section.querySelector('iframe')):[];}
+function scrollReport(frame,ratio){frame.contentWindow?.postMessage?.({type:'report-scroll-to',ratio},'*');}
+window.addEventListener('message',event=>{
+ const type=event.data?.type;if(type!=='report-ready'&&type!=='report-scroll')return;
+ for(const container of [$('#report-view'),$('#plain-report')]){
+  const frames=visibleReportFrames(container),source=frames.find(frame=>frame.contentWindow===event.source);
+  if(!source)continue;
+  if(type==='report-ready'){scrollReport(source,reportScroll.get(container)||0);return;}
+  const ratio=Math.min(1,Math.max(0,Number(event.data.ratio)||0));reportScroll.set(container,ratio);
+  frames.forEach(frame=>{if(frame!==source)scrollReport(frame,ratio);});
+  return;
+ }
+});
 function addReport(container,item,label){
  const section=document.createElement('section');section.className='frame-section';
  if(label){const title=document.createElement('h3');title.textContent=label;section.append(title);}
- const frame=document.createElement('iframe');frame.title=label||selected.label;frame.className='report-frame';frame.setAttribute('sandbox','allow-scripts');frame.addEventListener('load',()=>frame.dataset.loaded='true');frame.srcdoc=item.html;
+ const frame=document.createElement('iframe');frame.title=label||selected.label;frame.className='report-frame';frame.setAttribute('sandbox','allow-scripts');frame.addEventListener('load',()=>frame.dataset.loaded='true');frame.srcdoc=item.html+REPORT_SCROLL_BRIDGE;
  section.append(frame);container.append(section);
  return section;
 }
@@ -96,6 +114,7 @@ function showReports(container,entries){
   const heading=section.querySelector('h3');heading.textContent=label||'';heading.hidden=!label;
   section.querySelector('iframe').title=label||(/^(stronger-)?plain-/.test(item.file)?'Plain weekly report':selected.label);
   section.style.order=String(order);section.hidden=false;
+  const frame=section.querySelector('iframe');if(frame.dataset.loaded==='true')scrollReport(frame,reportScroll.get(container)||0);
   if(entries.length===1&&!label&&previous.length===1)handoffReport(container,previous[0],section);
  });
 }
