@@ -36,7 +36,8 @@ function syncRailMarker(animate=false){
  const target=button.getBoundingClientRect?.(),track=$('#rail-stops').getBoundingClientRect?.();
  if(!target?.width||!track)return;
  marker.style.transitionDuration=animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches?'220ms':'0ms';
- marker.style.width=target.width+'px';marker.style.transform='translateX('+(target.left-track.left)+'px)';
+ const first=$('#stage-0').getBoundingClientRect?.()||target;
+ marker.style.width=(target.right-first.left)+'px';marker.style.transform='translateX('+(first.left-track.left)+'px)';
 }
 const railResize=new ResizeObserver(()=>syncRailMarker());railResize.observe($('#rail-stops'));
 function settlePresentation(){settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
@@ -241,12 +242,13 @@ function nextIngredient(index,current){
  if(position<0){bag.length=0;return nextIngredient(index,current);}
  return bag.splice(position,1)[0];
 }
-function roll(index,gesture=null){
+function roll(index,gesture=null,forced=null){
  settlePresentation();
  const introduce=introMode;introMode=false;ingredientsChosen=true;
  if(introduce){stage=1;comparing=false;}
  const before=selected,indices=introduce?[0,1]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
- indices.forEach(i=>{values[i]=introduce?randomIndex(i?INGREDIENTS_B.length:INGREDIENTS_A.length):nextIngredient(i,values[i]);});
+ // The demo passes authored faces; every visitor roll stays random.
+ indices.forEach(i=>{values[i]=forced?.[i]??(introduce?randomIndex(i?INGREDIENTS_B.length:INGREDIENTS_A.length):nextIngredient(i,values[i]));});
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  // Selection is immediate. The dice acknowledge it without gating the report.
  render(false);

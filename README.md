@@ -36,6 +36,7 @@ The recorded reports here use no personal design skills or supplied visual refer
 
 ## Explore
 
+- A first visit plays the story once with a demo cursor on the real controls. Any click, tap, key or scroll takes over from exactly where it is; **Watch demo** replays it.
 - The page opens on the plain one-shot: one prompt, one page. **Add randomness** rolls two dice in from either side of the report.
 - Click a die to roll it, drag slowly to choose its upper face, or flick to throw. Arrow keys turn it; Escape cancels a drag.
 - **Refine it** runs the same refinement prompt up to three times, one pass per click; nothing advances on a timer. **Reset** returns to the plain page.

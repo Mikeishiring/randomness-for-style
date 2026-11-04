@@ -31,7 +31,10 @@
     <span id="rail-marker" class="rail-marker" aria-hidden="true"></span>
    </div>
   </nav>
-  <a class="topbar-link" href="#atlas">36 combinations ↓</a>
+  <div class="topbar-actions">
+   <button type="button" id="demo-toggle" class="demo-toggle" aria-pressed="false"><span class="demo-glyph" aria-hidden="true"></span><span id="demo-label">Watch demo</span></button>
+   <a class="topbar-link" href="#atlas">36 combinations ↓</a>
+  </div>
  </header>
  <main id="play">
   <h1 class="sr-only">Randomness for Style</h1>
@@ -45,7 +48,7 @@
     <span id="dice-gesture-help" class="sr-only">Click or press Enter to roll. Drag slowly to choose the upper face; release quickly to throw. Arrow keys turn the die. Escape cancels a drag.</span>
    </section>
    <section id="dice-lab" class="result" aria-labelledby="pair-title"><h2 id="pair-title" class="sr-only" tabindex="-1"></h2>
-    <div id="report-view"></div>
+    <div id="report-view"><span class="report-sweep" aria-hidden="true"></span></div>
    </section>
    <div id="stage-bar" class="stage-bar">
     <button type="button" id="reset" class="reset" aria-label="Reset to the plain page"><span aria-hidden="true">↺</span> Reset</button>
@@ -73,5 +76,6 @@
  <footer><a href="previous-experiment.html">Earlier versions ↗</a></footer>
 </div>
 <p id="status" class="sr-only" role="status"></p>
+<div id="demo-cursor" class="demo-cursor" aria-hidden="true" hidden><svg class="demo-arrow" viewBox="0 0 24 24" width="24" height="24"><path d="M5.5 3.2v15.6l4.2-4.1 2.7 6.1 2.6-1.1-2.7-6h5.9z"/></svg><span class="demo-ring"></span><span class="demo-touch"></span></div>
 <script>/* APP_JS */</script>
 </body></html>

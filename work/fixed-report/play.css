@@ -1,10 +1,14 @@
 /* Narrative stage: one headline, the report in the middle, the dice either side, one action below. */
-:root{--serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;--sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--ease-out:cubic-bezier(.23,1,.32,1)}
+:root{--ink:#1d261e;--accent:#c2432a;--mono:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace;--serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;--sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--ease-out:cubic-bezier(.23,1,.32,1)}
 body{font-family:var(--sans);overflow-x:clip}
 .shell{max-width:1560px;padding:0 32px 24px}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:64px;border-bottom:1px solid var(--line)}
 .brand{font:600 15px/1.2 var(--sans);letter-spacing:-.2px}
+.topbar-actions{display:flex;align-items:center;gap:18px}
 .topbar-link{font-size:13px;color:var(--muted);text-decoration:none;min-height:40px;display:flex;align-items:center}
+.demo-toggle{display:inline-flex;align-items:center;gap:9px;min-height:36px;padding:0 14px 0 12px;border:1px solid #cfd0c3;border-radius:999px;background:transparent;color:var(--ink);font:500 13px var(--sans);transition:background 150ms ease-out,border-color 150ms ease-out}
+.demo-glyph{width:8px;height:9px;background:currentColor;clip-path:polygon(0 0,100% 50%,0 100%);transition:clip-path 160ms var(--ease-out),background 160ms ease-out}
+.demo-toggle[aria-pressed=true] .demo-glyph{clip-path:polygon(0 0,100% 0,100% 100%,0 100%);background:var(--accent);width:8px;height:8px;border-radius:1px}
 .story{text-align:center;padding:22px 16px 18px}
 #story-title{font:400 clamp(34px,4vw,54px)/1.05 var(--serif);letter-spacing:-.02em;margin:0;text-wrap:balance}
 #story-text{margin:8px auto 0;max-width:620px;min-height:3em;font:15px/1.5 var(--sans);color:var(--muted);text-wrap:balance}
@@ -22,6 +26,9 @@ body{font-family:var(--sans);overflow-x:clip}
 .result{min-width:0}
 .report-frame{height:clamp(420px,calc(100dvh - 304px),900px);background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px #25301c0d,0 12px 32px -18px #25301c33}
 #report-view,#plain-report{position:relative;isolation:isolate}
+.report-frame{transition:opacity 260ms ease-out}.report-frame:not([data-loaded=true]){opacity:0}
+/* The reveal line rides the boundary as the previous page is wiped away. */
+.report-sweep{position:absolute;left:-1px;right:-1px;top:0;height:2px;border-radius:2px;background:var(--accent);box-shadow:0 8px 18px -6px #c2432a99;opacity:0;z-index:3;pointer-events:none}
 .frame-section.report-outgoing{position:absolute;inset:0;z-index:2;pointer-events:none}
 #report-view.comparing{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .frame-section h3{font:500 12px var(--sans);margin:0 0 8px;min-height:16px;color:var(--muted)}
@@ -33,8 +40,9 @@ body{font-family:var(--sans);overflow-x:clip}
 .experiment-next{grid-area:next;display:flex;align-items:center;justify-content:space-between;gap:18px;min-width:230px;height:48px;padding:0 20px 0 24px;border:0;border-radius:999px;background:var(--ink);color:var(--paper);font:600 15px/1 var(--sans);box-shadow:0 1px 2px #1a24151f,0 6px 16px -8px #1a241566;transition:background 150ms ease-out,transform 120ms var(--ease-out)}
 .experiment-next:active{transform:scale(.97)}
 #next-label{display:block;white-space:nowrap}
-.next-cue{display:block;flex:none;min-width:24px;text-align:right;font:600 14px/1 var(--sans);font-variant-numeric:tabular-nums;opacity:.72}
-.experiment-next[data-action=roll] .next-cue{font-size:18px;font-weight:400}
+.next-cue{display:block;flex:none;min-width:30px;padding:5px 7px;border-radius:7px;background:#f4f2ea1f;text-align:center;font:600 12px/1 var(--mono);font-variant-numeric:tabular-nums}
+.experiment-next[data-action=roll] .next-cue{background:none;padding:0;font:400 18px/1 var(--sans);text-align:right}
+.experiment-next.is-demo-hover{background:#121a13}.experiment-next.is-demo-press{transform:scale(.97)}
 .experiment-tools{grid-area:bar;justify-self:end;align-self:center;position:relative;display:flex;align-items:center;gap:2px}
 .experiment-tools #dice-controls{display:block;padding:0}
 .experiment-tools .prompt-peek{position:static;margin:0;border:0}
@@ -45,15 +53,36 @@ body{font-family:var(--sans);overflow-x:clip}
 #share-status{position:absolute;right:12px;top:100%;font-size:11px;color:var(--muted)}#share-status:empty{display:none}
 #compare-target{max-width:none;margin:4px 0 0}
 
-/* Chapters: one segmented track whose selection slides. */
+/* Chapters: a progress rule. The ink fills from the start to the current step. */
 .chapters{min-width:0}
-.rail-stops{position:relative;display:flex;gap:2px;padding:3px;border-radius:999px;background:#e9ebdf}
-.rail-stops button{position:relative;z-index:1;min-width:44px;min-height:34px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:#59644f;font:500 13px/1 var(--sans);white-space:nowrap;transition:color 150ms ease-out,background 150ms ease-out}
-.rail-stops button:nth-child(3){margin-left:9px}
-.rail-stops button:nth-child(3):before{content:'';position:absolute;left:-6px;top:9px;bottom:9px;width:1px;background:#c6ccbb}
-.rail-stops button[aria-pressed=true]{color:var(--paper)}
-.rail-stops button:disabled{opacity:.38}
-.rail-marker{position:absolute;top:3px;bottom:3px;left:0;background:var(--ink);border-radius:999px;box-shadow:0 1px 3px #29352226;z-index:0;pointer-events:none;transition:transform 240ms var(--ease-out),width 240ms var(--ease-out)}
+.rail-stops{position:relative;display:flex;gap:2px;padding:0 0 9px}
+.rail-stops:after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--line)}
+.rail-stops button{position:relative;min-width:40px;min-height:34px;padding:0 10px;border:0;border-radius:6px;background:transparent;color:var(--muted);font:500 13px/1 var(--sans);white-space:nowrap;transition:color 150ms ease-out,background 150ms ease-out}
+.rail-stops button:nth-child(3){margin-left:12px}
+.rail-stops button:nth-child(n+3){font-family:var(--mono);font-size:12px}
+.rail-stops button[aria-pressed=true]{color:var(--ink)}
+.rail-stops button:disabled{opacity:.35}
+.rail-marker{position:absolute;bottom:-1px;left:0;height:3px;border-radius:2px;background:var(--ink);z-index:1;pointer-events:none;transition:transform 260ms var(--ease-out),width 260ms var(--ease-out)}
+.rail-marker:after{content:'';position:absolute;right:-1px;top:50%;width:7px;height:7px;border-radius:50%;background:var(--accent);transform:translate(50%,-50%);box-shadow:0 0 0 2px var(--paper)}
+
+/* Dice: two precise objects, one ink and one vermilion, sharing light, edge and type. */
+.dice .die .die-object{color:#f4f1e8}
+.dice .die:first-child .cube-face,.dice .die:nth-child(2) .cube-face{border-radius:18%;border:1px solid #0f1610;background:linear-gradient(150deg,#33423a 0%,#212c23 48%,#19221b 100%);box-shadow:inset 0 1px 0 #ffffff26,inset 0 0 0 1px #ffffff0a,inset 0 -6px 12px #00000026}
+.dice .die:nth-child(2) .cube-face{border-color:#8a2814;background:linear-gradient(150deg,#d9603d 0%,#c2432a 50%,#a83620 100%);box-shadow:inset 0 1px 0 #ffffff40,inset 0 0 0 1px #ffffff12,inset 0 -6px 12px #5a170a33}
+.dice .cube-face svg{width:54%;height:54%;margin-top:-6px;opacity:.96}
+.dice .cube-face small{bottom:9%;font:500 9px/1 var(--mono);letter-spacing:.14em;opacity:.62}
+.dice .die-shadow{background:radial-gradient(closest-side,#1d261e5c,#1d261e00);filter:none}
+.dice .die-object[data-hover] .cube-face,.dice .die-object:focus-visible .cube-face{border-color:#000}
+.dice .die:nth-child(2) .die-object[data-hover] .cube-face{border-color:#6e1f0f}
+.die-object.is-demo-press .die-grip{transform:translateY(2px);transition-duration:65ms}
+
+/* Demo cursor: drawn above the page, never hit-testable. */
+.demo-cursor{position:fixed;left:0;top:0;z-index:60;pointer-events:none;will-change:transform}
+.demo-arrow{display:block;fill:var(--ink);stroke:#fff;stroke-width:1.5;stroke-linejoin:round;filter:drop-shadow(0 2px 3px #1d261e45);transform:translate(-5.5px,-3.2px);transform-origin:5.5px 3.2px;transition:transform 90ms ease-out}
+.demo-cursor.pressing .demo-arrow{transform:translate(-5.5px,-3.2px) scale(.86)}
+.demo-ring{position:absolute;left:0;top:0;width:46px;height:46px;border-radius:50%;border:2px solid var(--accent);opacity:0;transform:translate(-50%,-50%)}
+.demo-touch{display:none}
+@media(pointer:coarse){.demo-arrow{display:none}.demo-touch{display:block;position:absolute;left:0;top:0;width:38px;height:38px;border-radius:50%;background:#1d261e2e;border:2px solid #ffffffd9;box-shadow:0 2px 8px #1d261e33;transform:translate(-50%,-50%);transition:transform 90ms ease-out}.demo-cursor.pressing .demo-touch{transform:translate(-50%,-50%) scale(.84)}}
 
 /* Plain-prompt view keeps its own controls beside the report. */
 [data-view=plain] .workbench{grid-template-columns:232px minmax(0,1fr);grid-template-areas:"sidebar result";align-items:start;margin-top:28px}
@@ -134,7 +163,8 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  .die-object:hover .cube-face{border-color:currentColor}
  .matrix-cell:hover{border-color:var(--accent)}.matrix-cell:hover .matrix-select{background:#e9ecdf}
  summary:hover,.return-to-dice:hover,.topbar-link:hover{color:var(--ink)}
- .rail-stops button:not(:disabled):not([aria-pressed=true]):hover{background:#dde3d4}
+ .rail-stops button:not(:disabled):not([aria-pressed=true]):hover{color:var(--ink);background:#e7e8de}
+ .demo-toggle:hover{background:#e7e8de;border-color:#b9bcad}
  .experiment-next:hover{background:#1e2c1f}
  .reset:hover,.experiment-tools>button:not(:disabled):hover,.experiment-tools .prompt-trigger:hover{background:#e5e9dd;color:var(--ink)}
  .prompt-panel header button:hover{background:#e9ecdf}
@@ -149,7 +179,8 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 @media(max-width:860px){
  .shell{padding:0 16px 16px}
  .topbar{flex-wrap:wrap;gap:6px 16px;padding:10px 0 12px}
- .chapters{order:3;width:100%}.rail-stops button{flex:1;padding:0 6px}
+ .chapters{order:3;width:100%}.rail-stops button{flex:1;padding:0 4px;min-width:0}.rail-stops button:nth-child(3){margin-left:6px}
+ .demo-toggle{min-height:34px;padding:0 12px 0 10px}
  .story{padding:16px 4px 10px}#story-title{font-size:30px}#story-text{font-size:14px;margin-top:6px}
  .workbench{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"left right" "bar bar" "report report" "tools tools";column-gap:12px;row-gap:12px}
  [data-journey=original] .dice-deck:not(.leaving) .die{display:none}
@@ -168,4 +199,4 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 @media(max-width:860px){[data-journey=original] .stage-bar{grid-template-columns:minmax(0,1fr);grid-template-areas:"next"}}
 @media(max-width:560px){.report-frame{height:520px}.matrix{gap:12px}.matrix-select{font-size:12px;gap:5px;padding:10px;min-height:48px}.notes pre{font-size:11px}}
 @media(max-width:400px){.atlas>header{display:block}#atlas-ingredient{display:block;width:100%;max-width:none;margin-top:12px}.topbar-link{display:none}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.die-grip{transform:none!important;transition:none!important}.matrix-cell,.rail-stops button,.rail-marker,.experiment-next,.reset,.experiment-tools>button{transition:none!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.die-grip{transform:none!important;transition:none!important}.matrix-cell,.rail-stops button,.rail-marker,.experiment-next,.reset,.experiment-tools>button,.report-frame,.demo-arrow,.demo-touch,.demo-glyph{transition:none!important}}
