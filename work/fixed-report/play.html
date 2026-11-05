@@ -23,7 +23,8 @@
   <h1 class="sr-only">Randomness for Style</h1>
   <div id="story" class="story" aria-live="polite" aria-atomic="true"><h2 id="story-title"></h2><p id="story-text"></p></div>
   <div class="workbench">
-   <p id="pointer-note" class="pointer-note" data-side="above" hidden><span class="pointer-card"><strong id="pointer-text"></strong><span id="pointer-sub"></span></span><i class="pointer-leader"></i><i class="pointer-dot"></i></p>
+   <span id="die-call" class="die-call" aria-hidden="true" hidden>Click me</span>
+   <p id="pointer-note" class="pointer-note" data-side="above" hidden><span class="pointer-card"><strong id="pointer-text"></strong><span id="pointer-sub"></span><span id="pointer-action" class="pointer-action" hidden></span></span><i class="pointer-leader"></i><i class="pointer-dot"></i></p>
    <section id="dice-deck" class="dice-deck" aria-label="Ingredients">
     <div class="dice">
      <div class="die"><div class="die-top"><span>Ingredient 1</span></div><strong id="ingredient-a"></strong></div>
@@ -36,7 +37,7 @@
    </section>
    <div id="stage-bar" class="stage-bar">
     <button type="button" id="reset" class="reset" aria-label="Reset to the plain page"><span aria-hidden="true">↺</span> Reset</button>
-    <button type="button" id="experiment-next" class="experiment-next" data-action="roll"><span id="next-label">Add randomness</span><span id="next-cue" class="next-cue" aria-hidden="true">→</span></button>
+    <button type="button" id="experiment-next" class="experiment-next" data-action="roll"><span id="next-label">Add randomness</span><span id="next-cue" class="next-cue" aria-hidden="true">→</span><span class="next-pips" aria-hidden="true"><i></i><i></i><i></i></span></button>
     <button type="button" id="compare" title="Compare with brief only" aria-pressed="false" aria-label="Compare with brief only" aria-controls="report-view compare-target">Compare</button>
    </div>
    <nav id="refinement-rail" class="chapters" aria-label="Experiment steps">

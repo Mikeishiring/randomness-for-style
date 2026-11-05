@@ -21,6 +21,8 @@ Refinement has momentum: the action is a large button that fires a sheen when pr
 
 Adding randomness from the plain page rolls a fresh pair. The Dice chapter returns to the last pair.
 
+The story cards speak to the visitor and carry the next move: clicking a card (or Enter on it) rolls the first die, rolls the second, refines, or compares. The narration says back what the visitor actually did, so breaking the story's order still explains where you are: "You added Greek myths. It is now part of the style brief. Roll the second die.", "You swapped in Disco.", "You chose Opera.", "You picked Cthulhu × Tech." Moving through the passes returns it to the refinement narration. The die waiting to be rolled carries a floating, gently bobbing Click me. Under the report the refine button stands alone, with three pass pips; Reset sits bottom left and Compare bottom right once the pair has made a page, and the story card sits beside the button. Cards are kept inside the window. Reset is narrated too: "Back to plain."
+
 ## Demo and takeover
 
 A first visit (no query, motion allowed) plays the story once with a cursor: read the plain page, click the first die (Cthulhu), click the second (Fast food), refine three times, compare the third pass with the plain page side by side, then step aside and point at a die: "Your turn". The demo drives the real state functions, so a visitor's pointer, tap, key or scroll stops it at once and keeps whatever is on screen. **Watch demo** replays it; it pauses with a hidden tab and stops when the width changes. Reduced motion never autoplays.

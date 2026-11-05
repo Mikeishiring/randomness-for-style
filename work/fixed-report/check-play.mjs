@@ -136,7 +136,7 @@ const rememberedPair=selected;
 nodes.get('#stage-1').click();assert.equal(introMode,false);assert.equal(selected,rememberedPair);assert.equal(stage,1);
 assert.equal(nodes.get('#story-title').textContent,'Now add randomness.');assert.equal(nodes.get('#reset').hidden,false);
 for(let next=2;next<=4;next++){
- assert.equal(nodes.get('#next-label').textContent,next===2?'Refine it':'Again, same prompt');
+ assert.equal(nodes.get('#next-label').textContent,['','','Refine it','Refine again','One more pass'][next]);
  assert.equal(nodes.get('#next-cue').textContent,'+'+(next-1));
  nodes.get('#experiment-next').click();assert.equal(stage,next);assert.equal(selected,rememberedPair);
  assert.equal(nodes.get('#stage-'+next).attrs['aria-pressed'],'true');
@@ -225,3 +225,15 @@ message(pair[1],{type:'report-scroll',ratio:7});assert.equal(left[0].ratio,1);
 comparing=false;renderResult();
 }`,context);
 console.log('PASS: reports keep the reading position across steps and scroll together in comparison.');
+vm.runInContext(`{
+pointer.custom=null;comparing=false;view='dice';introMode=true;halfway=false;stage=1;render();
+assert.equal(pointerSpec().title,'Plain prompt, plain page.');assert.equal(pointerSpec().action.label,'Roll the first die');
+roll(0,null,[3]);assert.equal(halfway,true);assert.equal(pointerSpec().title,'You added randomness: Bureaucracy.');assert.equal(pointerSpec().action.label,'Roll the second die');
+roll(0,null,[2]);assert.equal(pointerSpec().title,'Swapped for Weather.');
+roll(1,null,[undefined,0]);assert.equal(introMode,false);assert.equal(pointerSpec().title,'Weather × Tech.');assert.equal(pointerSpec().action.label,'Refine it');
+roll(1,null,[undefined,1]);assert.equal(pointerSpec().title,'Swapped in Disco.');
+setAttempt(2);assert.equal(pointerSpec().title,'Refined once.');
+setAttempt(4);assert.equal(pointerSpec().action.label,'Compare with plain');
+showBrief();assert.equal(pointerSpec().title,'Back to plain.');
+}`,context);
+console.log('PASS: the narration says back each roll, swap and pass, and the last card carries Compare.');

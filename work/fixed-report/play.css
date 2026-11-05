@@ -15,7 +15,7 @@ body{font-family:var(--sans);overflow-x:clip}
 #story-title{font:400 clamp(34px,4vw,54px)/1.05 var(--serif);letter-spacing:-.02em;margin:0;text-wrap:balance}
 #story-text{margin:8px auto 0;max-width:620px;min-height:3em;font:15px/1.5 var(--sans);color:var(--muted);text-wrap:balance}
 
-.workbench{position:relative;display:grid;grid-template-columns:minmax(210px,1fr) minmax(0,860px) minmax(210px,1fr);grid-template-areas:"left report right" ". bar ." ". steps .";column-gap:24px;row-gap:12px;align-items:center}
+.workbench{position:relative;display:grid;grid-template-columns:minmax(210px,1fr) minmax(0,860px) minmax(210px,1fr);grid-template-areas:"left report right" "reset bar compare" ". steps .";column-gap:24px;row-gap:20px;align-items:center}
 .dice-deck,.dice{display:contents}
 .die{min-width:0;text-align:center}
 .die:first-child{grid-area:left}.die:nth-child(2){grid-area:right}
@@ -26,7 +26,7 @@ body{font-family:var(--sans);overflow-x:clip}
 [data-journey=original] .die:nth-child(2):not(.leaving){visibility:hidden}
 #dice-lab{grid-area:report;min-width:0}
 .result{min-width:0}
-.report-frame{height:clamp(420px,calc(100dvh - 250px),880px);background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px #25301c0d,0 12px 32px -18px #25301c33}
+.report-frame{height:clamp(400px,calc(100dvh - 272px),860px);background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px #25301c0d,0 12px 32px -18px #25301c33}
 #report-view,#plain-report{position:relative;isolation:isolate}
 #report-view{margin-top:28px}
 /* Each refinement pass leaves a sheet behind the report, so the passes accumulate visibly. */
@@ -48,14 +48,17 @@ body{font-family:var(--sans);overflow-x:clip}
 .frame-section h3{font:500 12px var(--sans);margin:0 0 8px;min-height:16px;color:var(--muted)}
 
 /* One action, with reset and the occasional tools at its sides. */
-/* The bar under the report: Reset, the action in the centre, Compare beside it. */
-.stage-bar{grid-area:bar;display:grid;grid-template-columns:1fr auto 1fr;grid-template-areas:"reset next compare";align-items:center;gap:16px}
-#experiment-next{grid-area:next}
-#reset{grid-area:reset;justify-self:end}
-#compare{grid-area:compare;justify-self:start}
+/* The action stands alone under the report. Reset sits under the first die; Compare, once the pair has
+   made a page, under the second. */
+.stage-bar{display:contents}
+#experiment-next{grid-area:bar;justify-self:center}
+#reset{grid-area:reset;justify-self:start}
+#compare{grid-area:compare;justify-self:end}
+/* Reset and Compare belong to a page made by the pair; before that the dice are the whole story. */
+[data-journey=half] #reset{visibility:hidden}
 /* While the dice are the action, the button steps back; it appears for refinement. */
 [data-journey=original] #experiment-next,[data-journey=half] #experiment-next,[data-journey=original] #compare,[data-journey=half] #compare{visibility:hidden}
-#compare{min-height:44px;padding:0 16px;border:1.5px solid #cfcdbf;border-radius:10px;background:transparent;color:var(--ink);font:600 14px var(--sans);transition:background 180ms ease-out,border-color 180ms ease-out,color 180ms ease-out}
+#compare{min-height:44px;padding:0 18px;border:1.5px solid #cfcdbf;border-radius:10px;background:transparent;color:var(--ink);font:600 14px var(--sans);transition:background 180ms ease-out,border-color 180ms ease-out,color 180ms ease-out}
 #compare[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--paper)}#compare:disabled{opacity:.4}
 .reset{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px 0 8px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:500 14px var(--sans);transition:background 180ms ease-out,color 180ms ease-out}
 .reset span{display:inline-block;transition:transform 260ms var(--ease-out)}
@@ -73,6 +76,11 @@ body{font-family:var(--sans);overflow-x:clip}
 #next-label{display:block;white-space:nowrap}
 .next-cue{display:grid;place-items:center;flex:none;min-width:46px;height:40px;padding:0 10px;border-radius:8px;background:#00000026;color:#fff;font:650 15px/1 var(--mono);font-variant-numeric:tabular-nums}
 .experiment-next[data-action=roll] .next-cue{font:400 21px/1 var(--sans)}
+/* Refining shows passes as three pips: done, the one this press makes, and what is left. */
+.next-pips{display:none;gap:7px;padding:0 6px}.next-pips i{width:12px;height:12px;border-radius:50%;border:2px solid #ffffffa6;box-sizing:border-box;transition:background 200ms ease-out,border-color 200ms ease-out,transform 260ms var(--ease-out)}
+.experiment-next[data-action=refine] .next-cue{display:none}.experiment-next[data-action=refine] .next-pips{display:flex}
+.experiment-next[data-passes='1'] .next-pips i:nth-child(-n+1),.experiment-next[data-passes='2'] .next-pips i:nth-child(-n+2){background:#fff;border-color:#fff}
+.experiment-next[data-passes='0'] .next-pips i:nth-child(1),.experiment-next[data-passes='1'] .next-pips i:nth-child(2),.experiment-next[data-passes='2'] .next-pips i:nth-child(3){border-color:#fff;transform:scale(1.15)}
 .experiment-next.is-demo-hover{background:#d14c31}
 .page-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:8px;padding:14px 0;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
 .page-footer>a{font-size:12px;color:var(--muted);text-decoration:none}
@@ -101,7 +109,7 @@ body{font-family:var(--sans);overflow-x:clip}
 
 /* Dice: two precise objects, one ink and one vermilion, sharing light, edge and type. */
 .dice .die .die-object{color:#f4f1e8}
-.dice .die:first-child .cube-face,.dice .die:nth-child(2) .cube-face{inset:calc(var(--size)*.075);border-radius:3px;border:0;background:#243026;box-shadow:inset 0 0 0 1px #ffffff0d}
+.dice .die:first-child .cube-face,.dice .die:nth-child(2) .cube-face{inset:calc(var(--size)*.068);border-radius:3px;border:0;background:#243026;box-shadow:inset 0 0 0 1px #ffffff0d}
 .dice .die:nth-child(2) .cube-face{background:#c2432a;box-shadow:inset 0 0 0 1px #ffffff14}
 .cube-bevel,.cube-corner{position:absolute;left:50%;top:50%;background:#243026;backface-visibility:hidden}
 .dice .die:nth-child(2) .cube-bevel,.dice .die:nth-child(2) .cube-corner{background:#c2432a}
@@ -117,21 +125,31 @@ body{font-family:var(--sans);overflow-x:clip}
 
 /* Pointing label: a paper card at the end of a vermilion leader, with a dot on the object it names. */
 .pointer-note{position:absolute;left:0;top:0;z-index:4;margin:0;pointer-events:none}
-.pointer-card{display:grid;gap:3px;width:max-content;max-width:200px;padding:11px 14px 12px;border-radius:10px;background:#fffdf8;border:1px solid #e3e0d3;box-shadow:0 1px 2px #1d261e12,0 16px 30px -18px #1d261e66}
-#pointer-text{font:600 15px/1.2 var(--sans);letter-spacing:-.1px;color:var(--ink)}#pointer-sub{font:13px/1.35 var(--sans);color:var(--muted)}#pointer-sub:empty{display:none}
+.pointer-card{display:grid;gap:5px;width:max-content;max-width:280px;padding:15px 19px 16px;border-radius:12px;pointer-events:none;transition:transform 180ms var(--ease-out),box-shadow 180ms ease-out,border-color 180ms ease-out;background:#fffdf8;border:1px solid #e3e0d3;box-shadow:0 1px 2px #1d261e12,0 16px 30px -18px #1d261e66}
+#pointer-text{font:600 18px/1.2 var(--sans);letter-spacing:-.2px;color:var(--ink)}#pointer-sub{font:15px/1.4 var(--sans);color:var(--muted)}
+.pointer-card[data-actionable=true]{pointer-events:auto;cursor:pointer}
+.pointer-card:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.pointer-action{justify-self:start;margin-top:8px;padding-top:9px;border-top:1px solid #ebe7da;width:100%;color:var(--accent);font:600 15px/1.2 var(--sans);transition:color 180ms ease-out}
+@media(hover:hover) and (pointer:fine){.pointer-card[data-actionable=true]:hover{transform:translateY(-2px);border-color:#e6b9aa;box-shadow:0 1px 2px #1d261e12,0 20px 34px -18px #8c2a1670}.pointer-card[data-actionable=true]:hover .pointer-action{color:#a8361f}}
+.pointer-card[data-actionable=true]:active{transform:translateY(1px)}#pointer-sub:empty{display:none}
 .pointer-leader,.pointer-dot{position:absolute;display:block}
 .pointer-leader{background:var(--accent)}
-.pointer-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--paper),0 0 0 6px #c2432a26;transform:translate(-50%,-50%)}
-.pointer-note[data-side=left] .pointer-leader{left:100%;top:50%;width:26px;height:2px;margin-top:-1px;transform-origin:100% 50%}
-.pointer-note[data-side=left] .pointer-dot{left:calc(100% + 26px);top:50%}
-.pointer-note[data-side=right] .pointer-leader{right:100%;top:50%;width:26px;height:2px;margin-top:-1px;transform-origin:0 50%}
-.pointer-note[data-side=right] .pointer-dot{left:-26px;top:50%}
-.pointer-note[data-side=above] .pointer-leader{left:50%;top:100%;width:2px;height:26px;margin-left:-1px;transform-origin:50% 100%}
-.pointer-note[data-side=above] .pointer-dot{left:50%;top:calc(100% + 26px)}
+.pointer-dot{width:11px;height:11px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--paper),0 0 0 6px #c2432a26;transform:translate(-50%,-50%)}
+.pointer-note[data-side=left] .pointer-leader{left:100%;top:50%;width:32px;height:2px;margin-top:-1px;transform-origin:100% 50%}
+.pointer-note[data-side=left] .pointer-dot{left:calc(100% + 32px);top:50%}
+.pointer-note[data-side=right] .pointer-leader{right:100%;top:31px;width:32px;height:2px;margin-top:-1px;transform-origin:0 50%}
+.pointer-note[data-side=right] .pointer-dot{left:-32px;top:31px}
+.pointer-note[data-side=below] .pointer-leader{left:50%;bottom:100%;width:2px;height:32px;margin-left:-1px;transform-origin:50% 0}
+.pointer-note[data-side=below] .pointer-dot{left:50%;top:-32px}
+.pointer-note[data-side=above] .pointer-leader{left:50%;top:100%;width:2px;height:32px;margin-left:-1px;transform-origin:50% 100%}
+.pointer-note[data-side=above] .pointer-dot{left:50%;top:calc(100% + 32px)}
 
 /* Each ingredient's name is set in the type that ingredient brings to the page. */
 .die>strong{transition:color 160ms ease-out}
-.die>strong[data-face=call]{display:inline-flex;align-items:center;justify-content:center;min-height:0;margin-top:2px;padding:7px 14px;border-radius:999px;background:var(--accent);color:#fff;font:650 14px/1 var(--sans);letter-spacing:.01em;box-shadow:0 3px 0 #8c2a16}
+/* The die waiting to be rolled carries a floating Click me; its own label stays empty until it lands. */
+.die-call{position:absolute;z-index:5;padding:9px 16px;border-radius:999px;background:var(--accent);color:#fff;font:650 16px/1 var(--sans);letter-spacing:.01em;white-space:nowrap;box-shadow:0 4px 0 #8c2a16,0 12px 20px -10px #8c2a16aa;pointer-events:none;animation:die-call-bob 1.6s cubic-bezier(.45,0,.55,1) infinite alternate}
+.die-call:after{content:'';position:absolute;left:50%;top:100%;margin-left:-7px;border:7px solid transparent;border-top-color:var(--accent);border-bottom:0}
+@keyframes die-call-bob{from{transform:translateY(0)}to{transform:translateY(-6px)}}
 .die>strong[data-face=cthulhu]{font:italic 500 21px/1.15 "Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;letter-spacing:.01em}
 .die>strong[data-face=greek-myths]{font:600 14px/1.3 Georgia,"Times New Roman",serif;letter-spacing:.22em;text-transform:uppercase}
 .die>strong[data-face=weather]{font:300 19px/1.2 var(--sans);letter-spacing:.05em}
@@ -262,7 +280,9 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  .pointer-card{max-width:none;text-align:center}
  [data-journey=original] .die:nth-child(2):not(.leaving){visibility:hidden}
  .die-object{--size:72px;height:150px}.die>strong{font-size:15px;min-height:2.5em}
- .stage-bar{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"reset next compare";gap:8px}
+ .stage-bar{grid-area:bar;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"reset next compare";gap:8px}
+ #reset{grid-area:reset;align-self:center}#compare{grid-area:compare;align-self:center}#experiment-next{grid-area:next}
+ .die-call{font-size:14px;padding:8px 13px}
  #experiment-next{justify-self:stretch}
  .experiment-next{min-width:0;width:100%;height:58px;font-size:17px}
  .rail-stops button{min-width:0;flex:1}.rail-stops:after{left:10%;right:10%}
@@ -278,4 +298,4 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 
 @media(max-width:560px){.report-frame{height:520px}.matrix{gap:12px}.matrix-select{font-size:12px;gap:5px;padding:10px;min-height:48px}.notes pre{font-size:11px}}
 @media(max-width:400px){.atlas>header{display:block}#atlas-ingredient{display:block;width:100%;max-width:none;margin-top:12px}.topbar-link{display:none}}
-@media(prefers-reduced-motion:reduce){.experiment-next:after{display:none}.reset span,.experiment-next .next-cue{transition:none}.version-stack i{transition:none}html{scroll-behavior:auto}.die-grip{transform:none!important;transition:none!important}.matrix-cell,.rail-stops button,.rail-marker,.experiment-next,.reset,.experiment-tools>button,.report-frame,.demo-arrow,.demo-touch,.demo-glyph{transition:none!important}}
+@media(prefers-reduced-motion:reduce){.die-call{animation:none}.pointer-card,.next-pips i{transition:none}.experiment-next:after{display:none}.reset span,.experiment-next .next-cue{transition:none}.version-stack i{transition:none}html{scroll-behavior:auto}.die-grip{transform:none!important;transition:none!important}.matrix-cell,.rail-stops button,.rail-marker,.experiment-next,.reset,.experiment-tools>button,.report-frame,.demo-arrow,.demo-touch,.demo-glyph{transition:none!important}}
