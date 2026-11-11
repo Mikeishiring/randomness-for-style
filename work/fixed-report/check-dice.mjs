@@ -43,6 +43,35 @@ assert.equal(directions.size,2);assert.equal(axes.size,4);assert.ok(durations.si
 const flickStart={q:dieLanding(2),x:15,y:0};
 const flickRight=makeDiePlan(flickStart,1,()=>.5,116,20,{direction:1,strength:1}),flickLeft=makeDiePlan(flickStart,1,()=>.5,116,20,{direction:-1,strength:.2});
 assert.ok(flickRight.drift>=flickStart.x);assert.ok(flickLeft.drift<flickStart.x);assert.equal(flickRight.turns,3);assert.equal(flickLeft.turns,1);assert.ok(flickRight.lift>flickLeft.lift);assert.ok(flickRight.duration>flickLeft.duration);
+// A throw toward the page beside it strikes the edge in mid-air, rebounds and lands back home.
+// Lateral travel reverses only at the strike, and the die never passes the page edge.
+for(let n=0;n<300;n++){
+ const edge=(n%2?-1:1)*(70+(n%5)*20),home={q:dieLanding(n%6),x:(n%3-1)*4,y:0},gesture=n%4===3?{direction:Math.sign(edge),strength:(n%7)/6}:null;
+ const plan=makeDiePlan(home,n%6,random,116,18,gesture,{edge});
+ dieKnockWall(n%2,plan);
+ const direction=Math.sign(edge),[hit]=plan.contacts;
+ assert.ok(plan.knock>0&&plan.knock<hit,'the strike comes before the first landing');
+ assert.ok(sampleDiePlan(plan,plan.knock).air>1,'the die strikes the page in mid-air');
+ near(sampleDiePlan(plan,plan.knock).x,plan.wall);
+ assert.ok((plan.wall-home.x)*direction>=0&&(plan.edge-plan.wall)*direction>0,'the die travels toward the page and stops at its own edge');
+ let previous=home.x;
+ for(let step=1;step<=200;step++){
+  const t=step/200,before=(step-1)/200,sample=sampleDiePlan(plan,t);
+  assert.ok((sample.x-plan.wall)*direction<=1e-8,'never passes the page edge');
+  // A step that spans the strike is checked in its two halves: up to the edge, then back.
+  if(before<plan.knock&&t>plan.knock){assert.ok((plan.wall-previous)*direction>=-1e-8&&(sample.x-plan.wall)*direction<=1e-8,'reverses only at the strike');}
+  else{const towards=t<=plan.knock;assert.ok((sample.x-previous)*direction*(towards?1:-1)>=-1e-8,'reverses only at the strike');}
+  previous=sample.x;
+ }
+ plan.contacts.forEach(t=>near(sampleDiePlan(plan,t).air,0));
+ const end=sampleDiePlan(plan,1);near(end.x,plan.endX);assert.ok(Math.abs(end.x)<=5,'it comes back to rest near home');
+ quatRotate(end.q,DIE_NORMALS[n%6]).forEach((v,i)=>near(v,[0,-1,0][i]));
+}
+// Thrown away from the page, or with the page out of reach, there is no strike.
+assert.equal(makeDiePlan({q:dieLanding(0),x:0,y:0},0,random,116,18,{direction:-1,strength:.5},{edge:80}).knock,null);
+assert.equal(makeDiePlan({q:dieLanding(0),x:0,y:0},0,random,116,18,null,null).knock,null);
+// A die already against the page hops in place to strike it.
+const pressed=makeDiePlan({q:dieLanding(0),x:40,y:0},0,random,116,18,null,{edge:60});assert.ok(pressed.wall>=40);
 // A held cube can reach every face; leveling preserves that face and uses a short rotation.
 for(let value=0;value<6;value++){
  const start={q:dieLanding(value,.24),x:0,y:0},reached=new Set();
@@ -91,5 +120,5 @@ const invitation={kind:'invitation',from:{q:dieLanding(a),x:0,y:0},size:104,dura
 assert.ok(Math.abs(sampleDiePlan(invitation,.25).y)>0);near(sampleDiePlan(invitation,1).y,0);
 motion.matches=true;const beforeReduced={...dieStates[0].pose};moveDieGrab(0,beforeReduced,104);assert.notEqual(dieTopFace(dieStates[0].pose.q),dieTopFace(beforeReduced.q));settleDieGrab(0);assert.equal(dieStates[0].running,null);
 assert.ok(soundCalls.length>0&&soundCalls.every(call=>call[0]==='play'),'every throw schedules its contact sounds');
-console.log('PASS: 96 exact face-up orientations/CSS matrices; 500 varied rigid tumbles; stable face markup; landing/rebound contacts; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion.');
+console.log('PASS: 96 exact face-up orientations/CSS matrices; 500 varied rigid tumbles; stable face markup; landing/rebound contacts; 300 page strikes in mid-air that never pass the edge and land back home; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion.');
 `,context);

@@ -43,15 +43,38 @@ function dieSupportLift(q,size=116){
  const axes=[[1,0,0],[0,1,0],[0,0,1]],halfExtent=axes.reduce((sum,axis)=>sum+Math.abs(quatRotate(q,axis)[1]),0);
  return Math.max(0,(halfExtent-1)*size*.5*.54);
 }
-function makeDiePlan(from,value,random=Math.random,size=116,travelLimit=18,gesture=null){
+// wall: the page edge beside the die, as {edge} = signed distance from the die's rest centre.
+// A throw toward it strikes the edge in mid-air, rebounds, and lands back on the die's own tray.
+function makeDiePlan(from,value,random=Math.random,size=116,travelLimit=18,gesture=null,wall=null){
  const between=(min,max)=>min+(max-min)*random(),sign=()=>random()<.5?-1:1;
  const yaw=Math.floor(random()*4)*Math.PI/2+between(-.16,.16);
- const strength=dieClamp(gesture?.strength||0),direction=gesture?.direction||sign();
+ const strength=dieClamp(gesture?.strength||0),direction=gesture?.direction||(wall?Math.sign(wall.edge):sign());
  const flight=between(230,285)+strength*65,bounce=flight*between(.46,.55),last=bounce*between(.40,.50),settle=between(85,115),duration=flight+bounce+last+settle;
  let drift=direction*between(travelLimit*(.45+strength*.25),travelLimit);
  if(gesture?.direction)drift=direction>0?Math.max(from.x,drift):Math.min(from.x,drift);
  const axis=gesture?.axis||[sign()*between(.55,1),between(-.35,.35),-direction*between(.55,1)];
- return {from,target:dieLanding(value,yaw),size,duration,axis,turns:1+Math.round(strength*2),drift,lift:between(26,31)+strength*10,rock:sign()*between(.025,.045),contacts:[flight/duration,(flight+bounce)/duration,(flight+bounce+last)/duration]};
+ const plan={from,target:dieLanding(value,yaw),size,duration,axis,turns:1+Math.round(strength*2),drift,lift:between(26,31)+strength*10,rock:sign()*between(.025,.045),contacts:[flight/duration,(flight+bounce)/duration,(flight+bounce+last)/duration],knock:null};
+ if(wall&&Math.sign(wall.edge)===direction){
+  // Strike late in the first flight, while still airborne. The edge is met by the die's own
+  // extent; callers that know the camera refine plan.wall with dieKnockWall.
+  plan.knock=plan.contacts[0]*between(.58,.66);
+  plan.edge=wall.edge;plan.wall=wall.edge-direction*size*.62;
+  if((plan.wall-from.x)*direction<0)plan.wall=from.x;
+  plan.endX=direction*between(1,5);plan.drift=plan.wall;
+ }
+ return plan;
+}
+// Position along the throw for a knocking plan: straight to the edge, reverse at the strike,
+// then lose lateral speed at each landing until the die rests near home, never past the strike.
+function dieKnockX(plan,t){
+ const [hit,bounce,last]=plan.contacts,k=plan.knock,from=plan.from.x,wall=plan.wall,direction=Math.sign(plan.edge);
+ if((plan.endX-wall)*direction>0)plan.endX=wall;
+ if(t<=k)return from+(wall-from)*(t/k);
+ const span=(hit-k)+.6*(bounce-hit)+.3*(last-bounce)+.05*(1-last),v=(plan.endX-wall)/span;
+ let x=wall+v*(Math.min(t,hit)-k);if(t<=hit)return x;
+ x+=.6*v*(Math.min(t,bounce)-hit);if(t<=bounce)return x;
+ x+=.3*v*(Math.min(t,last)-bounce);if(t<=last)return x;
+ const s=(t-last)/(1-last);return x+.1*v*(1-last)*(s-s*s/2);
 }
 function sampleDiePlan(plan,t){
  t=dieClamp(t);
@@ -70,7 +93,7 @@ function sampleDiePlan(plan,t){
  let q=quatMultiply(quatAxis(plan.axis,Math.PI*2*plan.turns*phase),quatSlerp(plan.from.q,plan.target,phase));
  if(t>last){const settle=(t-last)/(1-last);q=quatMultiply(quatAxis([0,0,1],Math.sin(settle*Math.PI)*plan.rock*(1-settle)),plan.target);}
  const travel=t<=hit?t/hit*.67:t<=bounce?.67+(t-hit)/(bounce-hit)*.23:t<=last?.90+(t-bounce)/(last-bounce)*.08:.98+.02*(1-(1-(t-last)/(1-last))**2);
- const x=plan.from.x+(plan.drift-plan.from.x)*travel;
+ const x=plan.knock!=null?dieKnockX(plan,t):plan.from.x+(plan.drift-plan.from.x)*travel;
  let air;
  if(t<=hit){const p=t/hit,fromAir=Math.max(0,-plan.from.y-dieSupportLift(plan.from.q,plan.size));air=fromAir*(1-p)+4*plan.lift*p*(1-p);}
  else if(t<=bounce){const p=(t-hit)/(bounce-hit),lift=plan.lift*((bounce-hit)/hit)**2;air=4*lift*p*(1-p);}

@@ -205,8 +205,8 @@ function addFirstIngredient(forced=null){
  const value=forced??randomIndex(INGREDIENTS_A.length);
  lastEvent={kind:swapping?'swap':'add',index:0,name:INGREDIENTS_A[value]};
  selected=currentExperiment().runs.find(run=>run.a===value&&run.b===selected.b);
- render(false);
- tumbleDice([0],[value,selected.b],()=>{syncDice3D();},DICE_THROW.enter);
+ const impact=reportImpactFor(()=>render(false));
+ tumbleDice([0],[value,selected.b],()=>{syncDice3D();},DICE_THROW.enter,impact);
  landLabels([0],LABEL_LAND.enter);
 }
 function showIngredients(){
@@ -415,9 +415,9 @@ function roll(index,gesture=null,forced=null){
  if(completing)lastEvent={kind:'pair'};
  else if(announce){const i=indices[0];lastEvent={kind:'swap',index:i,name:i?INGREDIENTS_B[values[1]]:INGREDIENTS_A[values[0]]};}
  else lastEvent={kind:'pair'};
- // Selection is immediate. The dice acknowledge it without gating the report.
- render(false);
- tumbleDice(indices,values,()=>{syncDice3D();},gesture||(introduce?DICE_THROW.enter:null));
+ // Selection is immediate; only the old page's cover waits for the die to reach the page.
+ const impact=reportImpactFor(()=>render(false));
+ tumbleDice(indices,values,()=>{syncDice3D();},gesture||(introduce?DICE_THROW.enter:null),impact);
  landLabels(indices,introduce?LABEL_LAND.enter:LABEL_LAND.roll);
 }
 async function copyText(text,pre,status){

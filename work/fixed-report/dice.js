@@ -97,7 +97,39 @@ function syncDice3D(){
   paintDiePose(i,state.pose);
  });
 }
+// The page beside a die, in the die's own coordinates. Beside the page (desktop) a die can reach
+// its edge; stacked above it (phone) the change comes from the page's top edge instead.
+function dieWall(i,gesture){
+ const button=$('#throw-'+i),page=document.querySelector?.('#report-view');
+ if(!button?.getBoundingClientRect||!page?.getBoundingClientRect)return null;
+ const box=button.getBoundingClientRect(),rect=page.getBoundingClientRect();
+ if(!box.width||!rect.width)return null;
+ const centre=box.left+box.width/2,middle=box.top+box.height/2;
+ const side=rect.left>=centre?'left':rect.right<=centre?'right':'top';
+ const wall={side,edge:null,y:middle-rect.top};
+ // Only a die resting beside the page, not sliding on or off the table or hidden by a comparison, reaches it.
+ const moving=button.getAnimations?.().some(animation=>animation.playState==='running');
+ if(side==='top'||moving||document.documentElement?.dataset.comparing==='true'||middle<rect.top+24||middle>rect.bottom-24)return wall;
+ const edge=side==='left'?rect.left-centre:rect.right-centre;
+ if(Math.abs(edge)>220||(gesture?.direction&&Math.sign(gesture.direction)!==Math.sign(edge)))return wall;
+ wall.edge=edge;return wall;
+}
+// Meet the page edge with the cube's projected width at the moment of the strike.
+function dieKnockWall(i,plan){
+ if(plan.knock==null)return;
+ const camera=dieShading[i]?.camera,q=sampleDiePlan(plan,plan.knock).q,direction=Math.sign(plan.edge);
+ const extent=[[1,0,0],[0,1,0],[0,0,1]].reduce((sum,axis)=>{const v=quatRotate(q,axis);return sum+Math.abs(camera?camera[0][0]*v[0]+camera[0][1]*v[1]+camera[0][2]*v[2]:v[0]);},0)*plan.size*.5*1.03;
+ plan.wall=plan.edge-direction*extent;
+ if((plan.wall-plan.from.x)*direction<0)plan.wall=plan.from.x;
+ plan.drift=plan.wall;
+}
+// A die's pending strike on the page. An interrupted throw still delivers its page change, without
+// the shove; a die stopped where it is (hidden page, reduced motion, scrolled away) delivers it whole.
+const dieImpacts=[null,null];
+function clearDieImpact(i){const pending=dieImpacts[i];if(pending){clearTimeout(pending.timer);dieImpacts[i]=null;pending.land();}}
+function flushDieImpact(i){const pending=dieImpacts[i];if(pending){clearTimeout(pending.timer);dieImpacts[i]=null;pending.run();}}
 function releaseDieAnimation(i){
+ clearDieImpact(i);
  const state=dieStates[i],running=state.running;
  if(running){state.pose=sampleDiePlan(running.plan,dieClamp(Number(running.animations[0].currentTime||0)/running.plan.duration));running.animations.forEach(animation=>animation.cancel());state.running=null;paintDiePose(i,state.pose);}
  return state.pose;
@@ -109,7 +141,7 @@ function finishDie(i){
  paintDiePose(i,state.pose);running.animations.forEach(animation=>animation.cancel());
  if(activeDiceRoll){activeDiceRoll.remaining.delete(i);if(!activeDiceRoll.remaining.size){const complete=activeDiceRoll.complete;activeDiceRoll=null;complete();}}
 }
-function stopDieMotion(i){clearDieInvitation(i);resetDieInteraction(i);finishDie(i);}
+function stopDieMotion(i){clearDieInvitation(i);resetDieInteraction(i);flushDieImpact(i);finishDie(i);}
 function cancelDiceRoll(){activeDiceRoll=null;[0,1].forEach(i=>{clearDieInvitation(i);resetDieInteraction(i);releaseDieAnimation(i);dieStates[i].value=null;});}
 function beginDieGrab(i){clearDieInvitation(i);activeDiceRoll=null;return releaseDieAnimation(i);}
 function moveDieGrab(i,from,dx,dy=0){
@@ -141,7 +173,8 @@ function animateDiePlan(i,plan,value){
  state.running={plan,animations,value};
  animations[0].onfinish=()=>{if(state.running?.animations===animations)finishDie(i);};
 }
-function tumbleDice(indices,values,complete,gesture=null){
+// impact: the page change this throw causes (from reportImpactFor); it lands when the die reaches the page.
+function tumbleDice(indices,values,complete,gesture=null,impact=null){
  // Snapshot the current pose before cancelling: a second throw continues in flight.
  const from=dieStates.map((state,i)=>indices.includes(i)?releaseDieAnimation(i):state.pose);
  // Reroll only the clicked die. Any other die already in flight keeps its motion.
@@ -150,12 +183,22 @@ function tumbleDice(indices,values,complete,gesture=null){
   [...activeDiceRoll.remaining].forEach(i=>{releaseDieAnimation(i);dieStates[i].pose={q:dieLanding(values[i]),x:0,y:0};dieStates[i].value=values[i];paintDiePose(i,dieStates[i].pose);});
   activeDiceRoll=null;complete();return;
  }
+ const sides=[];
  indices.forEach(i=>{
   clearDieInvitation(i);
-  const cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8)),plan=makeDiePlan(from[i],values[i],Math.random,width,Number.isFinite(travel)?travel:18,Array.isArray(gesture)?gesture[i]:gesture);
+  const thrown=Array.isArray(gesture)?gesture[i]:gesture,wall=dieWall(i,thrown);
+  const cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8)),plan=makeDiePlan(from[i],values[i],Math.random,width,Number.isFinite(travel)?travel:18,thrown,wall?.edge!=null?wall:null);
+  dieKnockWall(i,plan);
   animateDiePlan(i,plan,values[i]);
   if(typeof playDiceClatter==='function')playDiceClatter(i,plan,performance.now());
+  // The page reacts when the die strikes its edge, or, out of reach, when the die first lands.
+  const side=wall?.side||(i?'right':'left'),knock=plan.knock!=null;
+  const hit={side,knock,die:i,strength:dieClamp(thrown?.strength||0),y:knock?wall.y+sampleDiePlan(plan,plan.knock).y:0};
+  const run=()=>{if(typeof hitReport==='function')hitReport(impact,hit);},land=()=>{if(typeof landReportImpact==='function')landReportImpact(impact);};
+  dieImpacts[i]={run,land,timer:setTimeout(()=>{dieImpacts[i]=null;run();},(knock?plan.knock:plan.contacts[0])*plan.duration)};
+  sides.push(side);
   const name=i?modes[active].options[values[i]].name:worlds[values[i]].name;
   $('#throw-'+i).setAttribute('aria-label',`Roll ${i?'second':'first'} die again. ${name}`);
  });
+ if(impact&&typeof aimReportImpact==='function')aimReportImpact(impact,sides);
 }

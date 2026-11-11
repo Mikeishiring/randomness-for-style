@@ -76,6 +76,10 @@ body{font-family:var(--sans);overflow-x:clip}
 /* The reveal line rides the boundary as the previous page is wiped away. */
 .report-sweep{position:absolute;left:-1px;right:-1px;top:0;height:2px;border-radius:2px;background:var(--accent);box-shadow:0 8px 18px -6px #c2432a99;opacity:0;z-index:3;pointer-events:none}
 .frame-section.report-outgoing{position:absolute;inset:0;z-index:2;pointer-events:none}
+/* A die's strike: the wipe leaves from the struck edge, and a ring in the die's colour marks the contact. */
+.report-sweep-x{position:absolute;top:-1px;bottom:-1px;left:-1px;width:2px;border-radius:2px;background:var(--accent);box-shadow:0 0 18px -4px #c2432a99;opacity:0;z-index:3;pointer-events:none}
+.report-knock{position:absolute;width:58px;height:58px;border-radius:50%;border:2px solid #243026;background:radial-gradient(closest-side,#24302624,#24302600);opacity:0;z-index:4;pointer-events:none}
+.report-knock[data-die='1']{border-color:#c2432a;background:radial-gradient(closest-side,#c2432a26,#c2432a00)}
 #report-view.comparing{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 /* Comparing gives both pages the full width, side by side; the dice step aside. */
 [data-comparing=true] #dice-lab{grid-column:1/-1}
@@ -449,15 +453,38 @@ function dieSupportLift(q,size=116){
  const axes=[[1,0,0],[0,1,0],[0,0,1]],halfExtent=axes.reduce((sum,axis)=>sum+Math.abs(quatRotate(q,axis)[1]),0);
  return Math.max(0,(halfExtent-1)*size*.5*.54);
 }
-function makeDiePlan(from,value,random=Math.random,size=116,travelLimit=18,gesture=null){
+// wall: the page edge beside the die, as {edge} = signed distance from the die's rest centre.
+// A throw toward it strikes the edge in mid-air, rebounds, and lands back on the die's own tray.
+function makeDiePlan(from,value,random=Math.random,size=116,travelLimit=18,gesture=null,wall=null){
  const between=(min,max)=>min+(max-min)*random(),sign=()=>random()<.5?-1:1;
  const yaw=Math.floor(random()*4)*Math.PI/2+between(-.16,.16);
- const strength=dieClamp(gesture?.strength||0),direction=gesture?.direction||sign();
+ const strength=dieClamp(gesture?.strength||0),direction=gesture?.direction||(wall?Math.sign(wall.edge):sign());
  const flight=between(230,285)+strength*65,bounce=flight*between(.46,.55),last=bounce*between(.40,.50),settle=between(85,115),duration=flight+bounce+last+settle;
  let drift=direction*between(travelLimit*(.45+strength*.25),travelLimit);
  if(gesture?.direction)drift=direction>0?Math.max(from.x,drift):Math.min(from.x,drift);
  const axis=gesture?.axis||[sign()*between(.55,1),between(-.35,.35),-direction*between(.55,1)];
- return {from,target:dieLanding(value,yaw),size,duration,axis,turns:1+Math.round(strength*2),drift,lift:between(26,31)+strength*10,rock:sign()*between(.025,.045),contacts:[flight/duration,(flight+bounce)/duration,(flight+bounce+last)/duration]};
+ const plan={from,target:dieLanding(value,yaw),size,duration,axis,turns:1+Math.round(strength*2),drift,lift:between(26,31)+strength*10,rock:sign()*between(.025,.045),contacts:[flight/duration,(flight+bounce)/duration,(flight+bounce+last)/duration],knock:null};
+ if(wall&&Math.sign(wall.edge)===direction){
+  // Strike late in the first flight, while still airborne. The edge is met by the die's own
+  // extent; callers that know the camera refine plan.wall with dieKnockWall.
+  plan.knock=plan.contacts[0]*between(.58,.66);
+  plan.edge=wall.edge;plan.wall=wall.edge-direction*size*.62;
+  if((plan.wall-from.x)*direction<0)plan.wall=from.x;
+  plan.endX=direction*between(1,5);plan.drift=plan.wall;
+ }
+ return plan;
+}
+// Position along the throw for a knocking plan: straight to the edge, reverse at the strike,
+// then lose lateral speed at each landing until the die rests near home, never past the strike.
+function dieKnockX(plan,t){
+ const [hit,bounce,last]=plan.contacts,k=plan.knock,from=plan.from.x,wall=plan.wall,direction=Math.sign(plan.edge);
+ if((plan.endX-wall)*direction>0)plan.endX=wall;
+ if(t<=k)return from+(wall-from)*(t/k);
+ const span=(hit-k)+.6*(bounce-hit)+.3*(last-bounce)+.05*(1-last),v=(plan.endX-wall)/span;
+ let x=wall+v*(Math.min(t,hit)-k);if(t<=hit)return x;
+ x+=.6*v*(Math.min(t,bounce)-hit);if(t<=bounce)return x;
+ x+=.3*v*(Math.min(t,last)-bounce);if(t<=last)return x;
+ const s=(t-last)/(1-last);return x+.1*v*(1-last)*(s-s*s/2);
 }
 function sampleDiePlan(plan,t){
  t=dieClamp(t);
@@ -476,7 +503,7 @@ function sampleDiePlan(plan,t){
  let q=quatMultiply(quatAxis(plan.axis,Math.PI*2*plan.turns*phase),quatSlerp(plan.from.q,plan.target,phase));
  if(t>last){const settle=(t-last)/(1-last);q=quatMultiply(quatAxis([0,0,1],Math.sin(settle*Math.PI)*plan.rock*(1-settle)),plan.target);}
  const travel=t<=hit?t/hit*.67:t<=bounce?.67+(t-hit)/(bounce-hit)*.23:t<=last?.90+(t-bounce)/(last-bounce)*.08:.98+.02*(1-(1-(t-last)/(1-last))**2);
- const x=plan.from.x+(plan.drift-plan.from.x)*travel;
+ const x=plan.knock!=null?dieKnockX(plan,t):plan.from.x+(plan.drift-plan.from.x)*travel;
  let air;
  if(t<=hit){const p=t/hit,fromAir=Math.max(0,-plan.from.y-dieSupportLift(plan.from.q,plan.size));air=fromAir*(1-p)+4*plan.lift*p*(1-p);}
  else if(t<=bounce){const p=(t-hit)/(bounce-hit),lift=plan.lift*((bounce-hit)/hit)**2;air=4*lift*p*(1-p);}
@@ -585,7 +612,39 @@ function syncDice3D(){
   paintDiePose(i,state.pose);
  });
 }
+// The page beside a die, in the die's own coordinates. Beside the page (desktop) a die can reach
+// its edge; stacked above it (phone) the change comes from the page's top edge instead.
+function dieWall(i,gesture){
+ const button=$('#throw-'+i),page=document.querySelector?.('#report-view');
+ if(!button?.getBoundingClientRect||!page?.getBoundingClientRect)return null;
+ const box=button.getBoundingClientRect(),rect=page.getBoundingClientRect();
+ if(!box.width||!rect.width)return null;
+ const centre=box.left+box.width/2,middle=box.top+box.height/2;
+ const side=rect.left>=centre?'left':rect.right<=centre?'right':'top';
+ const wall={side,edge:null,y:middle-rect.top};
+ // Only a die resting beside the page, not sliding on or off the table or hidden by a comparison, reaches it.
+ const moving=button.getAnimations?.().some(animation=>animation.playState==='running');
+ if(side==='top'||moving||document.documentElement?.dataset.comparing==='true'||middle<rect.top+24||middle>rect.bottom-24)return wall;
+ const edge=side==='left'?rect.left-centre:rect.right-centre;
+ if(Math.abs(edge)>220||(gesture?.direction&&Math.sign(gesture.direction)!==Math.sign(edge)))return wall;
+ wall.edge=edge;return wall;
+}
+// Meet the page edge with the cube's projected width at the moment of the strike.
+function dieKnockWall(i,plan){
+ if(plan.knock==null)return;
+ const camera=dieShading[i]?.camera,q=sampleDiePlan(plan,plan.knock).q,direction=Math.sign(plan.edge);
+ const extent=[[1,0,0],[0,1,0],[0,0,1]].reduce((sum,axis)=>{const v=quatRotate(q,axis);return sum+Math.abs(camera?camera[0][0]*v[0]+camera[0][1]*v[1]+camera[0][2]*v[2]:v[0]);},0)*plan.size*.5*1.03;
+ plan.wall=plan.edge-direction*extent;
+ if((plan.wall-plan.from.x)*direction<0)plan.wall=plan.from.x;
+ plan.drift=plan.wall;
+}
+// A die's pending strike on the page. An interrupted throw still delivers its page change, without
+// the shove; a die stopped where it is (hidden page, reduced motion, scrolled away) delivers it whole.
+const dieImpacts=[null,null];
+function clearDieImpact(i){const pending=dieImpacts[i];if(pending){clearTimeout(pending.timer);dieImpacts[i]=null;pending.land();}}
+function flushDieImpact(i){const pending=dieImpacts[i];if(pending){clearTimeout(pending.timer);dieImpacts[i]=null;pending.run();}}
 function releaseDieAnimation(i){
+ clearDieImpact(i);
  const state=dieStates[i],running=state.running;
  if(running){state.pose=sampleDiePlan(running.plan,dieClamp(Number(running.animations[0].currentTime||0)/running.plan.duration));running.animations.forEach(animation=>animation.cancel());state.running=null;paintDiePose(i,state.pose);}
  return state.pose;
@@ -597,7 +656,7 @@ function finishDie(i){
  paintDiePose(i,state.pose);running.animations.forEach(animation=>animation.cancel());
  if(activeDiceRoll){activeDiceRoll.remaining.delete(i);if(!activeDiceRoll.remaining.size){const complete=activeDiceRoll.complete;activeDiceRoll=null;complete();}}
 }
-function stopDieMotion(i){clearDieInvitation(i);resetDieInteraction(i);finishDie(i);}
+function stopDieMotion(i){clearDieInvitation(i);resetDieInteraction(i);flushDieImpact(i);finishDie(i);}
 function cancelDiceRoll(){activeDiceRoll=null;[0,1].forEach(i=>{clearDieInvitation(i);resetDieInteraction(i);releaseDieAnimation(i);dieStates[i].value=null;});}
 function beginDieGrab(i){clearDieInvitation(i);activeDiceRoll=null;return releaseDieAnimation(i);}
 function moveDieGrab(i,from,dx,dy=0){
@@ -629,7 +688,8 @@ function animateDiePlan(i,plan,value){
  state.running={plan,animations,value};
  animations[0].onfinish=()=>{if(state.running?.animations===animations)finishDie(i);};
 }
-function tumbleDice(indices,values,complete,gesture=null){
+// impact: the page change this throw causes (from reportImpactFor); it lands when the die reaches the page.
+function tumbleDice(indices,values,complete,gesture=null,impact=null){
  // Snapshot the current pose before cancelling: a second throw continues in flight.
  const from=dieStates.map((state,i)=>indices.includes(i)?releaseDieAnimation(i):state.pose);
  // Reroll only the clicked die. Any other die already in flight keeps its motion.
@@ -638,18 +698,29 @@ function tumbleDice(indices,values,complete,gesture=null){
   [...activeDiceRoll.remaining].forEach(i=>{releaseDieAnimation(i);dieStates[i].pose={q:dieLanding(values[i]),x:0,y:0};dieStates[i].value=values[i];paintDiePose(i,dieStates[i].pose);});
   activeDiceRoll=null;complete();return;
  }
+ const sides=[];
  indices.forEach(i=>{
   clearDieInvitation(i);
-  const cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8)),plan=makeDiePlan(from[i],values[i],Math.random,width,Number.isFinite(travel)?travel:18,Array.isArray(gesture)?gesture[i]:gesture);
+  const thrown=Array.isArray(gesture)?gesture[i]:gesture,wall=dieWall(i,thrown);
+  const cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8)),plan=makeDiePlan(from[i],values[i],Math.random,width,Number.isFinite(travel)?travel:18,thrown,wall?.edge!=null?wall:null);
+  dieKnockWall(i,plan);
   animateDiePlan(i,plan,values[i]);
   if(typeof playDiceClatter==='function')playDiceClatter(i,plan,performance.now());
+  // The page reacts when the die strikes its edge, or, out of reach, when the die first lands.
+  const side=wall?.side||(i?'right':'left'),knock=plan.knock!=null;
+  const hit={side,knock,die:i,strength:dieClamp(thrown?.strength||0),y:knock?wall.y+sampleDiePlan(plan,plan.knock).y:0};
+  const run=()=>{if(typeof hitReport==='function')hitReport(impact,hit);},land=()=>{if(typeof landReportImpact==='function')landReportImpact(impact);};
+  dieImpacts[i]={run,land,timer:setTimeout(()=>{dieImpacts[i]=null;run();},(knock?plan.knock:plan.contacts[0])*plan.duration)};
+  sides.push(side);
   const name=i?modes[active].options[values[i]].name:worlds[values[i]].name;
   $('#throw-'+i).setAttribute('aria-label',`Roll ${i?'second':'first'} die again. ${name}`);
  });
+ if(impact&&typeof aimReportImpact==='function')aimReportImpact(impact,sides);
 }
 
 const dieInteractions=new Map();
 const diceFinePointer=matchMedia('(hover: hover) and (pointer: fine)');
+const dieTick=(index,kind)=>{if(typeof playDieTick==='function')playDieTick(index,kind);};
 function resetDieInteraction(index){dieInteractions.get(index)?.();}
 function bindDieInteraction(button,index){
  let pointer=null,dragging=false,suppressPointerClick=false;
@@ -676,8 +747,12 @@ function bindDieInteraction(button,index){
    const dx=event.clientX-pointer.x,dy=event.clientY-pointer.y,now=performance.now();
    pointer.samples.push({x:event.clientX,y:event.clientY,t:now});
    pointer.samples=pointer.samples.filter(sample=>now-sample.t<=120);
-   if(!dragging&&Math.hypot(dx,dy)>7){dragging=true;button.dataset.dragging='true';}
-   if(dragging){event.preventDefault();moveDieGrab(index,pointer.from,dx,dy);}
+   if(!dragging&&Math.hypot(dx,dy)>7){dragging=true;button.dataset.dragging='true';pointer.face=dieTopFace(pointer.from.q);dieTick(index,'lift');}
+   if(dragging){
+    event.preventDefault();const face=moveDieGrab(index,pointer.from,dx,dy);
+    // Each new face that comes up clicks into place under the finger.
+    if(face!==pointer.face){pointer.face=face;dieTick(index,'face');}
+   }
    return;
   }
   if(!diceFinePointer.matches||event.pointerType==='touch'||diceMotion.matches||dieStates[index].running)return;
@@ -697,7 +772,7 @@ function bindDieInteraction(button,index){
   if(wasDragging){
    suppressPointerClick=true;
    if(speed>.6)roll(index,{direction:Math.sign(vx)||1,strength:Math.min(1,(speed-.6)/1.8),axis:[-vy/speed,0,vx/speed]});
-   else chooseDieFace(index,dieTopFace(dieStates[index].pose.q));
+   else{dieTick(index,'set');chooseDieFace(index,dieTopFace(dieStates[index].pose.q));}
   }else if(!inside)suppressPointerClick=true;
  });
  const cancel=event=>{if(pointer&&event.pointerId===pointer.id){suppressPointerClick=true;reset();}};
@@ -708,7 +783,7 @@ function bindDieInteraction(button,index){
   if(event.key.startsWith('Arrow')){
    event.preventDefault();reset();const from=beginDieGrab(index),size=button.querySelector('.cube').clientWidth||94;
    moveDieGrab(index,from,event.key==='ArrowRight'?size:event.key==='ArrowLeft'?-size:0,event.key==='ArrowDown'?size:event.key==='ArrowUp'?-size:0);
-   chooseDieFace(index,dieTopFace(dieStates[index].pose.q));return;
+   dieTick(index,'set');chooseDieFace(index,dieTopFace(dieStates[index].pose.q));return;
   }
   if(event.key===' '||event.key==='Enter')button.dataset.pressed='true';
  });
@@ -718,45 +793,148 @@ function bindDieInteraction(button,index){
  document.addEventListener('visibilitychange',()=>{if(document.hidden)reset();});
 }
 
+// Synthesised, so nothing loads and no two throws sound alike. Each die has its own material:
+// the ink die is a bright resin click, the vermilion die a warmer, woodier knock. Every throw
+// varies pitch, brightness and the small rattles between landings. A die striking the page gives
+// a dull board knock; the page change that follows makes a short paper swish. On phones that
+// support it, each contact also gives a short vibration. Nothing sounds until a visitor acts.
 let diceAudioContext=null,diceNoise=null,diceSoundEnabled=true;
-const diceVoices=[new Set(),new Set()],diceSoundVersions=[0,0];
+const diceVoices=[new Set(),new Set(),new Set()],diceSoundVersions=[0,0,0],diceBuzzTimers=[new Set(),new Set(),new Set()];
+const DIE_MATERIALS=[
+ {click:3400,body:1250,bodyQ:1.5,ring:1880,ringWave:'triangle',thump:118},
+ {click:2600,body:880,bodyQ:1.15,ring:1320,ringWave:'sine',thump:96}
+];
 try{diceSoundEnabled=localStorage.getItem('design-dice-sound')!=='off';}catch{/* File storage can be unavailable. */}
 function updateSoundButton(){const button=document.querySelector('#sound-toggle');button.textContent=diceSoundEnabled?'Sound on':'Sound off';button.setAttribute('aria-pressed',String(diceSoundEnabled));}
 function initDiceSound(){
  const button=document.querySelector('#sound-toggle');updateSoundButton();
  if(!(window.AudioContext||window.webkitAudioContext)){button.disabled=true;button.textContent='Sound unavailable';button.setAttribute('aria-pressed','false');return;}
  button.addEventListener('click',()=>{diceSoundEnabled=!diceSoundEnabled;updateSoundButton();try{localStorage.setItem('design-dice-sound',diceSoundEnabled?'on':'off');}catch{}
-  if(diceSoundEnabled)primeDiceAudio();else [0,1].forEach(cancelDieSound);
+  if(diceSoundEnabled)primeDiceAudio();else [0,1,2].forEach(cancelDieSound);
  });
 }
 async function primeDiceAudio(){
  if(!diceSoundEnabled)return null;
  try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return null;diceAudioContext??=new Audio();if(diceAudioContext.state==='suspended')await diceAudioContext.resume();return diceAudioContext.state==='running'?diceAudioContext:null;}catch{return null;}
 }
+// Channel 0 and 1 are the dice; channel 2 is the page.
 function cancelDieSound(index){
  diceSoundVersions[index]++;
  for(const voice of diceVoices[index]){for(const source of voice.sources){try{source.stop();}catch{}}voice.nodes.forEach(node=>node.disconnect());}
  diceVoices[index].clear();
+ diceBuzzTimers[index].forEach(timer=>clearTimeout(timer));diceBuzzTimers[index].clear();
 }
-function diceImpact(context,index,time,strength){
- if(!diceNoise){diceNoise=context.createBuffer(1,Math.ceil(context.sampleRate*.075),context.sampleRate);const samples=diceNoise.getChannelData(0);for(let i=0;i<samples.length;i++)samples[i]=Math.random()*2-1;}
- const noise=context.createBufferSource(),filter=context.createBiquadFilter(),noiseGain=context.createGain(),body=context.createOscillator(),bodyGain=context.createGain(),pan=context.createStereoPanner();
- const nodes=[noise,filter,noiseGain,body,bodyGain,pan],voice={sources:[noise,body],nodes};diceVoices[index].add(voice);
- noise.buffer=diceNoise;noise.playbackRate.value=.88+Math.random()*.3;filter.type='bandpass';filter.frequency.value=1500+Math.random()*1400;filter.Q.value=.9;
- noiseGain.gain.setValueAtTime(.0001,time);noiseGain.gain.linearRampToValueAtTime(.17*strength,time+.001);noiseGain.gain.exponentialRampToValueAtTime(.0001,time+.052);
- body.type='triangle';body.frequency.setValueAtTime(310+Math.random()*160,time);body.frequency.exponentialRampToValueAtTime(180,time+.035);bodyGain.gain.setValueAtTime(.055*strength,time);bodyGain.gain.exponentialRampToValueAtTime(.0001,time+.037);
- pan.pan.value=(index?1:-1)*(.25+Math.random()*.15);
- noise.connect(filter);filter.connect(noiseGain);noiseGain.connect(pan);body.connect(bodyGain);bodyGain.connect(pan);pan.connect(context.destination);
- noise.onended=()=>{diceVoices[index].delete(voice);nodes.forEach(node=>node.disconnect());};
- noise.start(time);noise.stop(time+.07);body.start(time);body.stop(time+.045);
+const soundBetween=(min,max)=>min+(max-min)*Math.random();
+function diceNoiseBuffer(context){
+ if(!diceNoise){diceNoise=context.createBuffer(1,Math.ceil(context.sampleRate*.6),context.sampleRate);const samples=diceNoise.getChannelData(0);for(let i=0;i<samples.length;i++)samples[i]=Math.random()*2-1;}
+ return diceNoise;
 }
+// One voice: a set of sources into a shared panner, released together.
+function diceVoice(context,index,pan){
+ const panner=context.createStereoPanner(),voice={sources:[],nodes:[panner],out:panner,end:0};
+ panner.pan.value=Math.max(-1,Math.min(1,pan));panner.connect(context.destination);
+ diceVoices[index].add(voice);return voice;
+}
+function finishVoice(voice,index){
+ const last=voice.sources.at(-1);if(!last)return;
+ last.onended=()=>{diceVoices[index].delete(voice);voice.nodes.forEach(node=>node.disconnect());};
+}
+// Filtered noise: clicks, knocks and paper.
+function noiseBurst(context,voice,time,{type,frequency,q=1,peak,decay,rate=1,offset=0}){
+ const source=context.createBufferSource(),filter=context.createBiquadFilter(),gain=context.createGain();
+ source.buffer=diceNoiseBuffer(context);source.playbackRate.value=rate;
+ filter.type=type;filter.frequency.value=frequency;filter.Q.value=q;
+ gain.gain.setValueAtTime(.0001,time);gain.gain.linearRampToValueAtTime(peak,time+.0012);gain.gain.exponentialRampToValueAtTime(.0001,time+decay);
+ source.connect(filter);filter.connect(gain);gain.connect(voice.out);
+ voice.sources.push(source);voice.nodes.push(source,filter,gain);
+ source.start(time,offset);source.stop(time+decay+.01);
+ return gain;
+}
+// A short pitched tone: the die's ring, or the weight of a landing.
+function toneBurst(context,voice,time,{wave='sine',from,to=from,peak,decay}){
+ const tone=context.createOscillator(),gain=context.createGain();
+ tone.type=wave;tone.frequency.setValueAtTime(from,time);tone.frequency.exponentialRampToValueAtTime(to,time+decay);
+ gain.gain.setValueAtTime(peak,time);gain.gain.exponentialRampToValueAtTime(.0001,time+decay);
+ tone.connect(gain);gain.connect(voice.out);
+ voice.sources.push(tone);voice.nodes.push(tone,gain);
+ tone.start(time);tone.stop(time+decay+.01);
+}
+// A die landing on its tray. strength falls with each bounce; the first landing carries weight.
+function diceImpact(context,index,time,strength,character,first=false){
+ const material=DIE_MATERIALS[index],tone=character.tone,voice=diceVoice(context,index,character.pan);
+ noiseBurst(context,voice,time,{type:'highpass',frequency:material.click*character.bright,q:.7,peak:.2*strength,decay:.012,rate:soundBetween(.9,1.15),offset:Math.random()*.4});
+ noiseBurst(context,voice,time,{type:'bandpass',frequency:material.body*tone,q:material.bodyQ,peak:.24*strength,decay:soundBetween(.035,.05),rate:soundBetween(.85,1.1),offset:Math.random()*.4});
+ toneBurst(context,voice,time,{wave:material.ringWave,from:material.ring*tone*soundBetween(.97,1.03),to:material.ring*tone*.94,peak:.045*strength,decay:.028});
+ if(first)toneBurst(context,voice,time,{from:material.thump*tone,to:material.thump*.6,peak:.2*strength,decay:.07});
+ finishVoice(voice,index);
+ return voice;
+}
+// The die striking the page: a dull board knock with a little paper in it.
+function diceKnock(context,index,time,strength){
+ const voice=diceVoice(context,index,index?.12:-.12);
+ toneBurst(context,voice,time,{from:soundBetween(200,225),to:100,peak:.34*strength,decay:.085});
+ noiseBurst(context,voice,time,{type:'bandpass',frequency:soundBetween(560,720),q:.9,peak:.26*strength,decay:.06,offset:Math.random()*.4});
+ noiseBurst(context,voice,time+.004,{type:'highpass',frequency:4600,q:.6,peak:.07*strength,decay:.045,offset:Math.random()*.4});
+ finishVoice(voice,index);
+}
+function diceBuzz(index,delay,pattern){
+ if(typeof navigator==='undefined'||typeof navigator.vibrate!=='function')return;
+ const timer=setTimeout(()=>{diceBuzzTimers[index].delete(timer);if(diceSoundEnabled&&!document.hidden){try{navigator.vibrate(pattern);}catch{}}},Math.max(0,delay));
+ diceBuzzTimers[index].add(timer);
+}
+// Schedules a whole throw against its plan: every landing, the rattles between them, and the strike on the page.
 function playDiceClatter(index,plan,startedAt){
  const version=diceSoundVersions[index];
+ // Each throw has its own character: harder throws are brighter, and no two share a pitch.
+ const strength=.85+.3*Math.max(0,Math.min(1,(plan.turns-1)/2)),character={tone:soundBetween(.93,1.07),bright:soundBetween(.88,1.18),pan:(index?1:-1)*soundBetween(.22,.4)};
+ const elapsedAt=()=>(performance.now()-startedAt)/1000;
+ plan.contacts.forEach((contact,n)=>diceBuzz(index,contact*plan.duration-(performance.now()-startedAt),[12,7,4][n]));
+ if(plan.knock!=null)diceBuzz(index,plan.knock*plan.duration-(performance.now()-startedAt),22);
  primeDiceAudio().then(context=>{
   if(!context||!diceSoundEnabled||document.hidden||diceSoundVersions[index]!==version)return;
-  const elapsed=(performance.now()-startedAt)/1000;
-  plan.contacts.forEach((contact,n)=>{const delay=contact*plan.duration/1000-elapsed;if(delay>=0)diceImpact(context,index,context.currentTime+delay,[1,.58,.28][n]);});
+  const elapsed=elapsedAt();
+  plan.contacts.forEach((contact,n)=>{
+   const delay=contact*plan.duration/1000-elapsed;if(delay<0)return;
+   const level=[1,.58,.3][n]*strength;
+   diceImpact(context,index,context.currentTime+delay,level,character,n===0);
+   // An edge catching as the die tips: sometimes one rattle, sometimes two, quieter each bounce.
+   if(n<2&&Math.random()<.75)diceImpact(context,index,context.currentTime+delay+soundBetween(.014,.034),level*.26,character);
+   if(n<2&&Math.random()<.35)diceImpact(context,index,context.currentTime+delay+soundBetween(.045,.075),level*.13,character);
+  });
+  if(plan.knock!=null){const delay=plan.knock*plan.duration/1000-elapsed;if(delay>=0)diceKnock(context,index,context.currentTime+delay,strength);}
  }).catch(()=>{/* Audio failure must not interrupt a throw. */});
+}
+// Dragging: a click as each new face comes up, a soft lift and a set-down.
+function playDieTick(index,kind='face'){
+ const version=diceSoundVersions[index];
+ if(kind!=='lift')diceBuzz(index,0,kind==='set'?10:5);
+ primeDiceAudio().then(context=>{
+  if(!context||!diceSoundEnabled||document.hidden||diceSoundVersions[index]!==version)return;
+  const material=DIE_MATERIALS[index],time=context.currentTime;
+  if(kind==='set')diceImpact(context,index,time,.5,{tone:1,bright:1,pan:(index?1:-1)*.3});
+  else{
+   const voice=diceVoice(context,index,(index?1:-1)*.3);
+   noiseBurst(context,voice,time,{type:'highpass',frequency:material.click*1.2,q:.8,peak:kind==='lift'?.05:.11,decay:.008,offset:Math.random()*.4});
+   toneBurst(context,voice,time,{wave:material.ringWave,from:material.ring*1.25*soundBetween(.98,1.02),peak:kind==='lift'?.012:.026,decay:.016});
+   finishVoice(voice,index);
+  }
+ }).catch(()=>{});
+}
+// The page change after a strike: a soft paper swish travelling across from the struck edge.
+function playReportSwish(origin,duration){
+ const version=diceSoundVersions[2];
+ primeDiceAudio().then(context=>{
+  if(!context||!diceSoundEnabled||document.hidden||diceSoundVersions[2]!==version)return;
+  const length=Math.min(.55,duration/1000*.75),time=context.currentTime,from=origin==='left'?-.55:origin==='right'?.55:0;
+  const voice=diceVoice(context,2,from),source=context.createBufferSource(),filter=context.createBiquadFilter(),gain=context.createGain();
+  source.buffer=diceNoiseBuffer(context);filter.type='bandpass';filter.Q.value=.75;
+  filter.frequency.setValueAtTime(700,time);filter.frequency.exponentialRampToValueAtTime(2600,time+length);
+  gain.gain.setValueAtTime(.0001,time);gain.gain.linearRampToValueAtTime(.05,time+length*.22);gain.gain.exponentialRampToValueAtTime(.0001,time+length);
+  voice.out.pan.setValueAtTime(from,time);voice.out.pan.linearRampToValueAtTime(-from,time+length);
+  source.connect(filter);filter.connect(gain);gain.connect(voice.out);
+  voice.sources.push(source);voice.nodes.push(source,filter,gain);
+  source.start(time);source.stop(time+length+.01);finishVoice(voice,2);
+ }).catch(()=>{});
 }
 
 // Hover/focus previews; a click keeps the exact prompt available to inspect.
@@ -796,14 +974,61 @@ function showPrompt(pre,text,addition=''){
 }
 
 // Keep the previous saved page visible while its replacement paints in the same frame,
-// then wipe it away from the top so the new design reads as printed over the old one.
+// then wipe it away so the new design reads as printed over the old one.
 // This is presentation only: selection, controls and the new document update immediately.
+// A refinement prints over from the top. A die throw waits for the die to reach the page and
+// wipes away from the edge it struck, so the change visibly starts where the die hit.
 const REPORT_REVEAL={duration:560,easing:'cubic-bezier(.65,0,.35,1)'};
+const REPORT_KNOCK_REVEAL={duration:640,easing:'cubic-bezier(.16,1,.3,1)'};
+const REPORT_WIPES={top:'inset(100% 0 0 0)',left:'inset(0 0 0 100%)',right:'inset(0 100% 0 0)',both:'inset(0 50% 0 50%)'};
 const reportHandoffs=new WeakMap();
+// The page change a throw causes. The rendered change claims it; it lands when a die reaches the
+// page, or at once when that throw is interrupted, so a page never waits on a die that will not arrive.
+const reportImpacts={next:null};
+function reportImpactFor(render){
+ const impact={landed:false,origin:'top',waiters:[]};
+ reportImpacts.next=impact;
+ try{render();}finally{reportImpacts.next=null;}
+ return impact;
+}
+function aimReportImpact(impact,sides){
+ if(!impact||impact.landed)return;
+ impact.origin=sides.includes('left')&&sides.includes('right')?'both':sides[0]||'top';
+}
+function landReportImpact(impact){
+ if(!impact||impact.landed)return;
+ impact.landed=true;
+ const waiters=impact.waiters;impact.waiters=[];waiters.forEach(run=>run(impact.origin));
+}
+function hitReport(impact,hit){
+ if(hit.knock)knockReport(hit);
+ landReportImpact(impact);
+}
+// The struck page takes a small shove away from the die and springs back; a ring in the die's
+// colour marks the point of contact.
+function knockReport(hit){
+ const view=document.querySelector?.('#report-view');
+ if(!view?.animate||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const rect=view.getBoundingClientRect(),away=hit.side==='left'?1:-1,force=.65+.55*Math.max(0,Math.min(1,hit.strength||0));
+ const lever=Math.max(-1,Math.min(1,(hit.y-rect.height/2)/(rect.height/2||1))),turn=-lever*away*.3*force;
+ const spring='cubic-bezier(.33,1,.68,1)';
+ view.animate([
+  {transform:'none',easing:spring},
+  {transform:`translateX(${7*force*away}px) rotate(${turn}deg)`,offset:.13,easing:spring},
+  {transform:`translateX(${-2.6*force*away}px) rotate(${-turn*.4}deg)`,offset:.34,easing:spring},
+  {transform:`translateX(${1*force*away}px)`,offset:.56,easing:spring},
+  {transform:`translateX(${-.35*force*away}px)`,offset:.78,easing:spring},
+  {transform:'none'}
+ ],{duration:620});
+ const mark=document.createElement('span');mark.className='report-knock';mark.dataset.die=String(hit.die);
+ mark.style.left=hit.side==='left'?'0':'100%';mark.style.top=Math.max(12,Math.min(rect.height-12,hit.y))+'px';
+ view.append(mark);
+ mark.animate([{transform:'translate(-50%,-50%) scale(.35)',opacity:.7},{transform:'translate(-50%,-50%) scale(1.6)',opacity:0}],{duration:520,easing:'cubic-bezier(.16,1,.3,1)'}).onfinish=()=>mark.remove();
+}
 function releaseReportHandoff(container,keepCover=false){
  const active=reportHandoffs.get(container);if(!active)return;
  const cover=active.frame.dataset.loaded==='true'?active.incoming:active.previous;
- reportHandoffs.delete(container);active.animation?.cancel();active.sweep?.cancel();if(active.frame.style)active.frame.style.transition='';
+ reportHandoffs.delete(container);active.animation?.cancel();active.sweeps.forEach(sweep=>sweep.cancel());if(active.frame.style)active.frame.style.transition='';
  active.frame.removeEventListener('load',active.reveal);
  active.previous.hidden=!(keepCover&&cover===active.previous);active.previous.inert=false;
  active.previous.removeAttribute('aria-hidden');active.previous.classList.remove('report-outgoing');
@@ -815,21 +1040,43 @@ function settleReportHandoff(container){
  active.immediate=true;
  if(active.frame.dataset.loaded==='true')releaseReportHandoff(container);
 }
+// A lateral wipe leaves a vertical vermilion edge travelling with it; the top wipe keeps the horizontal one.
+function reportSweeps(container,origin,previous){
+ const box=previous.getBoundingClientRect?.();if(!box?.height||!container.querySelector)return [];
+ const timing=origin==='top'?REPORT_REVEAL:REPORT_KNOCK_REVEAL;
+ if(origin==='top'){const sweep=container.querySelector('.report-sweep');return sweep?.animate?[sweep.animate([{transform:'translateY(0)',opacity:0},{opacity:1,offset:.1},{opacity:1,offset:.88},{transform:`translateY(${box.height}px)`,opacity:0}],timing)]:[];}
+ const edges=origin==='both'?[['left',box.width/2],['right',box.width/2]]:[[origin,box.width]];
+ return edges.map(([from,distance],n)=>{
+  let sweep=container.querySelectorAll?.('.report-sweep-x')[n];
+  if(!sweep){sweep=document.createElement('span');sweep.className='report-sweep-x';sweep.setAttribute('aria-hidden','true');container.append(sweep);}
+  const start=from==='left'?0:box.width,end=from==='left'?distance:box.width-distance;
+  return sweep.animate([{transform:`translateX(${start}px)`,opacity:0},{opacity:1,offset:.06},{opacity:1,offset:.82},{transform:`translateX(${end}px)`,opacity:0}],timing);
+ });
+}
 function handoffReport(container,previous,incoming){
+ const impact=reportImpacts.next;reportImpacts.next=null;
  if(!previous||previous===incoming||!previous.animate)return;
  const frame=incoming.querySelector('iframe');
  if(previous.querySelector('iframe').srcdoc===frame.srcdoc)return;
- const active={previous,incoming,frame,animation:null,sweep:null,reveal:null,immediate:false};reportHandoffs.set(container,active);
+ const active={previous,incoming,frame,impact,animation:null,sweeps:[],reveal:null,immediate:false};reportHandoffs.set(container,active);
  if(frame.style)frame.style.transition='none';
  previous.hidden=false;previous.inert=true;previous.setAttribute('aria-hidden','true');previous.classList.add('report-outgoing');
+ const wipe=origin=>{
+  if(reportHandoffs.get(container)!==active||active.animation)return;
+  if(active.immediate){releaseReportHandoff(container);return;}
+  const timing=origin==='top'?REPORT_REVEAL:REPORT_KNOCK_REVEAL;
+  active.animation=previous.animate([{clipPath:'inset(0 0 0 0)'},{clipPath:REPORT_WIPES[origin]||REPORT_WIPES.top}],timing);
+  active.sweeps=reportSweeps(container,origin,previous);
+  if(origin!=='top'&&typeof playReportSwish==='function')playReportSwish(origin,timing.duration);
+  active.animation.onfinish=()=>{if(reportHandoffs.get(container)===active)settleReportHandoff(container);};
+ };
  active.reveal=()=>{
   if(reportHandoffs.get(container)!==active||active.animation)return;
   frame.dataset.loaded='true';frame.removeEventListener('load',active.reveal);
   if(active.immediate||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches){releaseReportHandoff(container);return;}
-  active.animation=previous.animate([{clipPath:'inset(0 0 0 0)'},{clipPath:'inset(100% 0 0 0)'}],REPORT_REVEAL);
-  const sweep=container.querySelector?.('.report-sweep'),height=previous.getBoundingClientRect?.().height;
-  if(sweep?.animate&&height)active.sweep=sweep.animate([{transform:'translateY(0)',opacity:0},{opacity:1,offset:.1},{opacity:1,offset:.88},{transform:`translateY(${height}px)`,opacity:0}],REPORT_REVEAL);
-  active.animation.onfinish=()=>{if(reportHandoffs.get(container)===active)settleReportHandoff(container);};
+  // A thrown die is still in the air: the old page holds until it arrives.
+  if(impact&&!impact.landed){impact.waiters.push(wipe);return;}
+  wipe(impact?.origin||'top');
  };
  if(frame.dataset.loaded==='true')active.reveal();
  else frame.addEventListener('load',active.reveal,{once:true});
@@ -1042,8 +1289,8 @@ function addFirstIngredient(forced=null){
  const value=forced??randomIndex(INGREDIENTS_A.length);
  lastEvent={kind:swapping?'swap':'add',index:0,name:INGREDIENTS_A[value]};
  selected=currentExperiment().runs.find(run=>run.a===value&&run.b===selected.b);
- render(false);
- tumbleDice([0],[value,selected.b],()=>{syncDice3D();},DICE_THROW.enter);
+ const impact=reportImpactFor(()=>render(false));
+ tumbleDice([0],[value,selected.b],()=>{syncDice3D();},DICE_THROW.enter,impact);
  landLabels([0],LABEL_LAND.enter);
 }
 function showIngredients(){
@@ -1252,9 +1499,9 @@ function roll(index,gesture=null,forced=null){
  if(completing)lastEvent={kind:'pair'};
  else if(announce){const i=indices[0];lastEvent={kind:'swap',index:i,name:i?INGREDIENTS_B[values[1]]:INGREDIENTS_A[values[0]]};}
  else lastEvent={kind:'pair'};
- // Selection is immediate. The dice acknowledge it without gating the report.
- render(false);
- tumbleDice(indices,values,()=>{syncDice3D();},gesture||(introduce?DICE_THROW.enter:null));
+ // Selection is immediate; only the old page's cover waits for the die to reach the page.
+ const impact=reportImpactFor(()=>render(false));
+ tumbleDice(indices,values,()=>{syncDice3D();},gesture||(introduce?DICE_THROW.enter:null),impact);
  landLabels(indices,introduce?LABEL_LAND.enter:LABEL_LAND.roll);
 }
 async function copyText(text,pre,status){

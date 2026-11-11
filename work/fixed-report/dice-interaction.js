@@ -1,5 +1,6 @@
 const dieInteractions=new Map();
 const diceFinePointer=matchMedia('(hover: hover) and (pointer: fine)');
+const dieTick=(index,kind)=>{if(typeof playDieTick==='function')playDieTick(index,kind);};
 function resetDieInteraction(index){dieInteractions.get(index)?.();}
 function bindDieInteraction(button,index){
  let pointer=null,dragging=false,suppressPointerClick=false;
@@ -26,8 +27,12 @@ function bindDieInteraction(button,index){
    const dx=event.clientX-pointer.x,dy=event.clientY-pointer.y,now=performance.now();
    pointer.samples.push({x:event.clientX,y:event.clientY,t:now});
    pointer.samples=pointer.samples.filter(sample=>now-sample.t<=120);
-   if(!dragging&&Math.hypot(dx,dy)>7){dragging=true;button.dataset.dragging='true';}
-   if(dragging){event.preventDefault();moveDieGrab(index,pointer.from,dx,dy);}
+   if(!dragging&&Math.hypot(dx,dy)>7){dragging=true;button.dataset.dragging='true';pointer.face=dieTopFace(pointer.from.q);dieTick(index,'lift');}
+   if(dragging){
+    event.preventDefault();const face=moveDieGrab(index,pointer.from,dx,dy);
+    // Each new face that comes up clicks into place under the finger.
+    if(face!==pointer.face){pointer.face=face;dieTick(index,'face');}
+   }
    return;
   }
   if(!diceFinePointer.matches||event.pointerType==='touch'||diceMotion.matches||dieStates[index].running)return;
@@ -47,7 +52,7 @@ function bindDieInteraction(button,index){
   if(wasDragging){
    suppressPointerClick=true;
    if(speed>.6)roll(index,{direction:Math.sign(vx)||1,strength:Math.min(1,(speed-.6)/1.8),axis:[-vy/speed,0,vx/speed]});
-   else chooseDieFace(index,dieTopFace(dieStates[index].pose.q));
+   else{dieTick(index,'set');chooseDieFace(index,dieTopFace(dieStates[index].pose.q));}
   }else if(!inside)suppressPointerClick=true;
  });
  const cancel=event=>{if(pointer&&event.pointerId===pointer.id){suppressPointerClick=true;reset();}};
@@ -58,7 +63,7 @@ function bindDieInteraction(button,index){
   if(event.key.startsWith('Arrow')){
    event.preventDefault();reset();const from=beginDieGrab(index),size=button.querySelector('.cube').clientWidth||94;
    moveDieGrab(index,from,event.key==='ArrowRight'?size:event.key==='ArrowLeft'?-size:0,event.key==='ArrowDown'?size:event.key==='ArrowUp'?-size:0);
-   chooseDieFace(index,dieTopFace(dieStates[index].pose.q));return;
+   dieTick(index,'set');chooseDieFace(index,dieTopFace(dieStates[index].pose.q));return;
   }
   if(event.key===' '||event.key==='Enter')button.dataset.pressed='true';
  });

@@ -41,6 +41,10 @@ body{font-family:var(--sans);overflow-x:clip}
 /* The reveal line rides the boundary as the previous page is wiped away. */
 .report-sweep{position:absolute;left:-1px;right:-1px;top:0;height:2px;border-radius:2px;background:var(--accent);box-shadow:0 8px 18px -6px #c2432a99;opacity:0;z-index:3;pointer-events:none}
 .frame-section.report-outgoing{position:absolute;inset:0;z-index:2;pointer-events:none}
+/* A die's strike: the wipe leaves from the struck edge, and a ring in the die's colour marks the contact. */
+.report-sweep-x{position:absolute;top:-1px;bottom:-1px;left:-1px;width:2px;border-radius:2px;background:var(--accent);box-shadow:0 0 18px -4px #c2432a99;opacity:0;z-index:3;pointer-events:none}
+.report-knock{position:absolute;width:58px;height:58px;border-radius:50%;border:2px solid #243026;background:radial-gradient(closest-side,#24302624,#24302600);opacity:0;z-index:4;pointer-events:none}
+.report-knock[data-die='1']{border-color:#c2432a;background:radial-gradient(closest-side,#c2432a26,#c2432a00)}
 #report-view.comparing{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 /* Comparing gives both pages the full width, side by side; the dice step aside. */
 [data-comparing=true] #dice-lab{grid-column:1/-1}
