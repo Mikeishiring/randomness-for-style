@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Form W-01 — Weekly Performance</title>
+<style>
+  :root {
+    --paper: #f0b429;
+    --sheet: #fbf3e2;
+    --panel: #fff8ea;
+    --ink: #26201a;
+    --red: #c8102e;
+    --mustard: #f2b705;
+    --mute: #6b5d46;
+    --leader: #c9bda6;
+    --rule: #ded0ad;
+    --mono: "Courier New", Courier, monospace;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 30px 16px 56px;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .sheet {
+    max-width: 860px;
+    margin: 0 auto;
+    background: var(--sheet);
+    border: 2px solid var(--ink);
+    box-shadow: 10px 10px 0 rgba(38, 32, 26, 0.28);
+  }
+
+  /* Awning */
+  .awning {
+    height: 22px;
+    background: repeating-linear-gradient(90deg, var(--red) 0 36px, #fff 36px 72px);
+    border-bottom: 2px solid var(--ink);
+    position: relative;
+  }
+  .awning::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 12px;
+    background-image:
+      radial-gradient(circle at 18px 0, var(--red) 0 10.5px, var(--ink) 10.5px 12px, transparent 12.5px),
+      radial-gradient(circle at 54px 0, #fff 0 10.5px, var(--ink) 10.5px 12px, transparent 12.5px);
+    background-size: 72px 12px;
+    background-repeat: repeat-x;
+  }
+
+  /* Header */
+  header {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 24px;
+    align-items: start;
+    padding: 34px 24px 24px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .formtag {
+    display: inline-block;
+    background: var(--ink);
+    color: #fff;
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 5px 9px;
+  }
+  .bureau {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 2.5px;
+    color: var(--mute);
+  }
+  h1 { margin: 16px 0 0; font-size: 0; }
+  h1 span {
+    display: inline-block;
+    padding: 9px 12px 8px;
+    font-weight: bold;
+    font-size: clamp(19px, 3.6vw, 28px);
+    letter-spacing: 2px;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  h1 .l1 { background: var(--red); color: #fff; }
+  h1 .l2 { background: var(--mustard); color: var(--ink); margin: 6px 0 0 22px; }
+
+  /* Receipt */
+  .rwrap { position: relative; }
+  .receipt {
+    position: relative;
+    background: #fff;
+    padding: 18px 14px 14px;
+    box-shadow: 5px 5px 0 rgba(38, 32, 26, 0.18);
+  }
+  .receipt::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background-image: radial-gradient(circle at 6px 0, #fff 0 5px, transparent 5.5px);
+    background-size: 12px 6px;
+    background-repeat: repeat-x;
+  }
+  .rline {
+    display: flex;
+    align-items: baseline;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-top: 7px;
+  }
+  .rline:first-child { margin-top: 0; }
+  .rline .dots {
+    flex: 1;
+    min-width: 12px;
+    border-bottom: 2px dotted var(--leader);
+    margin: 0 6px 3px;
+  }
+  .rline b { font-size: 14px; }
+  .rsub {
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: var(--mute);
+    text-align: right;
+    margin-top: 3px;
+  }
+  .rline.total {
+    border-top: 2px dashed var(--leader);
+    padding-top: 9px;
+    margin-top: 11px;
+    color: var(--red);
+  }
+  .rline.total b { font-size: 21px; }
+  .stamp {
+    position: absolute;
+    top: -15px;
+    right: -9px;
+    transform: rotate(-7deg);
+    border: 3px double var(--red);
+    color: var(--red);
+    padding: 7px 11px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+    letter-spacing: 2px;
+    opacity: 0.9;
+  }
+  .stamp small {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 3px;
+    margin-top: 4px;
+  }
+
+  /* Sections */
+  section { padding: 20px 24px 28px; }
+  section + section { border-top: 2px solid var(--ink); }
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 2.5px;
+    margin: 0 0 18px;
+  }
+  h2 .no {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    background: var(--red);
+    color: #fff;
+    font-size: 12px;
+  }
+  .legend {
+    margin-left: auto;
+    display: flex;
+    gap: 14px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    color: var(--mute);
+  }
+  .chip i {
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--ink);
+  }
+  .chip.visits i { background: var(--mustard); }
+  .chip.signups i { background: var(--red); }
+
+  /* Daily chart */
+  .chart { display: flex; }
+  .axis {
+    flex: none;
+    width: 58px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .ax {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .ax b { font-size: 10px; letter-spacing: 1.5px; }
+  .ax-v {
+    height: 132px;
+    position: relative;
+    justify-content: flex-end;
+    padding-bottom: 3px;
+  }
+  .ax-s {
+    height: 50px;
+    position: relative;
+    justify-content: flex-start;
+    padding-top: 4px;
+  }
+  .tick {
+    position: absolute;
+    right: 5px;
+    font-size: 8px;
+    font-weight: bold;
+    line-height: 8px;
+    color: var(--mute);
+  }
+  .col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+  }
+  .varea {
+    height: 132px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 3px;
+    background-image: linear-gradient(to bottom,
+      transparent 0 26.5px, var(--rule) 26.5px 27.5px,
+      transparent 27.5px 52.5px, var(--rule) 52.5px 53.5px,
+      transparent 53.5px 79.5px, var(--rule) 79.5px 80.5px,
+      transparent 80.5px 105.5px, var(--rule) 105.5px 106.5px,
+      transparent 106.5px);
+  }
+  .vnum { font-size: 11px; font-weight: bold; }
+  .vbar {
+    width: min(44px, 58%);
+    background: var(--mustard);
+    border: 2px solid var(--ink);
+    border-bottom: none;
+  }
+  .dlab {
+    width: 100%;
+    text-align: center;
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    background: var(--panel);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    padding: 5px 0;
+  }
+  .dlab.axd { color: var(--mute); }
+  .peak .dlab { background: var(--ink); color: #fff; }
+  .sarea {
+    height: 50px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-image: linear-gradient(to bottom,
+      transparent 0 18.4px, var(--rule) 18.4px 19.4px,
+      transparent 19.4px 37.3px, var(--rule) 37.3px 38.3px,
+      transparent 38.3px);
+  }
+  .sbar {
+    width: min(26px, 34%);
+    background: var(--red);
+    border: 2px solid var(--ink);
+    border-top: none;
+  }
+  .snum, .axnum {
+    height: 16px;
+    line-height: 16px;
+    margin-top: 3px;
+    width: 100%;
+  }
+  .snum {
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--red);
+    text-align: center;
+  }
+  .cnum, .axconv {
+    height: 15px;
+    line-height: 15px;
+    margin-top: 1px;
+    width: 100%;
+  }
+  .cnum {
+    font-size: 10px;
+    font-weight: bold;
+    color: var(--mute);
+    text-align: center;
+  }
+  .axconv {
+    font-size: 9px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: var(--mute);
+  }
+
+  /* Sources ledger */
+  .src {
+    display: grid;
+    grid-template-columns: 86px 1fr 64px;
+    gap: 12px;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 2px dotted var(--mute);
+  }
+  .src:last-child { border-bottom: none; padding-bottom: 4px; }
+  .src h3 {
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin: 0;
+  }
+  .src h3 .item {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--mute);
+    margin-bottom: 2px;
+  }
+  .bars { display: grid; gap: 5px; min-width: 0; }
+  .brow {
+    display: grid;
+    grid-template-columns: 1fr 44px;
+    gap: 8px;
+    align-items: center;
+  }
+  .btrack { min-width: 0; }
+  .bfill { border: 2px solid var(--ink); }
+  .bfill.v { height: 16px; background: var(--mustard); }
+  .bfill.s { height: 11px; background: var(--red); }
+  .bnum { font-size: 11px; font-weight: bold; text-align: right; }
+  .bnum.s { color: var(--red); }
+  .convbox {
+    border: 2px solid var(--red);
+    color: var(--red);
+    text-align: center;
+    padding: 7px 4px 6px;
+  }
+  .convbox b { display: block; font-size: 16px; }
+  .convbox span {
+    font-size: 8px;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+  .src:nth-of-type(1) .convbox { transform: rotate(-2deg); }
+  .src:nth-of-type(2) .convbox { transform: rotate(1.5deg); }
+  .src:nth-of-type(3) .convbox { transform: rotate(-1.2deg); }
+
+  @media (max-width: 680px) {
+    header { grid-template-columns: 1fr; gap: 26px; }
+    .rwrap { max-width: 300px; }
+  }
+  @media (max-width: 620px) {
+    section { padding: 20px 14px 26px; }
+    h2 { flex-wrap: wrap; }
+    .legend { flex-basis: 100%; margin-left: 32px; }
+    .axis { width: 52px; }
+    .vnum, .snum { font-size: 10px; }
+    .src { grid-template-columns: 64px 1fr 56px; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<main class="sheet">
+  <div class="awning" aria-hidden="true"></div>
+
+  <header>
+    <div>
+      <span class="formtag">FORM W-01</span>
+      <span class="bureau">BUREAU OF SITE SERVICE</span>
+      <h1><span class="l1">Weekly Performance</span><br><span class="l2">Declaration</span></h1>
+    </div>
+    <div class="rwrap">
+      <div class="receipt">
+        <div class="rline"><span>VISITS</span><i class="dots"></i><b>12,480</b></div>
+        <div class="rline"><span>SIGNUPS</span><i class="dots"></i><b>624</b></div>
+        <div class="rline"><span>PEAK DAY</span><i class="dots"></i><b>SUN</b></div>
+        <div class="rsub">2,100 VISITS &middot; 6.0% CONV</div>
+        <div class="rline total"><span>CONVERSION</span><i class="dots"></i><b>5.0%</b></div>
+      </div>
+      <div class="stamp">SYNTHETIC DATA<small>WEEK 01</small></div>
+    </div>
+  </header>
+
+  <section aria-label="Daily visits and signups">
+    <h2><span class="no">1</span> DAILY RECORD</h2>
+    <div class="chart">
+      <div class="axis">
+        <div class="ax ax-v">
+          <b>VISITS</b>
+          <span class="tick" style="bottom:101px">2,000</span>
+          <span class="tick" style="bottom:75px">1,500</span>
+          <span class="tick" style="bottom:48px">1,000</span>
+          <span class="tick" style="bottom:22px">500</span>
+        </div>
+        <div class="dlab axd">DAY</div>
+        <div class="ax ax-s">
+          <b>SIGNUPS</b>
+          <span class="tick" style="top:15px">50</span>
+          <span class="tick" style="top:34px">100</span>
+        </div>
+        <div class="axnum"></div>
+        <div class="axconv">CONV %</div>
+      </div>
+      <div class="col">
+        <div class="varea"><span class="vnum">1,420</span><div class="vbar" style="height:74px"></div></div>
+        <div class="dlab">MON</div>
+        <div class="sarea"><div class="sbar" style="height:22px"></div></div>
+        <div class="snum">57</div>
+        <div class="cnum">4.0</div>
+      </div>
+      <div class="col">
+        <div class="varea"><span class="vnum">1,600</span><div class="vbar" style="height:84px"></div></div>
+        <div class="dlab">TUE</div>
+        <div class="sarea"><div class="sbar" style="height:27px"></div></div>
+        <div class="snum">72</div>
+        <div class="cnum">4.5</div>
+      </div>
+      <div class="col">
+        <div class="varea"><span class="vnum">1,780</span><div class="vbar" style="height:93px"></div></div>
+        <div class="dlab">WED</div>
+        <div class="sarea"><div class="sbar" style="height:34px"></div></div>
+        <div class="snum">89</div>
+        <div class="cnum">5.0</div>
+      </div>
+      <div class="col">
+        <div class="varea"><span class="vnum">1,640</span><div class="vbar" style="height:86px"></div></div>
+        <div class="dlab">THU</div>
+        <div class="sarea"><div class="sbar" style="height:28px"></div></div>
+        <div class="snum">74</div>
+        <div class="cnum">4.5</div>
+      </div>
+      <div class="col">
+        <div class="varea"><span class="vnum">1,920</span><div class="vbar" style="height:101px"></div></div>
+        <div class="dlab">FRI</div>
+        <div class="sarea"><div class="sbar" style="height:36px"></div></div>
+        <div class="snum">96</div>
+        <div class="cnum">5.0</div>
+      </div>
+      <div class="col">
+        <div class="varea"><span class="vnum">2,020</span><div class="vbar" style="height:106px"></div></div>
+        <div class="dlab">SAT</div>
+        <div class="sarea"><div class="sbar" style="height:41px"></div></div>
+        <div class="snum">109</div>
+        <div class="cnum">5.4</div>
+      </div>
+      <div class="col peak">
+        <div class="varea"><span class="vnum">2,100</span><div class="vbar" style="height:110px"></div></div>
+        <div class="dlab">SUN</div>
+        <div class="sarea"><div class="sbar" style="height:48px"></div></div>
+        <div class="snum">127</div>
+        <div class="cnum">6.0</div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Traffic sources">
+    <h2><span class="no">2</span> TRAFFIC SOURCES
+      <span class="legend">
+        <span class="chip visits"><i></i>VISITS</span>
+        <span class="chip signups"><i></i>SIGNUPS</span>
+      </span>
+    </h2>
+
+    <div class="src">
+      <h3><span class="item">2A</span>DIRECT</h3>
+      <div class="bars">
+        <div class="brow">
+          <div class="btrack"><div class="bfill v" style="width:100%"></div></div>
+          <span class="bnum">5,240</span>
+        </div>
+        <div class="brow">
+          <div class="btrack"><div class="bfill s" style="width:100%"></div></div>
+          <span class="bnum s">314</span>
+        </div>
+      </div>
+      <div class="convbox"><b>6.0%</b><span>CONV</span></div>
+    </div>
+
+    <div class="src">
+      <h3><span class="item">2B</span>SEARCH</h3>
+      <div class="bars">
+        <div class="brow">
+          <div class="btrack"><div class="bfill v" style="width:85.5%"></div></div>
+          <span class="bnum">4,480</span>
+        </div>
+        <div class="brow">
+          <div class="btrack"><div class="bfill s" style="width:71.3%"></div></div>
+          <span class="bnum s">224</span>
+        </div>
+      </div>
+      <div class="convbox"><b>5.0%</b><span>CONV</span></div>
+    </div>
+
+    <div class="src">
+      <h3><span class="item">2C</span>SOCIAL</h3>
+      <div class="bars">
+        <div class="brow">
+          <div class="btrack"><div class="bfill v" style="width:52.7%"></div></div>
+          <span class="bnum">2,760</span>
+        </div>
+        <div class="brow">
+          <div class="btrack"><div class="bfill s" style="width:27.4%"></div></div>
+          <span class="bnum s">86</span>
+        </div>
+      </div>
+      <div class="convbox"><b>3.1%</b><span>CONV</span></div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

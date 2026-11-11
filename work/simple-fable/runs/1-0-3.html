@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 Performance</title>
+<style>
+  :root{
+    --bg:#0f1117;
+    --panel:#171a22;
+    --line:#262b36;
+    --ink:#e9e4d8;
+    --muted:#a39d8f;
+    --faint:#8f8a7d;
+    --gold:#c9a53f;
+    --gold-bright:#d4af37;
+    --marble:#c9c2b1;
+    --mono:ui-monospace,"Cascadia Mono",Consolas,"SF Mono",Menlo,monospace;
+  }
+  html{color-scheme:dark}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:Georgia,"Iowan Old Style","Times New Roman",serif;
+  }
+  .band{line-height:0}
+  .wrap{max-width:920px;margin:0 auto;padding:10px 20px 40px}
+  header{display:flex;align-items:center;gap:14px;margin:26px 0 22px}
+  header svg{flex:none}
+  h1{font-size:24px;font-weight:600;margin:0;letter-spacing:.4px}
+  .meta{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .period{font-size:13px;letter-spacing:2.2px;color:var(--gold);text-transform:uppercase}
+  .chip{border:1px solid #3a3f4a;border-radius:2px;padding:3px 8px;font-size:10.5px;letter-spacing:1.4px;color:var(--muted);text-transform:uppercase}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--gold);padding:12px 14px 13px}
+  .kpi .label{font-size:10.5px;letter-spacing:1.8px;color:var(--faint);text-transform:uppercase}
+  .kpi .value{font-family:var(--mono);font-size:23px;margin-top:7px}
+  .kpi .sub{font-size:11.5px;color:var(--faint);margin-top:5px}
+  .kpi .sub .f{font-family:var(--mono);font-size:10.5px}
+  .panel{background:var(--panel);border:1px solid var(--line);padding:16px 18px 14px;margin-bottom:12px}
+  h2{display:flex;align-items:center;gap:12px;font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin:0 0 14px}
+  h2::after{
+    content:"";flex:1;height:5px;
+    background:
+      linear-gradient(var(--line),var(--line)) left center/100% 1px no-repeat,
+      linear-gradient(var(--gold),var(--gold)) right center/5px 5px no-repeat;
+  }
+  .panel svg{display:block;width:100%;height:auto}
+  svg text.fig{font-family:var(--mono)}
+  .sources{width:100%;border-collapse:collapse;font-size:13.5px}
+  .sources thead th{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--faint);font-weight:600;padding:0 0 7px 14px;text-align:right}
+  .sources thead th:first-child{padding-left:0;text-align:left}
+  .sources thead th.l{text-align:left}
+  .sources tbody th,.sources tbody td{border-top:1px solid #20242e;padding:8px 0 8px 14px;vertical-align:middle;text-align:left}
+  .sources tbody th{padding-left:0;font-weight:400;color:var(--ink)}
+  .epi{font-size:9px;letter-spacing:1.8px;color:var(--faint);text-transform:uppercase;margin-top:2px}
+  .bar{width:36%}
+  .fill{height:13px;background:var(--marble)}
+  .num{text-align:right;font-family:var(--mono);font-size:13px}
+  .conv{display:flex;align-items:center;gap:8px}
+  .cwrap{width:60px;flex:none}
+  .cfill{height:9px;background:var(--gold)}
+  .cval{color:#d2b14e;font-family:var(--mono);font-size:13px}
+  @media (max-width:640px){
+    h1{font-size:19px}
+    .kpis{grid-template-columns:1fr 1fr}
+    .sources{font-size:12px}
+    .sources tbody th,.sources tbody td,.sources thead th{padding-left:8px}
+    .bar{min-width:64px}
+    .cwrap{width:40px}
+    .num,.cval{font-size:11.5px}
+  }
+</style>
+</head>
+<body>
+
+<div class="band" aria-hidden="true">
+  <svg width="100%" height="18">
+    <defs>
+      <pattern id="m1" width="20" height="18" patternUnits="userSpaceOnUse">
+        <path d="M0 3 H20 M19 3 V13 M19 13 H8 M8 13 V8 M8 8 H14 M0 16 H20" fill="none" stroke="#b9953a" stroke-width="2"/>
+        <rect x="12.6" y="6.6" width="3" height="3" fill="#d4af37"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="18" fill="url(#m1)"/>
+  </svg>
+</div>
+
+<div class="wrap">
+
+  <header>
+    <svg width="44" height="38" viewBox="0 0 48 42" aria-hidden="true">
+      <path d="M4 14 L24 2 L44 14" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M6 18 H42" stroke="var(--gold)" stroke-width="2.5"/>
+      <path d="M12 21 V33 M24 21 V33 M36 21 V33" stroke="var(--gold)" stroke-width="2.5"/>
+      <path d="M8 35 H40" stroke="var(--gold)" stroke-width="2.5"/>
+      <path d="M4 40 H44" stroke="var(--gold)" stroke-width="2.5"/>
+    </svg>
+    <h1>Website performance</h1>
+    <div class="meta">
+      <span class="period">Week 01</span>
+      <span class="chip">Synthetic data</span>
+    </div>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="label">Visits</div>
+      <div class="value">12,480</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Signups</div>
+      <div class="value">624</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Conversion</div>
+      <div class="value">5.0%</div>
+      <div class="sub"><span class="f">4.0%</span> Mon &#8594; <span class="f">6.0%</span> Sun</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Peak day</div>
+      <div class="value">Sun</div>
+      <div class="sub"><span class="f">2,100</span> visits &#183; <span class="f">127</span> signups</div>
+    </div>
+  </div>
+
+  <section class="panel">
+    <h2>Day by day</h2>
+    <svg viewBox="0 0 720 452" role="img" aria-label="Daily visits as columns, Monday 1,420 rising to Sunday 2,100; daily signups below, 57 rising to 127; daily conversion 4.0% to 6.0%.">
+      <text x="4" y="50" font-size="10" letter-spacing="1.5" fill="#8f8a7d">VISITS</text>
+
+      <!-- Mon 1,420 -->
+      <text class="fig" x="70" y="111" font-size="12.5" fill="#e9e4d8" text-anchor="middle">1,420</text>
+      <rect x="42" y="121" width="56" height="6" fill="#d8d2c2"/>
+      <polygon points="46,127 94,127 89,132 51,132" fill="#d8d2c2"/>
+      <polygon points="53,132 87,132 90,270 50,270" fill="#c9c2b1"/>
+      <path d="M56.5 137 V266 M65.5 137 V266 M74.5 137 V266 M83.5 137 V266" stroke="rgba(15,17,23,.20)" stroke-width="2.4"/>
+      <!-- Tue 1,600 -->
+      <text class="fig" x="167" y="92" font-size="12.5" fill="#e9e4d8" text-anchor="middle">1,600</text>
+      <rect x="139" y="102" width="56" height="6" fill="#d8d2c2"/>
+      <polygon points="143,108 191,108 186,113 148,113" fill="#d8d2c2"/>
+      <polygon points="150,113 184,113 187,270 147,270" fill="#c9c2b1"/>
+      <path d="M153.5 118 V266 M162.5 118 V266 M171.5 118 V266 M180.5 118 V266" stroke="rgba(15,17,23,.20)" stroke-width="2.4"/>
+      <!-- Wed 1,780 -->
+      <text class="fig" x="264" y="73" font-size="12.5" fill="#e9e4d8" text-anchor="middle">1,780</text>
+      <rect x="236" y="83" width="56" height="6" fill="#d8d2c2"/>
+      <polygon points="240,89 288,89 283,94 245,94" fill="#d8d2c2"/>
+      <polygon points="247,94 281,94 284,270 244,270" fill="#c9c2b1"/>
+      <path d="M250.5 99 V266 M259.5 99 V266 M268.5 99 V266 M277.5 99 V266" stroke="rgba(15,17,23,.20)" stroke-width="2.4"/>
+      <!-- Thu 1,640 -->
+      <text class="fig" x="361" y="88" font-size="12.5" fill="#e9e4d8" text-anchor="middle">1,640</text>
+      <rect x="333" y="98" width="56" height="6" fill="#d8d2c2"/>
+      <polygon points="337,104 385,104 380,109 342,109" fill="#d8d2c2"/>
+      <polygon points="344,109 378,109 381,270 341,270" fill="#c9c2b1"/>
+      <path d="M347.5 114 V266 M356.5 114 V266 M365.5 114 V266 M374.5 114 V266" stroke="rgba(15,17,23,.20)" stroke-width="2.4"/>
+      <!-- Fri 1,920 -->
+      <text class="fig" x="458" y="59" font-size="12.5" fill="#e9e4d8" text-anchor="middle">1,920</text>
+      <rect x="430" y="69" width="56" height="6" fill="#d8d2c2"/>
+      <polygon points="434,75 482,75 477,80 439,80" fill="#d8d2c2"/>
+      <polygon points="441,80 475,80 478,270 438,270" fill="#c9c2b1"/>
+      <path d="M444.5 85 V266 M453.5 85 V266 M462.5 85 V266 M471.5 85 V266" stroke="rgba(15,17,23,.20)" stroke-width="2.4"/>
+      <!-- Sat 2,020 -->
+      <text class="fig" x="555" y="48" font-size="12.5" fill="#e9e4d8" text-anchor="middle">2,020</text>
+      <rect x="527" y="58" width="56" height="6" fill="#d8d2c2"/>
+      <polygon points="531,64 579,64 574,69 536,69" fill="#d8d2c2"/>
+      <polygon points="538,69 572,69 575,270 535,270" fill="#c9c2b1"/>
+      <path d="M541.5 74 V266 M550.5 74 V266 M559.5 74 V266 M568.5 74 V266" stroke="rgba(15,17,23,.20)" stroke-width="2.4"/>
+      <!-- Sun 2,100 (peak) -->
+      <path d="M7 0 L1.5 8 H4.8 L3 15 L10 5.5 H6.2 L9.5 0 Z" fill="#d4af37" transform="translate(612,27) scale(0.95)"/>
+      <text class="fig" x="652" y="40" font-size="12.5" font-weight="bold" fill="#d9b84a" text-anchor="middle">2,100</text>
+      <rect x="624" y="50" width="56" height="6" fill="#c9a53f"/>
+      <polygon points="628,56 676,56 671,61 637,61" fill="#c9a53f"/>
+      <polygon points="635,61 669,61 672,270 632,270" fill="#e8e1cf"/>
+      <path d="M638.5 66 V266 M647.5 66 V266 M656.5 66 V266 M665.5 66 V266" stroke="rgba(15,17,23,.20)" stroke-width="2.4"/>
+
+      <!-- stylobate -->
+      <rect x="32" y="270" width="656" height="7" fill="#6e685b"/>
+      <rect x="22" y="277" width="676" height="7" fill="#4c483e"/>
+
+      <!-- day labels -->
+      <text x="70" y="299" font-size="12.5" fill="#a39d8f" text-anchor="middle">Mon</text>
+      <text x="167" y="299" font-size="12.5" fill="#a39d8f" text-anchor="middle">Tue</text>
+      <text x="264" y="299" font-size="12.5" fill="#a39d8f" text-anchor="middle">Wed</text>
+      <text x="361" y="299" font-size="12.5" fill="#a39d8f" text-anchor="middle">Thu</text>
+      <text x="458" y="299" font-size="12.5" fill="#a39d8f" text-anchor="middle">Fri</text>
+      <text x="555" y="299" font-size="12.5" fill="#a39d8f" text-anchor="middle">Sat</text>
+      <text x="652" y="299" font-size="12.5" fill="#d4b44a" text-anchor="middle">Sun</text>
+
+      <text x="4" y="357" font-size="10" letter-spacing="1.5" fill="#8f8a7d">SIGNUPS</text>
+
+      <!-- signup bars -->
+      <text class="fig" x="70" y="386" font-size="11.5" fill="#d2b14e" text-anchor="middle">57</text>
+      <rect x="50" y="393" width="40" height="27" fill="#b08f35"/>
+      <rect x="50" y="393" width="40" height="3" fill="#cfa94a"/>
+      <text class="fig" x="167" y="379" font-size="11.5" fill="#d2b14e" text-anchor="middle">72</text>
+      <rect x="147" y="386" width="40" height="34" fill="#b08f35"/>
+      <rect x="147" y="386" width="40" height="3" fill="#cfa94a"/>
+      <text class="fig" x="264" y="371" font-size="11.5" fill="#d2b14e" text-anchor="middle">89</text>
+      <rect x="244" y="378" width="40" height="42" fill="#b08f35"/>
+      <rect x="244" y="378" width="40" height="3" fill="#cfa94a"/>
+      <text class="fig" x="361" y="378" font-size="11.5" fill="#d2b14e" text-anchor="middle">74</text>
+      <rect x="341" y="385" width="40" height="35" fill="#b08f35"/>
+      <rect x="341" y="385" width="40" height="3" fill="#cfa94a"/>
+      <text class="fig" x="458" y="368" font-size="11.5" fill="#d2b14e" text-anchor="middle">96</text>
+      <rect x="438" y="375" width="40" height="45" fill="#b08f35"/>
+      <rect x="438" y="375" width="40" height="3" fill="#cfa94a"/>
+      <text class="fig" x="555" y="361" font-size="11.5" fill="#d2b14e" text-anchor="middle">109</text>
+      <rect x="535" y="368" width="40" height="52" fill="#b08f35"/>
+      <rect x="535" y="368" width="40" height="3" fill="#cfa94a"/>
+      <text class="fig" x="652" y="353" font-size="11.5" font-weight="bold" fill="#d9b84a" text-anchor="middle">127</text>
+      <rect x="632" y="360" width="40" height="60" fill="#d4af37"/>
+      <rect x="632" y="360" width="40" height="3" fill="#e8cc6a"/>
+      <path d="M22 420.5 H698" stroke="#2a2f3b" stroke-width="1"/>
+
+      <!-- daily conversion -->
+      <text x="4" y="441" font-size="10" letter-spacing="1.5" fill="#8f8a7d">CONV.</text>
+      <text class="fig" x="70" y="441" font-size="10.5" fill="#87816f" text-anchor="middle">4.0%</text>
+      <text class="fig" x="167" y="441" font-size="10.5" fill="#87816f" text-anchor="middle">4.5%</text>
+      <text class="fig" x="264" y="441" font-size="10.5" fill="#87816f" text-anchor="middle">5.0%</text>
+      <text class="fig" x="361" y="441" font-size="10.5" fill="#87816f" text-anchor="middle">4.5%</text>
+      <text class="fig" x="458" y="441" font-size="10.5" fill="#87816f" text-anchor="middle">5.0%</text>
+      <text class="fig" x="555" y="441" font-size="10.5" fill="#87816f" text-anchor="middle">5.4%</text>
+      <text class="fig" x="652" y="441" font-size="10.5" fill="#d4b44a" text-anchor="middle">6.0%</text>
+    </svg>
+  </section>
+
+  <section class="panel">
+    <h2>Sources</h2>
+    <table class="sources">
+      <thead>
+        <tr>
+          <th scope="col">Source</th>
+          <th scope="col" colspan="2">Visits</th>
+          <th scope="col">Signups</th>
+          <th scope="col" class="l">Conv.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row" title="Patron: Hermes, messenger of the gods">Direct<div class="epi" aria-hidden="true">Hermes</div></th>
+          <td class="bar"><div class="fill" style="width:100%"></div></td>
+          <td class="num">5,240</td>
+          <td class="num">314</td>
+          <td><div class="conv"><div class="cwrap"><div class="cfill" style="width:100%"></div></div><span class="cval">6.0%</span></div></td>
+        </tr>
+        <tr>
+          <th scope="row" title="Patron: Athena, goddess of wisdom">Search<div class="epi" aria-hidden="true">Athena</div></th>
+          <td class="bar"><div class="fill" style="width:85.5%"></div></td>
+          <td class="num">4,480</td>
+          <td class="num">224</td>
+          <td><div class="conv"><div class="cwrap"><div class="cfill" style="width:83.3%"></div></div><span class="cval">5.0%</span></div></td>
+        </tr>
+        <tr>
+          <th scope="row" title="Patron: Dionysus, god of the gathering">Social<div class="epi" aria-hidden="true">Dionysus</div></th>
+          <td class="bar"><div class="fill" style="width:52.7%"></div></td>
+          <td class="num">2,760</td>
+          <td class="num">86</td>
+          <td><div class="conv"><div class="cwrap"><div class="cfill" style="width:51.9%"></div></div><span class="cval">3.1%</span></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<div class="band" aria-hidden="true">
+  <svg width="100%" height="18">
+    <defs>
+      <pattern id="m2" width="20" height="18" patternUnits="userSpaceOnUse">
+        <path d="M0 3 H20 M19 3 V13 M19 13 H8 M8 13 V8 M8 8 H14 M0 16 H20" fill="none" stroke="#b9953a" stroke-width="2"/>
+        <rect x="12.6" y="6.6" width="3" height="3" fill="#d4af37"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="18" fill="url(#m2)"/>
+  </svg>
+</div>
+
+</body>
+</html>

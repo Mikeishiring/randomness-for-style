@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grand Hotel R'lyeh — Week 01</title>
+<style>
+  :root {
+    --abyss: #06201e;
+    --panel: #0a2a27;
+    --panel-edge: #123832;
+    --baseline: #1d4a42;
+    --gold: #c8a24b;
+    --gold-bright: #e6c87a;
+    --gold-dim: rgba(200, 162, 75, 0.35);
+    --gold-faint: rgba(200, 162, 75, 0.14);
+    --ivory: #ede3c8;
+    --muted: #9db8ad;
+    --sea: #4a9d92;
+    --sea-deep: #2c6b63;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: linear-gradient(180deg, #0d3531 0%, #06201e 34%, #041714 100%) fixed;
+    background-color: var(--abyss);
+    color: var(--ivory);
+    font-family: Georgia, "Times New Roman", serif;
+    padding: 40px 16px 64px;
+    line-height: 1.4;
+  }
+  .frame {
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    max-width: 920px;
+    margin: 0 auto;
+    border: 1px solid var(--gold-dim);
+    box-shadow: inset 0 0 0 4px var(--abyss), inset 0 0 0 5px var(--gold-dim);
+    padding: 48px clamp(16px, 5vw, 56px) 56px;
+    background: linear-gradient(180deg, rgba(13, 53, 49, 0.35), rgba(6, 32, 30, 0) 320px);
+  }
+  .watermark {
+    position: absolute;
+    z-index: -1;
+    top: -34px;
+    right: -30px;
+  }
+
+  header { text-align: center; }
+  .marque {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    font-size: 13px;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .marque::before, .marque::after {
+    content: "";
+    height: 1px;
+    width: 44px;
+    background: var(--gold-dim);
+  }
+  .ornament { margin: 18px auto 10px; display: block; }
+  h1 {
+    font-size: clamp(34px, 6vw, 46px);
+    font-weight: normal;
+    letter-spacing: 0.06em;
+  }
+  .tag {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid rgba(157, 184, 173, 0.35);
+    border-radius: 2px;
+    padding: 3px 10px 2px;
+    text-indent: 0.22em;
+  }
+
+  .kpis {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .kpi {
+    border: 1px solid var(--panel-edge);
+    border-top: 2px solid var(--gold);
+    box-shadow: inset 0 0 0 1px var(--gold-faint);
+    background: var(--panel);
+    padding: 20px 12px 18px;
+    text-align: center;
+  }
+  .kpi b {
+    display: block;
+    font-weight: normal;
+    font-size: clamp(26px, 4.5vw, 38px);
+    color: var(--gold-bright);
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi span {
+    display: block;
+    margin-top: 6px;
+    font-size: 11px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-indent: 0.26em;
+  }
+
+  section.panel {
+    margin-top: 40px;
+    border: 1px solid var(--panel-edge);
+    background: var(--panel);
+    padding: 28px clamp(14px, 3.5vw, 32px) 26px;
+  }
+  h2 {
+    font-weight: normal;
+    font-size: 13px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-indent: 0.32em;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .cap {
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 8px 46px;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    column-gap: 10px;
+  }
+  .lane { margin-bottom: 26px; }
+  .ticks { position: relative; }
+  .tick {
+    position: absolute;
+    right: 0;
+    font-size: 10px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    transform: translateY(50%);
+  }
+  .plotwrap {
+    position: relative;
+    border-bottom: 1px solid var(--baseline);
+  }
+  .gridline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px solid var(--gold-faint);
+  }
+  .g7 {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: clamp(4px, 1.5vw, 12px);
+    height: 100%;
+  }
+  .g7 .cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .bar {
+    width: min(60%, 34px);
+    border-radius: 1px 1px 0 0;
+  }
+  .bar.visits { background: linear-gradient(180deg, var(--sea), var(--sea-deep)); }
+  .bar.signups { background: linear-gradient(180deg, var(--gold-bright), var(--gold)); }
+  .val {
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 4px;
+  }
+  .val.gold { color: var(--gold-bright); }
+  .days span, .convs span {
+    display: block;
+    text-align: center;
+  }
+  .days { margin-bottom: 4px; }
+  .days span {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 10px;
+  }
+  .convs span {
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .convcap { margin-top: 16px; }
+
+  .source {
+    display: grid;
+    grid-template-columns: 64px 1fr 70px 74px 64px 92px;
+    align-items: center;
+    column-gap: 14px;
+    padding: 14px 0;
+  }
+  .source + .source { border-top: 1px solid var(--panel-edge); }
+  .source.head {
+    padding: 0 0 10px;
+    border-bottom: 1px solid var(--gold-dim);
+    align-items: end;
+  }
+  .source.head + .source { border-top: none; }
+  .h {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: right;
+  }
+  .source .name { font-size: 15px; }
+  .source .track {
+    position: relative;
+    height: 12px;
+    background: rgba(18, 56, 50, 0.9);
+  }
+  .source .fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: linear-gradient(90deg, var(--sea-deep), var(--sea));
+  }
+  .source .share {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .nums { display: contents; }
+  .num {
+    font-size: 14px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .num small, .share small {
+    display: none;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .num.gold { color: var(--gold-bright); }
+  .meter {
+    display: block;
+    height: 3px;
+    margin: 5px 0 0 auto;
+    background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  }
+  .convs .meter { margin: 4px auto 0; }
+
+  footer { margin-top: 44px; text-align: center; }
+
+  @media (max-width: 560px) {
+    body { padding: 20px 16px 40px; }
+    .frame { padding: 36px 16px 40px; }
+    .kpis { gap: 8px; }
+    .kpi { padding: 14px 6px 12px; }
+    .kpi span { letter-spacing: 0.14em; text-indent: 0.14em; }
+    .val { font-size: 10px; }
+    .days span { font-size: 10px; letter-spacing: 0.08em; }
+    .convs span { font-size: 10px; }
+    .bar { width: min(72%, 26px); }
+    .source.head { display: none; }
+    .source {
+      grid-template-columns: 1fr auto;
+      grid-template-areas: "name share" "track track" "nums nums";
+      row-gap: 8px;
+    }
+    .source .name { grid-area: name; }
+    .source .track { grid-area: track; }
+    .source .share { grid-area: share; }
+    .nums {
+      display: flex;
+      grid-area: nums;
+      gap: 28px;
+    }
+    .num { text-align: left; }
+    .num small, .share small { display: block; }
+    .meter { margin: 5px auto 0 0; }
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <svg class="watermark" width="320" height="380" viewBox="0 0 320 380" aria-hidden="true">
+    <g fill="none" stroke="#c8a24b" stroke-opacity="0.10" stroke-linecap="round">
+      <path pathLength="100" stroke-width="10" stroke-dasharray="25 100"
+            d="M70 -20 C 110 60, 180 110, 220 180 C 252 236, 240 300, 190 302 C 152 303, 138 258, 170 244 C 188 236, 202 252, 192 266"/>
+      <path pathLength="100" stroke-width="6" stroke-dasharray="55 100"
+            d="M70 -20 C 110 60, 180 110, 220 180 C 252 236, 240 300, 190 302 C 152 303, 138 258, 170 244 C 188 236, 202 252, 192 266"/>
+      <path stroke-width="3"
+            d="M70 -20 C 110 60, 180 110, 220 180 C 252 236, 240 300, 190 302 C 152 303, 138 258, 170 244 C 188 236, 202 252, 192 266"/>
+    </g>
+    <g fill="#c8a24b" fill-opacity="0.085">
+      <circle cx="122" cy="78" r="7"/>
+      <circle cx="152" cy="106" r="6"/>
+      <circle cx="180" cy="136" r="5.2"/>
+      <circle cx="203" cy="168" r="4.5"/>
+      <circle cx="220" cy="202" r="3.8"/>
+      <circle cx="228" cy="238" r="3.2"/>
+    </g>
+  </svg>
+
+  <header>
+    <div class="marque">Grand Hotel R'lyeh</div>
+    <svg class="ornament" width="300" height="46" viewBox="0 0 300 46" role="img" aria-label="Tentacle ornament">
+      <g fill="none" stroke="#c8a24b" stroke-linecap="round">
+        <path pathLength="100" stroke-width="3.4" stroke-dasharray="28 100"
+              d="M150 23 C 128 5, 96 3, 80 15 C 66 26, 72 39, 86 37 C 96 35, 98 25, 90 22"/>
+        <path pathLength="100" stroke-width="2.2" stroke-dasharray="58 100"
+              d="M150 23 C 128 5, 96 3, 80 15 C 66 26, 72 39, 86 37 C 96 35, 98 25, 90 22"/>
+        <path stroke-width="1.2"
+              d="M150 23 C 128 5, 96 3, 80 15 C 66 26, 72 39, 86 37 C 96 35, 98 25, 90 22"/>
+        <path pathLength="100" stroke-width="3.4" stroke-dasharray="28 100"
+              d="M150 23 C 172 5, 204 3, 220 15 C 234 26, 228 39, 214 37 C 204 35, 202 25, 210 22"/>
+        <path pathLength="100" stroke-width="2.2" stroke-dasharray="58 100"
+              d="M150 23 C 172 5, 204 3, 220 15 C 234 26, 228 39, 214 37 C 204 35, 202 25, 210 22"/>
+        <path stroke-width="1.2"
+              d="M150 23 C 172 5, 204 3, 220 15 C 234 26, 228 39, 214 37 C 204 35, 202 25, 210 22"/>
+      </g>
+      <g fill="#c8a24b">
+        <circle cx="102" cy="28" r="1.7"/>
+        <circle cx="110" cy="24" r="1.4"/>
+        <circle cx="118" cy="21" r="1.15"/>
+        <circle cx="126" cy="19" r="0.9"/>
+        <circle cx="198" cy="28" r="1.7"/>
+        <circle cx="190" cy="24" r="1.4"/>
+        <circle cx="182" cy="21" r="1.15"/>
+        <circle cx="174" cy="19" r="0.9"/>
+        <path d="M150 15 l 7 8 -7 8 -7 -8 z" fill="none" stroke="#e6c87a" stroke-width="1.2"/>
+        <circle cx="150" cy="23" r="1.8" fill="#e6c87a"/>
+      </g>
+    </svg>
+    <h1>Week 01</h1>
+    <span class="tag">Site performance · Synthetic data</span>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi"><b>12,480</b><span>Visits</span></div>
+    <div class="kpi"><b>624</b><span>Signups</span></div>
+    <div class="kpi"><b>5.0%</b><span>Conversion</span></div>
+  </div>
+
+  <section class="panel" aria-label="Daily performance">
+    <h2>I. By day</h2>
+
+    <div class="lane">
+      <div class="cap" aria-hidden="true">Visits</div>
+      <div class="row">
+        <div class="ticks" aria-hidden="true">
+          <span class="tick" style="bottom:143px">2,000</span>
+          <span class="tick" style="bottom:71px">1,000</span>
+        </div>
+        <div class="plotwrap" style="height:172px">
+          <div class="gridline" style="bottom:143px" aria-hidden="true"></div>
+          <div class="gridline" style="bottom:71px" aria-hidden="true"></div>
+          <div class="g7" role="list">
+            <div class="cell" role="listitem" aria-label="Monday: 1,420 visits"><span class="val" aria-hidden="true">1,420</span><div class="bar visits" style="height:101px" aria-hidden="true"></div></div>
+            <div class="cell" role="listitem" aria-label="Tuesday: 1,600 visits"><span class="val" aria-hidden="true">1,600</span><div class="bar visits" style="height:114px" aria-hidden="true"></div></div>
+            <div class="cell" role="listitem" aria-label="Wednesday: 1,780 visits"><span class="val" aria-hidden="true">1,780</span><div class="bar visits" style="height:127px" aria-hidden="true"></div></div>
+            <div class="cell" role="listitem" aria-label="Thursday: 1,640 visits"><span class="val" aria-hidden="true">1,640</span><div class="bar visits" style="height:117px" aria-hidden="true"></div></div>
+            <div class="cell" role="listitem" aria-label="Friday: 1,920 visits"><span class="val" aria-hidden="true">1,920</span><div class="bar visits" style="height:137px" aria-hidden="true"></div></div>
+            <div class="cell" role="listitem" aria-label="Saturday: 2,020 visits"><span class="val" aria-hidden="true">2,020</span><div class="bar visits" style="height:144px" aria-hidden="true"></div></div>
+            <div class="cell" role="listitem" aria-label="Sunday: 2,100 visits"><span class="val" aria-hidden="true">2,100</span><div class="bar visits" style="height:150px" aria-hidden="true"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lane">
+      <div class="cap" aria-hidden="true">Signups</div>
+      <div class="row">
+        <div class="ticks" aria-hidden="true">
+          <span class="tick" style="bottom:55px">100</span>
+          <span class="tick" style="bottom:28px">50</span>
+        </div>
+        <div class="plotwrap" style="height:92px">
+          <div class="gridline" style="bottom:55px" aria-hidden="true"></div>
+          <div class="gridline" style="bottom:28px" aria-hidden="true"></div>
+          <div class="g7" role="list">
+            <div class="cell" role="listitem" aria-label="Monday: 57 signups"><span class="val gold" aria-hidden="true">57</span><div class="bar signups" style="height:31px" aria-hidden="true"></div></div>
+            <div class="cell" role="listitem" aria-label="Tuesday: 72 signups"><span class="val gold" aria-hidden="true">72</span><div class="bar signups" style="height:40px" aria-hidden="true"></div></div>
+            <div class="cell" role="listitem" aria-label="Wednesday: 89 signups"><span class="val gold" aria-hidden="true">89</span><div class="bar signups" style="height:49px" aria-hidden="true"></div></div>
+            <div class="cell" role="listitem" aria-label="Thursday: 74 signups"><span class="val gold" aria-hidden="true">74</span><div class="bar signups" style="height:41px" aria-hidden="true"></div></div>
+            <div class="cell" role="listitem" aria-label="Friday: 96 signups"><span class="val gold" aria-hidden="true">96</span><div class="bar signups" style="height:53px" aria-hidden="true"></div></div>
+            <div class="cell" role="listitem" aria-label="Saturday: 109 signups"><span class="val gold" aria-hidden="true">109</span><div class="bar signups" style="height:60px" aria-hidden="true"></div></div>
+            <div class="cell" role="listitem" aria-label="Sunday: 127 signups"><span class="val gold" aria-hidden="true">127</span><div class="bar signups" style="height:70px" aria-hidden="true"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row days" aria-hidden="true">
+      <div></div>
+      <div class="g7">
+        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+      </div>
+    </div>
+
+    <div class="cap convcap" aria-hidden="true">Conversion</div>
+    <div class="row convs">
+      <div></div>
+      <div class="g7" role="list">
+        <span role="listitem" aria-label="Monday: 4.0% conversion"><span aria-hidden="true">4.0%</span><span class="meter" style="width:min(66.7%, 29.3px)" aria-hidden="true"></span></span>
+        <span role="listitem" aria-label="Tuesday: 4.5% conversion"><span aria-hidden="true">4.5%</span><span class="meter" style="width:min(75%, 33px)" aria-hidden="true"></span></span>
+        <span role="listitem" aria-label="Wednesday: 5.0% conversion"><span aria-hidden="true">5.0%</span><span class="meter" style="width:min(83.3%, 36.7px)" aria-hidden="true"></span></span>
+        <span role="listitem" aria-label="Thursday: 4.5% conversion"><span aria-hidden="true">4.5%</span><span class="meter" style="width:min(75%, 33px)" aria-hidden="true"></span></span>
+        <span role="listitem" aria-label="Friday: 5.0% conversion"><span aria-hidden="true">5.0%</span><span class="meter" style="width:min(83.3%, 36.7px)" aria-hidden="true"></span></span>
+        <span role="listitem" aria-label="Saturday: 5.4% conversion"><span aria-hidden="true">5.4%</span><span class="meter" style="width:min(90%, 39.6px)" aria-hidden="true"></span></span>
+        <span role="listitem" aria-label="Sunday: 6.0% conversion"><span aria-hidden="true">6.0%</span><span class="meter" style="width:min(100%, 44px)" aria-hidden="true"></span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-label="Traffic sources">
+    <h2>II. By source</h2>
+    <div class="sources" role="table" aria-label="Sources register">
+      <div class="source head" role="row">
+        <div role="columnheader" aria-label="Source"></div>
+        <div aria-hidden="true"></div>
+        <div class="h" role="columnheader">Visit share</div>
+        <div class="nums">
+          <div class="h" role="columnheader">Visits</div>
+          <div class="h" role="columnheader">Signups</div>
+          <div class="h" role="columnheader">Conversion</div>
+        </div>
+      </div>
+      <div class="source" role="row">
+        <div class="name" role="cell">Direct</div>
+        <div class="track" aria-hidden="true"><div class="fill" style="width:42%"></div></div>
+        <div class="share" role="cell">42%<small>Visit share</small></div>
+        <div class="nums">
+          <div class="num" role="cell">5,240<small>Visits</small></div>
+          <div class="num gold" role="cell">314<small>Signups</small></div>
+          <div class="num" role="cell">6.0%<small>Conversion</small><span class="meter" style="width:48px" aria-hidden="true"></span></div>
+        </div>
+      </div>
+      <div class="source" role="row">
+        <div class="name" role="cell">Search</div>
+        <div class="track" aria-hidden="true"><div class="fill" style="width:36%"></div></div>
+        <div class="share" role="cell">36%<small>Visit share</small></div>
+        <div class="nums">
+          <div class="num" role="cell">4,480<small>Visits</small></div>
+          <div class="num gold" role="cell">224<small>Signups</small></div>
+          <div class="num" role="cell">5.0%<small>Conversion</small><span class="meter" style="width:40px" aria-hidden="true"></span></div>
+        </div>
+      </div>
+      <div class="source" role="row">
+        <div class="name" role="cell">Social</div>
+        <div class="track" aria-hidden="true"><div class="fill" style="width:22%"></div></div>
+        <div class="share" role="cell">22%<small>Visit share</small></div>
+        <div class="nums">
+          <div class="num" role="cell">2,760<small>Visits</small></div>
+          <div class="num gold" role="cell">86<small>Signups</small></div>
+          <div class="num" role="cell">3.1%<small>Conversion</small><span class="meter" style="width:25px" aria-hidden="true"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <path d="M9 2 l 6 7 -6 7 -6 -7 z" fill="none" stroke="#c8a24b" stroke-opacity="0.5" stroke-width="1.2"/>
+      <circle cx="9" cy="9" r="1.4" fill="#c8a24b" fill-opacity="0.5"/>
+    </svg>
+  </footer>
+
+</div>
+</body>
+</html>

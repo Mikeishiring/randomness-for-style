@@ -1,0 +1,59 @@
+Critique of 4-5-3.html
+
+ORIGINALITY — harsh read
+
+1. The identity has stopped developing and started settling. Round two
+   added the board and the beetles; round three added nothing to the
+   vocabulary, only bookkeeping. That was the right call then, but the
+   honest reading now is that the two ingredients are developed exactly as
+   far as they will go without hurting the report: the remaining
+   conventional surfaces (bar chart, table) are conventional because
+   convention is what keeps them instantly readable. Harsh version: this
+   design's ceiling is cohesion, not invention, and v3 has not fully
+   cashed in the cohesion.
+2. Concrete cohesion failure: the page numbers three plates but frames only
+   two. Plates I and II sit in bordered specimen mounts; "Plate III" is a
+   bare table floating on the case bottom. The system the design invented,
+   it applies inconsistently.
+
+CLARITY — harsh read
+
+3. Share of visits is the one figure a reader must still estimate. The 10%
+   ticks were a half-measure: a ruler where a number belongs. 42.0 / 35.9 /
+   22.1 are knowable to one decimal; making the reader interpolate ticks is
+   false economy, especially when every other figure on the page is printed.
+4. Pixel-level sloppiness: in both plates the checkered best-day marker is
+   placed at x=330 while the 12px "Sun" label centred at x=320 extends to
+   roughly x=330.5 — the chip can clip the final glyph. Small, real, and
+   exactly the kind of finishing error a specimen label would never carry.
+5. The totals row's cream background will lose contrast once the table
+   gains the plate's tinted backing; it needs a visibly distinct tone or
+   the reconciliation row stops reading as a rule-off.
+
+CHANGES MADE IN 4-5-4.html
+
+A. Sources section now sits in the same plate frame as Plates I and II —
+   heading, plate number and table inside one bordered mount. The plate
+   system is applied consistently (addresses 2).
+B. Each share track is direct-labelled with its percentage: 42.0%, 35.9%,
+   22.1%, and 100% on the totals row. Ticks stay as the ruler; the number
+   does the precise work (addresses 3). Table minimum width raised to
+   fit the labels without squeezing.
+C. Best-day chips in both plates nudged from x=330 to x=334, clearing the
+   "Sun" label (addresses 4).
+D. Totals row backing set to the darker track tone so it still reads as a
+   rule-off inside the tinted plate (addresses 5).
+
+CONSIDERED AND REJECTED
+
+- Engraved hatch fills on the visits bars (Victorian woodcut texture):
+  texture noise on the page's simplest, most legible element; solid ink
+  wins.
+- Rebuilding the pit board as a semantic table or definition list: the
+  current markup already linearises correctly for a screen reader
+  ("Conversion by day, Mon 4.0%, ..."); churn without reader benefit.
+- Any further copy, captions or trend annotations: everything sayable is
+  already shown.
+
+Purpose, data, every supplied and derived figure, plates, beetles, board,
+plaques, header, palette — unchanged.

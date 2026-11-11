@@ -1,0 +1,52 @@
+Critique of 4-4-1.html
+
+ORIGINALITY — weak. The first version is the laziest possible reading of both
+ingredients. Motorsport is a 10px checkered sticker at the top of the page and
+an italic font style; luxury hotel is Didot, letterspacing and gold hairlines —
+the generic "premium dark" look of any whisky brand or barber shop. The two
+ingredients never combine: they sit in separate CSS properties (serif = hotel,
+italic = motorsport) instead of fusing into one device. Motorsport has a rich,
+data-native graphic language — timing sheets, sector splits, fastest-lap
+marking, number plates — and the data (seven days, a peak day, a best
+conversion) maps straight onto it; none of it was used. Hotel language beyond
+the font — folio ledgers, ruled registers, room-number plaques — was equally
+untouched.
+
+CLARITY — compromised in four places.
+1. Daily signups were a detached row of gold numbers floating below the day
+   labels; they read as footnotes, not data, and the legend swatch pointed at a
+   2.5px gold cap on each bar that encoded nothing. A legend describing
+   decoration is dishonest.
+2. Conversion-by-day lived in a separate panel, forcing the reader to
+   cross-reference Sunday's 2,100 visits against Sunday's 6.0% two charts
+   apart. Worse, its line sat on a 3.5% baseline, visually exaggerating a
+   4.0→6.0 climb; the axis was labeled, but small.
+3. The sources table interleaved orphan bar rows under the figures, doubling
+   the row count, and the bar (visits only) stretched under all four columns —
+   ambiguous scope.
+4. Sunday's bar used a lighter green with no stated meaning, and gold carried
+   three meanings at once (signups, conversion, decoration).
+
+STRONG DECISIONS PRESERVED: the deep racing-green/champagne palette, the Didot
+nameplate with condensed italic numerals, the KPI tiles with gold stripes, the
+"Synthetic data" badge, minimal copy, zero JavaScript, system fonts only.
+
+CHANGES MADE:
+- Fused device: both data sections become one shared grammar — a race timing
+  sheet typeset as a hotel folio ledger. Each day/source is one ruled row with
+  the exact figure and a zero-based inline bar per metric, scaled to the
+  column maximum. All three daily metrics now sit on one line; no
+  cross-referencing, no truncated baseline, no unexplained emphasis.
+- Conversion integrated per day (and per source) with its own zero-based bar;
+  the separate line-chart panel and its 3.5% baseline are gone.
+- Disciplined color roles: green bars = visits, gold bars = signups, champagne
+  bars = conversion; all figures ivory. The fake legend is gone.
+- Peak day marked explicitly: Sunday row highlighted with a small checkered
+  flag — the checker motif now means something (finish/peak) instead of being
+  only a border sticker.
+- Header monogram: "01" in a gold-bordered plaque — race number plate and
+  hotel room plaque in one mark; the title dedupes to "Website Performance"
+  (the period lives in the plaque, KPI context and footer).
+- Section panels carry a double livery stripe echoing the KPI tiles.
+- Same data, same purpose, still fully self-contained with no external
+  requests and no scripts.

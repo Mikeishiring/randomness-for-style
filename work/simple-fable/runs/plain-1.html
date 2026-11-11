@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 Performance</title>
+<style>
+  :root {
+    --bg: #faf9f6;
+    --surface: #ffffff;
+    --ink: #1f2430;
+    --muted: #6b7280;
+    --line: #e7e4dc;
+    --accent: #2f6f6a;
+    --accent-soft: #d9e8e6;
+    --accent-2: #c9823e;
+    --accent-2-soft: #f3e3d1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15181d;
+      --surface: #1d2127;
+      --ink: #e8e6e1;
+      --muted: #9aa0ab;
+      --line: #2c313a;
+      --accent: #5aa39d;
+      --accent-soft: #24413e;
+      --accent-2: #d9a05e;
+      --accent-2-soft: #453424;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #15181d;
+    --surface: #1d2127;
+    --ink: #e8e6e1;
+    --muted: #9aa0ab;
+    --line: #2c313a;
+    --accent: #5aa39d;
+    --accent-soft: #24413e;
+    --accent-2: #d9a05e;
+    --accent-2-soft: #453424;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 16px 64px;
+  }
+  header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  h1 {
+    font-size: 1.7rem;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .tag {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px 10px;
+  }
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .kpi .label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+  }
+  .kpi .value {
+    font-size: 1.9rem;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+    margin-top: 2px;
+  }
+  h2 {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    font-weight: 600;
+    margin: 0 0 14px;
+  }
+  section {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 22px 22px 18px;
+    margin-bottom: 20px;
+  }
+  .chart {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+  }
+  .col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+  .num {
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .track {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .track.visits { height: 130px; }
+  .track.signups { height: 64px; }
+  .bar {
+    width: 70%;
+    max-width: 44px;
+    border-radius: 4px 4px 0 0;
+  }
+  .bar.v { background: var(--accent); }
+  .bar.s { background: var(--accent-2); }
+  .day {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .row-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin: 0 0 10px;
+  }
+  .row-label + .chart { margin-bottom: 18px; }
+  .swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex: none;
+  }
+  .swatch.v { background: var(--accent); }
+  .swatch.s { background: var(--accent-2); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  th {
+    text-align: left;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 0 10px 8px 0;
+  }
+  th.n, td.n { text-align: right; }
+  td {
+    padding: 9px 10px 9px 0;
+    border-top: 1px solid var(--line);
+  }
+  td:last-child, th:last-child { padding-right: 0; }
+  .src-bar {
+    height: 10px;
+    border-radius: 5px;
+    background: var(--accent);
+  }
+  .src-track {
+    background: var(--accent-soft);
+    border-radius: 5px;
+    width: 100%;
+  }
+  td.bar-cell { width: 34%; }
+  @media (max-width: 560px) {
+    .kpis { grid-template-columns: 1fr; }
+    .kpi .value { font-size: 1.6rem; }
+    td.bar-cell { display: none; }
+    th.bar-cell { display: none; }
+    .num { font-size: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Week 01</h1>
+    <span class="tag">Synthetic data</span>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="label">Visits</div>
+      <div class="value">12,480</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Signups</div>
+      <div class="value">624</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Conversion</div>
+      <div class="value">5.0%</div>
+    </div>
+  </div>
+
+  <section aria-label="Daily visits and signups">
+    <h2>By day</h2>
+
+    <p class="row-label"><span class="swatch v"></span>Visits</p>
+    <div class="chart">
+      <div class="col"><span class="num">1,420</span><div class="track visits"><div class="bar v" style="height:67.6%"></div></div><span class="day">Mon</span></div>
+      <div class="col"><span class="num">1,600</span><div class="track visits"><div class="bar v" style="height:76.2%"></div></div><span class="day">Tue</span></div>
+      <div class="col"><span class="num">1,780</span><div class="track visits"><div class="bar v" style="height:84.8%"></div></div><span class="day">Wed</span></div>
+      <div class="col"><span class="num">1,640</span><div class="track visits"><div class="bar v" style="height:78.1%"></div></div><span class="day">Thu</span></div>
+      <div class="col"><span class="num">1,920</span><div class="track visits"><div class="bar v" style="height:91.4%"></div></div><span class="day">Fri</span></div>
+      <div class="col"><span class="num">2,020</span><div class="track visits"><div class="bar v" style="height:96.2%"></div></div><span class="day">Sat</span></div>
+      <div class="col"><span class="num">2,100</span><div class="track visits"><div class="bar v" style="height:100%"></div></div><span class="day">Sun</span></div>
+    </div>
+
+    <p class="row-label" style="margin-top:20px"><span class="swatch s"></span>Signups</p>
+    <div class="chart">
+      <div class="col"><span class="num">57</span><div class="track signups"><div class="bar s" style="height:44.9%"></div></div><span class="day">Mon</span></div>
+      <div class="col"><span class="num">72</span><div class="track signups"><div class="bar s" style="height:56.7%"></div></div><span class="day">Tue</span></div>
+      <div class="col"><span class="num">89</span><div class="track signups"><div class="bar s" style="height:70.1%"></div></div><span class="day">Wed</span></div>
+      <div class="col"><span class="num">74</span><div class="track signups"><div class="bar s" style="height:58.3%"></div></div><span class="day">Thu</span></div>
+      <div class="col"><span class="num">96</span><div class="track signups"><div class="bar s" style="height:75.6%"></div></div><span class="day">Fri</span></div>
+      <div class="col"><span class="num">109</span><div class="track signups"><div class="bar s" style="height:85.8%"></div></div><span class="day">Sat</span></div>
+      <div class="col"><span class="num">127</span><div class="track signups"><div class="bar s" style="height:100%"></div></div><span class="day">Sun</span></div>
+    </div>
+  </section>
+
+  <section aria-label="Traffic sources">
+    <h2>By source</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th class="bar-cell"></th>
+          <th class="n">Visits</th>
+          <th class="n">Signups</th>
+          <th class="n">Conversion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Direct</td>
+          <td class="bar-cell"><div class="src-track"><div class="src-bar" style="width:100%"></div></div></td>
+          <td class="n">5,240</td>
+          <td class="n">314</td>
+          <td class="n">6.0%</td>
+        </tr>
+        <tr>
+          <td>Search</td>
+          <td class="bar-cell"><div class="src-track"><div class="src-bar" style="width:85.5%"></div></div></td>
+          <td class="n">4,480</td>
+          <td class="n">224</td>
+          <td class="n">5.0%</td>
+        </tr>
+        <tr>
+          <td>Social</td>
+          <td class="bar-cell"><div class="src-track"><div class="src-bar" style="width:52.7%"></div></div></td>
+          <td class="n">2,760</td>
+          <td class="n">86</td>
+          <td class="n">3.1%</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+</body>
+</html>

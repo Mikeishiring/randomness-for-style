@@ -1,0 +1,57 @@
+Critique of 1-3-3.html (harsh, originality and clarity), followed by the change applied
+in 1-3-4.html.
+
+ORIGINALITY
+
+1. Both ingredients are now carried by drawn, specific elements rather than palette:
+   myth by the Orphic lyre-in-wreath crest, the colonnade on a shared stylobate, the
+   meander; opera by the gathered curtain with tassels, the staff with stemmed noteheads,
+   the night numerals, the playbill header. Pushing further runs into kitsch, and every
+   remaining idea on the table was already weighed and rejected for a clarity price:
+   crescendo hairpins editorialize past the Thursday dip, act names displace day labels,
+   mythic epithets obscure the only source names the owner uses, masks and string motifs
+   in the table are noise. Originality criticism at this point would demand decoration,
+   not design. No change.
+
+2. The honest residual weakness is environmental, not compositional: on a stock Windows
+   machine the Didot stack falls back to Times New Roman and the playbill voice dulls.
+   Self-containment forbids shipping a font. Carried as a known constraint since pass one.
+
+CLARITY
+
+3. Geometry re-audited line by line: curtain fill and hem control points mirror exactly;
+   stylobate top edge coincides with the zero line; every signup notehead, stem, label,
+   and the melody polyline agree with y = 488 - (value - 40) x 1.1; column heights agree
+   with 0.13 px per visit on a zero base. The Saturday note label (109) sits on the top
+   staff line, which its dark halo was designed for. No numeric or positional defect found.
+
+4. One real defect, and it has survived three passes unexamined: the mobile claim was
+   never stress-tested. The chart is a single 920-unit-wide SVG scaled to container
+   width; at a 375px phone the panel's inner width is about 315px, a 0.34 scale factor,
+   so 12.5px labels render at roughly 4px. Every value, axis figure, day name, and
+   conversion percentage becomes illegible precisely on the device where a site owner
+   checks weekly numbers. The sources table solved the same problem with a horizontal
+   scroll container from the first version; the chart inconsistently never received the
+   same treatment. That inconsistency is the justified change.
+
+5. Considered and rejected for this fix: a stacked mobile re-layout of the chart
+   (a structural change far beyond "change only what improves it", with new collision
+   risks across all seven groups), and shrinking chart margins per media query (SVG
+   internals do not respond to CSS media queries without scripting, and scripting is
+   worth avoiding in a page whose integrity rests on being static). The scroll container
+   matches the table's existing behavior, costs nothing on desktop, and guarantees a
+   minimum text size. Tradeoff accepted and shared with every scrolling table: the
+   y-axis pans out of view while scrolled — mitigated by the value labels carried on
+   every column and note.
+
+CHANGE APPLIED IN 1-3-4.html
+
+a. The daily chart is wrapped in the same .scroll container the table uses, and .chart
+   gains min-width:680px. On desktop nothing moves; below ~740px viewports the chart
+   scrolls horizontally instead of shrinking its text past legibility (minimum effective
+   label size about 9px).
+
+Nothing else was touched: data, scales, figures, labels, tooltips, crest, curtain,
+stylobate, table, and all text are identical to 1-3-3.html. This is the point of
+diminishing returns; absent new requirements, a further pass would be change for its
+own sake.

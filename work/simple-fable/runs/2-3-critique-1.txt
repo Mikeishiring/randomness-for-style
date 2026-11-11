@@ -1,0 +1,58 @@
+Critique of runs/2-3-1.html (Weather + Opera, Week 01)
+
+ORIGINALITY
+1. The "opera" half is mostly generic luxury styling: midnight blue, gold
+   hairlines, Didot small caps, a diamond ornament. That vocabulary says
+   perfume ad or hotel menu as readily as opera. The only genuinely operatic
+   element is the crescendo hairpin, an 18px unlabeled decoration most
+   readers will take for a divider.
+2. The "weather" half is the stock forecast icon set pasted above a wholly
+   conventional grouped bar chart. The icons restate the bars directly
+   beneath them (same variable, coarser resolution), so the two identities
+   sit side by side instead of fusing. Neither ingredient shapes the
+   structure of the report; both are applied as skin.
+3. Daytime sun glyphs contradict the opera's night-time register. The two
+   ingredients were not reconciled even at the level of time of day.
+4. The identity evaporates below the fold: "By source" is a plain bar table
+   with no trace of either ingredient.
+
+CLARITY
+5. Integrity defect: visits and signups bars share one baseline but are each
+   normalized to their own maximum. On Sunday both read 100% height,
+   visually asserting parity between 2,100 and 127. The sources section
+   stacks the same two-scale trick in adjacent rows.
+6. The glyph encoding (sky = relative visits) is never declared; the icons
+   could be mistaken for actual weather, a fabricated-looking claim on a
+   data page.
+7. The crescendo hairpin asserts monotonic growth; Thursday dips in both
+   metrics, so the flourish overstates the data.
+8. Gold means three things at once: signups (per the legend), sunshine (in
+   the glyphs), and brand trim (rules, headings) - a direct encoding
+   collision.
+9. The "Conversion" column header is 9px and letterspaced to
+   near-illegibility, and the per-day percentages are unlabeled.
+
+REFINEMENT APPLIED (same two ingredients, developed structurally)
+- Fused the metaphors into the chart's architecture: the daily chart is now
+  an opera-house cross-section. Visits perform on the stage (silver bars
+  above the stage line); signups glow in the orchestra pit (gold strips
+  mirrored below the line); day and conversion sit beneath the pit. Band
+  labels on the left name each register, replacing the chip legend.
+- One honest scale: pit strips and both source bars now share the same
+  pixels-per-visit scale as the visits bars, so gold/silver lengths show
+  true magnitude and conversion reads as a visible proportion. Printed
+  values preserve exact detail where the honest bars are small.
+- Night sky, not daytime: the glyphs become a clearing night - drizzle,
+  cloud, moon behind cloud, full moon with stars - matching the opera's
+  register and freeing gold to mean signups only (moons are ivory).
+- Declared the sky encoding with a one-line key (drizzle -> moon: "visits,
+  low to high").
+- Removed the crescendo hairpin as unearned and mildly misleading. The
+  opera identity is instead carried by a crimson curtain valance across the
+  top of the sheet - decoration that asserts nothing about the data.
+- Completed and enlarged conversion labeling: a "Conv." band row label on
+  the daily chart, full-size "Conversion" header in sources.
+
+KEPT (strong decisions): playbill header and ornament rules, totals row,
+exact figures and Mon-Sun order, synthetic-data flag, section structure,
+self-contained system-font implementation.

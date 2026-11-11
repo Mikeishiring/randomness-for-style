@@ -1,0 +1,62 @@
+CRITIQUE OF 1-5-2.html
+
+ORIGINALITY — harsh reading
+
+1. The amphora ghost was the right instinct, executed timidly. It is stamped
+   identically on all three plates, and at 13% opacity behind a large insect it
+   risks reading as a stain rather than a vessel — the beetle occludes almost
+   the whole vase, leaving only the lip and handles. Considered for this pass:
+   a different Greek vessel per source (kylix for Athena, krater for Echo —
+   both apt: the owl kylix, the communal mixing bowl). Rejected: at this size
+   the short, wide kylix and krater bowls sit entirely behind the spread wings,
+   so the variation would be invisible, and uniform mounts legitimately read as
+   a museum series. The judgment stands, but it should be on record that the
+   motif is near the floor of legibility.
+
+2. The Greek ingredient still never touches the data marks. The meander now
+   recurs as section rules, the vases sit behind specimens, but the daily chart
+   itself remains generic lollipops — the identity lives at the edges of the
+   figure, not in it. Considered: amphora-shaped pin heads, insect-silhouette
+   marks. Rejected: novelty marks at 9–10px would cost instant readability for
+   a conceit nobody could decode. Neutral marks are the deliberate price of a
+   report that is read daily; the identity is allowed to frame, not encode.
+
+3. Title block and KPI row remain plain letterspaced Georgia. Restraint, but
+   the least thematic zone of the page. No change found that adds identity
+   there without adding decoration that competes with three numbers whose whole
+   job is to be read in one glance.
+
+CLARITY — harsh reading
+
+4. v2 fixed the conversion orphan and created a mirrored, lesser version of
+   the same bug: the day labels moved to the foot, so the VISITS band — the
+   first and largest thing on the page — now sits ~160px above its day labels
+   with a whole second band in between. A first-time reader must either assume
+   Monday-first ordering or trace a column across the signups band. The fix
+   traded one long-distance lookup for another.
+
+5. The "signups ÷ visits" definition renders at 9px in the SVG — about 7px
+   after the chart's minimum-width scaling on a phone. Tertiary text, but
+   needlessly at the edge of legibility.
+
+6. Otherwise sound: both bands separately and honestly scaled, every value
+   labeled, bar-scale note consolidated under Sources, synthetic tag present.
+
+CHANGES APPLIED
+
+- Sandwich layout for the daily chart: day labels and the conversion row now
+  sit together BETWEEN the visits and signups bands. Visits reads down ~28px
+  to its day; conversion sits directly under the days with its definition at
+  the row head; signups reads up ~32px to the same labels. No element is more
+  than ~60px from its day label, and no labels are duplicated. (Fixes 4,
+  completes the repair begun in v2.)
+- Definition text raised from 9px to 9.5px — the largest size that clears the
+  Monday column. (Fixes 5.)
+
+PRESERVED DELIBERATELY
+
+- Uniform amphora mounts, meander head band and section rules, specimen
+  plates, binomials, owl eyespots (see 1–2 for the rejected alternatives).
+- Neutral data marks, two separate scales, labeled values, bar-scale note,
+  synthetic-data tag, palette and dark theme.
+- All figures unchanged and drawn only from the supplied data.

@@ -1,0 +1,62 @@
+Critique of 1-3-2.html (harsh, originality and clarity), followed by the changes applied in 1-3-3.html.
+
+ORIGINALITY
+
+1. The curtain is still the giveaway that this identity was assembled, not drawn. Twelve
+   identical quadratic arcs, metronome-regular, ending in nothing at both edges — real
+   theatre valances gather, vary, and terminate in hanging ends. The doubled trim line
+   added in the last pass is cosmetic polish on cloned geometry. For a page whose opera
+   ingredient leads with this element, it is the least convincing thing on the screen.
+
+2. The columns stop being a temple at their feet. Each column got its own plinth, but
+   they stand on a bare axis line: Greek columns share a stylobate — the stepped platform
+   is half of what makes a colonnade read as architecture — and an opera stage has a
+   floor. The one horizontal that could have fused both ingredients (platform = stage)
+   was left as a generic gold rule.
+
+3. The crest, stems, and night numerals from the last pass hold up; the header and table
+   otherwise remain typography-plus-palette. That is now a defensible stopping point:
+   further identity in the table (string motifs, mask icons, epithets) was weighed and
+   would tax reading for garnish. The remaining originality debt is in the drawn
+   elements, not in missing ones.
+
+CLARITY
+
+4. Gold still means "peak/best" by inference alone. The Sunday tooltip says "peak day",
+   but Direct's gold 6.0% in the table has no equivalent: a screen-reader user or a
+   hovering reader gets no explanation for the accent. One title attribute fixes the
+   asymmetry without adding visible copy.
+
+5. The track hairline added last pass behaves differently than specified: an inset
+   box-shadow is painted under child elements, so on Direct's full-width bar it is
+   invisible, and on Search/Social it outlines only the empty remainder of the track.
+   Examined rather than assumed, the accident is useful — the faint empty box extends
+   each bar to the common scale, showing what the bar is out of — and is kept
+   deliberately. Noted here so it is a decision, not an artifact.
+
+6. The uppercase title is set with .2em letter-spacing, which adds a trailing space
+   after the final character; centered, "WEEK 01" therefore sits a half-character left
+   of optical center at display size. Sloppy for a page this symmetric.
+
+7. Everything load-bearing survives scrutiny: zero-based column scale with labeled
+   gridlines, non-zero signup staff clearly labeled and drawn with points not areas,
+   per-day conversion strip, same-scale table segments with the shared-scale legend,
+   totals row, tooltips. No change found that would make the data easier to read;
+   this pass is therefore confined to drawing quality and the two nits above.
+
+CHANGES APPLIED IN 1-3-3.html (data, scales, figures, labels, both charts' geometry,
+table values: all unchanged)
+
+a. Curtain redrawn as fabric rather than pattern: swag depths alternate, the two ends
+   gather and fall lower at the page edges, and each gather stud now carries a small
+   tassel drop. Same palette, same height, still one inline SVG.
+b. A stylobate: a shallow shared marble step now runs under all seven plinths, fusing
+   temple platform and stage floor; the gold baseline remains as the axis edge on top
+   of it, so the zero line is exactly where it was.
+c. Direct's highlighted 6.0% cell gains title="Highest signups per visit", matching the
+   Sunday tooltip's explanation of the gold accent.
+d. The h1 compensates for its trailing letter-space (padding-left: .2em) so the title
+   is optically centered.
+
+Nothing else was touched. The report reads exactly as before; only the drawing earns
+its ingredients better.

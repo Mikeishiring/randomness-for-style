@@ -1,0 +1,56 @@
+Critique of runs/2-3-3.html (Weather + Opera, Week 01, revision 3)
+
+ORIGINALITY
+1. The theatre finally renders - and then the identity stops dead at the
+   "By source" rule. The lower half of the page belongs to a different,
+   plainer document: no weather, no theatre, just recycled bar colors.
+   Half the report is still unthemed after three passes.
+2. Weather is confined to the daily sky band. An identity ingredient that
+   appears on exactly one surface is a feature, not an identity.
+3. Sunday's sparkle stars are an undeclared fourth sky level: the key
+   promises drizzle-to-moon and the page quietly adds "moon with stars".
+   Harmless as an ordinal flourish on the maximum, but it is ornament
+   drifting ahead of the declared encoding.
+4. The valance scallops stretch with the viewport (preserveAspectRatio
+   "none"): at sheet width they are ~23% wider than drawn, on a phone ~50%
+   narrower. Assessed: within these ranges the shape still reads as a
+   curtain edge; redrawing with slice-cropping would clip the scallop tips,
+   so the distortion is the better trade and is left alone.
+
+CLARITY
+5. The same metric is named three ways: "Conversion" (totals tile),
+   "Conversion" (sources header), "Conv." (daily band label). The
+   abbreviation exists only because the 72px label gutter was sized before
+   the word; the gutter should serve the label, not the reverse.
+6. Mobile band labels render at 7.5px - below comfortable legibility for
+   the row that tells a reader what the gold strips are.
+7. The source signup bars are honest but unanchored: at 1.6% width,
+   Social's gold bar is a floating dot with no visible origin, so its
+   length can't be judged. The rows lack the one cue the daily chart has -
+   a drawn baseline.
+8. The source names sit in a bare text column while the daily chart gives
+   every category a sky; the asymmetry reads as an unfinished section
+   rather than a quieter one.
+
+REFINEMENT APPLIED
+- Extended the night sky below the fold: each source carries a small sky
+  glyph on the declared encoding (visits, low to high, relative within the
+  section) - Social drizzle, Search moon behind cloud, Direct clear moon.
+  Same ingredient, same key, second surface; glyphs are decorative to
+  assistive tech since the exact values are printed.
+- Anchored the source bars: a gold hairline rail now marks the shared
+  origin of both series in each row, echoing the stage line rotated
+  upright, so even the 1.6% Social sliver has a visible baseline.
+- Renamed "Conv." to "Conversion" on the desktop band label (label gutter
+  widened to fit the word); mobile keeps the abbreviation where the full
+  word cannot fit, via a breakpoint swap.
+- Raised mobile band labels from 7.5px to 8px with tightened tracking and
+  a slightly wider mobile gutter.
+
+KEPT: stage/pit architecture, single pixels-per-visit scale, printed
+values, sky key, valance/legs/stars/footlights, playbill header, totals,
+synthetic flag, Mon-Sun order, Sunday's stars (documented above as an
+accepted flourish). REJECTED: an operatic seating-map arc for sources
+(harder to compare than bars), mapping source glyphs to conversion instead
+of visits (would contradict the declared key), renaming metrics to theatre
+vocabulary like "attendance" (purpose must stay legible).

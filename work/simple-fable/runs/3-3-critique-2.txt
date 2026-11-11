@@ -1,0 +1,62 @@
+CRITIQUE OF 3-3-2 (harsh, originality and clarity)
+
+ORIGINALITY
+
+1. The structure is inconsistent with its own conceit. Acts I and II get
+   playbill headers; the opening block of four figures — the overture of any
+   programme — gets nothing. The page invents a theatrical frame and then
+   forgets to seat its first section in it.
+2. "The cast" earned its title but not its costume. The rows are still a
+   plain ledger grid. Playbills and bureaucratic indexes share one signature
+   device — the dotted leader carrying the eye from name to figure — and the
+   design missed this rare piece of genuinely shared vocabulary between its
+   two ingredients for a second time.
+3. Bureaucracy without a sum line is theatre. The most canonical element of
+   any official ledger — the ruled TOTAL row that proves the parts account
+   for the whole — is absent. Its absence is not minimalism; it drops real
+   information (that the three sources fully reconcile with the week's
+   12,480 visits and 624 signups, which the page currently leaves the reader
+   to verify by mental arithmetic).
+4. The verification ritual still rests entirely on one rubber stamp. Field
+   numbers and a form number exist, but no mark closes the document's loop.
+   (A second stamp would be repetition, not development; the sum line is the
+   better closing mark and is the change made.)
+
+CLARITY
+
+1. The bar column in the cast list has no scale reference. Bars are
+   proportional to the longest (Direct), but nothing shows the shared
+   measure, so Search's 85.5% of Direct must be judged against empty paper.
+2. The bar column's header cell is empty. Tolerable — each bar sits beside
+   its printed figure — but it is the one column a stranger must infer.
+3. Four figures at the top are weekly totals, but nothing says so; "12,480
+   visits" could be misread as something other than the seven-day sum until
+   the reader cross-checks Act I.
+4. "In triplicate" remains the page's one line of pure joke. Considered
+   replacing it with scope data and rejected: every candidate ("Week 01",
+   "synthetic") already appears once, and a redundant label is worse than a
+   two-word piece of identity texture. Retained deliberately.
+5. Considered and rejected: a fermata or star over Sunday's peak (glyph
+   support is unreliable and a floating mark reads as a footnote); a header
+   for the bar column (noise next to self-labelling bars).
+
+CHANGES APPLIED (one pass)
+
+- Overture seated in the frame: the figures block now opens with the same
+  header furniture as the acts — "Overture · The week in sum" — fixing the
+  structural inconsistency and stating plainly that these are weekly totals.
+- Dotted leaders laid under the cast bars: a dotted track now runs the full
+  column width behind each visits bar, playbill-style, carrying the eye from
+  name to figure and doubling as the shared-scale reference the bars lacked.
+- The ledger closed with a sum line: a double-ruled TOTAL row (12,480 · 624 ·
+  5.0%) ends Act II, reconciling sources against the overture's totals — the
+  bureaucratic ritual that was missing, carrying real verification value.
+
+PRESERVED (strong decisions)
+
+- The measure-ruled three-register score, printed values in place of axes,
+  the consistent "signups per visit" vocabulary, the synthetic-data stamp,
+  the numbered overture fields, the curtain with folds and scallops, the
+  docket, act titles, FIN. All figures, sums and ratios unchanged; the only
+  new numbers are the totals row, which restates existing sums where a
+  ledger requires them.

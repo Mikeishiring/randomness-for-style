@@ -1,0 +1,59 @@
+Critique of 4-5-2.html
+
+ORIGINALITY — harsh read
+
+1. The pit board rescued the motorsport half, but everything around it is
+   coasting. Plate I is still a plain bar chart in green paint with one
+   stripe: competent, honest, and the least original surface left. The
+   header still spends its energy on the most obvious borrow (roundel)
+   while the Victorian half of the header is carried by a single pinned
+   tag. Neither flaw misleads a reader, so neither justifies churn — but
+   they should be named: this design's originality now lives in three
+   elements (board, beetles, pinned tag) and borrows convention everywhere
+   else. For a performance report that is arguably correct; it is not brave.
+2. The roundel "01" beside "Week 01" remains a double statement. Accepted
+   again as a race-number echo; still the page's most tired device.
+3. The fake Latin stays half-serious. With the beetles present it now has
+   a visual anchor, so it reads as a consistent joke rather than a stray
+   one. Kept.
+
+CLARITY — harsh read
+
+4. Real gap: the sources table never shows that its parts sum to the whole.
+   A reader who cross-checks 5,240 + 4,480 + 2,760 against the "12,480"
+   plaque has to do arithmetic the page should demonstrate. Parts-to-whole
+   traceability is missing at the exact place it matters.
+5. Real redundancy: the footer. "Synthetic specimen" repeats the pinned
+   "Synthetic data" tag; "Collected Mon–Sun, Week 01" repeats the heading
+   and the day axes. Two italic lines of atmosphere restating three things
+   already on the page. Atmosphere that repeats information is filler.
+6. The two plates use slightly different plot heights (170px vs 160px max).
+   Invisible in practice because every mark is direct-labelled; no reader
+   can misread it. Noted, not fixed — fixing it changes nothing a reader
+   experiences.
+7. Pit board: seven bare numbers demand a scan to see the rise. A trend
+   encoding (scaled underlines, a spark) was considered and rejected: it
+   would re-encode what Plates I–II already show and make the board
+   busier; the board's job is exact per-day figures, and it does it.
+
+CHANGES MADE IN 4-5-3.html
+
+A. Totals row added to the sources table: full-width share track,
+   12,480 visits, 624 signups, 5.0% conversion, set off by an ink rule.
+   The breakdown now visibly reconciles with the plaques (addresses 4).
+B. Footer removed entirely. The synthetic marker keeps its single, more
+   prominent declaration (the pinned tag); the period keeps its heading;
+   the days keep their axes (addresses 5).
+
+CONSIDERED AND REJECTED
+
+- Mon-to-Sun growth stat (+48% visits, +123% signups): the plates and the
+  conversion board already demonstrate the divergence; a fifth plaque
+  would state what is shown.
+- Trend marks on the pit board (see 7).
+- Replacing the roundel: identity continuity beats novelty at this point;
+  swapping header furniture in round three is churn, not improvement.
+- Equalising plate plot heights (see 6): zero reader-visible effect.
+
+Everything else — purpose, data, every figure, plates, beetles, board,
+plaques, palette, header — unchanged.

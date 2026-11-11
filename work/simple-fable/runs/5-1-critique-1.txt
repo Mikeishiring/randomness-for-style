@@ -1,0 +1,54 @@
+CRITIQUE OF 5-1-1.html
+
+Originality — weak.
+- It is a stock neon dashboard. Dark background, cyan/magenta accents, glassy
+  rounded cards: remove the 46px ball and nothing on the page says either
+  deep sea or disco. The identity is a palette, not a design.
+- The two ingredients never combine. Cyan = ocean, magenta = disco is a color
+  split; no single element belongs to both worlds, so the brief's "combine"
+  is answered with "place side by side".
+- The disco ball is literal and inert: a CSS gradient circle with grid lines
+  reads as a generic sphere, and its "spin" is only a box-shadow crossfade.
+  Disco's actual signature — a faceted mirror scattering spots of light —
+  is absent.
+- Bioluminescence is reduced to the laziest trope available: five blurred
+  dots drifting in the background, unconnected to the data, with no depth
+  gradient and no luminous behavior in the content itself.
+- The bar glow via feGaussianBlur is the cheapest "make it glow" move, and
+  it costs clarity (below).
+
+Clarity — one real bug, several soft spots.
+- Critical: all chart text lives in a 700-unit SVG viewBox, so it scales
+  with the container. At a 375px phone width the 13px labels render at
+  roughly 7px — illegible. The chart fails on mobile.
+- feGaussianBlur fuzzes the ends of the bars. Bar-length comparison is the
+  entire job of the chart; softened ends undercut it.
+- The mobile sources grid hides the signups column — useful detail deleted
+  instead of reflowed.
+- The shared day labels float between the two panels and belong to neither
+  at a glance; the signups panel has no adjacent day reference.
+- Minor: source lanes are scaled to the max (Direct = 100%), which could be
+  misread as share of total; the adjacent absolute numbers mitigate this.
+
+Kept — these were right.
+- Two aligned panels instead of a dual-axis chart; direct value labels with
+  no gridline clutter; the KPI trio including derived conversion; per-source
+  conversion; the synthetic-data badge; minimal copy; the sr-only data table.
+- All figures, structure and purpose are unchanged.
+
+Changes applied in 5-1-2.html.
+1. Daily chart rebuilt in HTML/CSS: labels are real pixels and stay legible
+   at every width; bar edges are crisp (halo via box-shadow, no blur); each
+   day label sits in its own column between the two bars it names.
+2. A fusion motif replaces the particle trope: mirror-ball flecks — small
+   angled glints of cyan and pink — drift and blink through the water column,
+   one element carrying both ingredients at once. The header ball is now a
+   faceted SVG mirror ball with lit facets.
+3. Dance-floor baselines: each chart panel stands on a glowing cyan-to-
+   magenta strip instead of a grey hairline.
+4. Depth gradient: the page shades from a faintly sunlit top to abyss at
+   the bottom.
+5. The sources grid keeps every column on mobile; it shrinks instead of
+   hiding data.
+6. The title gradient gets a slow shimmer sweep; all motion is disabled
+   under prefers-reduced-motion.

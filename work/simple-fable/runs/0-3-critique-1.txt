@@ -1,0 +1,72 @@
+CRITIQUE OF 0-3-1.html
+
+ORIGINALITY — harsh
+
+1. Decoration, not identity. Cthulhu lives entirely at the margins: an emblem, a faint
+   corner tentacle, two ornament dividers. Remove those three ornaments and this is any
+   dark-gold dashboard. The one structural idea the page owns — visits above a waterline,
+   signups hanging below it in the deep — is undercommitted: the "water" is two straight
+   hairlines indistinguishable from table rules, so the page's best invention reads as a
+   header row.
+
+2. Opera is costume-shop playbill. Small caps, letterspacing, gilt tile frames: period
+   poster pastiche, not opera. Nothing of the theatre's own machinery is used. The curtain
+   is a 30px striped awning that appears once at the top and never falls; "in two acts"
+   promises a dramaturgy the page performs only in its headings.
+
+3. The two ingredients alternate instead of combining. Gold things are opera, teal things
+   are sea, and only the emblem fuses them. Swap the emblem out and the page could be
+   pitched as art-deco hotel branding.
+
+4. Gradient bars with a soft glow are stock dark-dashboard styling.
+
+CLARITY — harsh
+
+5. Act I's series labels are 10px rotated letterspaced captions — the weakest possible
+   labeling for the chart's least conventional feature. A reader must find them to learn
+   that gold-below-the-line is not a negative value.
+
+6. Act I and Act II label the same two series with different systems (rotated captions vs
+   legend chips). One vocabulary, two grammars.
+
+7. Act II's signups bars use their own scale: Direct's 314 signups is drawn as long as its
+   5,240 visits. Bar thickness is the only cue that the scales differ; a reader can
+   misread gold lengths as comparable to teal ones.
+
+8. Conversion — the page's most actionable comparison (Direct 6.0% vs Social 3.1%) — has
+   the least visual presence: a small right-aligned label, with the word "conversion"
+   repeated three times.
+
+9. The daily conversion trend (4.0% Monday rising to 6.0% Sunday) is absent entirely,
+   though it is the week's cleanest story and derivable row by row from the supplied data.
+
+PRESERVED DELIBERATELY
+
+The waterline chart concept, the playbill structure (overture + two acts), the stat tiles,
+the palette, printed values on every mark, the emblem, the synthetic-data label, and the
+minimal copy are strong decisions and stay.
+
+CHANGES APPLIED IN 0-3-2.html
+
+A. The waterline is made literal and put to work (addresses 1, 5, 9): the day band is now
+   bounded by waved gold lines (inline SVG pattern, no external request), and the band
+   carries each day's conversion percentage at the waterline — seven useful data points
+   added exactly where the metaphor meets the axis.
+
+B. One labeling system (addresses 5, 6, 8): both acts use the same three-item legend
+   (Visits / Signups / % conversion). The rotated captions are removed; per-source
+   percentages drop the repeated word "conversion".
+
+C. Honest shared scale in Act II (addresses 7, 8): signups bars now use the same scale as
+   visits (Direct's gold bar is 6.0% of the track), so each source's conversion is visible
+   as the ratio of gold to teal length — Social's sliver against its long teal bar is the
+   point. Gold bars are thickened so the smallest (86) stays visible; every value remains
+   printed.
+
+D. The curtain falls (addresses 2, 3): a mirrored velvet band with upward scallops closes
+   the page, and both curtains get soft gradient folds instead of flat stripes. The opera
+   frame now opens and closes the report instead of decorating its top edge.
+
+E. Everything else is left alone (addresses "change only what improves it"). The glow and
+   gradients (4) stay: muted, consistent, and not worth a churn that risks the page's
+   restraint.

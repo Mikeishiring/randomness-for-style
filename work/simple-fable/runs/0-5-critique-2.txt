@@ -1,0 +1,47 @@
+Critique of 0-5-2.html
+
+ORIGINALITY — better bones, still a one-specimen collection.
+
+1. The page calls itself a collection and owns exactly one specimen: the
+   header moth plate. Victorian entomology is plural by definition —
+   plates of catalogued creatures — yet the three source cards, the most
+   natural display cases on the page, hold only a dot-with-a-needle. The
+   catalog marks (No. I–III) promise taxonomy the cards never deliver.
+2. The fusion is still additive rather than structural. Victorian owns the
+   layout, Cthulhu owns the margins, and they only meet in the header.
+   The ornament system also repeats one idea at one scale — curl, pinhead,
+   curl, pinhead — instead of developing it.
+3. The chart where the owner actually looks treats the week's prize
+   specimen like any other rectangle. The peak tile says "Sun", but
+   Sunday's bar and pin are visually identical to Monday's. A collector
+   marks the type specimen.
+4. The share bar is the last surface untouched by either ingredient — a
+   plain fill in a track, straight out of any admin template.
+5. The "bioluminescent" spores are nine uniform specks at 30% opacity.
+   They read as dust on the monitor, not deep-sea light. Commit or cut.
+
+CLARITY — v2 fixed the real problems; what remains is small.
+
+6. Round scales, the labeled rate row, and consistent "signup rate"
+   wording all landed. Separate charts per metric, value labels on every
+   bar, and shares summing to 100% remain correct and stay.
+7. The card needle pierces nothing — it hangs over blank parchment, the
+   same complaint v1's chart pins earned.
+8. Peak information lives only in a tile; marking it in the charts would
+   let the two surfaces confirm each other at a glance.
+
+CHANGES APPLIED IN 0-5-3.html (purpose, data, layout, scales unchanged):
+- The collection becomes plural: each source card gets its own small
+  engraved eldritch specimen, pinned like the header plate — a tentacled
+  beetle (Direct), a narrow-winged moth (Search), a winged cephalopod
+  (Social). Stroke-only ink on parchment, 44px, decorative emblems that
+  replace the floating card needle rather than adding clutter.
+- Sunday's pin in both charts gains a wax-red seal ring, marking the peak
+  the summary tile already names — truthful emphasis, no new numbers.
+- The share fill ends in a pinhead marker, tying the last generic surface
+  into the pin system without changing what the bar measures.
+- Spores reworked: six glow points (soft halo + bright core) instead of
+  nine flat specks.
+- Dead CSS for the removed card pinhead deleted.
+Everything else is deliberately untouched: more ornament inside the chart
+cases would start competing with the figures.

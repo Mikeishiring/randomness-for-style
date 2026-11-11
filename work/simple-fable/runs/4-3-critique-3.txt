@@ -1,0 +1,55 @@
+CRITIQUE OF 4-3-3.html
+
+ORIGINALITY
+1. After three passes the header is still a straight playbill. The page's
+   opening statement - its biggest typographic moment - contains no motorsport
+   beyond a thin red rule. Every fused element the design has earned (finish
+   line, fastest-lap red, finishing order) lives below the fold, so the page
+   introduces itself as one genre and only later admits the other.
+2. The racing grammar is inconsistent, which is worse than absent. Sources
+   bars race rightward into a checkered finish line; the daily chart - the
+   largest display on the page, and one that literally depicts a left-to-right
+   run through the week ending at the week's peak - has no finish. A device
+   used once is an ornament; used everywhere it becomes the page's grammar.
+3. The checker ribbons remain pure trim at top and bottom. The earlier defense
+   (frame, bookends) stands, but the motif still does no data work outside the
+   sources chart.
+4. The "WEEK 01" date line is the one remaining element that could carry both
+   voices for free - racing prints round numbers on number boards, opera
+   programmes print performance numbers - and it is currently set as plain
+   tracked caps, i.e., the default.
+
+CLARITY
+5. Craft risk: the "Finishing order - By visits" heading is set nowrap; at
+   320px-wide screens the tracked caps plus flanking rules sit at the exact
+   limit of the content box and can overflow by a pixel or two.
+6. The red system now reads (peak values are printed red at their caps); the
+   two daily scales are separate but every bar carries its printed value, so
+   no misreading path remains. No other clarity defects found: labels state
+   what bars and numerals mean, headers carry units, data is unchanged and
+   traceable.
+
+CHANGES APPLIED IN 4-3-4.html
+- The week now finishes at a flag: a narrow checkered strip closes the right
+  edge of both daily tracks, directly beside Sunday's red-capped peaks. With
+  the sources chart this completes a single page-wide grammar - every display
+  runs toward a checkered finish - turning the motif from ornament into
+  system, and giving the top and bottom ribbons a mid-page echo that earns
+  them.
+- "01" in the date line is set on a small gold-bordered number plate in the
+  condensed italic of the figures: the header's first element that reads as
+  race number board and programme number at once, at zero added copy.
+- Mobile heading size and tracking reduced so the sources heading can no
+  longer overflow at 320px.
+
+REJECTED
+- Podium brightness on numeral I (dimming II/III): ranking is already carried
+  by order and the bars; grading the numerals would break their second reading
+  as opera act numbers, which is the fusion.
+- Reshaping or slanting bars, curtain fringes on the ribbons: theme at the
+  cost of the data-bearing shapes or of taste.
+
+KEPT
+Structure, palette, playbill title, stripe, stats row, roman numerals, finish
+line in sources, conversion row, red best-of-week system, and every supplied
+figure unchanged.

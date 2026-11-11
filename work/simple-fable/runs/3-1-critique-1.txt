@@ -1,0 +1,71 @@
+CRITIQUE OF 3-1-1.html
+
+ORIGINALITY — harsh
+
+1. Disco is a coat of paint, not a structure. Strip the palette and nothing
+   disco remains: a gradient headline, gradient bars and a diagonal stripe are
+   stock "fun dashboard" moves that could ship under any party brand. The one
+   genuinely disco object, the mirror ball, is a 52px garnish floating in the
+   header, connected to nothing.
+2. The diagonal stripe divider is a hazard-tape cliche. It reads
+   "construction site", not "dance floor".
+3. The smooth multi-stop rainbow on the title is the generic 2020s gradient
+   text treatment. Actual 70s disco lettering has a signature the page
+   ignores: chrome with a hard horizon line.
+4. Bureaucracy stays at costume level. Form number, section strips, margin
+   rule, punched holes and a stamp decorate the boxes, but the form never
+   shapes how data is presented. The strongest bureaucratic devices — the
+   fill-in entry line with the figure typed ON the rule, dotted leaders,
+   tabulated returns — go unused. The totals cells with a floating 44px
+   underline could come from any template.
+5. The two ingredients never touch. Every element is either a form element or
+   a disco element; the only fusion is a pink margin rule. The available
+   original move — bureaucratic machinery rendering disco material (entries
+   filed on chrome rules, bars built from mirror tiles, a lit floor strip as
+   the divider) — was left on the table.
+
+CLARITY — harsh
+
+6. The Mon–Sun axis is printed twice, once under each chart. A full duplicate
+   row that forces the eye to re-anchor and adds no information.
+7. The signup-rate row floats at the bottom with its own caption and no
+   visible tie to the day columns; on narrow screens the reader counts cells
+   to map 5.4% to Sat.
+8. The "■" legend swatches are color keys for single-series charts whose
+   caption already names the series and whose bars sit directly below. Dead
+   ink.
+9. The peak-day sub-line "2,100 · 127" makes the reader infer what the two
+   numbers are.
+10. "Section 1" spells out what the numbered strip already says; bureaucratic
+    registers abbreviate (§).
+
+REVISION APPLIED
+
+- Title re-lettered as 70s chrome: hard horizon gradient (violet/pink sky,
+  gold ground) instead of the generic smooth rainbow.
+- Divider rebuilt as a lit dance-floor strip: square color tiles with ink
+  grout, replacing the hazard stripe.
+- All bars (daily and source) now carry a faint mirror-tile facet grid over
+  the gradient — the mirror ball becomes the material the data is drawn
+  with, at a contrast low enough not to disturb length reading.
+- Totals rebuilt as filled-in form entries: each figure sits on a full-width
+  chrome-gradient entry rule, label above, like a typed return — the two
+  ingredients in one element.
+- Daily charts merged onto ONE shared day axis: visits rise above the ruled
+  Mon–Sun band, signups hang below it (each metric keeps its own scale and
+  every bar keeps its printed value, so no scales are conflated). The
+  duplicate axis row is gone and each day's pair reads in one vertical line.
+- Signup-rate row now sits directly under the signup bars in the same column
+  grid, separated by a single rule.
+- Legend swatches removed; captions alone name the series.
+- Peak-day sub-line now reads "2,100 visits · 127 signups".
+- Section heads tightened to "§ 1 · TOTALS" etc.
+
+PRESERVED
+
+Form WK-01 / Period line, synthetic-data stamp as the caveat, punched filing
+holes and pink margin rule, mirror ball, the totals/by-day/by-source
+structure, every supplied and derived figure, printed values on all bars, the
+source table with per-source rate, and the Sunday highlight that matches the
+peak-day entry. Purpose and data unchanged; page remains fully
+self-contained.

@@ -1,0 +1,55 @@
+CRITIQUE OF 5-5-1.html
+
+ORIGINALITY — harsh
+- Both ingredients are applied as a coat of paint, not developed. The chart forms
+  (bar chart, dot line, numeric table) are stock; swap the palette and nothing of
+  "deep-sea bioluminescence" or "Victorian insect collecting" survives. The identity
+  never reaches the data encoding itself.
+- The moth is pure decoration. It illustrates "Victorian insects" instead of doing
+  work. In a real entomology cabinet the specimen IS the record; here it is a logo.
+- Bioluminescence is reduced to generic box-shadow glow on chrome. Nothing glows
+  because of the data — light, the one obvious expressive channel of the theme, is
+  attached to borders and pins rather than to the marks.
+- The pin + double-rule plate is stamped identically on five cards. Repetition reads
+  as a template, not curation.
+- Craft flaw: a duplicated :root block shipped with an invalid declaration
+  ("--brass:#c2a express;"). Harmless only because the second block overrides it,
+  but it is dead weight and sloppy.
+
+CLARITY — harsh
+- Day labels sit between the two panels while the conversion row sits ~200 units
+  below them. Tracking SAT -> 109 -> 5.4% is an unguided vertical scan; nothing
+  visually ties a day's column together.
+- "CONV." is never defined. Conversion = signups / visits is guessable, not stated,
+  anywhere on the page.
+- In Plate II only visits get a bar. Signups and conversion are numbers alone, so
+  Social's weak conversion — the week's main actionable fact — is legible but has
+  no visual presence.
+- The color code (cyan = visits, amber = signups) is learned only implicitly; the
+  brass panel labels carry no legend.
+- The sources "table" is spans in a CSS grid: no table semantics for assistive tech.
+- background-attachment: fixed janks on mobile Safari for zero informational gain.
+
+WHAT HOLDS UP (preserved)
+- Separate, same-x panels for visits and signups avoid a dual-axis lie; bars are
+  zero-based and scales are honest.
+- Every mark carries its printed value; the theme costs no detail.
+- Copy is minimal; the synthetic-data caveat is visible at the top.
+- Mounted-specimen-above-label header structure is genuinely entomological.
+
+REFINEMENT APPLIED (one pass, in 5-5-2.html)
+1. Removed the dead duplicate :root block and the fixed background attachment.
+2. Cabinet compartments: brass hairline column dividers now run the full chart
+   height, so each day reads as one specimen compartment — day, visits, signups
+   and conversion are tied vertically. Develops the cabinet; fixes the scan problem.
+3. The data now emits the light: each visits bar gets a lit cap edge (the lure);
+   each signup dot gets a faint radiance ring. Glow belongs to the marks.
+4. Panel labels VISITS (cyan) and SIGNUPS (amber) now double as the color legend;
+   the same tinting is applied to the Plate II column headers.
+5. Plate II: a thin amber signups bar (own scale, max 314) sits under each visits
+   bar, so Social's drop-off is visible, not merely legible.
+6. Conversion is defined once — "signups ÷ visits" under the Conversion total.
+7. The moth becomes an implicit legend: upper wing spots cyan (visits), lower
+   spots amber (signups), with a faint bioluminescent aura.
+8. Sources rebuilt as a real <table> with row and column headers.
+Purpose, data, layout order, scales and every printed value are unchanged.

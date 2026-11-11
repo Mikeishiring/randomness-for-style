@@ -1,0 +1,63 @@
+Critique of 5-3-2.html
+
+ORIGINALITY
+
+1. The fusion is still one moment bolted onto a conventional glow-bar chart.
+   The Sunday beam stages the finale, but Monday to Saturday remain a generic
+   dark-dashboard column chart; the crescendo exists as a row of numbers, not
+   as design.
+
+2. The curtain reads as an 18px dotted fringe, not velvet: the scallops are
+   too small, a single flat crimson, and they compete for the same top pixels
+   as the surface-light gradient. At a glance it is a decorated border, not a
+   proscenium.
+
+3. Typography is unchanged — still Georgia for nearly every viewer — so
+   "opera" is still carried by the two "Act" words, the double rules and an
+   italic title. (External fonts are excluded by the self-containment rule,
+   so this is noted, not actionable; the system Didone stack is already the
+   best available.)
+
+4. The orb row is now the only place the two identities actually meet — gold
+   light suspended in dark water. The rest of the page still runs cyan and
+   gold as parallel channels.
+
+CLARITY
+
+5. Regression introduced in v2: adding flex:none to the source bar element
+   means a 100%-width bar plus its trailing printed value overflows the grid
+   cell — on the Direct and Search rows the visits figure collides with the
+   conversion column. A layout fault, not a nuance.
+
+6. Even where the row fits, each bar's usable track depends on the width of
+   its own printed number ("314" is wider than "86"), so bar lengths are not
+   strictly comparable across rows — the one property the shared scale was
+   introduced to guarantee.
+
+7. Values trail each bar at varying x positions, so the eye hunts for them;
+   aligned figure columns would scan faster and suit a playbill table.
+
+8. The cast header is aria-hidden, so screen readers hear three unlabeled
+   numbers per source row.
+
+9. The finale beam stops at the baseline: the "staged" Sunday column is half
+   staged — its orb, signup count and conversion rate sit outside the light.
+
+CHANGES APPLIED IN 5-3-3.html
+
+a. Source rows rebuilt as a bar track plus a fixed-width number column
+   (grid: 1fr / 3.6rem). The overflow bug is gone, every track is identical
+   so bars compare honestly across rows, and the figures align into
+   scannable right-aligned columns.
+b. aria-hidden removed from the column header so Visits / Signups /
+   Conversion label the row values for screen readers.
+c. The finale beam now runs the full height of the Sunday column — bar, orb,
+   signup count and conversion rate are staged as one lit column.
+d. The curtain scallops are enlarged and modelled (32px lobes, two-tone
+   crimson, gold hem) so the proscenium edge reads as an object rather than
+   a dotted border.
+
+PRESERVED (strong decisions): the playbill header, KPI triad, chart geometry
+and printed values, the per-day conversion row, the sqrt-area orb encoding
+with its radius ring, act labels, phone-width chart scrolling, and the copy
+level — no new prose, no data changes.

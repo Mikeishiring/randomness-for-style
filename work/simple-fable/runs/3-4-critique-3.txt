@@ -1,0 +1,54 @@
+Critique of 3-4-3.html (harsh, originality and clarity)
+
+ORIGINALITY
+1. The document now talks in two dialects. Section B is a genuine ruled
+   ledger; Section C is a CSS grid dressed to look like one. The seams show:
+   different gap rhythm, different header underline spacing, and a bar row
+   that floats between numbers instead of sitting in a ruled line. A real
+   register would enter sources on the same ruled paper as the days. The
+   identity is strongest where the page commits to one ledger language, and
+   Section C breaks the commitment.
+2. The twin same-size bar charts remain the most conventional element on the
+   page. They are defensible (two measures, two scales, two colours) and the
+   new value axes made them honest, so they stay — but they are competence,
+   not character.
+3. The bureaucracy ingredient remains deliberately restrained. Previous
+   passes judged that form theatrics add ink without information; that
+   judgement stands. Its development this pass is structural: the whole body
+   becomes one continuous register rather than a dashboard of three widget
+   styles.
+
+CLARITY
+4. Structural defect: the sources "table" is divs. A screen reader gets five
+   unrelated header strings followed by a soup of numbers with no row/column
+   association — the one place on the page where a number's meaning depends
+   entirely on its column. The ledger table above it proves the page knows
+   better.
+5. The page has no heading structure below the h1. "Totals", "Daily
+   register" and "Sources" are styled divs, so assistive navigation sees a
+   title and then an undifferentiated page.
+6. The new axis labels are set in #8b8a72, an off-token grey at roughly
+   2.9:1 against the paper — below small-text contrast thresholds, on the
+   one element added specifically to make the charts honest.
+7. At mid viewport widths (roughly 650-760px) the fixed 34px letterspaced
+   title wraps and can run under the absolutely positioned stamp.
+8. Noted, not fixed: the conversion mini-bars' 6.0% = full-width scale stays
+   implicit. The printed percentages beside every bar keep it safe; a scale
+   note would cost more than it buys.
+
+CHANGES APPLIED IN 3-4-4.html
+- Section C rebuilt as a real table sharing the ledger's rules, header
+  treatment and rhythm: source name in serif, share-of-visits bar (with its
+  printed 42.0 / 35.9 / 22.1 shares) in a ruled cell, visits, sign-ups and
+  conversion columns exactly as before. Same information, same bars, true
+  semantics, one register language across the document.
+- Section titles become real h2 elements, styled identically to before.
+- Axis labels darkened to the standing soft-ink token (#5a614d), ~5.7:1.
+- Title size set with clamp() so it stays one line clear of the stamp at
+  mid widths and sits better on phones.
+
+NOT CHANGED, DELIBERATELY
+- All figures, derivations, purpose; the certificate composition, crest,
+  stamp, tiles, palette, colour grammar, charts (bars, labels, new value
+  axes), ledger table, conversion mini-bars, footer. These carried the last
+  two critiques' strong decisions and nothing this pass found against them.

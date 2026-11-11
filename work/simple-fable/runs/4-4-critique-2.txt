@@ -1,0 +1,56 @@
+Critique of 4-4-2.html
+
+ORIGINALITY — the fusion got smarter and the page got duller. The "timing
+sheet as hotel folio" idea mostly lives in the designer's head: on the surface
+v2 is two near-identical admin tables with a 9px mystery dot. A real timing
+sheet carries rank, pace and a fastest-lap convention; none of that made it in.
+The strongest visual asset of this dataset — a clean rise from Monday to a
+Sunday peak with a Thursday dip — was loud in v1's bar chart and is now
+whispered by 7px slivers interleaved with text. The finish-line idea was never
+developed: the checker band at the top is still a disconnected sticker, while a
+report that literally runs Mon → Sun toward its peak ends with... nothing. The
+header shrank into genericism: "Website Performance" in a smaller Didot could
+be any brandless tool, and the plaque "01" sits next to an eyebrow that says
+"Week 01" — the duplication was moved, not removed. Luxury is claimed but not
+felt: row spacing is tight, the ledger's conventions (generous ruling,
+restrained emphasis) are underplayed, and gold is scattered thin.
+
+CLARITY — one real defect and two irritants.
+1. Per-column max scaling puts three incomparable metrics side by side at
+   identical lengths: Sunday and Direct peg 100% on all three bars, and Mon's
+   visits bar (67.6%) sits next to Mon's conversion bar (66.3%) looking
+   "equal". Same-looking bars invite exactly the cross-metric comparison the
+   scales forbid. This is worse than v1.
+2. The champagne conversion bar and gold signups bar are too close in hue at
+   7px tall; signups and conversion read as one metric family. The conversion
+   bars also encode almost nothing: a 4.0–6.0 range on a zero-based track is
+   a few pixels of difference — ink without information.
+3. The checkered flag on Sunday is defined nowhere visible; it leans on an
+   aria-label and the reader's goodwill.
+
+STRONG DECISIONS PRESERVED: the fused ledger/timing-sheet grammar, one shared
+row system for both sections, zero-based bars with exact figures, the
+racing-green/champagne palette, plaque monogram, livery stripes, KPI tiles,
+"Synthetic data" badge, no JavaScript, system fonts, minimal copy.
+
+CHANGES MADE:
+- Removed the conversion bars (the false-comparison engine and near-zero-ink
+  encoding). Conversion is now a set figure, timing-sheet style: the rate is
+  the lap time, read as a number. The two remaining bar columns (visits green,
+  signups gold) get more width and 9px height, so the week's rise and the
+  Thursday dip read at a glance again.
+- Adopted the fastest-lap convention: gold text now means best/peak only —
+  Sunday's row and 6.0%, Direct's 6.0%. Values are otherwise ivory, so color
+  roles are: green bar = visits, gold bar = signups, gold figure = best.
+- Defined the flag by reuse: the same checkered glyph appears on the Peak day
+  KPI tile and on Sunday's row, tying symbol to meaning without a legend.
+- Finish line developed: a contained checkered rule now closes the report
+  above the footer — the week runs Mon → Sun into the flag. The top band
+  stays as the identity cue.
+- Header: h1 restored to full size; the plaque is now explicitly decorative
+  (aria-hidden) with "Week 01" carried once as text, removing the duplicate
+  announcement.
+- Luxury in the ledger: slightly more generous row spacing and section
+  padding; everything else unchanged.
+- Same purpose, same data, all supplied figures intact; still fully
+  self-contained, no external requests, no scripts.

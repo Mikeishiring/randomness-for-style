@@ -1,0 +1,72 @@
+CRITIQUE OF 3-2-3.html
+
+ORIGINALITY — harsh read
+
+1. Section 2 is still the least developed surface on the page, two rounds
+   running. Section 1 now sits on ruled graph paper with printed ticks;
+   cross the section border and the ruling stops dead. The source bars
+   float on bare manila with no field, no frame, no rule — the one place
+   left where the page falls back to generic dashboard drawing. A form
+   that rules one schedule and not the next is not a form, it is a theme
+   applied where it was convenient.
+
+2. The page never cross-references itself. Real bureaucratic paperwork is
+   obsessive about this — "see line 3", "must match Schedule A" — and the
+   receipt's 5.0% total and the three per-source rates sit two sections
+   apart with no printed link between them. The reader who wants to know
+   whether SOCIAL's 3.1% is bad must carry a number across the page in
+   their head. The form idiom offers the fix and the page doesn't take it.
+
+3. The legend chips are stock dashboard furniture; tolerated because they
+   are the cheapest clear way to bind color to metric, but they are the
+   least in-character element that remains.
+
+4. The hand-rotated stamps and the ruled chart land; the receipt, awning
+   and signage title continue to carry the fusion. No complaint there.
+
+CLARITY — harsh read
+
+1. The genuine defect: the source bar lengths are fractions of an
+   invisible maximum. Nothing marks where 100% of the track is, so
+   SOCIAL's mustard bar reads only against its two siblings, and the
+   right end of the track is a guess. Every bar in section 1 stands on a
+   printed scale; every bar in section 2 stands on nothing.
+
+2. The conversion stamps (6.0 / 5.0 / 3.1) have no anchor at the point of
+   comparison. The relevant yardstick — the week's own 5.0% — is printed
+   far away in the receipt. Judging DIRECT as above-house and SOCIAL as
+   well below requires memory, not reading.
+
+3. Nothing else material. The round-two fixes hold: both chart bands are
+   tick-calibrated, conversion is anchored to a labeled row, value rows
+   align, the peak marker is unambiguous.
+
+WHAT IS STRONG AND KEPT
+
+The stamped receipt with conversion as its total line; the two-ink
+signage title; the awning; the ruled, tick-labeled mirrored chart;
+mustard=visits / red=signups; printed numbers on every bar; item letters;
+hand-rotated CONV stamps; all figures from the supplied data; fully
+static and self-contained.
+
+CHANGES APPLIED IN 3-2-4.html
+
+1. Framed every source bar in a visible ruled well — a panel-tinted
+   track with a thin rule border that the bar fills from the left. This
+   fixes the invisible-maximum defect (the track end is now printed, so
+   proportions read at a glance) and extends section 1's ruled-field
+   language into section 2, which is exactly the bureaucratic development
+   the lower half still owed.
+2. Printed the week's own rate — "WEEK RATE 5.0%" — in section 2's
+   header line, beside the color key. Two words and a figure give the
+   three stamps their yardstick at the point of comparison, in the form's
+   native cross-referencing idiom.
+3. Rejected: per-metric vertical tick rules inside the wells (two
+   unlabeled scales an inch apart would reintroduce the cross-metric
+   misreading the page already fought off); a signature or filing strip
+   at the foot of the form (decorative filler, no information); demoting
+   SOCIAL's stamp to a different color (a third color meaning would
+   corrupt the mustard/red code).
+
+Purpose, data, structure, bar proportions, and all computed figures are
+unchanged from 3-2-3.html.

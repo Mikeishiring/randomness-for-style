@@ -1,0 +1,89 @@
+CRITIQUE OF 3-2-1.html
+
+ORIGINALITY — harsh read
+
+1. The bureaucracy is surface chrome. A form tag, one stamp, and numbered
+   section headers sit on top of what is otherwise a generic dashboard:
+   four KPI cards, a bar chart, three horizontal bar rows. Swap the palette
+   and nothing below the header would tell you this page had an identity
+   at all. The form never reaches the data: no printed scales, no ledger
+   rows, no item numbering, no filled-in-field feel where the numbers live.
+
+2. Fast food is carried almost entirely by color plus one awning. Ketchup
+   red and mustard yellow without any fast-food FORM is just red and
+   yellow. Nothing in the data display evokes the genre: no receipt, no
+   ticket, no counter, no menu-board logic.
+
+3. The two ingredients are adjacent, not fused. Awning on top, form below,
+   and they never touch. The obvious fused move — official paperwork ABOUT
+   a fast-food operation, e.g. totals printed as a register receipt that
+   then gets rubber-stamped — was left on the table.
+
+4. Impact for the display face is the laziest possible choice. It reads as
+   meme/discount-flyer, which is neither bureaucratic nor fast food, and it
+   fights the Courier that does all the actual identity work. The
+   two-tone "hot word" in the title is a decorator's tic, not a decision.
+
+5. The one genuinely fused element — red "CONV" stamp boxes in the sources
+   ledger — is repeated identically three times, so it reads as a style,
+   not a stamp.
+
+CLARITY — harsh read
+
+1. The mirrored daily chart uses independent scales above and below the
+   baseline and never says so. The signup bars render at roughly 40% of
+   the visits bars, visually implying signups are ~40% of visits; the true
+   ratio is 5%. The printed numbers rescue it, but a chart that needs
+   rescuing by its labels is a clarity defect.
+
+2. The per-day conversion figure floats unanchored under the signup
+   number. The "CONV %" legend chip has no swatch and no position, so the
+   reader must infer what the muted percentage belongs to.
+
+3. The peak-day marker (red-filled SUN label) collides with the color
+   code: red means signups everywhere else. The marker is also never
+   explained anywhere.
+
+4. In the sources ledger the mustard and red bars are scaled to different
+   maxima, again unstated, inviting the same cross-metric misreading.
+
+5. Signup numbers hang at ragged heights under ragged bars, so the eye
+   cannot scan them as a row.
+
+6. "DAILY SERVICE RECORD" is flavor at the cost of plainness.
+
+WHAT IS STRONG AND KEPT
+
+Manila form sheet with hard offset shadow; the awning; one stamp carrying
+both SYNTHETIC DATA and WEEK 01; mustard=visits / red=signups encoding;
+a number printed on every bar; conversion computed at every level; peak
+day surfaced; all figures from the supplied data only; fully static and
+self-contained.
+
+CHANGES APPLIED IN 3-2-2.html
+
+1. Fused the ingredients where they were only adjacent: the KPI card row
+   is now a register receipt (white slip, dotted leaders, dashed tear
+   rule, torn bottom edge) whose bottom "total" line is the 5.0%
+   conversion, and the SYNTHETIC DATA / WEEK 01 stamp is struck across
+   the receipt's corner — stamped paperwork about a fast-food counter.
+   Same four figures, same detail (peak day keeps 2,100 visits and 6.0%).
+2. Dropped Impact entirely. The title is now two stacked signage bars —
+   white-on-ketchup and ink-on-mustard — set in the same bold Courier as
+   the rest of the form, so one typeface carries both ingredients.
+3. Gave the daily chart a printed axis column, like a ledger stub:
+   "VISITS 0–2,100" against the upper band, "SIGNUPS 0–127" against the
+   lower band, and a "CONV %" row label. Dual scales are now declared on
+   the page instead of discovered, and the conversion figures are
+   anchored to a named row (values lose their repeated % signs).
+4. Aligned signup numbers and conversion figures into fixed rows under
+   the baseline so they scan as table rows; bureaucratic and clearer.
+5. Peak-day marker recolored from red to ink so it no longer collides
+   with the signups encoding; the receipt names SUN in plain text.
+6. Sources rows gained form item numbers (2A, 2B, 2C) and the color
+   legend moved to that section's header, the first place colors appear
+   without an adjacent axis label.
+7. "DAILY SERVICE RECORD" renamed to "DAILY RECORD".
+
+Data, purpose, structure of sections, bar proportions, and all computed
+figures are unchanged.

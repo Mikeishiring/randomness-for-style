@@ -1,0 +1,73 @@
+Critique of runs/0-2-2.html (second harsh pass on originality and clarity)
+
+ORIGINALITY
+
+1. The fusion now reaches the daily chart (wave, sucker-textured bars, deep
+   zone) but stops at its edges. The corner tentacle art is still a clip-art
+   watermark: it touches nothing, frames nothing, and would survive a palette
+   swap to any other theme unchanged.
+
+2. The wave is a mathematically uniform sine - fourteen identical Q/T
+   segments. Nothing eldritch or liquid moves that regularly; it reads as a
+   zigzag border from a style kit.
+
+3. The "menu board" KPI panel is three centered stats with dashed dividers;
+   the menu exists in the divider alone. The sources rows open as menu items
+   (name, dot leader, price-position chip) and then collapse back into
+   admin-template pill meters on the next two lines.
+
+4. Typographic voice lives entirely in the logotype. Every label below the
+   title is stock system small-caps; a drive-thru board would carry more
+   weight in its signage lettering. (Within a no-external-fonts constraint
+   the available range is limited; noted, not fully fixable.)
+
+CLARITY
+
+5. Color semantics break on the rate. The KPI "Visits -> signups 5.0%" is
+   kelp green; the identical concept in sources wears ketchup-red chips -
+   while red everywhere else means signup counts. Same meaning, two hues;
+   one hue, two meanings. This is the worst clarity defect on the page.
+
+6. "Visits -> signups" is notation where plain words exist. The owner should
+   not decode an arrow; "signup rate" says it.
+
+7. The week's most meaningful derived fact is missing: the signup rate climbs
+   steadily from 4.0% (Mon) to 6.0% (Sun). Sources get rates; days do not.
+   The page shows visits and signups both rising but hides that signups rose
+   faster - precisely the kind of useful detail the owner reads a report for.
+
+8. Accessibility bug: aria-label="Visits to signups" on the rate chips
+   replaces the visible "6.0%" wherever the label is honored, so assistive
+   tech hears the explanation and never the number. Both earlier versions
+   share this defect.
+
+9. Minor: zone scale notes ("Visits - 0-2,100") are terse but adjacent and
+   unambiguous enough; the sucker texture stays below the alpha where it
+   could be mistaken for plotted marks. Both judged acceptable.
+
+CHANGES APPLIED IN 0-2-3.html
+
+- Rate becomes one color everywhere: a single mint-green token for the KPI
+  value, the source chips, and the new per-day rates. Red now exclusively
+  means signup counts, mustard exclusively visits. Fixes 5.
+- "Visits -> signups" and "visits -> signups" replaced with "Signup rate" /
+  "signup rate" in plain words. Fixes 6.
+- Per-day signup rate row added beneath the signup counts in the deep
+  (4.0, 4.5, 5.0, 4.5, 5.0, 5.4, 6.0), in mint, anchored by a right-aligned
+  "signup rate" zone label; the deep zone grew 14px to hold it. The rising
+  conversion story is now visible day by day. Fixes 7.
+- aria-labels removed from the chips; the visible "signup rate" column
+  header now serves all readers, and the numbers are read as written.
+  Fixes 8.
+- Wave redrawn with varied amplitude and wavelength - an irregular,
+  hand-shaped waterline instead of a repeated sine segment. Fixes 2.
+
+DELIBERATELY KEPT (change only what improves)
+
+- The ambient corner tentacles: still garnish (1), but harmless set-dressing;
+  removal would thin the identity without aiding clarity, and entangling
+  them with content risks covering data.
+- The plain pill meters (3): the menu metaphor ends where measurement
+  begins, by choice - clarity over novelty at the data surface.
+- All figures, scales, zero baselines, bar geometry, layout and reading
+  order are unchanged. Purpose and data unchanged.

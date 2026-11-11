@@ -1,0 +1,40 @@
+CRITIQUE OF 3-5-2.html
+
+Originality
+1. The pins are in the wrong place. The daily bars are now properly pinned, but each
+   source card carries its pin on the top edge of the card — pinning the label, not
+   the specimen. A Victorian collector drives the pin through the insect's thorax.
+   With the chart pins and the card pins drawn differently, the page also has two pin
+   vocabularies where one would do.
+2. The insects remain inert illustration: they encode nothing and connect to nothing.
+   Scaling them by visits was considered and rejected — it would read as a quantitative
+   encoding and lie about magnitude. The honest connection available is the pin itself:
+   the same pin that fixes each day's bar should fix each specimen.
+3. Bureaucracy still acts only once (the clerk's ellipse on Sunday). The summary strip
+   presents four totals yet ignores the oldest clerical convention for exactly this:
+   the accountant's double rule beneath a totals row. The single bottom border marks
+   nothing.
+4. Considered and rejected: wrapping the three source cards in a second bordered case
+   to match the daily record. Cards inside a case doubles every border and adds
+   structure without information; the shared card ground already links the sections.
+
+Clarity
+5. The two pin styles make the reader resolve one metaphor twice; unifying them is a
+   small clarity gain as well as an identity one.
+6. No other clarity regressions found: both panels keep per-bar values, the labelled
+   rate row, separated scales, and the peak mark; contrast was fixed in the previous
+   pass. The remaining cross-panel caveat (visits and signups bar heights are not
+   comparable between panels) is already mitigated by the dividing axis, separate
+   row labels, distinct colours, and a value on every bar — adding scale apparatus
+   for it would cost more than it returns.
+
+Changes applied in 3-5-3.html
+- Each insect is now pinned through the thorax with the same pin used on the daily
+  bars (ink head, light ring); the decorative card-edge pin is removed. One pin
+  vocabulary across the whole collection.
+- The summary strip closes with an accounting double rule, marking the four figures
+  as the week's totals — a bureaucratic mark that does semantic work instead of
+  decorating.
+- Everything else is unchanged: data, purpose, layout, both chart panels, values,
+  rate row, peak ellipse, stamp, cards, share bars, responsive behaviour. The page
+  remains fully self-contained.

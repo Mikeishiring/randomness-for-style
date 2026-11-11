@@ -1,0 +1,47 @@
+Critique of 2-5-3.html (harsh, originality and clarity)
+
+ORIGINALITY
+1. The engraving pass of v3 stopped halfway: the clouds now carry fine
+   hatching, but the three suns are still flat app-icon discs with ruler
+   rays. One sky, two hands. The remaining stock-icon flavour in the page
+   is concentrated in exactly those three glyphs.
+2. Beyond that, the identity holds together: the finding line makes the
+   weather frame carry the actual result, the specimens are data-ordered,
+   and the register ruling keeps Plate I from reading as a generic chart.
+   Pushing the theme further (faux taxonomy names, barometer dials,
+   collection-ledger borders) would now cost clarity for charm - the wrong
+   trade under this brief.
+
+CLARITY
+3. Accessibility parity gap: both bar bands expose their figures through a
+   role="img" label with the day names attached, but the new Rate row is
+   bare positional text - a screen reader hears "Rate 4.0% 4.5% ..." with
+   no days. The one row added for insight is the one row a non-visual
+   reader cannot map.
+4. Considered and rejected, to avoid churn:
+   - Highlighting Sunday's 6.0% rate: the tile already names the best day,
+     and singling out one value in a monotone trend would imply the others
+     matter less.
+   - Extending the finding sentence to mention the rate climb: the rate row
+     now shows it directly beneath the signups; a third clause would turn a
+     finding into a paragraph.
+   - Axis labels on the register lines: every bar prints its exact value;
+     an axis would state each number a second time.
+   - Renaming headings or adding theme copy anywhere: the information
+     surfaces are already at minimum viable words.
+
+CHANGES APPLIED (one pass)
+- Engraved the suns to match the clouds: two or three fine hatching strokes
+  inside each disc (clearing, fair, clear), same ink, same weight family as
+  the cloud shading, so every drawn mark on the page shares one hand.
+- Gave the Rate row the same accessibility treatment as the two bands:
+  role="img" with "Signup rate by day: Monday 4.0% ... Sunday 6.0%", visual
+  cells hidden from the accessibility tree.
+
+PRESERVED (strong decisions)
+Everything else is unchanged: the finding line with its 48% / more-than-
+doubled figures, the sky-over-register layout and rain -> clear legend
+formula, 500-visit ruling, printed bar values, the enlarged signups band,
+the daily rate row, data-ordered pinned specimens, disambiguated card
+labels, museum-tag tiles, parchment cabinet frame, and all supplied figures
+and derived totals.

@@ -1,0 +1,75 @@
+CRITIQUE OF 3-2-2.html
+
+ORIGINALITY — harsh read
+
+1. The fusion now exists, but only in the header. The stamped receipt is
+   the one object on the page where bureaucracy and fast food actually
+   meet. Below the fold the page reverts to a competent official-form
+   pastiche that any "government form" brief would produce: the chart and
+   the ledger carry the palette, but nothing in their construction owes
+   anything to either ingredient. The identity is front-loaded.
+
+2. The three CONV boxes are still identical triplets. Round one called
+   this out — a stamp repeated with machine precision reads as a styled
+   component, not a stamp — and round one's revision did not fix it. A
+   rubber stamp's whole character is that no two strikes land the same.
+
+3. The chart's axis stub is the thinnest possible gesture at a printed
+   form: a bold word and a min–max range in 9px. Real forms and real
+   graph paper rule the field. The band behind the bars is blank manila,
+   which is a missed opportunity for the single most bureaucratic texture
+   available: ruled grid.
+
+4. The staggered signage bars (red bar, then indented mustard bar) sit
+   between two stools — not aligned like a form, not composed like a
+   sign. Considered for change; kept, because every alternative tried on
+   paper (flush-left stack, centered stack) was blander and the stagger
+   does echo stacked diner signage. Noted as taste, not strength.
+
+CLARITY — harsh read
+
+1. "0–2,100" is a range note, not a scale. To judge Wednesday's 1,780
+   against the band the reader must read every printed number; the chart
+   itself offers no reference line between zero and the top. Same for the
+   signups band. A chart whose only calibration is two endpoints printed
+   in 9px mute type is calibrated in name only.
+
+2. The gap left when short signup bars hang far above their aligned
+   number row (Mon: 22px bar, then empty space, then "57") is tolerable
+   because the rows scan as a table, but unruled empty space between bar
+   and value makes the eye trace nothing. Rules would carry the eye.
+
+3. Minor: the empty spacer row in the axis column (opposite the signup
+   numbers) is inert; acceptable, since labeling it would duplicate
+   "SIGNUPS".
+
+4. Otherwise the round-one fixes hold: both bands declare their own
+   scales, conversion is anchored to a named CONV % row, the peak marker
+   no longer borrows the signups color, value rows align.
+
+WHAT IS STRONG AND KEPT
+
+The stamped receipt with conversion as the receipt total; the two-ink
+signage title in the form's own Courier; the awning; mustard=visits /
+red=signups; a printed number on every bar; aligned value rows under the
+baseline; item letters 2A–2C; peak day named in the receipt and marked in
+ink; all figures unchanged; fully static and self-contained.
+
+CHANGES APPLIED IN 3-2-3.html
+
+1. Ruled the chart like graph paper. Both bands get faint horizontal
+   rules printed behind the bars — at 500/1,000/1,500/2,000 visits and at
+   50/100 signups — with small tick labels in the axis column replacing
+   the min–max range notes. One move serves both masters: it is the
+   printed-form grid the bureaucracy was missing, and it turns the chart
+   from endpoint-calibrated to genuinely readable at intermediate values.
+2. Gave each CONV stamp its own slight rotation (-2, +1.5, -1.2 degrees)
+   so the three strikes read as stamped by hand rather than templated.
+   Legibility is untouched at these angles.
+3. Nothing else changed. Renaming sources as menu items ("COMBO 2A") was
+   rejected as flavor that destroys plainness; receipt header chrome
+   ("ORDER #") was rejected as duplicating the form tag; ink hatching on
+   bars was rejected as texture that costs contrast and adds nothing.
+
+Purpose, data, structure, bar proportions, and all computed figures are
+unchanged from 3-2-2.html.

@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 · Site performance</title>
+<style>
+  :root{
+    color-scheme: dark;
+    --abyss:#041019;
+    --abyss-deep:#02070d;
+    --panel-top:rgba(13,37,54,.62);
+    --panel-bot:rgba(6,17,27,.62);
+    --edge:rgba(94,234,212,.16);
+    --ink:#eafaf5;
+    --dim:#86a7ab;
+    --cyan:#4df2d2;
+    --mustard:#ffc44d;
+    --ketchup:#ff8a7f;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{
+    background:
+      radial-gradient(900px 520px at 85% -12%, rgba(77,242,210,.09), transparent 70%),
+      radial-gradient(760px 480px at -10% 108%, rgba(255,196,77,.07), transparent 70%),
+      linear-gradient(180deg, var(--abyss) 0%, var(--abyss-deep) 100%);
+    background-attachment:fixed;
+    color:var(--ink);
+    font-family:system-ui,"Segoe UI",Arial,sans-serif;
+    min-height:100vh;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;
+    background-image:
+      radial-gradient(2px 2px at 11% 22%, rgba(125,247,223,.55), transparent 60%),
+      radial-gradient(1.5px 1.5px at 27% 64%, rgba(125,247,223,.35), transparent 60%),
+      radial-gradient(2px 2px at 44% 12%, rgba(255,211,107,.4), transparent 60%),
+      radial-gradient(1.5px 1.5px at 61% 80%, rgba(125,247,223,.3), transparent 60%),
+      radial-gradient(2px 2px at 73% 34%, rgba(255,138,127,.35), transparent 60%),
+      radial-gradient(1.5px 1.5px at 86% 68%, rgba(125,247,223,.4), transparent 60%),
+      radial-gradient(2px 2px at 93% 14%, rgba(255,211,107,.3), transparent 60%),
+      radial-gradient(1.5px 1.5px at 7% 86%, rgba(255,138,127,.3), transparent 60%);
+    animation:plankton 7s ease-in-out infinite alternate;
+  }
+  @keyframes plankton{from{opacity:.55}to{opacity:1}}
+  @media (prefers-reduced-motion: reduce){
+    body::before{animation:none}
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:40px 16px 56px;display:grid;gap:18px}
+  header{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  h1{
+    font-family:"Arial Rounded MT Bold",ui-rounded,"Arial Black",Arial,sans-serif;
+    font-weight:900;font-size:clamp(40px,8vw,62px);letter-spacing:-.01em;
+    color:#eafff9;
+    text-shadow:0 0 18px rgba(77,242,210,.55), 0 0 60px rgba(77,242,210,.22);
+  }
+  h1 .o{color:#ffd56e;text-shadow:0 0 18px rgba(255,196,77,.6), 0 0 60px rgba(255,196,77,.25)}
+  .tag{
+    align-self:center;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:#ffd98a;border:1px dashed rgba(255,196,77,.45);border-radius:999px;padding:6px 14px;
+  }
+  .panel,.kpi{
+    position:relative;overflow:hidden;
+    background:linear-gradient(180deg,var(--panel-top),var(--panel-bot));
+    border:1px solid var(--edge);border-radius:18px;
+  }
+  .panel::before,.kpi::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:4px;
+    background:repeating-linear-gradient(90deg, rgba(255,196,77,.4) 0 14px, rgba(255,99,85,.32) 14px 28px);
+  }
+  .panel{padding:20px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:18px}
+  .kpi{padding:18px 20px}
+  .kpi b{
+    display:block;font-family:"Arial Rounded MT Bold",ui-rounded,"Arial Black",Arial,sans-serif;
+    font-size:34px;font-weight:900;letter-spacing:-.02em;
+  }
+  .kpi span{display:block;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--dim);text-transform:uppercase}
+  .kpi .def{display:block;margin-top:3px;font-size:10px;color:var(--dim);letter-spacing:.04em}
+  .kpi.v b{color:#aef8e7;text-shadow:0 0 14px rgba(77,242,210,.5)}
+  .kpi.s b{color:#ffe0a1;text-shadow:0 0 14px rgba(255,196,77,.5)}
+  .kpi.c b{color:#ffb3aa;text-shadow:0 0 14px rgba(255,99,85,.5)}
+  .scroll{overflow-x:auto}
+  svg.daily{display:block;width:100%;min-width:600px;height:auto}
+  .band{font-size:10px;font-weight:700;letter-spacing:.2em;fill:var(--dim)}
+  .day{font-size:13px;fill:var(--dim)}
+  .val-v{font-size:14px;font-weight:700;fill:#d9fbf3}
+  .val-s{font-size:13px;font-weight:700;fill:#ffd98a}
+  .val-c{font-size:12px;font-weight:700;fill:var(--ketchup)}
+  .base{stroke:rgba(141,226,210,.25);stroke-width:1}
+  table.sources{width:100%;border-collapse:collapse}
+  .sources th{
+    font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+    text-align:right;padding:0 0 12px 12px;
+  }
+  .sources th:first-child{text-align:left;padding-left:0}
+  .sources th.bar{text-align:left}
+  .sources td{padding:11px 0 11px 12px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .sources td:first-child{text-align:left;padding-left:0;font-weight:800;font-size:15px}
+  .sources tbody tr + tr td{border-top:1px dotted rgba(255,196,77,.28)}
+  .sources td.bar{width:42%;padding-right:0}
+  .track{height:12px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden}
+  .fill{height:100%;border-radius:999px}
+  .f-direct{background:var(--cyan);box-shadow:0 0 12px rgba(77,242,210,.55)}
+  .f-search{background:var(--mustard);box-shadow:0 0 12px rgba(255,196,77,.55)}
+  .f-social{background:#ff6355;box-shadow:0 0 12px rgba(255,99,85,.55)}
+  .conv{color:var(--ketchup);font-weight:700}
+  @media (max-width:480px){
+    .sources td.bar{width:30%}
+    .sources td:first-child{font-size:13px}
+    .sources td{font-size:13px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Week <span class="o">01</span></h1>
+    <span class="tag">Synthetic data</span>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi v"><b>12,480</b><span>Visits</span></div>
+    <div class="kpi s"><b>624</b><span>Signups</span></div>
+    <div class="kpi c"><b>5.0%</b><span>Conversion</span><em class="def">signups / visits</em></div>
+  </div>
+
+  <section class="panel scroll">
+    <svg class="daily" viewBox="0 0 720 308" xmlns="http://www.w3.org/2000/svg" role="img"
+         aria-label="Daily visits, signups and conversion, Monday to Sunday. Visits climb from 1,420 on Monday to 2,100 on Sunday. Signups climb from 57 to 127. Conversion rises from 4.0 percent to 6.0 percent.">
+      <defs>
+        <linearGradient id="gv" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#6ff5db"/>
+          <stop offset="1" stop-color="#0f6b63" stop-opacity=".85"/>
+        </linearGradient>
+        <linearGradient id="gs" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffd36b"/>
+          <stop offset="1" stop-color="#8a5a14" stop-opacity=".85"/>
+        </linearGradient>
+        <filter id="glowv" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#4df2d2" flood-opacity="0.45"/>
+        </filter>
+        <filter id="glows" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ffc44d" flood-opacity="0.45"/>
+        </filter>
+      </defs>
+
+      <text class="band" x="58" y="112" text-anchor="end">VISITS</text>
+      <text class="band" x="58" y="250" text-anchor="end">SIGNUPS</text>
+      <text class="band" x="58" y="294" text-anchor="end">CONV</text>
+
+      <line class="base" x1="70" y1="176.5" x2="707" y2="176.5"/>
+      <line class="base" x1="70" y1="272.5" x2="707" y2="272.5"/>
+
+      <g filter="url(#glowv)">
+        <rect x="87"  y="87" width="56" height="89"  rx="6" fill="url(#gv)"/>
+        <rect x="178" y="75" width="56" height="101" rx="6" fill="url(#gv)"/>
+        <rect x="269" y="64" width="56" height="112" rx="6" fill="url(#gv)"/>
+        <rect x="360" y="73" width="56" height="103" rx="6" fill="url(#gv)"/>
+        <rect x="451" y="55" width="56" height="121" rx="6" fill="url(#gv)"/>
+        <rect x="542" y="49" width="56" height="127" rx="6" fill="url(#gv)"/>
+        <rect x="633" y="44" width="56" height="132" rx="6" fill="url(#gv)"/>
+      </g>
+      <text class="val-v" x="115" y="79"  text-anchor="middle">1,420</text>
+      <text class="val-v" x="206" y="67"  text-anchor="middle">1,600</text>
+      <text class="val-v" x="297" y="56"  text-anchor="middle">1,780</text>
+      <text class="val-v" x="388" y="65"  text-anchor="middle">1,640</text>
+      <text class="val-v" x="479" y="47"  text-anchor="middle">1,920</text>
+      <text class="val-v" x="570" y="41"  text-anchor="middle">2,020</text>
+      <text class="val-v" x="661" y="36"  text-anchor="middle">2,100</text>
+
+      <text class="day" x="115" y="196" text-anchor="middle">Mon</text>
+      <text class="day" x="206" y="196" text-anchor="middle">Tue</text>
+      <text class="day" x="297" y="196" text-anchor="middle">Wed</text>
+      <text class="day" x="388" y="196" text-anchor="middle">Thu</text>
+      <text class="day" x="479" y="196" text-anchor="middle">Fri</text>
+      <text class="day" x="570" y="196" text-anchor="middle">Sat</text>
+      <text class="day" x="661" y="196" text-anchor="middle">Sun</text>
+
+      <g filter="url(#glows)">
+        <rect x="87"  y="249" width="56" height="23" rx="5" fill="url(#gs)"/>
+        <rect x="178" y="243" width="56" height="29" rx="5" fill="url(#gs)"/>
+        <rect x="269" y="236" width="56" height="36" rx="5" fill="url(#gs)"/>
+        <rect x="360" y="242" width="56" height="30" rx="5" fill="url(#gs)"/>
+        <rect x="451" y="233" width="56" height="39" rx="5" fill="url(#gs)"/>
+        <rect x="542" y="227" width="56" height="45" rx="5" fill="url(#gs)"/>
+        <rect x="633" y="220" width="56" height="52" rx="5" fill="url(#gs)"/>
+      </g>
+      <text class="val-s" x="115" y="243" text-anchor="middle">57</text>
+      <text class="val-s" x="206" y="237" text-anchor="middle">72</text>
+      <text class="val-s" x="297" y="230" text-anchor="middle">89</text>
+      <text class="val-s" x="388" y="236" text-anchor="middle">74</text>
+      <text class="val-s" x="479" y="227" text-anchor="middle">96</text>
+      <text class="val-s" x="570" y="221" text-anchor="middle">109</text>
+      <text class="val-s" x="661" y="214" text-anchor="middle">127</text>
+
+      <text class="val-c" x="115" y="294" text-anchor="middle">4.0%</text>
+      <text class="val-c" x="206" y="294" text-anchor="middle">4.5%</text>
+      <text class="val-c" x="297" y="294" text-anchor="middle">5.0%</text>
+      <text class="val-c" x="388" y="294" text-anchor="middle">4.5%</text>
+      <text class="val-c" x="479" y="294" text-anchor="middle">5.0%</text>
+      <text class="val-c" x="570" y="294" text-anchor="middle">5.4%</text>
+      <text class="val-c" x="661" y="294" text-anchor="middle">6.0%</text>
+    </svg>
+  </section>
+
+  <section class="panel">
+    <table class="sources">
+      <thead>
+        <tr><th>Source</th><th class="bar">Share</th><th>Visits</th><th>Signups</th><th>Conv</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Direct</td>
+          <td class="bar"><div class="track"><div class="fill f-direct" style="width:42%"></div></div></td>
+          <td>5,240</td><td>314</td><td class="conv">6.0%</td>
+        </tr>
+        <tr>
+          <td>Search</td>
+          <td class="bar"><div class="track"><div class="fill f-search" style="width:35.9%"></div></div></td>
+          <td>4,480</td><td>224</td><td class="conv">5.0%</td>
+        </tr>
+        <tr>
+          <td>Social</td>
+          <td class="bar"><div class="track"><div class="fill f-social" style="width:22.1%"></div></div></td>
+          <td>2,760</td><td>86</td><td class="conv">3.1%</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+</body>
+</html>

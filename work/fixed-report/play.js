@@ -1,8 +1,11 @@
 const $=s=>document.querySelector(s);
 const params=new URLSearchParams(location.search);
-let method=params.get('prompt')==='original'?'original':'stronger';
-const currentExperiment=()=>method==='original'?EXPERIMENT:STRONGER_EXPERIMENT;
-const currentBaseline=()=>method==='original'?BASELINE:STRONGER_BASELINE;
+let method=params.get('model')==='newer'?'newer':params.get('prompt')==='original'?'original':'stronger';
+// Three recorded tracks: the earlier model with its two refinement prompts, and a newer-model
+// rerun of the whole experiment with identical prompts.
+let promptTrack=method==='original'?'original':'stronger';
+const currentExperiment=()=>method==='newer'?NEWER_EXPERIMENT:method==='original'?EXPERIMENT:STRONGER_EXPERIMENT;
+const currentBaseline=()=>method==='newer'?NEWER_BASELINE:method==='original'?BASELINE:STRONGER_BASELINE;
 const worlds=INGREDIENTS_A.map(name=>({name}));
 const modes={original:{options:INGREDIENTS_B.map((name,i)=>({name,layout:['tech','disco','diner','opera','hotel','insects'][i]}))}};
 const active='original';
@@ -220,7 +223,8 @@ function nextExperimentStep(){
  else{stage=1;comparing=false;roll();}
 }
 function updateURL(){
- const query=new URLSearchParams({view,pair:selected.id,stage:String(stage),plainStage:String(plainStage),prompt:method});
+ const query=new URLSearchParams({view,pair:selected.id,stage:String(stage),plainStage:String(plainStage)});
+ if(method==='newer')query.set('model','newer');else query.set('prompt',method);
  if(comparing)query.set('compare','1');
  if(comparison==='other')query.set('against','other');
  if(introMode)query.set('start','original');
@@ -260,7 +264,7 @@ function showReports(container,entries){
   let section=cache.get(item.file);
   if(!section){section=addReport(container,item,label||'Report');cache.set(item.file,section);}
   const heading=section.querySelector('h3');heading.textContent=label||'';heading.hidden=!label;
-  section.querySelector('iframe').title=label||(/^(stronger-)?plain-/.test(item.file)?'Plain weekly report':selected.label);
+  section.querySelector('iframe').title=label||(/^(stronger-|newer-)?plain-/.test(item.file)?'Plain weekly report':selected.label);
   section.style.order=String(order);section.hidden=false;
   const frame=section.querySelector('iframe');if(frame.dataset.loaded==='true')scrollReport(frame,reportScroll.get(container)||0);
   if(entries.length===1&&!label&&previous.length===1&&previous[0]!==section){
@@ -296,11 +300,14 @@ function renderRail(){
 function renderResult(){
  const container=$('#report-view');container.classList.toggle('comparing',comparing);
  const current=introMode?currentBaseline().steps[0]:selected.steps[stage-1];
- const other=(method==='stronger'?EXPERIMENT:STRONGER_EXPERIMENT).runs.find(run=>run.id===selected.id).steps[stage-1];
- const currentLabel=method==='stronger'?'Stronger prompt':'Original prompt',otherLabel=method==='stronger'?'Original prompt':'Stronger prompt';
+ // "Other" is each track's one alternative: the earlier model's two prompts compare with each
+ // other from a shared one-shot; the newer model compares with the earlier original-prompt run.
+ const other=(method==='original'?STRONGER_EXPERIMENT:EXPERIMENT).runs.find(run=>run.id===selected.id).steps[stage-1];
+ const currentLabel=method==='newer'?'Newer model':method==='stronger'?'Stronger prompt':'Original prompt';
+ const otherLabel=method==='newer'?'Earlier model':method==='stronger'?'Original prompt':'Stronger prompt';
  let entries=[{item:current,label:''}];
  if(comparing&&comparison==='plain')entries=[{item:currentBaseline().steps[stage-1],label:'Brief only'},{item:current,label:'+ Two ingredients'}];
- if(comparing&&comparison==='other')entries=stage===1?[{item:current,label:'Shared one-shot'}]:method==='stronger'?[{item:other,label:otherLabel},{item:current,label:currentLabel}]:[{item:current,label:currentLabel},{item:other,label:otherLabel}];
+ if(comparing&&comparison==='other')entries=stage===1&&method!=='newer'?[{item:current,label:'Shared one-shot'}]:method==='original'?[{item:current,label:currentLabel},{item:other,label:otherLabel}]:[{item:other,label:otherLabel},{item:current,label:currentLabel}];
  if(introMode)entries=[{item:current,label:''}];
  container.classList.toggle('comparing',entries.length>1);document.documentElement.dataset.comparing=String(entries.length>1);
  container.dataset.passes=String(!introMode&&entries.length===1?stage-1:0);
@@ -308,11 +315,13 @@ function renderResult(){
  $('#pair-title').textContent=introMode?'Brief only':selected.label;
  $('#compare').disabled=introMode;
  $('#compare').setAttribute('aria-pressed',String(comparing));
- $('#compare').setAttribute('aria-label',comparing&&comparison==='other'?'Compare refinement prompts':'Compare with brief only');
+ $('#compare').setAttribute('aria-label',comparing&&comparison==='other'?(method==='newer'?'Compare model generations':'Compare refinement prompts'):'Compare with brief only');
  $('#compare-target').hidden=introMode||!comparing;$('#compare-target').value=comparison;$('#compare-other').textContent=otherLabel;
  $('#view-plain').disabled=false;$('#view-plain').textContent='Refine brief alone →';
- $('#method-original').setAttribute('aria-pressed',String(method==='original'));$('#method-stronger').setAttribute('aria-pressed',String(method==='stronger'));
+ $('#method-original').setAttribute('aria-pressed',String(method==='original'));$('#method-stronger').setAttribute('aria-pressed',String(method==='stronger'));$('#method-newer').setAttribute('aria-pressed',String(method==='newer'));
+ $('#model-toggle').setAttribute('aria-pressed',String(method==='newer'));
  $('#method-note').hidden=stage!==1;
+ $('#method-note').textContent=method==='newer'?'Same prompts, a newer model, its own one-shot.':'Both prompts start from this one-shot.';
  renderRail();
  showPrompt($('#current-prompt'),current.prompt,!introMode&&stage===1?`Combine ${INGREDIENTS_A[a]} and ${INGREDIENTS_B[b]} into a distinct visual identity.`:'');
  $('#prompt-title').textContent=introMode?'Brief only':stage===1?'One-shot prompt':'Refinement prompt';
@@ -416,10 +425,12 @@ async function copyText(text,pre,status){
 }
 $('#compare').addEventListener('click',()=>{if(introMode)return;comparing=!comparing;renderResult();updateURL();});
 $('#compare-target').addEventListener('change',event=>{comparison=event.target.value==='other'?'other':'plain';renderResult();updateURL();});
-function changeMethod(next){settlePresentation();method=next;promptPeeks.forEach(peek=>peek.close());selected=currentExperiment().runs.find(run=>run.id===selected.id);render();if(view==='plain')renderPlain();}
+function changeMethod(next){settlePresentation();method=next;if(next!=='newer')promptTrack=next;promptPeeks.forEach(peek=>peek.close());selected=currentExperiment().runs.find(run=>run.id===selected.id);render();if(view==='plain')renderPlain();}
 $('#method-original').addEventListener('click',()=>changeMethod('original'));
 $('#method-stronger').addEventListener('click',()=>changeMethod('stronger'));
-$('#plain-method').addEventListener('change',event=>changeMethod(event.target.value==='original'?'original':'stronger'));
+$('#method-newer').addEventListener('click',()=>changeMethod('newer'));
+$('#model-toggle').addEventListener('click',()=>changeMethod(method==='newer'?promptTrack:'newer'));
+$('#plain-method').addEventListener('change',event=>changeMethod(event.target.value==='newer'?'newer':event.target.value==='original'?'original':'stronger'));
 function setAttempt(value){if(introMode)return;settlePresentation();lastEvent=null;const next=Math.round(Number(value));if(selected.steps[next-1]){stage=next;render(false);}}
 $('#stage-0').addEventListener('click',showBrief);
 for(let value=1;value<=4;value++)$('#stage-'+value).addEventListener('click',()=>{

@@ -1,0 +1,57 @@
+Critique of 4-0-1.html (originality, then clarity), followed by the changes applied in 4-0-2.html.
+
+ORIGINALITY — harsh read
+
+1. The motorsport layer is a costume, not a system. It reaches for the three
+   stock signifiers any generic "racing dashboard" would: F1 red (#e10600), a
+   checkered strip, and italic uppercase headings. The checkered band is pure
+   wallpaper — it touches no data and does no work.
+2. The tech layer barely exists as an ingredient. A monospace numeral font and
+   a teal accent is default dashboard styling, not a developed identity. The
+   two ingredients never interact; they are applied as separate coats of paint
+   (red = motorsport, mono = tech) rather than fused into one language.
+3. The telemetry metaphor is claimed in a label ("Daily telemetry") but not
+   executed. The charts are ordinary area charts with a detached legend.
+   Real telemetry identifies each channel inside its own lane and reads
+   derived values like sector times; v1 does neither.
+4. Motorsport has a native emphasis convention — purple marks the session
+   best — that v1 ignores entirely, even though the data has obvious "bests"
+   (Sunday, Direct's conversion) begging for it.
+
+CLARITY — harsh read
+
+5. The daily conversion trend is the most interesting derived signal in the
+   data (4.0% -> 6.0% across the week) and it is absent. The reader must
+   divide two traces mentally; the 5.0% headline KPI hides that the week
+   improved steadily.
+6. The legend sits detached in the card header; channel identification should
+   be adjacent to the trace it names.
+7. The sources table hides the SIGNUPS and CONV columns under 560px
+   (hide-sm), silently dropping useful detail on phones. That is a real
+   clarity failure, not a responsive compromise.
+8. Emphasis is uniform: every number is rendered with equal weight, so the
+   page states facts but never points at the finding.
+
+WORTH KEEPING (strong decisions preserved)
+
+- Zero-based filled traces with every value labelled; no tooltips needed.
+- Separate lanes for visits and signups instead of a misleading dual axis.
+- KPI row with Mon->Sun deltas; the WK 01 plate; the notched livery corners;
+  restrained copy throughout.
+
+CHANGES APPLIED IN 4-0-2.html
+
+a. In-lane channel labels (VISITS / SIGNUPS, colour-matched) replace the
+   detached legend — the telemetry metaphor becomes structural (3, 6).
+b. A CONV % row under the day labels, read like sector times: 4.0 4.5 5.0
+   4.5 5.0 5.4 6.0 — all arithmetic on supplied figures (5).
+c. The motorsport "purple = session best" convention is adopted as a third
+   semantic colour: Sunday's points, day label and 6.0% conversion, the
+   Peak-day KPI, and Direct's 6.0% source conversion are marked purple.
+   Emphasis now encodes meaning, and the convention is an authentic deep cut
+   rather than another checkered flag (1, 4, 8).
+d. Sources grid rebuilt: fixed number columns with the bar on its own
+   full-width track row, so nothing is hidden at phone width (7).
+e. Everything else — data, purpose, layout order, copy, palette roles
+   (red = visits, teal = signups), KPIs, checkered header strip as a single
+   compact identity marker — is unchanged.

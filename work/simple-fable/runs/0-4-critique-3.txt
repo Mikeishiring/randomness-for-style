@@ -1,0 +1,44 @@
+CRITIQUE OF 0-4-3.html
+
+Originality
+- Third look: ornament, watermark, plaques, register — the identity now frames
+  the data but still never touches the data marks where it matters. The one
+  place the two ingredients genuinely meet (gold as the house's take:
+  conversion) was realized in the register and then abandoned in the by-day
+  panel, where conversion — the week's actual story, 4.0% rising to 6.0% — is
+  a row of plain text.
+- The page never says what it reports. "Week 01" of what? The fiction (the
+  hotel marque) crowds out the fact (a website's week). An identity that
+  omits its subject is vanity.
+
+Clarity
+- The conversion trend is the most actionable fact on the page and it is
+  invisible as shape. Sources got comparison meters; days did not. One
+  quantity, two treatments, and the treatment is missing exactly where the
+  movement is.
+- 9px type (the depth soundings, the register headers) sits below a
+  comfortable legibility floor for the least-skimmable content on the page.
+- Register semantics are sloppy at the edges: an unnamed empty header cell
+  exposed to assistive tech, a stray aria-hidden="false", a meter marked up
+  as <i>.
+
+Kept (strong decisions)
+Everything structural: lanes with baselines and labeled gridlines, the
+register with its single header row and ruled entries, share-of-week bars,
+from-zero conversion meters, accessible per-day labels, the restrained
+identity load. No new ornament is added this pass — v3 already carries as
+much identity as the data can bear, and the remaining gains are in making
+the data itself speak.
+
+Changes applied in 0-4-4.html
+1. The tag line now carries the subject with the caveat: "Site performance ·
+   Synthetic data". Two necessary facts, one quiet line.
+2. By-day conversion values gain the same from-zero underline meters as the
+   register (6.0% = full length), making the weekly rise visible. Widths use
+   min(percent, px) pairs sharing one ratio, so proportions stay truthful at
+   every viewport width instead of clamping.
+3. Small type raised from 9px to 10px (gridline soundings, register headers,
+   mobile figure labels).
+4. Semantics cleanup: the empty track header cell is hidden from assistive
+   tech, the stray aria-hidden="false" is removed, meters are <span>s.
+No other changes; data, scales, structure and identity are unchanged.

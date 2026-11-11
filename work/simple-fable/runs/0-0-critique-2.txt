@@ -1,0 +1,49 @@
+Critique of runs/0-0-2.html
+
+ORIGINALITY — one idea, surrounded by template.
+1. The waterline chart is now the page's only real invention. Everything around
+   it is still stock dark-dashboard chrome: four identical rounded tiles, 1px
+   bordered panels, tracked uppercase h2s. Cover the chart and the page could be
+   any crypto product. The identity does not extend into the system; it lives in
+   one SVG.
+2. The corner tentacles are anatomically lazy: uniform-width strokes with round
+   caps — glowing noodles, not limbs. The suckers are loose circles scattered
+   near, not on, the curves. Decoration this careless reads as a filter, not a
+   world.
+3. The tech half still has no instrument character. A page about watching the
+   deep begs for telemetry/depth-gauge framing; instead it has the default
+   dashed gridlines every charting library ships.
+4. Typographically the eldritch voice is still letter-spaced Palatino, i.e.
+   nothing. (A custom display font would fix this, but self-containment forbids
+   external fonts and embedding one would bloat the file; system stacks are the
+   honest ceiling here. Noted as a constraint, not excused as a choice.)
+
+CLARITY — good, with three residual faults.
+1. Sources pairs two bars normalized to different maxima (visits to 5,240,
+   signups to 314). Direct shows both at 100%, visually implying signups track
+   visits proportionally — a false ratio reading the layout invites. Two
+   same-shaped bars in one block suggest commensurability that does not exist.
+2. The sources block is a soup of spans: no table semantics, so a screen reader
+   gets fifteen unlabeled cells. The chart's aria-label is thorough; the table
+   deserves the same care.
+3. "Peak day — Sun 2,100" states no unit; after the signups tile, 2,100 could be
+   misattributed. Small, but free to fix.
+Minor: SIGNUPS (down arrow) sits far from the waterline where its axis begins; accepted,
+since placing it nearer overlaps Monday's bar.
+
+REVISION (one pass)
+- Tentacles rebuilt with tapering segments (wide base, thin tip, final flick)
+  and suckers computed to sit on the limb curves. Same placement and restraint,
+  better craft; ambience now survives a second look.
+- The waterline motif extends into the chrome: each section heading carries a
+  short glowing rule that fades out, echoing the surface line. The identity now
+  repeats as a system instead of living in one chart.
+- Sources signups switched from a second bar to a glowing sucker-dot on a thin
+  track (same scale, same numbers). A different encoding kills the false
+  bar-to-bar ratio reading, and the dot is the motif doing data work.
+- Sources rebuilt as a real table (scoped row headers, column headers), visually
+  unchanged; bar/dot graphics marked decorative since the numbers carry the data.
+- "Peak day" now reads "Sun — 2,100 visits".
+- Left alone: the waterline chart (the strong decision), all figures, scales,
+  stat row, header, chip, palette, and the copy level — still no sentence of
+  filler anywhere on the page.

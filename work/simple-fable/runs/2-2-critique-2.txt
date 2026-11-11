@@ -1,0 +1,33 @@
+Critique of 2-2-2.html (originality, then clarity), followed by the change applied in 2-2-3.html and the changes deliberately refused.
+
+ORIGINALITY — harsh read
+
+1. The conversion-as-sunshine system is now the page's one original idea, and v2 left it incomplete. Every conversion figure on the page carries its weather icon except the most prominent one: the weekly 5.0% on the totals board. The system claims to be a language, then falls silent exactly where the page speaks loudest. An encoding that applies only where convenient is a motif, not a system.
+
+2. The masthead is still scenery. The big sun and the white cloud in the sky header decorate without stating anything; worse, a full sun crowns a week whose own scale rates it "sun behind a small cloud" (5.0%). It survives only by reading as a logo rather than as data — a defensible but lazy ambiguity.
+
+3. The fast-food half remains the weaker ingredient. Burger/fries/drink still map to Direct/Search/Social by nothing but size order; the awning, sign, board, leaders and price tags are set dressing that any diner-themed template could supply. What keeps them is that they are instantly legible and never touch the data's meaning — competent, not original.
+
+4. The week's narrative — volume and conversion both climbing into the weekend, Thursday's dip — is left for the reader to assemble from seven cards. The bars make the scan easy, but no device makes the trend itself a first-class object.
+
+CLARITY — harsh read
+
+5. The icon tiers are never stated. Readers can infer sun > sun-with-cloud > cloud-with-sun > cloud > rain because every icon sits beside its number, but the inference is work the page could spare. (Refused below — see why.)
+
+6. The board inconsistency noted in 1 is also a clarity defect: a reader who learned "conversion comes with a weather mark" from the day strip and the price tags finds the rule broken on the board, and may wonder whether the weekly 5.0% is a different kind of figure. It is not.
+
+7. Everything else holds: values labeled, bars on shared within-metric scales, legend adjacent, sr-only text intact, mobile wrap acceptable (Sunday's lone full-width card lands on the best day, a lucky but harmless emphasis).
+
+CHANGE APPLIED IN 2-2-3.html
+
+A. The totals board's Conversion value now carries its weather icon (sun behind a small cloud, the 5.0% tier), completing the icon system across all three data surfaces: board, days, sources. One small flex wrapper and icon; nothing else moves.
+
+CHANGES CONSIDERED AND REFUSED
+
+- Trend sparkline or arrows across the day strip: a third encoding of data the bars and ordered cards already show; adds ink, no information.
+- Printed tier thresholds (a five-icon legend with ranges): a paragraph of scale documentation to formalize what each adjacent number already proves; copy cost exceeds the inference it saves.
+- Re-theming the masthead sun to the week's 5.0% icon: the masthead is identity, not a data surface; a "sun behind cloud" logo is a worse logo and would invite reading data where none is attached.
+- Meaningful food-to-source mapping or "combo" numbering: no mapping is less arbitrary, and numbering adds noise.
+- Weekend highlighting on Sat/Sun cards: the bars and 5.4%/6.0% suns already carry it; emphasis would editorialize.
+
+v2's purpose, data, figures, layout, palette and copy level are otherwise unchanged. One change was justified; it was made; the rest of the design had earned its keep.

@@ -1,0 +1,27 @@
+Critique of 1-4-2.html (originality, then clarity), followed by the changes applied in 1-4-3.html.
+
+ORIGINALITY — harsh
+1. The fusion is still ornamental, not structural. V2 gave gold a grammar (gold = conversion), which was real progress, but the two ingredients otherwise live only in the frame: meander bands top and bottom, a laurel in the masthead, and nothing in between. Strip the header and footer and the body is a competent minimal report that could belong to any brand.
+2. The laurel is decoration with no referent. In myth the laurel crowns a victor; here it floats under the title crowning nothing. Meanwhile the chart marks Sunday with a gold capital and gold numeral — a victor with no laurel. The page owns the right symbol and the right moment and fails to connect them.
+3. Section heads ("Daily", "Sources") are generic template typography: caps, letterspacing, a hairline. The identity's strongest mark — the meander — never recurs at section level, so the middle of the page has no accent of its own.
+4. The masthead is a centered stack straight from the luxury-brand template: over-line, big serif, ornament, tag. Defensible for a plaque, but composed with no risk whatsoever.
+5. The "marble" is flat cream paint. A luxury-hotel surface trades on material; the backdrop has none.
+6. The pillar fluting is effectively invisible at rendered size — a detail that exists mainly in the CSS, not on the page.
+
+CLARITY — harsh
+7. The peak marking is unexplained. Sunday's gold capital and gold numeral could read as emphasis, selection, or error; nothing states "best day of the week". The mark needs legible meaning, not just color.
+8. The signups numeral row floats between the day labels and the conversion bars, anchored only by its left register label. Acceptable, but the weakest row in the ledger.
+9. Bar scale maxima are unstated everywhere (pillars to 2,100; gold bars to 6.0%; table ink bars to 5,240). Defensible because every value is printed beside its mark, but a strict reader must infer the convention.
+10. The sr-only table duplicates the chart for assistive tech while the visible chart is aria-hidden — workable, yet it means the page maintains two parallel truths that must never drift.
+
+CHANGES APPLIED in 1-4-3.html
+A. The laurel crowns the victor (answers 2, 7): small laurel sprigs now flank Sunday's visits numeral, repeating the masthead mark at the data. The gold capital stops being an arbitrary highlight: the same symbol introduced in the header names Sunday the week's best day, without a word of caption.
+B. The meander recurs at section level (answers 3, and 1 in part): each section title carries a single small meander-spiral glyph, so the identity's signature appears where the information lives, not only on the frame.
+C. Material backdrop (answers 5): the page backdrop gains a faint warm-and-ink tonal wash — kept outside the content panel, far below text contrast, deepening the surface without touching legibility.
+D. Nothing else moved. Items 6, 8, 9 and 10 were weighed and left: removing the fluting deletes a harmless detail for no gain; re-anchoring the signups row would add rules or ink that the chart does not need; printing scale maxima would add numbers that duplicate what the printed values already state; collapsing the sr-only table into the visible grid would worsen the reading order for assistive tech.
+
+PRESERVED (strong decisions)
+The gold grammar from v2 (gold = conversion everywhere, one shared scale); pillar colonnade with capitals; conversion staircase demonstrating the 4.0% to 6.0% rise; signups preserved as numerals; meander bands; marble/ink/gold palette and type pairing; three-stat band; sources table with printed values; minimal copy; synthetic-data tag; sr-only data table. Purpose and data unchanged; every figure remains the supplied values or direct arithmetic on them.
+
+NOT CHANGED, considered and rejected
+A laurel on the pillar itself (clutter inside the chart body); a pediment-shaped masthead and asymmetric plaque composition (risk of regression for novelty's sake); narrative or mythic captions (copy competing with information); a totals row in the sources table (duplicates the stat band); renaming metrics to themed vocabulary (clarity cost).

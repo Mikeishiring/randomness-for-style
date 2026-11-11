@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01</title>
+<style>
+:root{
+  --paper:#f2e9d7;
+  --card:#f7f0e0;
+  --ink:#2b2118;
+  --muted:#7a6a52;
+  --line:#b5a37f;
+  --grid:#d9cba9;
+  --accent:#943b24;
+  --wing:#eadfc4;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#201912;
+    --card:#2a2117;
+    --ink:#e9ddc2;
+    --muted:#a8977a;
+    --line:#5f4f38;
+    --grid:#443726;
+    --accent:#c96b47;
+    --wing:#3b2f20;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#201912;
+  --card:#2a2117;
+  --ink:#e9ddc2;
+  --muted:#a8977a;
+  --line:#5f4f38;
+  --grid:#443726;
+  --accent:#c96b47;
+  --wing:#3b2f20;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font:16px/1.45 Georgia,"Palatino Linotype","Book Antiqua","Times New Roman",serif;
+}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px 56px}
+.meander{display:block;width:100%;height:16px;margin-top:14px}
+.meander path{stroke:var(--accent);stroke-width:2;fill:none}
+header{text-align:center;margin:26px 0 6px}
+.titlerow{display:flex;align-items:center;gap:18px}
+.titlerow::before,.titlerow::after{content:"";flex:1;border-top:1px solid var(--line)}
+h1{font-size:clamp(1.6rem,5vw,2.2rem);font-weight:normal;letter-spacing:.16em;text-transform:uppercase;margin:0;white-space:nowrap}
+.tag{display:inline-block;margin-top:12px;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);padding:3px 10px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;list-style:none;padding:0;margin:24px 0 0}
+.kpis li{background:var(--card);border:1px solid var(--line);outline:1px solid var(--line);outline-offset:-5px;text-align:center;padding:16px 8px 14px}
+.kpis .k{display:block;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.kpis .v{font-size:1.7rem}
+@media (max-width:540px){.kpis .v{font-size:1.3rem}}
+.card{background:var(--card);border:1px solid var(--line);outline:1px solid var(--line);outline-offset:-5px;padding:18px 14px 10px;margin:14px 0 0}
+.chartwrap{overflow-x:auto}
+.chartwrap svg{display:block;min-width:560px;width:100%;height:auto}
+svg text{font-family:inherit}
+.c-lbl{fill:var(--muted);font-size:10.5px;letter-spacing:.12em}
+.c-tick{fill:var(--muted);font-size:11px}
+.c-day{fill:var(--ink);font-size:13px;letter-spacing:.12em}
+.c-val{fill:var(--ink);font-size:12.5px}
+.c-pct{fill:var(--accent);font-size:13.5px}
+.c-grid{stroke:var(--grid);stroke-dasharray:3 4}
+.c-axis{stroke:var(--line)}
+.c-stem{stroke:var(--muted);stroke-width:1.5}
+.c-head{fill:var(--accent);stroke:var(--ink);stroke-width:.75}
+h2{font-weight:normal;font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:14px;margin:36px 0 14px}
+h2::before,h2::after{content:"";flex:1;border-top:3px double var(--line)}
+.sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.specimen{background:var(--card);border:1px solid var(--line);outline:1px solid var(--line);outline-offset:-5px;text-align:center;padding:18px 16px 16px}
+.insect{width:104px;height:104px;display:block;margin:0 auto 2px}
+.i-line{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round}
+.i-wing{fill:var(--wing);stroke:var(--ink);stroke-width:1.4;stroke-linejoin:round}
+.i-dot{fill:var(--muted)}
+.i-club{fill:var(--ink)}
+.i-eye{fill:none;stroke:var(--ink);stroke-width:1.2}
+.i-eyedot{fill:var(--accent)}
+.i-pinhead{fill:var(--accent);stroke:var(--ink);stroke-width:.8}
+.i-pinstem{stroke:var(--ink);stroke-width:1.3}
+h3{margin:4px 0 0;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;font-weight:normal}
+.binomial{margin:2px 0 12px;font-style:italic;color:var(--muted);font-size:.85rem}
+.stats{margin:0;text-align:left}
+.stat{margin:10px 0 0}
+.stat .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+dt{font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+dd{margin:0;font-size:1rem}
+.track{height:4px;background:var(--grid);margin-top:4px}
+.fill{display:block;height:100%;background:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <svg class="meander" aria-hidden="true">
+    <defs>
+      <pattern id="gk" width="18" height="16" patternUnits="userSpaceOnUse">
+        <path d="M1 14 H15 V3 H6 V9 H10"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="16" fill="url(#gk)"/>
+  </svg>
+
+  <header>
+    <div class="titlerow"><h1>Week 01</h1></div>
+    <span class="tag">Synthetic data</span>
+  </header>
+
+  <ul class="kpis">
+    <li><span class="k">Visits</span><span class="v">12,480</span></li>
+    <li><span class="k">Signups</span><span class="v">624</span></li>
+    <li><span class="k">Conversion</span><span class="v">5.0%</span></li>
+  </ul>
+
+  <figure class="card chartwrap">
+    <svg viewBox="0 0 720 414">
+      <title>Visits, signups and conversion by day, Monday to Sunday</title>
+
+      <!-- Visits band -->
+      <text class="c-lbl" x="14" y="34">VISITS</text>
+      <line class="c-grid" x1="86" y1="59" x2="706" y2="59"/>
+      <line class="c-grid" x1="86" y1="129" x2="706" y2="129"/>
+      <line class="c-axis" x1="86" y1="200" x2="706" y2="200"/>
+      <text class="c-tick" x="78" y="63" text-anchor="end">2,000</text>
+      <text class="c-tick" x="78" y="133" text-anchor="end">1,000</text>
+      <text class="c-tick" x="78" y="204" text-anchor="end">0</text>
+
+      <line class="c-stem" x1="130" y1="200" x2="130" y2="100"/><circle class="c-head" cx="130" cy="100" r="5"/><text class="c-val" x="130" y="87" text-anchor="middle">1,420</text>
+      <line class="c-stem" x1="219" y1="200" x2="219" y2="87"/><circle class="c-head" cx="219" cy="87" r="5"/><text class="c-val" x="219" y="74" text-anchor="middle">1,600</text>
+      <line class="c-stem" x1="307" y1="200" x2="307" y2="75"/><circle class="c-head" cx="307" cy="75" r="5"/><text class="c-val" x="307" y="62" text-anchor="middle">1,780</text>
+      <line class="c-stem" x1="396" y1="200" x2="396" y2="85"/><circle class="c-head" cx="396" cy="85" r="5"/><text class="c-val" x="396" y="72" text-anchor="middle">1,640</text>
+      <line class="c-stem" x1="485" y1="200" x2="485" y2="65"/><circle class="c-head" cx="485" cy="65" r="5"/><text class="c-val" x="485" y="52" text-anchor="middle">1,920</text>
+      <line class="c-stem" x1="573" y1="200" x2="573" y2="58"/><circle class="c-head" cx="573" cy="58" r="5"/><text class="c-val" x="573" y="45" text-anchor="middle">2,020</text>
+      <line class="c-stem" x1="662" y1="200" x2="662" y2="52"/><circle class="c-head" cx="662" cy="52" r="5"/><text class="c-val" x="662" y="39" text-anchor="middle">2,100</text>
+
+      <!-- Day labels -->
+      <text class="c-day" x="130" y="228" text-anchor="middle">MON</text>
+      <text class="c-day" x="219" y="228" text-anchor="middle">TUE</text>
+      <text class="c-day" x="307" y="228" text-anchor="middle">WED</text>
+      <text class="c-day" x="396" y="228" text-anchor="middle">THU</text>
+      <text class="c-day" x="485" y="228" text-anchor="middle">FRI</text>
+      <text class="c-day" x="573" y="228" text-anchor="middle">SAT</text>
+      <text class="c-day" x="662" y="228" text-anchor="middle">SUN</text>
+
+      <!-- Signups band -->
+      <text class="c-lbl" x="14" y="252">SIGNUPS</text>
+      <line class="c-grid" x1="86" y1="257" x2="706" y2="257"/>
+      <line class="c-grid" x1="86" y1="304" x2="706" y2="304"/>
+      <line class="c-axis" x1="86" y1="352" x2="706" y2="352"/>
+      <text class="c-tick" x="78" y="261" text-anchor="end">140</text>
+      <text class="c-tick" x="78" y="308" text-anchor="end">70</text>
+      <text class="c-tick" x="78" y="356" text-anchor="end">0</text>
+
+      <line class="c-stem" x1="130" y1="352" x2="130" y2="313"/><circle class="c-head" cx="130" cy="313" r="4.5"/><text class="c-val" x="130" y="301" text-anchor="middle">57</text>
+      <line class="c-stem" x1="219" y1="352" x2="219" y2="303"/><circle class="c-head" cx="219" cy="303" r="4.5"/><text class="c-val" x="219" y="291" text-anchor="middle">72</text>
+      <line class="c-stem" x1="307" y1="352" x2="307" y2="292"/><circle class="c-head" cx="307" cy="292" r="4.5"/><text class="c-val" x="307" y="280" text-anchor="middle">89</text>
+      <line class="c-stem" x1="396" y1="352" x2="396" y2="302"/><circle class="c-head" cx="396" cy="302" r="4.5"/><text class="c-val" x="396" y="290" text-anchor="middle">74</text>
+      <line class="c-stem" x1="485" y1="352" x2="485" y2="287"/><circle class="c-head" cx="485" cy="287" r="4.5"/><text class="c-val" x="485" y="275" text-anchor="middle">96</text>
+      <line class="c-stem" x1="573" y1="352" x2="573" y2="278"/><circle class="c-head" cx="573" cy="278" r="4.5"/><text class="c-val" x="573" y="266" text-anchor="middle">109</text>
+      <line class="c-stem" x1="662" y1="352" x2="662" y2="266"/><circle class="c-head" cx="662" cy="266" r="4.5"/><text class="c-val" x="662" y="250" text-anchor="middle">127</text>
+
+      <!-- Conversion row -->
+      <text class="c-lbl" x="14" y="398">CONVERSION</text>
+      <text class="c-pct" x="130" y="398" text-anchor="middle">4.0%</text>
+      <text class="c-pct" x="219" y="398" text-anchor="middle">4.5%</text>
+      <text class="c-pct" x="307" y="398" text-anchor="middle">5.0%</text>
+      <text class="c-pct" x="396" y="398" text-anchor="middle">4.5%</text>
+      <text class="c-pct" x="485" y="398" text-anchor="middle">5.0%</text>
+      <text class="c-pct" x="573" y="398" text-anchor="middle">5.4%</text>
+      <text class="c-pct" x="662" y="398" text-anchor="middle">6.0%</text>
+    </svg>
+  </figure>
+
+  <h2>Sources</h2>
+
+  <div class="sources">
+
+    <article class="specimen">
+      <svg class="insect" viewBox="0 0 120 120" aria-hidden="true">
+        <path class="i-line" d="M55 26 Q46 16 37 13"/>
+        <path class="i-line" d="M65 26 Q74 16 83 13"/>
+        <circle class="i-club" cx="37" cy="13" r="2"/>
+        <circle class="i-club" cx="83" cy="13" r="2"/>
+        <path class="i-line" d="M46 50 L31 41 L24 31"/>
+        <path class="i-line" d="M44 66 L27 67 L17 60"/>
+        <path class="i-line" d="M47 84 L33 95 L27 107"/>
+        <path class="i-line" d="M74 50 L89 41 L96 31"/>
+        <path class="i-line" d="M76 66 L93 67 L103 60"/>
+        <path class="i-line" d="M73 84 L87 95 L93 107"/>
+        <circle class="i-wing" cx="60" cy="32" r="6"/>
+        <ellipse class="i-wing" cx="60" cy="45" rx="12" ry="9"/>
+        <ellipse class="i-wing" cx="60" cy="77" rx="17" ry="25"/>
+        <line class="i-line" x1="60" y1="53" x2="60" y2="101"/>
+        <circle class="i-dot" cx="52" cy="68" r="1.2"/><circle class="i-dot" cx="68" cy="68" r="1.2"/>
+        <circle class="i-dot" cx="50" cy="82" r="1.2"/><circle class="i-dot" cx="70" cy="82" r="1.2"/>
+        <circle class="i-dot" cx="54" cy="93" r="1.2"/><circle class="i-dot" cx="66" cy="93" r="1.2"/>
+        <line class="i-pinstem" x1="60" y1="14" x2="60" y2="39"/>
+        <circle class="i-pinhead" cx="60" cy="11" r="3.4"/>
+      </svg>
+      <h3>Direct</h3>
+      <p class="binomial">Hermes directus</p>
+      <dl class="stats">
+        <div class="stat"><div class="row"><dt>Visits</dt><dd>5,240</dd></div><div class="track"><i class="fill" style="width:100%"></i></div></div>
+        <div class="stat"><div class="row"><dt>Signups</dt><dd>314</dd></div><div class="track"><i class="fill" style="width:100%"></i></div></div>
+        <div class="stat"><div class="row"><dt>Conversion</dt><dd>6.0%</dd></div><div class="track"><i class="fill" style="width:100%"></i></div></div>
+      </dl>
+    </article>
+
+    <article class="specimen">
+      <svg class="insect" viewBox="0 0 120 120" aria-hidden="true">
+        <path class="i-line" d="M57 47 Q49 34 40 27" stroke-dasharray="3 2"/>
+        <path class="i-line" d="M63 47 Q71 34 80 27" stroke-dasharray="3 2"/>
+        <path class="i-wing" d="M55 58 Q31 44 17 46 Q8 52 15 63 Q34 70 55 68 Z"/>
+        <path class="i-wing" d="M65 58 Q89 44 103 46 Q112 52 105 63 Q86 70 65 68 Z"/>
+        <path class="i-wing" d="M56 72 Q38 76 30 86 Q32 96 45 93 Q55 87 57 80 Z"/>
+        <path class="i-wing" d="M64 72 Q82 76 90 86 Q88 96 75 93 Q65 87 63 80 Z"/>
+        <ellipse class="i-wing" cx="60" cy="72" rx="5.5" ry="17"/>
+        <circle class="i-wing" cx="60" cy="51" r="5"/>
+        <circle class="i-eye" cx="31" cy="55" r="4.5"/><circle class="i-eyedot" cx="31" cy="55" r="1.6"/>
+        <circle class="i-eye" cx="89" cy="55" r="4.5"/><circle class="i-eyedot" cx="89" cy="55" r="1.6"/>
+        <line class="i-pinstem" x1="60" y1="23" x2="60" y2="58"/>
+        <circle class="i-pinhead" cx="60" cy="20" r="3.4"/>
+      </svg>
+      <h3>Search</h3>
+      <p class="binomial">Athena quaerens</p>
+      <dl class="stats">
+        <div class="stat"><div class="row"><dt>Visits</dt><dd>4,480</dd></div><div class="track"><i class="fill" style="width:85.5%"></i></div></div>
+        <div class="stat"><div class="row"><dt>Signups</dt><dd>224</dd></div><div class="track"><i class="fill" style="width:71.3%"></i></div></div>
+        <div class="stat"><div class="row"><dt>Conversion</dt><dd>5.0%</dd></div><div class="track"><i class="fill" style="width:83.3%"></i></div></div>
+      </dl>
+    </article>
+
+    <article class="specimen">
+      <svg class="insect" viewBox="0 0 120 120" aria-hidden="true">
+        <path class="i-line" d="M58 49 Q53 36 46 29"/>
+        <path class="i-line" d="M62 49 Q67 36 74 29"/>
+        <circle class="i-club" cx="46" cy="29" r="1.8"/>
+        <circle class="i-club" cx="74" cy="29" r="1.8"/>
+        <path class="i-wing" d="M56 60 Q34 36 18 36 Q8 42 14 56 Q32 68 56 68 Z"/>
+        <path class="i-wing" d="M64 60 Q86 36 102 36 Q112 42 106 56 Q88 68 64 68 Z"/>
+        <path class="i-wing" d="M56 72 Q38 74 28 88 Q31 101 45 96 Q56 88 58 80 Z"/>
+        <path class="i-wing" d="M64 72 Q82 74 92 88 Q89 101 75 96 Q64 88 62 80 Z"/>
+        <ellipse class="i-wing" cx="60" cy="70" rx="4.5" ry="15"/>
+        <circle class="i-wing" cx="60" cy="52" r="4.5"/>
+        <circle class="i-eye" cx="30" cy="48" r="3"/><circle class="i-eye" cx="90" cy="48" r="3"/>
+        <circle class="i-eyedot" cx="38" cy="56" r="1.4"/><circle class="i-eyedot" cx="82" cy="56" r="1.4"/>
+        <line class="i-pinstem" x1="60" y1="17" x2="60" y2="58"/>
+        <circle class="i-pinhead" cx="60" cy="14" r="3.4"/>
+      </svg>
+      <h3>Social</h3>
+      <p class="binomial">Echo gregaria</p>
+      <dl class="stats">
+        <div class="stat"><div class="row"><dt>Visits</dt><dd>2,760</dd></div><div class="track"><i class="fill" style="width:52.7%"></i></div></div>
+        <div class="stat"><div class="row"><dt>Signups</dt><dd>86</dd></div><div class="track"><i class="fill" style="width:27.4%"></i></div></div>
+        <div class="stat"><div class="row"><dt>Conversion</dt><dd>3.1%</dd></div><div class="track"><i class="fill" style="width:51.7%"></i></div></div>
+      </dl>
+    </article>
+
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+CRITIQUE — run 1-2-1 (Agora Grill, Week 01)
+
+ORIGINALITY — harsh read
+
+1. The "Greek myth" ingredient is mostly Greece-the-country, not myth. A meander
+   frieze, Anthora blue-and-cream, a temple logo: that is the New York diner cup,
+   a borrowed surface. The only actual mythology on the page is three name chips
+   (Hermes, The Oracle, The Sirens), and they do no work — strip them and nothing
+   about the report changes. Myth never carries meaning anywhere.
+2. The fast-food ingredient is thinner still: a burger in the logo and big Impact
+   numbers "like a menu board". Nothing actually reads as a menu, a ticket, or a
+   price. "The Week's Order" promises a menu metaphor the tiles never deliver.
+3. The two ingredients never combine. Greek frieze, then a generic KPI grid, then
+   a generic bar chart, then a generic stat table. It is a tasteful neo-brutalist
+   dashboard wearing two stickers — current-trend styling (hard shadows, pills,
+   rounded cards), not a distinct identity.
+4. Impact everywhere is a shortcut. One voice does both gods and burgers, so
+   neither ingredient gets a typographic voice of its own.
+
+CLARITY — harsh read
+
+5. The gold "signups within visits" base segment is 6-13px tall: nearly invisible,
+   easily misread as a baseline highlight, and the legend phrase "Signups, within
+   visits" is cryptic. (Its tininess is honest — conversion IS ~5% — but it needs
+   a crisp edge and plainer words.)
+6. Best-day tile: giant "Sun" plus the unlabeled triple "2,100 · 127 · 6.0%" makes
+   the reader guess what each number is. The 6.0% also duplicates the conversion
+   tile's trend endpoint.
+7. Sources: "Visits · 42% of all" crams two facts into one 10px label. Worse, the
+   visits bar and signups bar sit side by side at the SAME height on DIFFERENT
+   scales (each normalized to its own column max), inviting a length comparison
+   that means nothing. The printed numbers rescue it; the geometry shouldn't need
+   rescuing.
+8. The epithet chips are styled exactly like interactive filter pills (border,
+   pill radius, uppercase). They are decoration pretending to be controls.
+9. The signups tile's "peak 127 on Sun" duplicates the best-day tile.
+
+PRESERVED (strong decisions, kept deliberately)
+
+- Overall structure: totals -> daily -> sources; all supplied figures and all
+  derived figures unchanged.
+- Myth-title + literal-subtitle double labeling of sections (identity without
+  hiding what a section is).
+- Values printed on every bar; full numeric table under the chart; honest
+  same-scale signups segment rather than a misleading dual axis.
+- Meander frieze, palette, logo, synthetic-data tag, card system.
+
+CHANGES APPLIED IN 1-2-2 (one pass, each justified)
+
+a. Myth gets a voice and a job: epithets become small serif-italic lines that
+   explain the god-to-channel mapping ("Hermes · the straight road", "the Oracle ·
+   asked and answered", "the Sirens · the distant song") and lose the fake-control
+   pill styling. Serif italic = myth voice; Impact caps stays the menu voice. (1,4,8)
+b. Sunday's bar is crowned with a small gold star marking the peak — the week
+   reads as a climb to its summit, and the maximum is now marked in the chart
+   itself, not only in the table tint. (1,2 restrained)
+c. Chart legend reworded to "Signups — the gold base of each bar"; gold segments
+   get a crisp paper-colored edge so they read as a segment, not a glow. (5)
+d. Best-day tile: value "Sunday", sub-line labeled "2,100 visits · 127 signups";
+   the duplicate 6.0% dropped. Signups tile sub-line becomes "+123% Mon → Sun",
+   parallel to the visits tile and no longer duplicating the best-day tile. (6,9)
+e. Sources: share moved out of the label into a muted suffix after the number
+   ("5,240 · 42% of all"); signups bars thinned to 6px so the two bar columns no
+   longer present as comparable lengths on one scale. (7)
+f. Receipt detail: the sources total row gets a double rule, the accounting/
+   receipt convention for a total — a fast-food cue that is also a reading cue. (2)
+
+Not changed: no new sections, no new copy beyond the three epithets, no layout
+reshuffle — the dashboard was clear; it needed its identity to work harder, not
+more furniture.

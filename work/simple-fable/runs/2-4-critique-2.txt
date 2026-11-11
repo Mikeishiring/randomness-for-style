@@ -1,0 +1,47 @@
+Critique of 2-4-2.html (originality, then clarity), followed by the changes applied in 2-4-3.html.
+
+ORIGINALITY — harsh
+
+1. v2's "engraving pass" was cosmetic: washes and hairlines, not invention.
+   The masthead crest is still a generic ring-and-sun asserting luxury while
+   carrying nothing — ornament with no duty. Worse, the page defines its own
+   language (sky = conversion) and the crest ignores it: the week's overall
+   conversion is 5.0%, which the page's own key names "partly sunny", yet the
+   emblem says "clear". By the report's own grammar the seal is wrong — or at
+   best empty.
+2. The weekend band and tariff rules move in the right direction but are
+   conservative; the bars remain anonymous dashboard rectangles. Considered
+   and declined: weathering the bars (gradients, cloud silhouettes, skyline
+   profiles) would put atmosphere inside the data marks themselves and tax
+   the two encodings that already work.
+
+CLARITY
+
+3. v2 introduced a regression: renaming the Sources header to "Conversion"
+   overflows its fixed 70px mobile column — 10 letterspaced capitals at 9px
+   with .24em tracking run roughly 80px — so the header can collide with
+   "Visits" below 620px. A rename without re-measuring its column was
+   careless.
+4. The week board is a CSS grid, not a semantic table; a screen reader hears
+   all skies, then all days, then all values, row-major. Noted and kept: a
+   table rebuild is a structural rewrite out of proportion to this pass, and
+   every value remains reachable as text with labeled glyphs.
+5. Everything else holds up: the separate-scale bar rows self-label through
+   their printed maxima, the legend bands round honestly (5.4% reads as the
+   5½% sky), and the weekend band states the week's shape without words.
+
+CHANGES APPLIED IN 2-4-3.html (and only these)
+
+- The crest now bears the week's own sky: partly sunny, the key's name for
+  the overall 5.0% conversion shown directly beneath it in the stat strip.
+  The emblem stops being generic ornament and becomes the report's seal,
+  correct by the page's own legend. No words added. (Fixes 1.)
+- The mobile Sources grid lets the Conversion column size to its header,
+  with slightly tighter tracking under 620px. (Fixes the v2 regression, 3.)
+
+DECLINED, DELIBERATELY
+
+- No texturing of bars (2): atmosphere stays in the sky row where it informs,
+  not in the marks that measure.
+- No table rebuild (4), no fleurons, no added prose.
+- Purpose, data, figures, layout and section order are unchanged.

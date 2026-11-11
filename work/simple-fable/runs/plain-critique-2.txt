@@ -1,0 +1,49 @@
+Critique of plain-2.html
+
+ORIGINALITY — direction found, conviction missing.
+1. The "editorial ledger" identity is announced and then abandoned: the serif
+   appears exactly twice (masthead, KPI numerals) and everything else falls
+   back to the same system-sans small-caps treatment at one size. Section
+   heads, metric labels, table heads and the synthetic-data note are all the
+   same voice, so the page has one rule weight and one label style doing four
+   jobs. A ledger earns its look from rule rhythm; a single 2px line under the
+   masthead is not a rhythm.
+2. The KPI dots are coding noise: Signups and Conversion share an identical
+   ochre dot, so the "key" distinguishes nothing — two of three dots are the
+   same, and the words already carry the meaning. Decoration posing as
+   legend.
+
+CLARITY — two genuine faults, one craft defect.
+3. Misreading risk: in the source table the bars sit in full-width soft
+   tracks. A filled track reads as "progress to 100%", so Direct's full bar
+   suggests Direct is all of the traffic, when the scale is actually
+   share-of-max. The same applies to the conversion bars. The track
+   backgrounds actively mislead; the bars alone compare honestly.
+4. Label-data distance: value labels are pinned to the top of each column, so
+   Monday's number floats ~40px above Monday's bar while Sunday's touches it.
+   The eye must re-attach each number to its bar. Labels belong on the bars.
+5. Craft defect: every cell carries its own border-bottom, so each chart
+   baseline renders as seven dashes interrupted by grid gaps instead of one
+   continuous ground line. The conversion dot at 6.0% also overflows its
+   52px track by a pixel.
+
+STRONG DECISIONS — preserved unchanged.
+- The daily conversion row, the single shared Mon–Sun axis, honest separate
+  scales per metric, value labels instead of fake axes, the green=visits /
+  ochre=rate color system, tabular numerals, minimal copy, dark mode,
+  self-containment. All figures and arithmetic identical.
+
+CHANGES MADE in plain-3.html
+a. Masthead rule becomes a classic double rule; the ledger now has two rule
+   weights (double under the masthead, hairlines elsewhere) instead of one.
+b. KPI dots removed; the band is numerals and labels only. In the day section
+   the metric keys now echo the mark itself — squares for the bar rows,
+   a circle for the dot row — so the key encodes shape as well as color.
+c. Source-table track backgrounds removed; bars stand alone as comparative
+   lengths.
+d. Value labels now sit directly on top of their bars (bottom-aligned
+   columns with fixed pixel scales: visits max 104px, signups max 44px),
+   preserving exact proportionality.
+e. Baselines moved from per-cell borders to one continuous rule per chart
+   row; dot track deepened to 56px so the Sunday dot no longer clips.
+No content, figure, or derived value changed; purpose and data unchanged.

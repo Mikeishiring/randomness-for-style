@@ -1,0 +1,53 @@
+Critique of 4-0-3.html (originality, then clarity), followed by the changes applied in 4-0-4.html.
+
+ORIGINALITY — harsh read
+
+1. One semantic leak survived the v3 cleanup. v3's claim to originality is
+   that color is a working instrument system, not decoration — yet in the KPI
+   row only the peak tile honors it. The SIGNUPS tile wears the visits
+   channel's red accent, and the CONVERSION tile — a derived, channel-less
+   metric — wears a data-channel color at all. The row that opens the page
+   is the last place still styled by default rather than by meaning.
+2. Red is doing two jobs on one hex: brand chrome (plate, checkered rule,
+   section dashes) and the visits channel (traces, columns, deltas). The page
+   gets away with it because chrome red never sits in a data position —
+   except on those KPI borders, which is exactly where (1) bites.
+3. The checkered strip is still ornament; third pass, same verdict. It stays:
+   it is the one compact at-a-glance identity marker, every replacement
+   considered is subtler but less recognizable, and it occupies no data
+   position.
+4. Further tech-ingredient candidates were weighed and rejected again:
+   a visits-share column in sources (redundant — the bars already show
+   proportion and absolutes are printed), per-KPI sparklines (duplicate the
+   lanes directly below), HUD corner brackets and scanlines (noise). The
+   instrumentation idea is better served by finishing the semantics than by
+   adding props.
+
+CLARITY — harsh read
+
+5. The KPI accents are not just an identity leak, they mislead slightly: a
+   reader who has absorbed red = visits from the lanes can read the red edge
+   on SIGNUPS as a channel mark. Meaning-bearing color must never be wrong,
+   only absent.
+6. The signups trace peaks above its last labelled gridline (127 over the
+   100 line). Acceptable: every point carries its printed value, and adding
+   a 150 gridline would compress the trace for no information. No change.
+7. No other defects found: zero baselines are labelled, every figure is
+   printed, emphasis marks both the best (purple) and the caution (amber),
+   nothing is hidden at phone width, and all percentages check against the
+   supplied figures.
+
+WORTH KEEPING (strong decisions preserved)
+
+- The full v3 system: lane-per-channel telemetry with in-lane labels, the
+  CONV % sector row, purple-best / amber-caution flags, channel-coded
+  sources table and deltas, zero-based labelled scales, minimal copy.
+
+CHANGES APPLIED IN 4-0-4.html
+
+a. KPI tile accents join the channel system: VISITS keeps channel red,
+   SIGNUPS takes channel teal, CONVERSION takes a neutral gray edge (derived
+   metric, no channel), PEAK DAY keeps purple (1, 2, 5).
+b. Nothing else is changed. Every other candidate either duplicated
+   information already demonstrated or added decoration without meaning,
+   and the data, purpose, structure and copy are unchanged.

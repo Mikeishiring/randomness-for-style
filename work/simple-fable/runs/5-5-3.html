@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 — Website Performance</title>
+<style>
+  :root{
+    --abyss-top:#082036;
+    --abyss:#04101c;
+    --abyss-deep:#020a12;
+    --plate:rgba(9,27,42,.78);
+    --ink:#e8dfc8;
+    --dim:#8fa6ad;
+    --conv:#9db4bd;
+    --brass:#c0a56e;
+    --brass-dim:rgba(192,165,110,.38);
+    --glow:#7cf5e2;
+    --glow-dim:rgba(124,245,226,.25);
+    --amber:#ffd9a0;
+    --amber-line:rgba(255,201,122,.65);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:Georgia,"Palatino Linotype","Book Antiqua",serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1.5px 1.5px at 12% 18%, rgba(124,245,226,.5) 0 1px, transparent 100%),
+      radial-gradient(1px 1px at 78% 9%,  rgba(124,245,226,.4) 0 1px, transparent 100%),
+      radial-gradient(1.5px 1.5px at 64% 32%, rgba(124,245,226,.3) 0 1px, transparent 100%),
+      radial-gradient(1px 1px at 31% 56%, rgba(124,245,226,.35) 0 1px, transparent 100%),
+      radial-gradient(1.5px 1.5px at 88% 64%, rgba(124,245,226,.3) 0 1px, transparent 100%),
+      radial-gradient(1px 1px at 9% 82%,  rgba(124,245,226,.3) 0 1px, transparent 100%),
+      radial-gradient(1px 1px at 52% 91%, rgba(124,245,226,.25) 0 1px, transparent 100%),
+      linear-gradient(var(--abyss-top), var(--abyss) 38%, var(--abyss-deep));
+    background-color:var(--abyss);
+    min-height:100vh;
+  }
+  .page{max-width:920px;margin:0 auto;padding:44px 16px 56px}
+
+  /* ---------- header: mounted specimen + label ---------- */
+  header{text-align:center;margin-bottom:34px}
+  header .moth{display:block;margin:0 auto 10px;width:132px;height:auto}
+  .eyebrow{
+    font-size:12px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--brass);margin:0 0 6px;font-weight:400;
+  }
+  h1{
+    font-size:clamp(34px,6vw,46px);font-weight:400;margin:0 0 14px;
+    letter-spacing:.04em;
+    text-shadow:0 0 22px rgba(124,245,226,.28);
+  }
+  .tag{
+    display:inline-block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--dim);border:1px solid var(--brass-dim);border-radius:2px;
+    padding:4px 10px 3px;
+  }
+
+  /* ---------- specimen plates ---------- */
+  .plate{
+    position:relative;background:var(--plate);
+    border:1px solid var(--brass-dim);border-radius:2px;
+    padding:22px 24px 24px;margin-bottom:18px;
+    box-shadow:0 14px 34px rgba(0,0,0,.4), inset 0 1px 0 rgba(124,245,226,.06);
+  }
+  .plate::before{
+    content:"";position:absolute;inset:5px;pointer-events:none;
+    border:1px solid rgba(192,165,110,.16);border-radius:1px;
+  }
+  .plate::after{ /* entomology pin head */
+    content:"";position:absolute;top:-4px;left:50%;margin-left:-4px;
+    width:8px;height:8px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #fff3d6, #b49a62 70%, #6e5a33);
+    box-shadow:0 0 10px rgba(255,224,160,.45);
+  }
+  h2{
+    display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    font-size:15px;font-weight:400;letter-spacing:.26em;text-transform:uppercase;
+    color:var(--ink);margin:0 0 18px;
+  }
+  h2 .plate-no{
+    font-size:10px;letter-spacing:.3em;color:var(--brass);white-space:nowrap;
+  }
+
+  /* ---------- catalog label: week totals ---------- */
+  .kpis{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    padding:12px 8px 14px;margin-bottom:18px;
+  }
+  .kpi{padding:12px 10px 8px;text-align:center}
+  .kpi + .kpi{border-left:1px solid rgba(192,165,110,.2)}
+  .kpi .k-label{
+    font-size:11px;letter-spacing:.26em;text-transform:uppercase;
+    color:var(--brass);margin-bottom:8px;
+  }
+  .kpi .k-value{
+    font-size:clamp(24px,4.4vw,36px);font-variant-numeric:tabular-nums;
+    text-shadow:0 0 16px rgba(124,245,226,.3);
+  }
+  .kpi .k-value .unit{font-size:.6em;color:var(--dim)}
+  .kpi .k-note{
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--dim);margin-top:7px;
+  }
+
+  /* ---------- daily chart ---------- */
+  .chart-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .chart-scroll svg{display:block;width:100%;min-width:680px;height:auto}
+
+  /* ---------- sources ---------- */
+  .src-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  .src-table th{font-weight:400}
+  .src-table thead th{
+    font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--brass);
+    text-align:right;padding:0 0 10px 14px;
+    border-bottom:1px solid rgba(192,165,110,.22);
+  }
+  .src-table thead th.t-name{text-align:left;padding-left:0}
+  .src-table thead th.t-vis{color:rgba(124,245,226,.8)}
+  .src-table thead th.t-sign{color:rgba(255,217,160,.85)}
+  .src-table thead th.t-bar{width:99%;padding-left:0}
+  .src-table tbody th, .src-table tbody td{
+    padding:14px 0 13px 14px;border-bottom:1px solid rgba(124,245,226,.1);
+    text-align:right;font-size:15px;
+  }
+  .src-table tbody tr:last-child th, .src-table tbody tr:last-child td{
+    border-bottom:none;padding-bottom:2px;
+  }
+  .src-table tbody th{
+    text-align:left;padding-left:0;font-size:13px;
+    letter-spacing:.14em;text-transform:uppercase;
+  }
+  .src-table td.t-bar{padding-left:0;padding-right:0}
+  .src-table .signups{color:var(--amber)}
+  .src-table .conv{color:var(--conv)}
+  .bars{display:block;min-width:120px}
+  .bar{
+    display:block;height:9px;border-radius:1px;
+    background:linear-gradient(90deg, rgba(124,245,226,.16), rgba(124,245,226,.75));
+    box-shadow:0 0 12px rgba(124,245,226,.35);
+    border-right:1px solid rgba(220,255,248,.85);
+  }
+  /* signups on the SAME scale as visits: amber/cyan length = conversion */
+  .bar-s{
+    display:block;height:5px;margin-top:3px;border-radius:1px;min-width:2px;
+    background:linear-gradient(90deg, rgba(255,201,122,.25), rgba(255,201,122,.7));
+    box-shadow:0 0 8px rgba(255,201,122,.5);
+    border-right:2px solid rgba(255,230,190,.95);
+  }
+
+  @media (max-width:560px){
+    .plate{padding:18px 14px 18px}
+    .plate.kpis{padding:8px 2px 10px}
+    .src-table tbody th, .src-table tbody td{font-size:12.5px;padding-left:8px}
+    .src-table tbody th{font-size:11px;letter-spacing:.08em}
+    .src-table thead th{padding-left:8px}
+    .bars{min-width:80px}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <!-- mounted specimen: engraved moth, wing spots carry the two data colors -->
+    <svg class="moth" viewBox="0 0 120 90" aria-hidden="true">
+      <defs>
+        <filter id="mothGlow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="2.6" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <radialGradient id="aura">
+          <stop offset="0" stop-color="#7cf5e2" stop-opacity=".1"/>
+          <stop offset="1" stop-color="#7cf5e2" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <circle cx="60" cy="46" r="40" fill="url(#aura)"/>
+      <g stroke="#b49a62" stroke-width="1.1" fill="none" stroke-linecap="round">
+        <path d="M60 32 C 54 22, 46 16, 38 13"/>
+        <path d="M60 32 C 66 22, 74 16, 82 13"/>
+        <path d="M58 42 C 38 28, 18 26, 10 34 C 6 42, 16 52, 34 54 C 44 55, 52 52, 58 48 Z" fill="rgba(124,245,226,.05)"/>
+        <path d="M62 42 C 82 28, 102 26, 110 34 C 114 42, 104 52, 86 54 C 76 55, 68 52, 62 48 Z" fill="rgba(124,245,226,.05)"/>
+        <path d="M58 54 C 46 58, 36 66, 38 74 C 40 80, 50 78, 56 70 C 58 66, 59 60, 59 56 Z" fill="rgba(255,201,122,.05)"/>
+        <path d="M62 54 C 74 58, 84 66, 82 74 C 80 80, 70 78, 64 70 C 62 66, 61 60, 61 56 Z" fill="rgba(255,201,122,.05)"/>
+        <ellipse cx="60" cy="52" rx="4" ry="16" fill="rgba(192,165,110,.18)"/>
+        <circle cx="60" cy="33" r="3.4" fill="rgba(192,165,110,.18)"/>
+      </g>
+      <g filter="url(#mothGlow)">
+        <circle cx="30" cy="41" r="3.6" fill="#7cf5e2"/>
+        <circle cx="90" cy="41" r="3.6" fill="#7cf5e2"/>
+        <circle cx="46" cy="68" r="2" fill="#ffd9a0"/>
+        <circle cx="74" cy="68" r="2" fill="#ffd9a0"/>
+      </g>
+    </svg>
+    <p class="eyebrow">Website performance</p>
+    <h1>Week 01</h1>
+    <span class="tag">Synthetic data</span>
+  </header>
+
+  <div class="plate kpis">
+    <div class="kpi">
+      <div class="k-label">Visits</div>
+      <div class="k-value">12,480</div>
+    </div>
+    <div class="kpi">
+      <div class="k-label">Signups</div>
+      <div class="k-value">624</div>
+    </div>
+    <div class="kpi">
+      <div class="k-label">Conversion</div>
+      <div class="k-value">5.0<span class="unit">%</span></div>
+      <div class="k-note">signups &#247; visits</div>
+    </div>
+  </div>
+
+  <section class="plate">
+    <h2>Daily record <span class="plate-no">Plate I</span></h2>
+    <div class="chart-scroll">
+      <svg viewBox="0 0 840 432" role="img"
+           aria-label="Daily visits, signups and conversion (signups divided by visits). Monday 1420 visits, 57 signups, 4.0 percent. Tuesday 1600 visits, 72 signups, 4.5 percent. Wednesday 1780 visits, 89 signups, 5.0 percent. Thursday 1640 visits, 74 signups, 4.5 percent. Friday 1920 visits, 96 signups, 5.0 percent. Saturday 2020 visits, 109 signups, 5.4 percent. Sunday 2100 visits, 127 signups, 6.0 percent.">
+        <defs>
+          <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#7cf5e2" stop-opacity=".9"/>
+            <stop offset=".3" stop-color="#7cf5e2" stop-opacity=".4"/>
+            <stop offset="1" stop-color="#7cf5e2" stop-opacity=".07"/>
+          </linearGradient>
+          <filter id="dotGlow" x="-120%" y="-120%" width="340%" height="340%">
+            <feGaussianBlur stdDeviation="3" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- cabinet compartment dividers: one column per day -->
+        <g stroke="rgba(192,165,110,.13)" stroke-width="1">
+          <line x1="120" y1="20" x2="120" y2="410"/>
+          <line x1="240" y1="20" x2="240" y2="410"/>
+          <line x1="360" y1="20" x2="360" y2="410"/>
+          <line x1="480" y1="20" x2="480" y2="410"/>
+          <line x1="600" y1="20" x2="600" y2="410"/>
+          <line x1="720" y1="20" x2="720" y2="410"/>
+        </g>
+
+        <!-- visits panel -->
+        <text x="20" y="26" fill="rgba(124,245,226,.8)" font-size="12" letter-spacing="3" font-family="Georgia,serif">VISITS</text>
+        <g fill="url(#barGrad)" stroke="rgba(124,245,226,.55)" stroke-width=".75">
+          <rect x="32"  y="92.1"  width="56" height="87.9"/>
+          <rect x="152" y="80.95" width="56" height="99.05"/>
+          <rect x="272" y="69.81" width="56" height="110.19"/>
+          <rect x="392" y="78.48" width="56" height="101.52"/>
+          <rect x="512" y="61.14" width="56" height="118.86"/>
+          <rect x="632" y="54.95" width="56" height="125.05"/>
+          <rect x="752" y="50"    width="56" height="130"/>
+        </g>
+        <!-- lit cap edge on each bar: the lure -->
+        <g fill="#bdfff2" opacity=".95">
+          <rect x="32"  y="92.1"  width="56" height="2"/>
+          <rect x="152" y="80.95" width="56" height="2"/>
+          <rect x="272" y="69.81" width="56" height="2"/>
+          <rect x="392" y="78.48" width="56" height="2"/>
+          <rect x="512" y="61.14" width="56" height="2"/>
+          <rect x="632" y="54.95" width="56" height="2"/>
+          <rect x="752" y="50"    width="56" height="2"/>
+        </g>
+        <g fill="#e8dfc8" font-size="14.5" text-anchor="middle" font-family="Georgia,serif">
+          <text x="60"  y="82.1">1,420</text>
+          <text x="180" y="70.95">1,600</text>
+          <text x="300" y="59.81">1,780</text>
+          <text x="420" y="68.48">1,640</text>
+          <text x="540" y="51.14">1,920</text>
+          <text x="660" y="44.95">2,020</text>
+          <text x="780" y="40">2,100</text>
+        </g>
+        <line x1="20" y1="180" x2="820" y2="180" stroke="rgba(124,245,226,.25)" stroke-width="1"/>
+
+        <!-- day labels -->
+        <g fill="#c0a56e" font-size="12.5" text-anchor="middle" letter-spacing="2" font-family="Georgia,serif">
+          <text x="60"  y="206">MON</text>
+          <text x="180" y="206">TUE</text>
+          <text x="300" y="206">WED</text>
+          <text x="420" y="206">THU</text>
+          <text x="540" y="206">FRI</text>
+          <text x="660" y="206">SAT</text>
+          <text x="780" y="206">SUN</text>
+        </g>
+
+        <!-- signups panel -->
+        <text x="20" y="246" fill="rgba(255,217,160,.85)" font-size="12" letter-spacing="3" font-family="Georgia,serif">SIGNUPS</text>
+        <polyline points="60,310.6 180,297.6 300,282.9 420,295.9 540,276.9 660,265.6 780,250"
+                  fill="none" stroke="rgba(255,201,122,.65)" stroke-width="1.5"/>
+        <!-- radiance rings -->
+        <g fill="none" stroke="rgba(255,201,122,.35)" stroke-width="1">
+          <circle cx="60"  cy="310.6" r="9.5"/>
+          <circle cx="180" cy="297.6" r="9.5"/>
+          <circle cx="300" cy="282.9" r="9.5"/>
+          <circle cx="420" cy="295.9" r="9.5"/>
+          <circle cx="540" cy="276.9" r="9.5"/>
+          <circle cx="660" cy="265.6" r="9.5"/>
+          <circle cx="780" cy="250"   r="9.5"/>
+        </g>
+        <g fill="#ffd9a0" filter="url(#dotGlow)">
+          <circle cx="60"  cy="310.6" r="4.5"/>
+          <circle cx="180" cy="297.6" r="4.5"/>
+          <circle cx="300" cy="282.9" r="4.5"/>
+          <circle cx="420" cy="295.9" r="4.5"/>
+          <circle cx="540" cy="276.9" r="4.5"/>
+          <circle cx="660" cy="265.6" r="4.5"/>
+          <circle cx="780" cy="250"   r="4.5"/>
+        </g>
+        <g fill="#ffd9a0" font-size="14.5" text-anchor="middle" font-family="Georgia,serif">
+          <text x="60"  y="294.6">57</text>
+          <text x="180" y="281.6">72</text>
+          <text x="300" y="266.9">89</text>
+          <text x="420" y="279.9">74</text>
+          <text x="540" y="260.9">96</text>
+          <text x="660" y="249.6">109</text>
+          <text x="780" y="234">127</text>
+        </g>
+        <line x1="20" y1="360" x2="820" y2="360" stroke="rgba(124,245,226,.25)" stroke-width="1"/>
+
+        <!-- conversion row -->
+        <text x="20" y="398" fill="#c0a56e" font-size="11" letter-spacing="3" font-family="Georgia,serif">CONV.</text>
+        <g fill="#9db4bd" font-size="13" text-anchor="middle" font-family="Georgia,serif">
+          <text x="60"  y="398">4.0%</text>
+          <text x="180" y="398">4.5%</text>
+          <text x="300" y="398">5.0%</text>
+          <text x="420" y="398">4.5%</text>
+          <text x="540" y="398">5.0%</text>
+          <text x="660" y="398">5.4%</text>
+          <text x="780" y="398">6.0%</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <section class="plate">
+    <h2>By source <span class="plate-no">Plate II</span></h2>
+    <table class="src-table">
+      <thead>
+        <tr>
+          <th scope="col" class="t-name">Source</th>
+          <th scope="col" class="t-bar"></th>
+          <th scope="col" class="t-vis">Visits</th>
+          <th scope="col" class="t-sign">Signups</th>
+          <th scope="col">Conv.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Direct</th>
+          <td class="t-bar"><span class="bars" aria-hidden="true"><span class="bar" style="width:100%"></span><span class="bar-s" style="width:6.0%"></span></span></td>
+          <td>5,240</td>
+          <td class="signups">314</td>
+          <td class="conv">6.0%</td>
+        </tr>
+        <tr>
+          <th scope="row">Search</th>
+          <td class="t-bar"><span class="bars" aria-hidden="true"><span class="bar" style="width:85.5%"></span><span class="bar-s" style="width:4.3%"></span></span></td>
+          <td>4,480</td>
+          <td class="signups">224</td>
+          <td class="conv">5.0%</td>
+        </tr>
+        <tr>
+          <th scope="row">Social</th>
+          <td class="t-bar"><span class="bars" aria-hidden="true"><span class="bar" style="width:52.7%"></span><span class="bar-s" style="width:1.6%"></span></span></td>
+          <td>2,760</td>
+          <td class="signups">86</td>
+          <td class="conv">3.1%</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 Weather</title>
+<style>
+  :root{
+    --ink:#35241a;
+    --cream:#fbf3e2;
+    --card:#fffdf8;
+    --ketchup:#c8361f;
+    --ketchup-bright:#d63b22;
+    --mustard:#e8a921;
+    --mustard-bright:#f2b52b;
+    --sky-top:#8fcbea;
+    --sky-bottom:#cdeaf7;
+    --track:#efe2c8;
+    --cloud:#e9f0f5;
+    --cloud-line:#9fb4c4;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+    line-height:1.35;
+  }
+  .container{max-width:980px;margin:0 auto;padding:0 16px}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  /* Sky header */
+  .sky{
+    position:relative;
+    background:linear-gradient(var(--sky-top),var(--sky-bottom));
+    overflow:hidden;
+  }
+  .sky-inner{
+    position:relative;
+    padding:44px 16px 40px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .sign{
+    background:var(--ketchup);
+    border:3px solid var(--ink);
+    border-radius:16px;
+    box-shadow:5px 5px 0 rgba(53,36,26,.25);
+    padding:16px 28px 18px;
+    color:var(--cream);
+  }
+  .sign h1{
+    font-size:2.1rem;
+    font-weight:900;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    line-height:1.1;
+  }
+  .sign p{
+    margin-top:2px;
+    font-size:.8rem;
+    font-weight:700;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--mustard-bright);
+  }
+  .chip{
+    position:absolute;
+    top:12px;
+    right:16px;
+    background:rgba(255,255,255,.78);
+    color:var(--ink);
+    font-size:.62rem;
+    font-weight:700;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    padding:4px 10px;
+    border-radius:999px;
+  }
+  .sky .deco{flex:0 0 auto}
+  .sun-deco{width:110px;height:110px}
+  .cloud-deco{
+    position:absolute;
+    left:-14px;
+    bottom:10px;
+    width:96px;
+    height:52px;
+    opacity:.9;
+  }
+
+  /* Awning */
+  .awning{
+    height:34px;
+    background:repeating-linear-gradient(90deg,
+      var(--ketchup) 0 40px, #fdf8ec 40px 80px);
+    border-top:3px solid var(--ink);
+    position:relative;
+  }
+  .awning::after{
+    content:"";
+    position:absolute;
+    top:100%;
+    left:0;right:0;
+    height:20px;
+    background-image:
+      radial-gradient(circle at 20px 0, var(--ketchup) 0 18px, transparent 19px),
+      radial-gradient(circle at 60px 0, #fdf8ec 0 18px, transparent 19px);
+    background-size:80px 20px;
+    background-repeat:repeat-x;
+  }
+
+  /* Totals board */
+  .board{
+    margin-top:44px;
+    background:#35241a;
+    border-radius:16px;
+    padding:20px 24px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    text-align:center;
+    box-shadow:5px 5px 0 rgba(53,36,26,.15);
+  }
+  .board .label{
+    color:rgba(251,243,226,.65);
+    font-size:.7rem;
+    font-weight:700;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+  }
+  .board .value{
+    color:var(--mustard-bright);
+    font-size:2rem;
+    font-weight:900;
+    font-variant-numeric:tabular-nums;
+    line-height:1.15;
+  }
+  .board .value.vwx{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+  }
+  .bwx{width:28px;height:28px;flex:0 0 auto}
+  @media (max-width:560px){
+    .board{grid-template-columns:1fr;gap:16px}
+    .sky-inner{padding-top:52px}
+    .sun-deco{width:76px;height:76px}
+  }
+
+  /* Sections */
+  section{margin:34px 0 40px}
+  .sec-head{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px 18px;
+    margin-bottom:14px;
+  }
+  h2{
+    color:var(--ketchup);
+    font-size:1.05rem;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .key{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:.72rem;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:rgba(53,36,26,.75);
+  }
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .sw.v{background:var(--mustard)}
+  .sw.s{background:var(--ketchup-bright)}
+  .ksun{width:16px;height:16px}
+
+  /* Forecast cards */
+  .days{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(104px,1fr));
+    gap:10px;
+  }
+  .card{
+    background:var(--card);
+    border:2px solid var(--ink);
+    border-radius:12px;
+    box-shadow:4px 4px 0 rgba(53,36,26,.12);
+  }
+  .day{
+    padding:12px 10px 14px;
+    text-align:center;
+  }
+  .day .dname{
+    color:var(--ketchup);
+    font-size:.78rem;
+    font-weight:800;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+  .wxrow{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    margin:7px 0 5px;
+  }
+  .wxrow .wx{width:34px;height:34px;flex:0 0 auto}
+  .wxrow .conv{
+    font-size:1rem;
+    font-weight:900;
+    font-variant-numeric:tabular-nums;
+  }
+  .num-v{
+    font-size:1.3rem;
+    font-weight:900;
+    font-variant-numeric:tabular-nums;
+  }
+  .num-s{
+    margin-top:10px;
+    color:var(--ketchup-bright);
+    font-size:1rem;
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
+  }
+  .bar{
+    height:7px;
+    margin:5px 6px 0;
+    background:var(--track);
+    border-radius:999px;
+    overflow:hidden;
+  }
+  .bar > i{display:block;height:100%;border-radius:999px}
+  .bar.v > i{background:var(--mustard)}
+  .bar.s > i{background:var(--ketchup-bright)}
+  .bar.thin{height:6px}
+
+  /* Source combo cards */
+  .sources{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:14px;
+  }
+  .combo{padding:16px 16px 18px}
+  .combo-top{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .combo-top .food{width:46px;height:46px;flex:0 0 auto}
+  .combo-top .sname{
+    flex:1;
+    font-size:1.05rem;
+    font-weight:900;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+  .tag{
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    background:var(--mustard-bright);
+    border:2px solid var(--ink);
+    border-radius:999px;
+    padding:6px 12px 7px;
+    text-align:center;
+    transform:rotate(-3deg);
+    line-height:1.05;
+  }
+  .tag .tagwx{width:22px;height:22px;flex:0 0 auto}
+  .tag b{
+    display:block;
+    font-size:1.05rem;
+    font-weight:900;
+    font-variant-numeric:tabular-nums;
+  }
+  .tag small{
+    display:block;
+    font-size:.56rem;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:rgba(53,36,26,.8);
+  }
+  .mrow{
+    display:flex;
+    align-items:baseline;
+    margin-top:14px;
+    font-variant-numeric:tabular-nums;
+  }
+  .mrow .mlabel{
+    font-size:.74rem;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:rgba(53,36,26,.7);
+  }
+  .mrow .dots{
+    flex:1;
+    border-bottom:2px dotted rgba(53,36,26,.35);
+    margin:0 8px 4px;
+  }
+  .mrow .mval{font-size:1.05rem;font-weight:900}
+  .mrow .mval.s{color:var(--ketchup-bright)}
+  .combo .bar{margin:6px 0 0}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-sun" viewBox="0 0 48 48">
+      <g fill="none" stroke="#e8a921" stroke-width="3" stroke-linecap="round">
+        <line x1="24" y1="3" x2="24" y2="10"/><line x1="24" y1="38" x2="24" y2="45"/>
+        <line x1="3" y1="24" x2="10" y2="24"/><line x1="38" y1="24" x2="45" y2="24"/>
+        <line x1="9" y1="9" x2="14" y2="14"/><line x1="34" y1="34" x2="39" y2="39"/>
+        <line x1="39" y1="9" x2="34" y2="14"/><line x1="14" y1="34" x2="9" y2="39"/>
+      </g>
+      <circle cx="24" cy="24" r="10" fill="#f2b52b"/>
+    </symbol>
+    <symbol id="i-suncloud" viewBox="0 0 48 48">
+      <g fill="none" stroke="#e8a921" stroke-width="2.5" stroke-linecap="round">
+        <line x1="19" y1="2" x2="19" y2="7"/><line x1="4" y1="17" x2="9" y2="17"/>
+        <line x1="8" y1="6" x2="12" y2="10"/><line x1="30" y1="6" x2="26" y2="10"/>
+      </g>
+      <circle cx="19" cy="18" r="9" fill="#f2b52b"/>
+      <g fill="#e9f0f5" stroke="#9fb4c4" stroke-width="1.5">
+        <circle cx="28" cy="33" r="6"/><circle cx="36" cy="31" r="7"/>
+        <rect x="24" y="31" width="20" height="9" rx="4.5"/>
+      </g>
+    </symbol>
+    <symbol id="i-cloudsun" viewBox="0 0 48 48">
+      <circle cx="31" cy="15" r="8" fill="#f2b52b"/>
+      <g fill="#dde7ee" stroke="#9fb4c4" stroke-width="1.5">
+        <circle cx="16" cy="29" r="8"/><circle cx="26" cy="25" r="10"/><circle cx="34" cy="29" r="8"/>
+        <rect x="9" y="28" width="32" height="11" rx="5.5"/>
+      </g>
+    </symbol>
+    <symbol id="i-cloud" viewBox="0 0 48 48">
+      <g fill="#d5dee6" stroke="#9aaebe" stroke-width="1.5">
+        <circle cx="16" cy="27" r="8"/><circle cx="26" cy="22" r="10"/><circle cx="34" cy="27" r="8"/>
+        <rect x="9" y="26" width="32" height="12" rx="6"/>
+      </g>
+    </symbol>
+    <symbol id="i-rain" viewBox="0 0 48 48">
+      <g fill="#c7d3dc" stroke="#8fa5b6" stroke-width="1.5">
+        <circle cx="16" cy="22" r="8"/><circle cx="26" cy="17" r="10"/><circle cx="34" cy="22" r="8"/>
+        <rect x="9" y="21" width="32" height="12" rx="6"/>
+      </g>
+      <g stroke="#5b9bc0" stroke-width="3" stroke-linecap="round">
+        <line x1="16" y1="38" x2="14" y2="43"/><line x1="24" y1="38" x2="22" y2="43"/>
+        <line x1="32" y1="38" x2="30" y2="43"/>
+      </g>
+    </symbol>
+    <symbol id="i-cloud-plain" viewBox="0 0 96 52">
+      <g fill="#ffffff">
+        <circle cx="28" cy="30" r="16"/><circle cx="50" cy="22" r="20"/><circle cx="70" cy="32" r="14"/>
+        <rect x="14" y="28" width="68" height="20" rx="10"/>
+      </g>
+    </symbol>
+    <symbol id="i-burger" viewBox="0 0 48 48">
+      <path d="M8 22a16 12 0 0 1 32 0z" fill="#e8a14e"/>
+      <circle cx="18" cy="15" r="1.4" fill="#fbe6c2"/>
+      <circle cx="25" cy="13" r="1.4" fill="#fbe6c2"/>
+      <circle cx="31" cy="16" r="1.4" fill="#fbe6c2"/>
+      <rect x="7" y="22" width="34" height="4" rx="2" fill="#7fa641"/>
+      <rect x="8" y="27" width="32" height="5" rx="2.5" fill="#74432a"/>
+      <rect x="8" y="33" width="32" height="7" rx="3.5" fill="#e8a14e"/>
+    </symbol>
+    <symbol id="i-fries" viewBox="0 0 48 48">
+      <rect x="15" y="9" width="4.5" height="18" rx="2" fill="#f2b52b"/>
+      <rect x="22" y="6" width="4.5" height="20" rx="2" fill="#f2b52b"/>
+      <rect x="29" y="9" width="4.5" height="18" rx="2" fill="#f2b52b"/>
+      <path d="M11 23h26l-3.5 19h-19z" fill="#d63b22"/>
+      <path d="M14 29h20" stroke="#fbf3e2" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    </symbol>
+    <symbol id="i-drink" viewBox="0 0 48 48">
+      <rect x="22.5" y="3" width="3" height="11" rx="1.5" fill="#f2b52b" transform="rotate(8 24 8)"/>
+      <rect x="13" y="12" width="22" height="5" rx="2.5" fill="#35241a"/>
+      <path d="M15 17h18l-2.6 25H17.6z" fill="#d63b22"/>
+      <path d="M16 24h16l-.7 7H16.7z" fill="#fbf3e2"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="sky">
+  <span class="chip">Synthetic data</span>
+  <svg class="cloud-deco" aria-hidden="true" focusable="false"><use href="#i-cloud-plain"/></svg>
+  <div class="container sky-inner">
+    <div class="sign">
+      <h1>Week 01</h1>
+      <p>Website performance</p>
+    </div>
+    <svg class="sun-deco deco" aria-hidden="true" focusable="false"><use href="#i-sun"/></svg>
+  </div>
+</header>
+<div class="awning" aria-hidden="true"></div>
+
+<main class="container">
+
+  <div class="board">
+    <div><div class="label">Visits</div><div class="value">12,480</div></div>
+    <div><div class="label">Signups</div><div class="value">624</div></div>
+    <div>
+      <div class="label">Conversion</div>
+      <div class="value vwx">
+        <svg class="bwx" aria-hidden="true" focusable="false"><use href="#i-suncloud"/></svg>
+        <span>5.0%</span>
+      </div>
+    </div>
+  </div>
+
+  <section aria-labelledby="h-days">
+    <div class="sec-head">
+      <h2 id="h-days">This week's weather</h2>
+      <span class="key"><svg class="ksun" aria-hidden="true" focusable="false"><use href="#i-sun"/></svg>Conversion</span>
+      <span class="key"><i class="sw v"></i>Visits</span>
+      <span class="key"><i class="sw s"></i>Signups</span>
+    </div>
+    <div class="days">
+
+      <div class="card day">
+        <div class="dname">Mon</div>
+        <div class="wxrow">
+          <svg class="wx" aria-hidden="true" focusable="false"><use href="#i-cloud"/></svg>
+          <span class="conv">4.0%<span class="sr-only"> conversion</span></span>
+        </div>
+        <div class="num-v">1,420<span class="sr-only"> visits</span></div>
+        <div class="bar v" aria-hidden="true"><i style="width:67.6%"></i></div>
+        <div class="num-s">57<span class="sr-only"> signups</span></div>
+        <div class="bar s thin" aria-hidden="true"><i style="width:44.9%"></i></div>
+      </div>
+
+      <div class="card day">
+        <div class="dname">Tue</div>
+        <div class="wxrow">
+          <svg class="wx" aria-hidden="true" focusable="false"><use href="#i-cloudsun"/></svg>
+          <span class="conv">4.5%<span class="sr-only"> conversion</span></span>
+        </div>
+        <div class="num-v">1,600<span class="sr-only"> visits</span></div>
+        <div class="bar v" aria-hidden="true"><i style="width:76.2%"></i></div>
+        <div class="num-s">72<span class="sr-only"> signups</span></div>
+        <div class="bar s thin" aria-hidden="true"><i style="width:56.7%"></i></div>
+      </div>
+
+      <div class="card day">
+        <div class="dname">Wed</div>
+        <div class="wxrow">
+          <svg class="wx" aria-hidden="true" focusable="false"><use href="#i-suncloud"/></svg>
+          <span class="conv">5.0%<span class="sr-only"> conversion</span></span>
+        </div>
+        <div class="num-v">1,780<span class="sr-only"> visits</span></div>
+        <div class="bar v" aria-hidden="true"><i style="width:84.8%"></i></div>
+        <div class="num-s">89<span class="sr-only"> signups</span></div>
+        <div class="bar s thin" aria-hidden="true"><i style="width:70.1%"></i></div>
+      </div>
+
+      <div class="card day">
+        <div class="dname">Thu</div>
+        <div class="wxrow">
+          <svg class="wx" aria-hidden="true" focusable="false"><use href="#i-cloudsun"/></svg>
+          <span class="conv">4.5%<span class="sr-only"> conversion</span></span>
+        </div>
+        <div class="num-v">1,640<span class="sr-only"> visits</span></div>
+        <div class="bar v" aria-hidden="true"><i style="width:78.1%"></i></div>
+        <div class="num-s">74<span class="sr-only"> signups</span></div>
+        <div class="bar s thin" aria-hidden="true"><i style="width:58.3%"></i></div>
+      </div>
+
+      <div class="card day">
+        <div class="dname">Fri</div>
+        <div class="wxrow">
+          <svg class="wx" aria-hidden="true" focusable="false"><use href="#i-suncloud"/></svg>
+          <span class="conv">5.0%<span class="sr-only"> conversion</span></span>
+        </div>
+        <div class="num-v">1,920<span class="sr-only"> visits</span></div>
+        <div class="bar v" aria-hidden="true"><i style="width:91.4%"></i></div>
+        <div class="num-s">96<span class="sr-only"> signups</span></div>
+        <div class="bar s thin" aria-hidden="true"><i style="width:75.6%"></i></div>
+      </div>
+
+      <div class="card day">
+        <div class="dname">Sat</div>
+        <div class="wxrow">
+          <svg class="wx" aria-hidden="true" focusable="false"><use href="#i-sun"/></svg>
+          <span class="conv">5.4%<span class="sr-only"> conversion</span></span>
+        </div>
+        <div class="num-v">2,020<span class="sr-only"> visits</span></div>
+        <div class="bar v" aria-hidden="true"><i style="width:96.2%"></i></div>
+        <div class="num-s">109<span class="sr-only"> signups</span></div>
+        <div class="bar s thin" aria-hidden="true"><i style="width:85.8%"></i></div>
+      </div>
+
+      <div class="card day">
+        <div class="dname">Sun</div>
+        <div class="wxrow">
+          <svg class="wx" aria-hidden="true" focusable="false"><use href="#i-sun"/></svg>
+          <span class="conv">6.0%<span class="sr-only"> conversion</span></span>
+        </div>
+        <div class="num-v">2,100<span class="sr-only"> visits</span></div>
+        <div class="bar v" aria-hidden="true"><i style="width:100%"></i></div>
+        <div class="num-s">127<span class="sr-only"> signups</span></div>
+        <div class="bar s thin" aria-hidden="true"><i style="width:100%"></i></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section aria-labelledby="h-sources">
+    <div class="sec-head">
+      <h2 id="h-sources">Sources</h2>
+    </div>
+    <div class="sources">
+
+      <div class="card combo">
+        <div class="combo-top">
+          <svg class="food" aria-hidden="true" focusable="false"><use href="#i-burger"/></svg>
+          <div class="sname">Direct</div>
+          <div class="tag">
+            <svg class="tagwx" aria-hidden="true" focusable="false"><use href="#i-sun"/></svg>
+            <span><b>6.0%</b><small>conversion</small></span>
+          </div>
+        </div>
+        <div class="mrow"><span class="mlabel">Visits</span><span class="dots"></span><span class="mval">5,240</span></div>
+        <div class="bar v" aria-hidden="true"><i style="width:100%"></i></div>
+        <div class="mrow"><span class="mlabel">Signups</span><span class="dots"></span><span class="mval s">314</span></div>
+        <div class="bar s thin" aria-hidden="true"><i style="width:100%"></i></div>
+      </div>
+
+      <div class="card combo">
+        <div class="combo-top">
+          <svg class="food" aria-hidden="true" focusable="false"><use href="#i-fries"/></svg>
+          <div class="sname">Search</div>
+          <div class="tag">
+            <svg class="tagwx" aria-hidden="true" focusable="false"><use href="#i-suncloud"/></svg>
+            <span><b>5.0%</b><small>conversion</small></span>
+          </div>
+        </div>
+        <div class="mrow"><span class="mlabel">Visits</span><span class="dots"></span><span class="mval">4,480</span></div>
+        <div class="bar v" aria-hidden="true"><i style="width:85.5%"></i></div>
+        <div class="mrow"><span class="mlabel">Signups</span><span class="dots"></span><span class="mval s">224</span></div>
+        <div class="bar s thin" aria-hidden="true"><i style="width:71.3%"></i></div>
+      </div>
+
+      <div class="card combo">
+        <div class="combo-top">
+          <svg class="food" aria-hidden="true" focusable="false"><use href="#i-drink"/></svg>
+          <div class="sname">Social</div>
+          <div class="tag">
+            <svg class="tagwx" aria-hidden="true" focusable="false"><use href="#i-rain"/></svg>
+            <span><b>3.1%</b><small>conversion</small></span>
+          </div>
+        </div>
+        <div class="mrow"><span class="mlabel">Visits</span><span class="dots"></span><span class="mval">2,760</span></div>
+        <div class="bar v" aria-hidden="true"><i style="width:52.7%"></i></div>
+        <div class="mrow"><span class="mlabel">Signups</span><span class="dots"></span><span class="mval s">86</span></div>
+        <div class="bar s thin" aria-hidden="true"><i style="width:27.4%"></i></div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+Critique of 0-1-2.html (originality, then clarity), followed by the changes applied in 0-1-3.html.
+
+ORIGINALITY — harsh
+
+1. Pass 1 decorated the template better; it did not deepen the fusion. Outside the emblem, Cthulhu and Disco still alternate instead of combining: green bars here, magenta bars there, purple tentacles in the margins. The two ingredients share a page, not a design.
+2. Disco is still frozen. A mirror ball, chromatic echoes, a tiled dance floor — and not one thing moves or glints. Disco without light in motion is a costume, not an identity. The medium supports animation at zero data cost and the page leaves it on the table.
+3. There is still no light source. The emblem's ball hangs there emitting nothing; the glows in the page background are generic radial washes unconnected to it. The strongest available composition — the ball actually casting light across the report — was not attempted.
+4. The dance floor reads as a strip of colored tiles, which is the fix pass 1 promised, but it is inert: floors at a disco move under light. Static, it is one notch above the 2px line it replaced.
+
+CLARITY — harsh
+
+5. The ✦ glyph now means two things on the same page: pure decoration in every section heading (h2::before) and "best" in the Daily legend, Sunday's visits value, and Direct's conversion. Defining a semantic marker and simultaneously using it as ornament is a self-inflicted ambiguity — worse than pass 1's undefined star, because now the false definition is printed.
+6. The "best" convention is applied inconsistently even on its own terms: Sunday's visits value gets a star but its conversion gets gold without a star; Direct's conversion gets both; the bar cap gets gold alone. Three renderings of one idea.
+7. The peak bar's gold cap is a 3px border-top added outside the bar's height, so Sunday's bar is drawn 3px taller than its track allows — a small but real distortion of the tallest, most-looked-at bar, and it overflows its container.
+8. Social's 3.1% conversion is set in dim text. Dim reads as "unimportant", yet Social converting at half the Direct rate is the most actionable number in the report. The styling actively de-emphasizes the finding a reader should act on.
+9. The legend has grown to four items to explain one chart; the fourth ("✦ best") exists only to patch the convention problem in point 5. A cleaner encoding would need less legend.
+
+CHANGES APPLIED IN 0-1-3.html
+
+- One "best" encoding: gold color marks the week's best values, everywhere — Sunday's visits value, Sunday's conversion, Direct's conversion, and the peak bar's cap. The semantic ✦ is removed from values and legend; the legend's fourth item becomes a gold swatch labeled "best". The ✦ in section headings is now unambiguously decorative. (Fixes points 5, 6, 9.)
+- Peak cap redrawn as the top 4px of the bar's own gradient instead of an added border, so Sunday's bar height is exact and nothing overflows. (Fixes point 7.)
+- Social's conversion restored to full-strength ink; only "best" carries color. (Fixes point 8.)
+- The mirror ball now casts light: three faint conic beams angle down from the emblem across the header. (Addresses point 3.)
+- Motion, guarded by prefers-reduced-motion: the emblem's two sparkles twinkle on offset cycles, and the dance-floor tiles drift slowly as if lit by the turning ball. Data marks do not move. (Addresses points 2 and 4.)
+
+PRESERVED (strong decisions)
+
+- The overall architecture (KPIs, mirrored daily chart on the dance floor, sources grid) is retained deliberately: the brief rewards identity that does not compete with the information, and the mirrored-floor composition is the page's one structural fusion of both ingredients — it is developed, not replaced. The emblem, chromatic-echo h1, per-bar value labels, all figures and derivations (12,480 / 624 / 5.0%), the tapered tentacles, and the always-visible synthetic-data badge carry over unchanged. Point 1 is accepted as a real limit of this design rather than patched with a gimmick: forcing tentacles into the data marks would trade clarity for novelty, which the brief forbids.

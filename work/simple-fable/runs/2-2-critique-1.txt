@@ -1,0 +1,40 @@
+Critique of 2-2-1.html (originality, then clarity), followed by the changes applied in 2-2-2.html.
+
+ORIGINALITY — harsh read
+
+1. The two ingredients are stacked, not combined. The sky header and icons are "weather"; the awning, menu board, price tags and leaders are "fast food". They alternate by section instead of producing one idea. The only genuine fusion is the day strip, and even there the weather is skin-deep (see 2).
+
+2. The weather icons in v1 are stickers, not encoding. Each day's icon tier loosely tracks visits — the same quantity the mustard bar already states exactly. A sun above a 100% bar says one thing twice, and the mapping is never declared, so the icons read as the most generic possible "weather clip art" rather than an original device. Decoration that mimics data without being data is the weakest kind of theming.
+
+3. The fast-food mapping is arbitrary. Burger = Direct, fries = Search, drink = Social carries no meaning; it is palatable set dressing. Tolerable, but nothing about the combo cards could not be swapped onto any other theme.
+
+4. The retro-diner shell (awning, red sign, dark menu board) is a recognizable cliche. It earns its place only because it is cheap to read and does not fight the data; it is not where any originality lives.
+
+CLARITY — harsh read
+
+5. "7-day forecast" is false. The data is last week's record; a forecast promises the future. The metaphor lied to gain familiarity.
+
+6. The icons are ambiguous: a reader cannot tell whether they encode visits, signups, conversion, or nothing. Unlabeled redundant encodings are noise.
+
+7. Per-day conversion is absent. The weekly 5.0% and per-source rates are given, but the day cards hide the one derived figure that explains why Sunday was the best day (6.0%) and Monday the worst (4.0%). Useful detail was dropped for tidiness.
+
+8. The page's main actionable finding — Social converts at half the site rate (3.1% vs 5.0%) — is carried only by a small number in a tag. Nothing in the visual system flags it.
+
+WORTH KEEPING (strong decisions, preserved)
+
+- Shared-scale mustard/ketchup bars with a single legend; numbers in tabular figures.
+- Dotted menu leaders and the rotated price-tag treatment for conversion.
+- Dark menu-board totals strip; awning and sign for instant identity; synthetic-data chip.
+- Minimal copy throughout: labels, numbers, no helper prose.
+
+CHANGES APPLIED IN 2-2-2.html
+
+A. The weather icon is now a real, page-wide encoding of conversion (the "sunshine" of a day or source): sun >= 5.4%, sun-behind-small-cloud 5.0-5.3%, cloud-with-peeking-sun 4.5-4.9%, cloud 3.5-4.4%, rain below 3.5%. Day icons keep their v1 assignments — the ranking happened to coincide — but the rule now exists, is consistent, and is keyed in the legend ("Conversion" with a sun swatch).
+
+B. Each day card now shows its conversion value beside the icon (4.0% ... 6.0%), restoring the missing derived detail and anchoring the icon to a number.
+
+C. The same icon scale is applied inside each source's price tag: Direct 6.0% = sun, Search 5.0% = sun with cloud, Social 3.1% = rain. The underperformer is now flagged by the identity system itself — the one new icon (rain) exists because the data justifies it.
+
+D. "7-day forecast" renamed "This week's weather"; page title "Week 01 Weather". The metaphor now tells the truth about tense.
+
+E. Everything else — layout, palette, totals, bars, leaders, tags, copy level — unchanged. No change was made that does not either correct a falsehood, name an encoding, or surface detail the first version computed and then hid.

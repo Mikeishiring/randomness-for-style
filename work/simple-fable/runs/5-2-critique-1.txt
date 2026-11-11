@@ -1,0 +1,53 @@
+Critique of 5-2-1.html (harsh, originality and clarity), then changes applied in 5-2-2.html.
+
+ORIGINALITY
+
+1. The deep-sea ingredient is the laziest possible reading: dark page + cyan glow. That is
+   the default "neon dashboard" every generated dark-mode page produces. Bioluminescence has
+   usable structure — depth, drifting point lights, living pulse — and the page uses none of
+   it beyond eight static background speckles that could belong to any starfield.
+2. The fast-food ingredient is nearly invisible. It survives only in CSS variable names
+   (--mustard, --ketchup), a dashed pill, and rounded corners. Nothing on the rendered
+   surface reads as fast food. A viewer told "name the two ingredients" would get one.
+3. The two ingredients never interact. Cyan band + yellow band is a two-color chart, not a
+   combined identity. There is no point of view (e.g. a midnight menu board at depth) shaping
+   component forms; the palette is doing all the work.
+4. The split-color headline ("Week" cyan / "01" mustard) is the one typographic gesture and
+   it is a cliché. The three identical translucent rounded cards are stock glassmorphism.
+5. The type stack ("Arial Rounded MT Bold" falling back to Arial Black) lands on plain heavy
+   Arial for most visitors; no distinctive typographic voice.
+
+CLARITY
+
+6. Strong and kept: the aligned daily small multiples (visits, signups, conversion per day
+   on separate per-band scales) are honest and readable; no dual-axis distortion; every
+   supplied figure is on the page with exact value labels; totals and derived conversions
+   are correct; conversion is coral everywhere, one meaning per color.
+7. "CONV" floats as bare percentages with a cryptic abbreviation; conversion is never
+   defined as signups / visits anywhere visible.
+8. The source bars scale to the largest source, so Direct fills 100% of its track. Nothing
+   says what the bar measures; it invites a share-of-total misreading (Direct is actually
+   42% of visits, not all of them).
+9. The bar column has an empty header while every other column is labeled.
+10. Minor: the mobile chart scrolls horizontally with no affordance; the synthetic-data pill
+    reads more decorative than cautionary. Accepted as-is.
+
+CHANGES APPLIED (develop both ingredients, fix clarity, touch nothing that works)
+
+- Source bars rescaled to share of the week's total visits (42.0% / 35.9% / 22.1%) so the
+  track means "all visits" and the fills visibly sum to one; the column gains the header
+  "Share". Fixes 8 and 9 with one word.
+- The conversion KPI tile gains a one-line definition, "signups / visits". Fixes 7 once,
+  where the term first appears; CONV in the chart and Conv in the table now resolve to it.
+- Fast food developed in form, not copy: a low-alpha ketchup-and-mustard awning stripe tops
+  every card, and the source rows are separated by dotted mustard rules — menu-board
+  leaders. Addresses 2 and 3 without a single added sentence.
+- Bioluminescence developed as living light: the plankton speckles now pulse on a slow 7s
+  cycle (disabled under prefers-reduced-motion), and panels carry an internal top-to-bottom
+  depth gradient. Addresses 1 without touching the charts.
+- Type stack extended with ui-rounded ahead of the Arial fallbacks (partially addresses 5;
+  no font may be loaded externally, so system stacks are the ceiling).
+- Deliberately kept: the split-color headline (cliché, but it is the one place the two
+  palettes fuse and removing it would weaken the combination), the per-band chart scales,
+  all figures, layout, and the synthetic-data badge. No peak-day decoration was added; the
+  value labels already show Sunday leading.

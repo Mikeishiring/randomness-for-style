@@ -1,0 +1,58 @@
+Critique of runs/4-1-2.html
+
+ORIGINALITY
+
+1. The identity still lives at the page's edges. The daily display is two
+   generic bar charts; the one fused gesture inside the data — the finish-line
+   cap — is a six-pixel garnish. Nothing about how the data itself is drawn
+   says speed or light.
+2. The chequered mirror ball is a real fusion, but it is a passive masthead
+   badge, and the gradient-sheen title remains the stock dark-dashboard move
+   it was in round one.
+3. The checker strips top and bottom are page trim any template could wear.
+4. The KPI row is four identical rounded cards with a gradient hairline —
+   dark-theme component-library defaults, with no compositional idea.
+5. The week's own story — traffic building all week to a weekend peak — is a
+   disco arc the charts show but the design never claims.
+
+CLARITY
+
+6. Day labels sit at the very bottom of a ~320px stack. Matching a visits bar
+   to its day means scanning down across the entire signups chart; the shared
+   x-axis is farthest from the chart that needs it most.
+7. Color coding leaks: the sources track fill ends in gold, but gold
+   everywhere else means signups, and the track encodes visits only. The
+   strongest color on each source row points at the wrong metric.
+8. That track also spans under the signups and conversion columns, inviting a
+   read of "overall row performance" when it is a visits bar.
+9. Gold is additionally spent on the h2 flourish, so accent gold and
+   data-coding gold compete on the same screen.
+10. "Conv." is the table's only naming of conversion and leans on the KPI tile
+    to be understood. Tolerable — the tile establishes the term and the values
+    carry their own % sign — but it is a lean.
+
+CHANGES IN 4-1-3
+
+- Mirrored the day-by-day chart around a shared day axis: visits rise above
+  it, signups hang below it like a reflection. Each day now reads as one
+  vertical slice — label, both metrics — with direction, not distance,
+  separating the two scales (fixes 6, develops 1). The silhouette is an
+  equalizer: rhythm as the disco gesture inside the data at last, and the
+  finish-line caps now mark Sunday's tips on both sides of the axis. Metric
+  labels sit at the outer edges, Visits top and Signups bottom, symmetric
+  with the mirror rather than inconsistently stacked.
+- Retuned the sources track fill to the visits coding (pink to orange),
+  removing gold from a bar that does not encode signups (fixes 7).
+- Quieted the h2 flourish from gold to silver so gold spends only on signups,
+  the podium chip, and the synthetic-data badge (fixes 9).
+
+PRESERVED, DELIBERATELY
+
+The KPI cards stay plain (4): the identity now lives inside the charts, and
+dressing every tile would compete with the information the brief says must
+win. The checker trim (3), the mirror-ball masthead (2), and the restrained
+title sheen stay as framing — the margins are the correct place for the
+loudest identity. The aligned sources leaderboard, direct value labels,
+P1/P2/P3 podium, track width under the full row (8 — acceptable once its
+gradient matches visits), and the "Conv." header (10) are kept as working
+decisions. Purpose, figures, and data are unchanged.

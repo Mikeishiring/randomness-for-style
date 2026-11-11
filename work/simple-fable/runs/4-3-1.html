@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 Performance</title>
+<style>
+  :root{
+    --bg:#160509;
+    --velvet-hi:#8e2238;
+    --velvet:#561224;
+    --velvet-lo:#3f0d1a;
+    --gold:#d3a73e;
+    --gold-hi:#e3bc55;
+    --gold-dim:#9a7a2e;
+    --red:#d2342a;
+    --cream:#f2e7d5;
+    --muted:#c8b39a;
+    --serif:"Didot","Bodoni MT","Playfair Display",Georgia,"Times New Roman",serif;
+    --sans:"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    --narrow:"Arial Narrow","Avenir Next Condensed","Segoe UI",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--sans);
+    color:var(--cream);
+    background:
+      repeating-linear-gradient(90deg, rgba(255,245,230,.012) 0 26px, rgba(0,0,0,.10) 26px 52px),
+      radial-gradient(1100px 520px at 50% -120px, #350d18, rgba(53,13,24,0) 70%),
+      var(--bg);
+    background-color:var(--bg);
+    min-height:100vh;
+  }
+  .checker{
+    height:18px;
+    background-image:repeating-conic-gradient(var(--gold) 0% 25%, transparent 0% 50%);
+    background-size:18px 18px;
+    opacity:.9;
+  }
+  main{max-width:860px;margin:0 auto;padding:0 16px 8px}
+
+  /* ---------- Playbill header ---------- */
+  header{text-align:center;padding:52px 0 8px}
+  .date-line{
+    color:var(--gold);
+    font-size:12px;
+    letter-spacing:.3em;
+    text-transform:uppercase;
+    font-weight:600;
+  }
+  h1{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(46px, 9vw, 86px);
+    line-height:1.05;
+    margin-top:14px;
+    letter-spacing:.01em;
+  }
+  .stripe{
+    width:min(420px,72%);
+    margin:24px auto 0;
+    height:7px;
+    border-top:1px solid var(--gold);
+    border-bottom:3px solid var(--red);
+  }
+
+  /* ---------- Headline figures ---------- */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(3,auto);
+    justify-content:center;
+    gap:12px clamp(32px, 8vw, 88px);
+    padding:42px 0 10px;
+    text-align:center;
+  }
+  .stat .n{
+    font-family:var(--narrow);
+    font-size:clamp(30px, 5.4vw, 44px);
+    font-weight:700;
+    letter-spacing:.02em;
+    font-variant-numeric:tabular-nums;
+  }
+  .stat .l{
+    margin-top:4px;
+    color:var(--gold);
+    font-size:11px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+  }
+
+  /* ---------- Section headings ---------- */
+  section{margin:54px 0}
+  h2{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    color:var(--gold);
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.3em;
+    text-transform:uppercase;
+    margin-bottom:26px;
+  }
+  h2::before,h2::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:rgba(211,167,62,.35);
+  }
+
+  /* ---------- Daily chart ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    column-gap:8px;
+  }
+  .rowlbl{
+    grid-column:1/-1;
+    color:var(--gold-dim);
+    font-size:10px;
+    letter-spacing:.24em;
+    text-transform:uppercase;
+    margin-bottom:2px;
+  }
+  .rowlbl + .rowlbl{margin-top:0}
+  .track{
+    position:relative;
+    height:190px;
+    margin-top:18px;
+    border-bottom:1px solid rgba(211,167,62,.45);
+  }
+  .bar{
+    position:absolute;
+    left:14%;right:14%;bottom:0;
+    height:var(--h);
+    background:linear-gradient(180deg, var(--velvet-hi), var(--velvet) 55%, var(--velvet-lo));
+    border-top:2px solid var(--gold);
+    box-shadow:inset 1px 0 0 rgba(255,255,255,.06);
+  }
+  .val{
+    position:absolute;
+    bottom:calc(var(--h) + 6px);
+    left:0;right:0;
+    text-align:center;
+    font-size:11px;
+    font-variant-numeric:tabular-nums;
+    color:var(--cream);
+  }
+  .day{
+    text-align:center;
+    padding:8px 0 14px;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .strack{
+    position:relative;
+    height:58px;
+    margin-top:16px;
+    border-bottom:1px solid rgba(211,167,62,.3);
+  }
+  .sbar{
+    position:absolute;
+    left:30%;right:30%;bottom:0;
+    height:var(--h);
+    background:linear-gradient(180deg, var(--gold-hi), var(--gold-dim));
+  }
+  .sval{
+    position:absolute;
+    bottom:calc(var(--h) + 5px);
+    left:0;right:0;
+    text-align:center;
+    font-size:11px;
+    font-variant-numeric:tabular-nums;
+    color:var(--gold);
+  }
+
+  /* ---------- Sources: finishing order ---------- */
+  .classification{
+    display:grid;
+    grid-template-columns:2.4rem 1fr 5.5rem 5rem 6.2rem;
+    align-items:center;
+    row-gap:2px;
+  }
+  .classification .hdr{
+    color:var(--gold-dim);
+    font-size:10px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    text-align:right;
+    padding-bottom:10px;
+  }
+  .classification .hdr.first{grid-column:1/3;text-align:left}
+  .pos{
+    font-family:var(--serif);
+    font-size:22px;
+    color:var(--gold);
+    padding-top:10px;
+  }
+  .sname{
+    font-family:var(--serif);
+    font-size:21px;
+    padding-top:10px;
+  }
+  .classification .num{
+    text-align:right;
+    font-family:var(--narrow);
+    font-size:19px;
+    font-weight:700;
+    font-variant-numeric:tabular-nums;
+    padding-top:10px;
+  }
+  .sbartrack{
+    grid-column:2/-1;
+    height:10px;
+    margin:8px 0 14px;
+  }
+  .sbarh{
+    height:100%;
+    width:var(--w);
+    background:linear-gradient(90deg, var(--velvet-lo), var(--velvet) 45%, var(--velvet-hi));
+    border-right:2px solid var(--gold);
+  }
+
+  footer{margin-top:40px}
+
+  @media (max-width:520px){
+    .grid{column-gap:4px}
+    .track{height:150px}
+    .val,.sval,.day{font-size:9.5px}
+    .day{letter-spacing:.08em}
+    .classification{grid-template-columns:1.7rem 1fr 4.4rem 3.9rem 4.6rem}
+    .pos{font-size:18px}
+    .sname{font-size:17px}
+    .classification .num{font-size:15px}
+    .stats{gap:10px 24px}
+  }
+</style>
+</head>
+<body>
+
+<div class="checker" aria-hidden="true"></div>
+
+<main>
+  <header>
+    <p class="date-line">Week 01 &middot; Synthetic data</p>
+    <h1>Performance</h1>
+    <div class="stripe" aria-hidden="true"></div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="n">12,480</div><div class="l">Visits</div></div>
+    <div class="stat"><div class="n">624</div><div class="l">Signups</div></div>
+    <div class="stat"><div class="n">5.0%</div><div class="l">Conversion</div></div>
+  </div>
+
+  <section aria-label="Daily visits and signups">
+    <h2>Daily</h2>
+    <div class="grid">
+      <div class="rowlbl">Visits</div>
+
+      <div class="track"><span class="val" style="--h:67.6%">1,420</span><div class="bar" style="--h:67.6%"></div></div>
+      <div class="track"><span class="val" style="--h:76.2%">1,600</span><div class="bar" style="--h:76.2%"></div></div>
+      <div class="track"><span class="val" style="--h:84.8%">1,780</span><div class="bar" style="--h:84.8%"></div></div>
+      <div class="track"><span class="val" style="--h:78.1%">1,640</span><div class="bar" style="--h:78.1%"></div></div>
+      <div class="track"><span class="val" style="--h:91.4%">1,920</span><div class="bar" style="--h:91.4%"></div></div>
+      <div class="track"><span class="val" style="--h:96.2%">2,020</span><div class="bar" style="--h:96.2%"></div></div>
+      <div class="track"><span class="val" style="--h:100%">2,100</span><div class="bar" style="--h:100%"></div></div>
+
+      <div class="day">Mon</div>
+      <div class="day">Tue</div>
+      <div class="day">Wed</div>
+      <div class="day">Thu</div>
+      <div class="day">Fri</div>
+      <div class="day">Sat</div>
+      <div class="day">Sun</div>
+
+      <div class="rowlbl">Signups</div>
+
+      <div class="strack"><span class="sval" style="--h:44.9%">57</span><div class="sbar" style="--h:44.9%"></div></div>
+      <div class="strack"><span class="sval" style="--h:56.7%">72</span><div class="sbar" style="--h:56.7%"></div></div>
+      <div class="strack"><span class="sval" style="--h:70.1%">89</span><div class="sbar" style="--h:70.1%"></div></div>
+      <div class="strack"><span class="sval" style="--h:58.3%">74</span><div class="sbar" style="--h:58.3%"></div></div>
+      <div class="strack"><span class="sval" style="--h:75.6%">96</span><div class="sbar" style="--h:75.6%"></div></div>
+      <div class="strack"><span class="sval" style="--h:85.8%">109</span><div class="sbar" style="--h:85.8%"></div></div>
+      <div class="strack"><span class="sval" style="--h:100%">127</span><div class="sbar" style="--h:100%"></div></div>
+    </div>
+  </section>
+
+  <section aria-label="Traffic sources, ranked by visits">
+    <h2>Sources</h2>
+    <div class="classification">
+      <div class="hdr first">Source</div>
+      <div class="hdr">Visits</div>
+      <div class="hdr">Signups</div>
+      <div class="hdr">Conversion</div>
+
+      <div class="pos">I</div>
+      <div class="sname">Direct</div>
+      <div class="num">5,240</div>
+      <div class="num">314</div>
+      <div class="num">6.0%</div>
+      <div class="sbartrack"><div class="sbarh" style="--w:100%"></div></div>
+
+      <div class="pos">II</div>
+      <div class="sname">Search</div>
+      <div class="num">4,480</div>
+      <div class="num">224</div>
+      <div class="num">5.0%</div>
+      <div class="sbartrack"><div class="sbarh" style="--w:85.5%"></div></div>
+
+      <div class="pos">III</div>
+      <div class="sname">Social</div>
+      <div class="num">2,760</div>
+      <div class="num">86</div>
+      <div class="num">3.1%</div>
+      <div class="sbartrack"><div class="sbarh" style="--w:52.7%"></div></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="checker" aria-hidden="true"></div>
+</footer>
+
+</body>
+</html>

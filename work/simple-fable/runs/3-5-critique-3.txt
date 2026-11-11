@@ -1,0 +1,37 @@
+CRITIQUE OF 3-5-3.html
+
+Clarity
+1. The page contradicts its own colour grammar. The chart establishes ink hatching for
+   visits and red hatching for signups — then every source card fills its
+   share-of-visits bar with red stripes. A reader who learned the system from the
+   chart is told, in the cards, that these bars are about signups. They are not.
+   This is the worst defect left on the page, and it was introduced in the first
+   version and preserved twice without being noticed.
+2. The clerk's red line-work now carries two meanings (annotation mark, stamp) and the
+   red hatch a third (signups). Red-as-annotation and red-as-signups can coexist —
+   ledger clerks used red ink for both marks and contra entries, and the mark is an
+   outline while the data is a fill — but only if no red fill ever sits on a
+   visits figure. Point 1 must be fixed for this to hold.
+
+Originality
+3. The inspector is inconsistent. In the daily record the clerk circles the peak
+   (Sunday's 2,100); in Sources, where the page holds its most decision-relevant
+   spread — Direct converts at 6.0% against Social's 3.1%, nearly double — no figure
+   is marked at all. The one bureaucratic act that earned its place is applied to one
+   section and forgotten in the other.
+4. Considered and rejected: more stamps, a "carried forward" footer line, Latin
+   binomials under the insect names, a third section. All are identity inflation —
+   decoration or copy without new information. The remaining surfaces (masthead,
+   summary, case, cards) are each doing a job; at this point most available changes
+   would subtract clarity, and the harshest true criticism is that the previous pass
+   fixed pin placement while missing the colour-grammar error in the same cards.
+
+Changes applied in 3-5-4.html
+- Share-of-visits bars now fill with ink stripes (and an ink end-cap), matching the
+  visits hatching in the daily record. Red fill is once again exclusively signups.
+- The clerk's ellipse is applied consistently: Direct's 6.0% signup rate — the best
+  of the three sources — is circled with the same red mark that circles Sunday's
+  peak in the daily record.
+- Everything else is unchanged: data, purpose, layout, chart geometry, values, rate
+  row, stamp, pins, cards, responsive behaviour. The page remains fully
+  self-contained.

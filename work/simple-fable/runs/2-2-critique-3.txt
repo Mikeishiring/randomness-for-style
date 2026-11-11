@@ -1,0 +1,27 @@
+Critique of 2-2-3.html (originality, then clarity), followed by the change applied in 2-2-4.html and the changes deliberately refused.
+
+ORIGINALITY — harsh read
+
+1. The design has stopped inventing and started maintaining. Pass 2 built the conversion-as-sunshine language, pass 3 completed it; nothing in v3 extends either ingredient further. That is not automatically a fault — a system that is finished should stop — but a harsh reading says the fast-food half never reached the same standard: the burger, fries and drink still mean nothing, the awning and sign are stock diner furniture, and only the price-tag-with-weather hybrid does double duty. The weather ingredient carries the page; the fast-food ingredient carries the mood.
+
+2. The masthead remains a logo-shaped excuse: a full sun over a sun-behind-cloud week. Defensible as branding, and changing it would trade a strong mark for a weak pun, but it is the one place the identity contradicts its own scale.
+
+CLARITY — harsh read (measured this pass)
+
+3. One genuine, measurable defect survives all three versions: the visits bars fail non-text contrast. Bright mustard #e8a921 on the cream track #efe2c8 computes to roughly 1.6:1 — well under the 3:1 that meaningful graphics need. In glare or with low vision, the page's most repeated comparison device nearly vanishes. The ketchup signups bars pass at about 3.6:1, which makes the mustard failure look worse: half the bar system is readable, half is decoration-grade. Every bar's exact value is printed beside it, so no data is lost — but a comparison aid that cannot be seen is a false promise.
+
+4. The rest of the palette holds up under measurement: tag caption on bright mustard about 5.1:1, ketchup day names on card about 5.1:1, ketchup-bright signup figures about 4.6:1, muted row labels about 5.5:1, board labels about 6.5:1. No other combination needed touching.
+
+5. Structure, labels, legends, sr-only text, icon-number pairing, and the within-metric bar scales were re-examined and hold. No new ambiguity was found.
+
+CHANGE APPLIED IN 2-2-4.html
+
+A. The visits bar fill and its matching legend swatch darken from bright mustard to a dijon mustard (#a87006), raising fill-on-track contrast to about 3.3:1 — past the 3:1 graphics threshold. Bright mustard stays everywhere it is large or decorative: the sun, the price tags, the board numbers, the fries, the sign accent. The legend swatch moves with the bars, so the key still matches what it keys. Dijon is, conveniently, still mustard; the identity survives its own accessibility fix.
+
+CHANGES CONSIDERED AND REFUSED
+
+- Ink outlines on all bar fills: would fix perceivability but adds a third treatment to elements that only needed a better fill color; the simpler fix wins.
+- Lightening the track instead: the track is already near-cream; the remaining headroom cannot reach 3:1 without the fill darkening anyway.
+- The pass-2 refusals (trend sparkline, printed tier thresholds, masthead re-theming, meaningful food mapping, weekend emphasis) were reconsidered and stand for the same reasons: each adds ink or copy to restate what a number, an ordered row of cards, or an adjacent icon already proves.
+
+Purpose, data, figures, layout and copy level are otherwise unchanged. One defect was found; one change fixes it; the design is otherwise done and should be left alone.

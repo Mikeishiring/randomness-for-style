@@ -1,0 +1,55 @@
+Critique of 0-5-1.html
+
+ORIGINALITY — the fusion is thinner than it pretends to be.
+
+1. The Cthulhu ingredient is two corner flourishes, and they are the same
+   flourish: one path copy-pasted and rotated 180 degrees. At 22% opacity
+   behind a dominant parchment panel, the page reads as 90% Victorian
+   ledger, 10% vaguely green margin. The only genuine fusion moment is the
+   tentacled-moth specimen plate in the header; it is small and never
+   echoed again.
+2. The insect-collecting ingredient is surface decoration, not structure.
+   The "pins" are gray dots floating above plain rectangles; the needle has
+   no point and does not visibly pierce anything, so it reads as an
+   unexplained vertical line. Nothing uses the conventions of a real
+   collection — no catalog numbering, no drawer furniture beyond a border.
+3. The two ingredients never touch below the header. Section rules,
+   share bars, and gridlines are stock dashboard furniture with a sepia
+   coat of paint (dashed gridlines, a plain fill bar).
+
+CLARITY — mostly sound, with avoidable friction.
+
+4. The visits scale ticks are 0 / 700 / 1400 / 2100 — thirds of the max
+   value, not round numbers. Nobody reasons in units of 700. Signups ticks
+   (0/60/120) are better but the top specimen (127) floats above the last
+   tick.
+5. The per-day rate row under the signups chart is labeled only by a 10px
+   "rate" placed at x=676 — outside the chart's own baseline (ends at 652)
+   and easy to miss entirely. The percentages risk being read as mystery
+   numbers.
+6. Terminology drifts: "signups ÷ visits" on the tile, "rate" in the
+   chart, "6.0% rate" on cards. One concept, three names.
+7. Minor hygiene: a redundant style="text-transform:uppercase" on already
+   uppercase SVG labels; value labels sit tight against pinheads.
+
+WHAT IS STRONG AND STAYS: separate charts per metric instead of a lying
+dual axis; a value label on every bar; shares that sum to 100%; per-source
+signup rates; the synthetic-data tag as a specimen label; the moth plate;
+restrained copy throughout.
+
+CHANGES APPLIED IN 0-5-2.html (all data and purpose unchanged):
+- Round scales: visits gridlines at 500/1000/1500/2000 (bars rescaled to a
+  2,200 max), signups at 40/80/120 (135 max); all bar geometry recomputed.
+- Rate row gets a left-margin "rate" label aligned with the axis labels,
+  inside the chart; the stray floating label is removed.
+- One term everywhere: "signup rate" on the summary tile, "rate" as its
+  short form in chart and cards.
+- Needles now pierce: each pin gains a pointed tip entering the bar, and
+  card pinheads gain a short needle shaft.
+- The two corner tentacles are now two different tentacles, with faint
+  bioluminescent specks added in the abyss for depth.
+- Section rules end in small tentacle curls — the fusion reaches the
+  chrome, not just the header.
+- Source cards get Victorian catalog marks (No. I–III, ordered by visits).
+- Hygiene: redundant style attribute removed; value labels nudged clear of
+  pinheads.

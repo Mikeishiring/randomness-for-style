@@ -1,0 +1,44 @@
+CRITIQUE OF 0-4-2.html
+
+Originality
+- The revision hides its boldest move. A tentacle watermark at 6-7% opacity is
+  deniable decoration; identity you have to hunt for is not identity.
+- The hotel is still typography. Roman numerals and hairline rules are
+  any-luxury shorthand; nothing on the page yet behaves like a hotel document.
+  The sources panel is a generic stats grid when it is begging to be the
+  register: ruled entries, columns stated once, figures set to the right.
+- Template thinking survives in the nine repeated micro-labels (Visits /
+  Signups / Conv... under every number). A ledger names its columns once.
+
+Clarity
+- "42%" floats unlabeled. Share of what — visits, signups, the week? The
+  reader infers it; the page never says it.
+- Conversion is the page's most consequential comparison (Social converts at
+  roughly half Direct's rate) and it is set as undifferentiated text. The
+  least decision-relevant quantity, visits, gets two encodings (bar and
+  number); the decisive one gets none.
+- DOM order divorces values from days: assistive tech hears seven numbers,
+  then seven more, then the day names, then percentages. Visually sound,
+  non-visually scrambled. The source grid is likewise divs with no table
+  semantics.
+
+Kept (strong decisions)
+Baseline and labeled gridlines in both lanes; always-visible lane captions;
+share-of-week source bars; single "Conversion" vocabulary; abyss-to-gold
+restraint; printed values everywhere; the synthetic tag; no filler copy.
+
+Changes applied in 0-4-3.html
+1. The sources panel is set as a register: one ruled header row (Visit share /
+   Visits / Signups / Conversion) replaces the nine repeated labels on
+   desktop, with hairline rules between entries; per-figure labels return on
+   mobile, where the header row is hidden. This also names what 42% means.
+2. The conversion column gains a quiet gold underline meter, scaled linearly
+   from zero with 6.0% at full length, so the Social gap is visible rather
+   than merely legible. Added only where the comparison matters; the by-day
+   conversion trend stays as text.
+3. Accessible structure: each by-day cell carries a label ("Mon: 1,420
+   visits"), decorative bars, gridlines and the redundant day row are hidden
+   from assistive tech, and the source grid takes table/row/cell roles.
+4. The watermark rises to ~10% opacity — present, still behind everything.
+5. Everything else is preserved unchanged, including the data, lane scales,
+   ornament and framing.

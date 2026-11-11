@@ -1,0 +1,51 @@
+CRITIQUE — run 4-2-3.html
+
+Originality
+1. The checkered flag is a one-off, not a system. Sunday gets flagged as the week's best day,
+   but Direct — the winning source on both volume and conversion — gets nothing. A motif used
+   once is decoration; used consistently it becomes vocabulary. The page invented a "winner"
+   marker and then forgot to reuse it.
+2. The top checker strip is the last surviving pure-decoration bookend. It can be argued as a
+   masthead banner, but it is still the only element that neither carries data nor divides
+   content.
+3. The wordmark lozenge is now visibly the plainest branded element next to the number plate —
+   a clipped rectangle doing less work than everything around it.
+4. Overall the fusion has become safe. Plate, board, finish-line axes and condiment encoding
+   are integrated, but every move is tasteful and conservative; nothing risks anything. That
+   is a fair trade against clarity, and further thematic invention from here (textures, icons,
+   mascots, track shapes) would almost certainly cost more comprehension than it buys
+   identity. Restraint is the correct direction for this pass.
+
+Clarity
+5. The weekly 5.0% reference is treated inconsistently: visible beside the day chart's CONV
+   row, but tooltip-only in the sources table. The same claim deserves the same anchor.
+6. The sources table is built from divs with no table semantics. A sighted reader gets a
+   clean grid; a screen-reader user gets a flat word soup with no row/column relationships.
+   For a report, that is a real clarity failure, invisible in a screenshot.
+7. The sources bars duplicate the adjacent numbers; for non-visual readers they are redundant
+   noise rather than reinforcement.
+8. The "Conv" column header inherits bold from the value styling while the other headers are
+   regular weight — a small inconsistency that implies emphasis where none is meant.
+9. Per-value "Week average 5.0%" tooltips would become redundant the moment the anchor is
+   visible in the column header.
+
+Refinement applied (one pass)
+A. The flag becomes a system: Direct gains the same small checkered flag as Sunday, marking
+   the week's winning source. One motif, one meaning — best performer — used exactly twice
+   (addresses 1).
+B. The weekly anchor becomes visible in the sources table: the Conv header gains a second
+   line "wk 5.0%", matching the day chart's treatment; the now-redundant per-value tooltips
+   are removed (addresses 5, 9).
+C. Table semantics added without visual change: ARIA table/row/columnheader/cell roles on the
+   sources grid, an accessible "Source" name on the empty first header, and the decorative
+   bar cells hidden from assistive technology since the numbers carry the data (addresses 6,
+   7).
+D. Header weight normalized so column headers share one style (addresses 8).
+E. Deliberately unchanged, per point 4: the top checker strip stays as the masthead banner
+   (the page's opening statement of the motif), and the wordmark stays plain — subordinate to
+   the number plate by design. No new thematic elements were added; both ingredients are
+   developed this pass by making their existing vocabulary consistent (the flag) and visible
+   (the anchor), not by adding more of it. Also preserved: layout and reading order, every
+   direct value label, finish-line axes, scale treatments, swatch-labeled dual bars, the lit
+   board, the plate, conversion highlights, zero helper copy, and all figures and
+   derivations.

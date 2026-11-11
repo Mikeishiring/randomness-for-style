@@ -14,6 +14,11 @@ const strongerSteps=(steps,prompt)=>steps.map((step,i)=>i?{...step,file:'stronge
 let stronger={experiment:{...experiment,runs:experiment.runs.map(run=>({...run,steps:strongerSteps(run.steps,strongerPrompt)})),refinementPrompt:strongerPrompt},baseline:{...baseline,steps:strongerSteps(baseline.steps,plainStrongerPrompt),protocol:{...baseline.protocol,refinementPrompt:plainStrongerPrompt}}};
 const completedStronger=JSON.parse(read('../strong-astra/recorded.json')).length===111;
 if(completedStronger){const {strongerCatalogs}=await import('../strong-astra/catalog.mjs');stronger=strongerCatalogs();}
+const plainNewerPrompt=refinementPrompt.replace('the same two ingredients','the visual identity');
+const newerSnapshot=(a,b,n)=>({...snapshot(a,b,n),file:'newer-'+(a===null?'plain':`${a}-${b}`)+`-${n}.html`,html:`<!doctype html><html><body>Newer ${a},${b},${n}</body></html>`});
+let newer={experiment:{...experiment,runs:experiment.runs.map(run=>({...run,steps:Array.from({length:4},(_,i)=>newerSnapshot(run.a,run.b,i+1))})),plain:newerSnapshot(null,null,1),refinementPrompt},baseline:{steps:Array.from({length:4},(_,i)=>({...newerSnapshot(null,null,i+1),...(i?{prompt:plainNewerPrompt,fullPrompt:plainNewerPrompt}:{})})),protocol:{refinementPrompt:plainNewerPrompt}}};
+const completedNewer=existsSync(new URL('../simple-fable/protocol.json',import.meta.url));
+if(completedNewer){const {fableCatalogs}=await import('../simple-fable/catalog.mjs');newer=fableCatalogs();}
 let document;
 class Element{
  constructor(tag='div'){this.tagName=tag;this.children=[];this.dataset={};this.style={setProperty(k,v){this[k]=v}};this.attrs={};this.events={};this.className='';this.textContent='';this.contentWindow={};this.classList={toggle:(name,on)=>{this.className=on?name:''}};}
@@ -40,7 +45,7 @@ nodes.set('#plain-prompt-details>summary',new Element('summary'));
 const visibleFrames=node=>node.children.filter(child=>!child.hidden).flatMap(child=>[...(child.tagName==='iframe'?[child]:[]),...visibleFrames(child)]);
 document={documentElement:{dataset:{}},events:{},addEventListener(k,v){(this.events[k]||=[]).push(v)},activeElement:null,querySelector:s=>nodes.get(s),querySelectorAll:()=>[],createElement:tag=>new Element(tag)};
 const observers=[],copies=[],downloads=[],rollout={defer:false,complete:null};
-const context=vm.createContext({assert,console,reduced:false,document,window:{listeners:{},addEventListener(k,v){(this.listeners[k]||=[]).push(v)}},history:{replaceState(){}},navigator:{clipboard:{async writeText(text){copies.push(text)}}},URLSearchParams,location:{search:'?stage=4',pathname:'/index.html',href:'https://randomness-for-style.vercel.app/?pair=0-2&stage=2&prompt=stronger'},crypto:webcrypto,EXPERIMENT:experiment,BASELINE:baseline,STRONGER_EXPERIMENT:stronger.experiment,STRONGER_BASELINE:stronger.baseline,INGREDIENTS_A:ingredientsA,INGREDIENTS_B:ingredientsB,IntersectionObserver:function(){this.observe=()=>{}},ResizeObserver:function(callback){this.callback=callback;this.observed=[];this.observe=e=>this.observed.push(e);this.disconnect=()=>{this.observed=[]};observers.push(this)},inviteDice(){},bindPromptPeek(){return {close(){}}},showPrompt(pre,text){pre.textContent=text},matchMedia(query){return {matches:query.includes('prefers-reduced-motion')&&context.reduced,addEventListener(){}}},initDice3D(){},syncDice3D(){},cancelDiceRoll(){rollout.complete=null;},tumbleDice(indices,values,complete,gesture){rollout.indices=indices;rollout.values=values;rollout.gesture=gesture;if(rollout.defer)rollout.complete=complete;else complete();},Blob,URL:{createObjectURL(blob){downloads.push(blob);return 'blob:html'},revokeObjectURL(){}},setTimeout(){},clearTimeout(){},nodes,visibleFrames,rollout});
+const context=vm.createContext({assert,console,reduced:false,document,window:{listeners:{},addEventListener(k,v){(this.listeners[k]||=[]).push(v)}},history:{replaceState(){}},navigator:{clipboard:{async writeText(text){copies.push(text)}}},URLSearchParams,location:{search:'?stage=4',pathname:'/index.html',href:'https://randomness-for-style.vercel.app/?pair=0-2&stage=2&prompt=stronger'},crypto:webcrypto,EXPERIMENT:experiment,BASELINE:baseline,STRONGER_EXPERIMENT:stronger.experiment,STRONGER_BASELINE:stronger.baseline,NEWER_EXPERIMENT:newer.experiment,NEWER_BASELINE:newer.baseline,INGREDIENTS_A:ingredientsA,INGREDIENTS_B:ingredientsB,IntersectionObserver:function(){this.observe=()=>{}},ResizeObserver:function(callback){this.callback=callback;this.observed=[];this.observe=e=>this.observed.push(e);this.disconnect=()=>{this.observed=[]};observers.push(this)},inviteDice(){},bindPromptPeek(){return {close(){}}},showPrompt(pre,text){pre.textContent=text},matchMedia(query){return {matches:query.includes('prefers-reduced-motion')&&context.reduced,addEventListener(){}}},initDice3D(){},syncDice3D(){},cancelDiceRoll(){rollout.complete=null;},tumbleDice(indices,values,complete,gesture){rollout.indices=indices;rollout.values=values;rollout.gesture=gesture;if(rollout.defer)rollout.complete=complete;else complete();},Blob,URL:{createObjectURL(blob){downloads.push(blob);return 'blob:html'},revokeObjectURL(){}},setTimeout(){},clearTimeout(){},nodes,visibleFrames,rollout});
 context.settleDieGrab=()=>{};
 vm.runInContext(read('report-handoff.js')+'\n'+read('play.js'),context);
 vm.runInContext(`
@@ -106,8 +111,9 @@ for(let i=0;i<3;i++)nodes.get('#plain-attempt-prev').click();assert.equal(nodes.
 nodes.get('#add-ingredients').click();assert.equal(nodes.get('#dice-lab').hidden,false);assert.equal(nodes.get('#plain-lab').hidden,true);assert.equal(nodes.get('#dice-deck').hidden,false);assert.equal(nodes.get('#stage-bar').hidden,false);assert.equal(nodes.get('#atlas').hidden,false);assert.equal(document.activeElement,nodes.get('#pair-title'));
 for(const observer of observers)observer.callback(observer.observed.map(target=>({target,contentRect:{width:140}})));
 vm.runInContext(`
-for(const track of ['stronger','original']){
+for(const track of ['stronger','original','newer']){
  changeMethod(track);assert.equal(method,track);comparing=false;
+ assert.equal(nodes.get('#model-toggle').attrs['aria-pressed'],String(track==='newer'));
  for(const run of currentExperiment().runs){
   selectPair(run);
   for(let pass=1;pass<=4;pass++){
@@ -116,15 +122,26 @@ for(const track of ['stronger','original']){
    assert.equal(nodes.get('#method-note').hidden,pass!==1);
    comparing=true;comparison='other';renderResult();
    const sections=nodes.get('#report-view').children.filter(section=>!section.hidden).sort((left,right)=>Number(left.style.order)-Number(right.style.order));
-   assert.equal(sections.length,pass===1?1:2);
-   if(pass===1){assert.equal(sections[0].querySelector('h3').textContent,'Shared one-shot');}
-   else{assert.equal(sections[0].querySelector('iframe').srcdoc,EXPERIMENT.runs.find(old=>old.id===run.id).steps[pass-1].html);assert.equal(sections[1].querySelector('iframe').srcdoc,STRONGER_EXPERIMENT.runs.find(newer=>newer.id===run.id).steps[pass-1].html);}
+   if(track==='newer'){
+    assert.equal(sections.length,2);
+    assert.equal(sections[0].querySelector('h3').textContent,'Earlier model');assert.equal(sections[1].querySelector('h3').textContent,'Newer model');
+    assert.equal(sections[0].querySelector('iframe').srcdoc,EXPERIMENT.runs.find(old=>old.id===run.id).steps[pass-1].html);assert.equal(sections[1].querySelector('iframe').srcdoc,NEWER_EXPERIMENT.runs.find(item=>item.id===run.id).steps[pass-1].html);
+   }else{
+    assert.equal(sections.length,pass===1?1:2);
+    if(pass===1){assert.equal(sections[0].querySelector('h3').textContent,'Shared one-shot');}
+    else{assert.equal(sections[0].querySelector('iframe').srcdoc,EXPERIMENT.runs.find(old=>old.id===run.id).steps[pass-1].html);assert.equal(sections[1].querySelector('iframe').srcdoc,STRONGER_EXPERIMENT.runs.find(newer=>newer.id===run.id).steps[pass-1].html);}
+   }
    comparison='plain';renderResult();assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===currentBaseline().steps[pass-1].html));comparing=false;
   }
  }
  for(let pass=1;pass<=4;pass++){plainStage=pass;renderPlain();assert.equal(visibleFrames(nodes.get('#plain-report'))[0].srcdoc,currentBaseline().steps[pass-1].html);}
  stage=3;render();const pair=selected.id;changeMethod(track==='original'?'stronger':'original');assert.equal(stage,3);assert.equal(selected.id,pair);roll(0);assert.equal(stage,3);assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[2].html);
 }
+// The footer toggle flips to the newer model and back to the last prompt track.
+changeMethod('original');nodes.get('#model-toggle').click();assert.equal(method,'newer');assert.equal(nodes.get('#model-toggle').attrs['aria-pressed'],'true');
+assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,NEWER_EXPERIMENT.runs.find(run=>run.id===selected.id).steps[stage-1].html);
+nodes.get('#model-toggle').click();assert.equal(method,'original');assert.equal(nodes.get('#model-toggle').attrs['aria-pressed'],'false');
+nodes.get('#method-newer').click();assert.equal(method,'newer');assert.equal(nodes.get('#method-newer').attrs['aria-pressed'],'true');
 changeMethod('stronger');comparing=false;stage=2;render();
 // The main action is reader-paced, and every state can be revisited.
 reduced=true;stage=2;roll(0);assert.equal(stage,2);reduced=false;
@@ -170,8 +187,16 @@ assert.ok(!/id="roll"|id="view-dice"|lab-switch/.test(read('play.js')+read('play
 assert.ok(!/id="expand"|id="plain-expand"|id="expanded"|attempt-select|Full size/.test(read('play.html')+read('play.js')));
 await nodes.get('#copy-link').click();assert.equal(copies.at(-1),context.location.href);assert.equal(nodes.get('#share-status').textContent,'Copied');
 await nodes.get('#copy-refinement').click();assert.equal(copies.at(-1),plainStrongerPrompt);
+nodes.get('#plain-method').events.change({target:{value:'newer'}});
+for(let pass=1;pass<=4;pass++){
+ vm.runInContext('plainStage='+pass+';renderPlain();',context);
+ assert.equal(visibleFrames(nodes.get('#plain-report'))[0].srcdoc,newer.baseline.steps[pass-1].html);
+ await nodes.get('#plain-copy').click();assert.equal(copies.at(-1),newer.baseline.steps[pass-1].fullPrompt);
+}
+await nodes.get('#copy-refinement').click();assert.equal(copies.at(-1),newer.baseline.protocol.refinementPrompt);
+nodes.get('#plain-method').events.change({target:{value:'stronger'}});
 assert.ok(!/Astra|Codex|Download HTML|Download experiment|Generation setup|generation-wrapper/.test(read('play.html')));
-console.log('PASS: both prompt trajectories and baselines, independent dice, all 288 ingredient stage views, exact prompts and share links, shared one-shots, stable comparison order and stage retention. '+(completedStronger?'All saved stronger outputs checked.':'Stronger fixtures used while generation is pending.'));
+console.log('PASS: all three recorded tracks and baselines, independent dice, all 432 ingredient stage views, exact prompts and share links, shared prompt-track one-shots, the newer model beside the earlier one, stable comparison order and stage retention. '+(completedStronger?'All saved stronger outputs checked.':'Stronger fixtures used while generation is pending.')+' '+(completedNewer?'All saved newer-model outputs checked.':'Newer-model fixtures used while generation is pending.'));
 
 // The shareable home entry begins with the real, unmodified plain one-shot.
 const homeNodes=new Map([...read('play.html').matchAll(/\bid="([^"]+)"/g)].map(m=>['#'+m[1],new Element()]));

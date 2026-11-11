@@ -1,0 +1,62 @@
+Critique of runs/0-2-3.html (third harsh pass on originality and clarity)
+
+ORIGINALITY
+
+1. The corner tentacle graphic has now survived two critiques as admitted
+   garnish. That is no longer restraint; it is avoidance. A pasted corner
+   sticker at opacity .32 is the weakest element on the page: it belongs to
+   no edge of the composition, overlaps nothing, means nothing. Meanwhile the
+   page's own best idea - things reaching up from below the waterline - is
+   begging to become the page frame itself. The chart already floats its data
+   above a deep; the page does not.
+
+2. The pill meters remain admin-template, for the third version running. The
+   defense (clarity over novelty at the data surface) is accepted once more,
+   and for the same reason the deep zone stays free of decorative menace:
+   silhouettes behind bars would be the first step toward unreadable. The
+   identity's remaining development must happen outside the data fields.
+
+3. The wave, suckers, menu board, dot leaders and checker all hold up. The
+   fusion is no longer garnish in the charts; it is garnish only in the
+   ambient art - which is exactly what this pass fixes.
+
+CLARITY
+
+4. The worst remaining defect is invisible to sighted readers: the daily
+   chart exposes twenty-one bare numbers (seven visits, seven counts, seven
+   rates) in three separate grids, with the day names in a fourth. A screen
+   reader hears "1,420 1,600 1,780 ... Mon Tue ... 57 4.0% 72 4.5% ..." with
+   no association between day and value. The visual design communicates
+   structure that the markup withholds.
+
+5. The per-day rates are set at 9.5px - the smallest text on the page, below
+   a comfortable floor even at strong contrast, and they carry the week's
+   most interesting fact.
+
+6. Everything else re-checked and standing: one hue per meaning (mustard
+   visits, ketchup signup counts, mint rates), plain-word labels, in-place
+   zone scales, value-labeled zero-baseline bars, visible peak-day emphasis,
+   the thin/thick meter distinction. No further clarity defects found that a
+   change would not worsen.
+
+CHANGES APPLIED IN 0-2-4.html
+
+- The corner sticker is gone. In its place, a fixed horizon strip spans the
+  bottom of the viewport: five tentacle silhouettes of varied height, curl
+  and weight rising from below the page, dim kelp on abyss, behind all
+  content. The page now does what its own chart does - the report floats
+  above the deep - and the identity frames the composition instead of
+  decorating one corner. Addresses 1 while respecting 2: no ink enters any
+  data field.
+- The visits grid and the deep grid each become a labeled image for
+  assistive tech (role="img" with the full day-by-day figures in the label:
+  "Mon 1,420 ... Sun 2,100" and "Mon 57, 4.0% ... Sun 127, 6.0%"), with
+  their painted children hidden from the tree; the now-redundant day-name
+  row is hidden too. Non-visual readers get the same associations sighted
+  readers get. Fixes 4.
+- Per-day rates raised from 9.5px to 10px. Fixes 5.
+
+DELIBERATELY KEPT
+
+- Pill meters, clean deep zone, all figures, scales, bar geometry, layout,
+  copy and reading order. Purpose and data unchanged.

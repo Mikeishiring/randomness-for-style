@@ -1,0 +1,50 @@
+CRITIQUE — third pass, on "Site Weather, Week 01" (2-0-3.html)
+
+ORIGINALITY
+1. The design has stopped inventing and started tolerating inconsistencies in its own
+   system — and an identity is only as original as the rules it keeps. The worst offender:
+   the wordmark wears the full-sun glyph as decoration, while everywhere else that same
+   glyph MEANS "conversion ≥ 5.25%". The logo permanently asserts "clear" regardless of the
+   data. A semantic icon system cannot afford one ornamental exception.
+2. The hierarchy rule won in pass two — conversion is the condition headline — was not
+   carried into the Sources card: there, conversion is the one dimmed column. The strip
+   says conversion is the story; the table whispers it. Same metric, opposite emphasis.
+3. Beyond that, the two ingredients are as developed as this composition allows: weather is
+   now load-bearing (glyphs, scale, H/L day tags), tech is the instrument screen and mono
+   telemetry. Further novelty would mean recomposing the strip, which the brief's clarity
+   constraint rules out.
+
+CLARITY
+4. Geometry defect: the signups baseline runs x=36 to x=926 while Sunday's bar ends at
+   x=932 — the axis stops six pixels inside the last bar. Sloppy, and exactly the kind of
+   detail an "instrument" aesthetic promises not to miss.
+5. Accessibility gap: the entire strip is one aria-label summarizing the trend. A screen
+   reader user gets "rises from 4.0% to 6.0%" and no way to read Thursday. The figures
+   exist only as SVG text, which assistive tech cannot navigate as data.
+6. The three header subs each end "SUN · … MON" — a triple stutter. True (all three
+   metrics peak Sunday and bottom Monday), but it reads as copy-paste.
+7. Band labels (CONV / VISITS / SIGNUPS) still scroll away with the strip on phones.
+
+REFINEMENTS APPLIED (one pass)
+- Wordmark icon removed: "SITE WEATHER" stands as type alone, and every sun on the page now
+  carries meaning. (Fixes 1.)
+- Sources conversion column raised from dim to ink, matching the strip's conversion
+  headline; the condition icon already differentiates the column. (Fixes 2.)
+- Signups baseline extended to x=944, symmetric overhang past the first and last bars.
+  (Fixes 4.)
+- The strip SVG is now aria-hidden and accompanied by a visually hidden data table
+  (day, visits, signups, conversion for all seven days), so assistive tech gets the actual
+  figures instead of a précis. No visual change. (Fixes 5.)
+
+REJECTED (considered, judged net-negative)
+- De-duplicating the "SUN · MON" day tags (6): dropping them from two stats loses
+  traceability and breaks the parallel H/L structure; the repetition is a fact of the data,
+  not filler.
+- Pinning band labels outside the scroll area (7): they would desynchronize from the SVG's
+  vertical scale and misalign at intermediate widths.
+
+PRESERVED
+- Everything else is unchanged: palette, instrument screen, condition scale key between the
+  cards, direct labels, glow-not-area emphasis, bar-behind-row table, SYNTHETIC chip, and
+  all supplied figures and derived rates. The remaining critique points are accepted costs,
+  stated above, not oversights.

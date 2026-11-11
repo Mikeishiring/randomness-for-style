@@ -1,0 +1,56 @@
+CRITIQUE — "Site Weather, Week 01" (2-0-1.html)
+
+ORIGINALITY
+1. The forecast strip is an iOS-weather pastiche, not an invented identity. Day label /
+   glyph / big number / temperature curve is lifted wholesale; the page borrows a familiar
+   surface instead of synthesizing one. The single genuinely original move — weather
+   conditions encode CONVERSION, not traffic — is buried: it lives in a 10px legend at the
+   bottom of the card while the layout implies the stock reading (icon summarizes the big
+   number beneath it).
+2. The "Tech" ingredient is generic dark-dashboard dressing: monospace digits,
+   letter-spaced caps, a dot grid, a dashed chip. A hundred dashboards do this. Weather and
+   Tech coexist on the page; they never combine into one idea.
+3. The identity evaporates in the Sources card: a plain bar table with three small icons
+   attached to the wrong element (the source name, not the conversion figure they encode).
+4. The sun glyph is used four ways (wordmark, header stat, legend, source row) with no
+   hierarchy of meaning.
+
+CLARITY
+5. Inverted hierarchy: the icons are driven by conversion, yet per-day conversion is the
+   smallest, dimmest number on the page (10.5px, bottom row), two bands away from the icons
+   it explains. A reader must find the legend to avoid misreading the glyphs as "visits
+   weather".
+6. The legend is a sentence plus four decimal-noise thresholds ("4.25–4.75%") — honest, but
+   written as prose instead of the scale it actually is.
+7. The amber area fill under the visits curve hangs from a 1,400 baseline. The line and its
+   point labels are honest; the fill implies magnitude from a false zero. Decoration should
+   not borrow the shape of evidence.
+8. The strip scrolls horizontally on phones with no affordance; content silently clips.
+9. The sources table's background bars encode visits, but nothing says which column the bar
+   belongs to.
+10. Markup nit: thead cells override fonts with inline style="font:inherit".
+
+REFINEMENTS APPLIED (one pass)
+- Conversion promoted into the condition row: each day now reads DAY / glyph / conv% as one
+  unit, with micro band labels CONV / VISITS / SIGNUPS down the left edge. The metaphor's
+  rule is visible where it operates, and the strip reads as three labeled instrument bands.
+- Legend rebuilt as an instrument: a slate-to-amber conversion scale (3.0–6.5%) with the
+  four condition glyphs sitting over their bands and threshold ticks at 4.25 / 4.75 / 5.25.
+  It reads as a scale, not a sentence.
+- Area fill replaced by a narrow glow stroke along the visits line — emphasis without a
+  false-baseline area.
+- The strip now sits on an inset "instrument screen" panel with edge scroll shadows: the
+  Tech half gains a purpose (telemetry screen) and narrow viewports get a visible cue that
+  the strip scrolls.
+- Sources: the condition icon moved next to the conversion value it encodes; an amber
+  swatch in the VISITS column header keys the row bars; the inline-style hack replaced by a
+  class.
+- Header H/L readings now name their day (H 2,100 SUN · L 1,420 MON) — weather-authentic
+  and traceable to the strip.
+
+PRESERVED (deliberately)
+- Night-sky palette, mono numerals, direct point labels, bar-behind-row sources table, H/L
+  framing, the SYNTHETIC chip, the static no-JS page, and every supplied figure and derived
+  rate. These carried the first version; they are developed here, not replaced.
+- Horizontal scroll on phones is kept (now signaled) rather than re-stacking the strip
+  vertically: a full mobile re-layout risks more clarity than it buys in a single pass.

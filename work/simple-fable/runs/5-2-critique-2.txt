@@ -1,0 +1,49 @@
+Critique of 5-2-2.html (harsh, originality and clarity), then changes applied in 5-2-3.html.
+
+ORIGINALITY
+
+1. The identity is still trim-deep. The awning is a 4px sticker on the same stock glass
+   cards; strip the palette and this is any dashboard. No component's *form* is shaped by
+   either ingredient — the chart would survive a rebrand untouched.
+2. The plankton pulse animates every speckle in unison. Real bioluminescence twinkles
+   asynchronously; a whole-sky fade in lockstep reads as a screen glitch, not living light.
+   This is the weakest rendering of the sea ingredient on the page.
+3. The header is the largest element and carries the least identity per pixel. It floats
+   unanchored while everything below it now speaks a menu-board grammar (awning strips,
+   dotted leaders); the page's two visual languages split at the fold line.
+4. A strength the previous critique never named, and which must be protected from any
+   decorative recoloring: the palette is semantic, not cosmetic. Sea-cyan measures traffic,
+   food-mustard measures signups (the orders), ketchup-coral the rate. That mapping is the
+   actual fusion of the two ingredients and is worth more than any added ornament.
+5. There is still no depth progression down the page — every panel has identical luminance,
+   so the descent idea goes unused. Considered and deliberately not changed: a luminance
+   ramp across data surfaces risks reading as inconsistency and would make the lowest table
+   the hardest to read. Rejected in favor of even legibility.
+
+CLARITY
+
+6. Still strong and untouched: aligned daily small multiples on per-band scales, every
+   supplied figure labeled exactly, share bars that visibly sum to the week's total under a
+   named "Share" header, conversion defined once as signups / visits, one meaning per color.
+7. The "signups / visits" definition is set in 10px italic on a glowing background — the
+   one piece of genuinely load-bearing fine print is the least legible text on the page.
+8. The chart still hides behind an unsignalled horizontal scroll at phone widths. Accepted
+   again: an edge-fade affordance would sit over data columns, and dropping min-width would
+   shrink labels below legibility. The least-bad option stands.
+9. Share bars carry no numeric share value. Derivable from the adjacent counts; a fifth
+   number per row would crowd the phone layout. Left as is.
+
+CHANGES APPLIED (small, each defensible; everything else preserved)
+
+- The speckle field is split into two fixed layers on offset rhythms (7s and 9.5s with a
+  -4s phase), sea-colored lights on one, sign-colored lights on the other, so the
+  background twinkles asynchronously instead of breathing in unison. Both layers are
+  static under prefers-reduced-motion. Fixes 2 and deepens 4: sea light and sign light
+  live on their own clocks.
+- The header is anchored with the same dotted mustard rule that separates the menu rows,
+  extending the menu-board grammar to the top surface. Fixes 3 with one hairline and no
+  added words.
+- The conversion definition is de-italicized for crispness at 10px. Fixes 7.
+- Not changed, deliberately: the semantic color mapping (4), the chart geometry and all
+  figures, the split-color headline, the depth-ramp idea (5), the mobile scroll trade-off
+  (8), and the share-bar labeling trade-off (9).

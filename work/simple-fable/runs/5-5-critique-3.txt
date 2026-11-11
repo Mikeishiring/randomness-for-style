@@ -1,0 +1,42 @@
+CRITIQUE OF 5-5-3.html
+
+ORIGINALITY — harsh
+- The identity has stopped being paint and now lives in the encodings (lit bar
+  caps, radiance rings, compartment dividers, the conversion-as-light-position
+  bars in Plate II). The harshest true criticism left is that any further
+  thematic development — anglerfish lures on the Sunday peak, light rays, depth
+  parallax, descent markers — would be vandalism: more theatre, zero information,
+  and a clarity tax. Convergence reached on structure.
+- The header is the most "modern-generic" surface remaining: eyebrow + big
+  numeral reads contemporary-minimal rather than Victorian label. Left alone
+  deliberately — the identity is established elsewhere, the header is clean, and
+  restyling it risks regression for taste points.
+- Craft sloppiness, pass two running: dead custom properties (--glow, --glow-dim,
+  --amber-line) shipped unused. Harmless to render, embarrassing to keep.
+- The ambient light contradicts its own legend in one place: the Signups total on
+  the catalog label glows cyan like its neighbors, though everywhere else amber
+  means signups. The system should hold even in the halos.
+
+CLARITY — harsh
+- No color-scheme is declared, so the Plate I horizontal-scroll scrollbar (and
+  any UA chrome) renders light-on-dark on Windows and some mobile browsers — a
+  bright slab across the abyss. A real, visible defect on exactly the device
+  class the inner scroll exists for.
+- Social's amber bar at 1.6% of track is a sliver. Accepted: it is the honest
+  size, the glowing end-marker keeps it findable, and the precise 86 sits two
+  columns away. Inflating it would reintroduce the pass-2 lie.
+- The empty bar-column header in Plate II announces as blank to screen readers.
+  Accepted: the bars are aria-hidden duplicates of adjacent printed values.
+- No further defects found: values all printed, scales zero-based and shared
+  where comparison is invited, conversion defined once, columns tied vertically,
+  table semantics real, copy minimal, synthetic caveat visible.
+
+REFINEMENT APPLIED (one finishing pass, in 5-5-4.html)
+1. Declared dark color-scheme (meta + :root), so scrollbars and UA chrome render
+   dark and the inner chart scroll no longer breaks the deep-sea ground.
+2. Removed the three unused custom properties.
+3. The Signups total now glows amber, matching the legend the rest of the page
+   keeps.
+Nothing else changed: markup order, all values, scales, geometry and copy are
+identical to 5-5-3.html. A further pass would need to invent problems; this one
+is finish work, and the design should now be left alone.

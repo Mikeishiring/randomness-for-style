@@ -1,0 +1,54 @@
+CRITIQUE OF 3-0-2.html
+
+ORIGINALITY
+- The first revision bolted tech on instead of fusing it. A barcode that is
+  aria-hidden and encodes nothing, an "EOF" tag, a second monospace face --
+  these are badges pinned to an IRS costume, not a synthesis. Remove them
+  and the page loses nothing, which is the definition of a prop.
+- The typewriter-vs-terminal type duality (Courier vs Consolas) is so close
+  that no reader perceives it. A private joke is not an identity.
+- The segmented dot-matrix bars were the one genuine fusion move on the
+  page. Everything else tech-flavored is sticker-deep.
+- The background grid remains subliminal: too faint to signify, still
+  rendering on every paint.
+
+CLARITY
+- The legend says "week high / week low", but in Part II the same markers
+  flag the best and worst SOURCE. One legend, and it misdescribes half of
+  its uses.
+- Three textures stack on every ledger row: dotted leaders, bar tracks,
+  segment stripes. The leaders run underneath the bars and collide with
+  them; row tracking is doing its job twice, badly.
+- The barcode caption repeats 12,480 and 624 -- the third appearance of
+  both figures above the fold -- while crowding the mobile masthead into a
+  title + barcode + stamp pile.
+- The peak-row tint (#eef1e4) is a near-invisible green on cream, and the
+  bullet marker is CSS-generated content that assistive tech never hears.
+- Part II at 375px sits within a few pixels of horizontal overflow; wide
+  header letter-spacing is spent on decoration at the exact breakpoint
+  where it risks breaking the no-scroll rule.
+
+KEPT (strong decisions)
+- Form frame and masthead, numbered summary boxes, black part bands,
+  merged labeled bar columns with printed values, segmented bar fills,
+  glyph markers so color is not the only signal, the synthetic-data stamp,
+  totals alignment, scope attributes, all derived figures.
+
+CHANGES APPLIED
+1. The sheet itself now fuses the two ingredients: tractor-feed sprocket
+   strips down both edges and green-bar row striping make the page
+   continuous-form computer paper -- the native habitat of a 1980s
+   administrative ledger. Tech becomes the medium instead of a badge.
+2. Green-bar stripes replace the dotted leaders: one row-tracking device
+   instead of two competing textures, and the bars sit on clean rows.
+3. The decorative barcode is removed with its duplicate caption; the
+   masthead decongests, especially on mobile. The faint body grid is
+   dropped for a flat desk tone that lets the sheet read as a sheet.
+4. Legend corrected to "highest conv. / lowest conv.", true in both
+   tables; peak day keeps its own entry.
+5. Peak row re-tinted blue -- distinct from the green bars, visibly
+   highlighted, consistent with its marker -- and the row label now
+   carries a visually-hidden "(peak)" for assistive tech.
+6. Mobile: narrower sprocket strips, tighter header letter-spacing and
+   smaller bar minimums remove the overflow risk. Revision counter -> 3.
+Purpose, figures, tables, derived values and structure unchanged.

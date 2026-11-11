@@ -1,0 +1,55 @@
+CRITIQUE — second pass, on "Site Weather, Week 01" (2-0-2.html)
+
+ORIGINALITY
+1. The composition is still borrowed weather-app vernacular. The instrument screen and the
+   conversion scale helped, but the silhouette — day labels / glyph row / curve / bars — is
+   stock. The invention continues to live in the mapping (conditions = conversion), not in
+   the form. That is a real limit of this design, acknowledged rather than hidden.
+2. The inversion the first critique demanded is incomplete. v2 moved conversion up under
+   the glyphs, but left it the smallest headline in the column: 12.5px, against 14.5px
+   amber visits labels. The metaphor says conversion is the temperature; the typography
+   still says visits.
+3. The legend-as-instrument was the right move, then it was parked inside the forecast card
+   while the Sources card depends on it equally. The decoder for the whole system is
+   presented as one chart's footnote.
+4. The sun glyph still plays wordmark, weekly stat, scale mark and row marker. Tolerable,
+   but the wordmark trades on the metaphor without adding to it.
+
+CLARITY
+5. Hierarchy mismatch (point 2) is also a clarity fault: the organizing metric is the
+   quietest number in each column.
+6. Cross-card dependency: a reader who lands on Sources must discover the icon decoder
+   inside the previous card.
+7. The sources grid is a div-table with no table semantics; assistive tech gets a flat
+   list of twelve strings.
+8. The three band labels (CONV / VISITS / SIGNUPS) are pinned to the left of scrolling
+   content, so on phones they scroll away mid-strip. Known, still unfixed below — pinning
+   them outside the scroll area would desynchronize them from the SVG's vertical scale.
+
+REFINEMENTS APPLIED (one pass)
+- Conversion is now each day's headline reading: 16px ink-white under its glyph, so icon +
+  conversion form the condition unit, and visits and signups read as labeled telemetry
+  bands beneath. The typography now agrees with the metaphor.
+- The condition scale moved out of the forecast card into a slim key between the two
+  cards: one decoder, explicitly keying both instruments. This removes the cross-card
+  dependency without repeating the legend.
+- The sources grid now carries table / row / columnheader / cell roles — same rendering,
+  real structure for screen readers.
+
+REJECTED (considered, judged net-negative for comprehension)
+- Plotting the seven daily conversions as dots on the scale bar: unlabeled marks invite
+  "what are these?", and the duplicate values (4.5 twice, 5.0 twice) collapse into
+  invisible overlaps.
+- A second cyan signups bar in each source row: it would restate conversion, which the
+  number and icon already carry; pure noise.
+- A "peak day" glow behind Sunday's column: the header already names the highs (H … SUN);
+  an unlabeled highlight invites "why is Sunday boxed?".
+- Naming the four conditions (CLOUD / BREAKS / FAIR / CLEAR): vocabulary without
+  information; the thresholds on the scale already define the bands.
+
+PRESERVED (deliberately)
+- Night-sky + mono system, the instrument screen with scroll shadows, direct point labels,
+  the glow-not-area line emphasis, day-tagged H/L header stats, bar-behind-row sources,
+  the SYNTHETIC chip, and every figure and derived rate. The strip's composition is kept:
+  the remaining originality gains on the table would tax comprehension more than they pay,
+  and the brief forbids making the report harder to understand.

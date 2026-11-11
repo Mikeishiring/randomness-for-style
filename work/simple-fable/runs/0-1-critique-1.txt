@@ -1,0 +1,32 @@
+Critique of 0-1-1.html (originality, then clarity), followed by the changes applied in 0-1-2.html.
+
+ORIGINALITY — harsh
+
+1. The layout is a stock analytics template: three KPI cards, a bar-chart card, a sources card. Swap the palette and nothing Cthulhu or Disco survives in the bones. The only genuinely fused invention is the emblem (disco ball sprouting tentacles); the rest of the page never develops it.
+2. Disco is reduced to neon gradients and one ✦ glyph. No light, no mirror, no floor. The 2px "floor" line under the visits bars is the page's best structural idea — signups hang beneath it like reflections — but nothing tells the eye it is a floor, so it reads as an arbitrary divider and the mirror conceit is wasted.
+3. Cthulhu is wallpaper: uniform-width stroke squiggles at 0.16 opacity, pinned behind the footer where cards cover most of them. The sucker circles do not even sit on the tentacle curves — they float beside them. Generic spooky garnish, not identity.
+4. Typography is an anonymous system stack with letter-spacing. The gradient-filled h1 is the single most overused "make it disco" move; the era's actual signature — chromatic echo / misregistration lettering — is absent. Eldritch has no typographic presence at all.
+5. Sunday's bar switches to a gold–magenta gradient while every other bar is green. Recoloring one bar in a series is a cheap highlight that a braver design would achieve without breaking its own encoding.
+
+CLARITY — harsh
+
+6. Two unexplained highlight conventions: the ✦ beside Sunday's 2,100 and the gold 6.0% in Sources both mean "best", and neither is defined anywhere. A reader must guess.
+7. The Sunday recolor (point 5) is also a clarity bug: in a bar series, a differently colored bar conventionally means a different measure, not "peak".
+8. The page's real story — conversion climbing steadily from 4.0% Monday to 6.0% Sunday — is set in the smallest, dimmest type on the page. The design buries its best insight.
+9. The legend item "% conversion" is vague and visually unconnected to the percentage values it describes, which sit two rows away under the day labels.
+10. The "Synthetic data" badge is display:none on mobile. That is a material caveat silently removed from small screens — indefensible.
+11. The visits/signups mirrored charts share columns but not scales. Per-bar value labels rescue it, but the design leans on labels to fix what the composition leaves ambiguous.
+
+CHANGES APPLIED IN 0-1-2.html
+
+- Floor line becomes an actual dance floor: a 10px strip of repeating purple/cyan/magenta/gold tiles with hairline edges and glow. The mirror conceit now reads: visits dance on the floor, signups reflect beneath it. (Develops Disco; fixes point 2.)
+- Sunday's bar returns to the green series gradient; the peak is marked instead by a gold cap and gold glow, keeping the series encoding intact. (Fixes points 5 and 7.)
+- One defined highlight convention: the Daily legend gains "✦ best"; Sunday keeps its star, and Direct's best conversion in Sources now carries the same gold star. (Fixes point 6.)
+- Daily conversion values promoted: larger (11px), brighter, with Sunday's 6.0% in gold under the defined convention; legend item renamed "conversion %". (Addresses points 8 and 9.)
+- h1 drops the gradient fill for solid ink with magenta/cyan chromatic-echo shadows — the authentic disco typographic move, and more legible than gradient text. (Addresses point 4.)
+- Background tentacles redrawn: two-weight strokes fake a taper from thick base to curling tip, suckers computed onto the actual bezier curves, presence raised slightly so they read as drawn creatures instead of noise. (Addresses point 3.)
+- Synthetic-data badge now shrinks on mobile instead of disappearing. (Fixes point 10.)
+
+PRESERVED (strong decisions)
+
+- The emblem, the mirrored visits/signups composition with per-bar value labels, the KPI row, the sources grid with dual bars and conversion column, all figures and their derivations (12,480 / 624 / 5.0%), and the overall restraint: identity carried by color, motif and one emblem rather than by copy. Point 11 is accepted as mitigated: with every bar labeled, the dual-scale mirror stays honest, and the new floor strip makes the two-chart structure more legible rather than less.

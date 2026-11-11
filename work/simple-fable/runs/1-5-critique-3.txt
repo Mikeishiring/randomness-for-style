@@ -1,0 +1,62 @@
+CRITIQUE OF 1-5-3.html
+
+ORIGINALITY — harsh reading
+
+1. The identity has stopped developing and started consolidating. That is
+   partly right — a weekly report must be boring to re-read — but the honest
+   account is that three zones remain generically styled and no safe
+   development was found for them, again: the title block and KPI row are
+   plain letterspaced Georgia; the daily chart marks are neutral lollipops;
+   the amphora ghosts hover at the floor of legibility behind the larger
+   insects. Each was weighed in earlier passes against concrete alternatives
+   (ornamented KPI labels, figurative marks, per-source vessels) and each
+   alternative loses more clarity than it gains identity. Those rejections
+   still hold. The design is now conservative by argument rather than by
+   neglect, but a harsher judge would say the experiment's ceiling on
+   originality was set in pass one and never raised: the fusion lives in the
+   source plates and the frame, and nowhere else.
+
+2. One frame defect is real: the meander opens the page in accent and recurs
+   at the section rule, but the page just stops after the cards. A Victorian
+   plate closes its frame. The cabinet has a lid and no floor.
+
+CLARITY — harsh reading
+
+3. Measured, not eyeballed: the muted sepia #7a6a52 reaches only 4.34:1
+   against the paper background — below WCAG AA (4.5:1) for the small tag,
+   note, and section heading that sit directly on paper, and a bare 4.61:1 on
+   the cards. Small-cap labels at 10–11px are precisely where contrast
+   shortfalls hurt.
+
+4. Sunday's signups value "127" sits 3px above the 140 gridline, which clips
+   the bottom of its bounding box. Cosmetic, but it is the biggest number in
+   the band and the one most likely to be read.
+
+5. Otherwise the chart now reads cleanly: day labels and conversion sit
+   between the bands, every series is within ~60px of its day label, scales
+   are separate and honest, every value is labeled, the bar-scale note is
+   consolidated. No structural clarity defect found.
+
+CHANGES APPLIED
+
+- Light-theme --muted darkened from #7a6a52 to #6c5c45: 5.35:1 on paper,
+  5.68:1 on cards — AA with margin, and the deeper sepia reads more like ink.
+  Dark theme already passed (6.1:1) and is untouched. (Fixes 3.)
+- Sunday signups label nudged from y279 to y276, clearing the gridline.
+  (Fixes 4.)
+- A closing muted meander band added after the sources, bookending the accent
+  band at the head: the frame now closes. (Fixes 2; develops the Greek
+  ingredient as a frame rather than a header decoration.)
+
+PRESERVED DELIBERATELY
+
+- Everything else, including the rejections re-argued in 1: neutral data
+  marks, plain KPI zone, uniform amphora mounts, binomials, owl eyespots,
+  two separate scales, synthetic-data tag.
+- All figures unchanged and drawn only from the supplied data.
+
+CONVERGENCE NOTE
+
+The defects found this pass are finish-level and measured, not structural.
+A further pass under the same prompt would be expected to find no justified
+change.

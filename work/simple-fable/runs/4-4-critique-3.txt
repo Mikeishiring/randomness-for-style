@@ -1,0 +1,51 @@
+Critique of 4-4-3.html
+
+ORIGINALITY — coherent now, and a little complacent. The timing-sheet-as-folio
+grammar finally reads on the surface (fastest-lap gold, flag defined by reuse,
+finish line closing the page), but the composition is static: three equal boxes
+stacked, two sections in the identical register, nothing expressing pace except
+bar length. Motorsport still contributes symbols more than structure. The KPI
+band is the most generic zone on the page — four striped tiles that could front
+any dashboard; it earns its place by working, not by belonging. The plaque's
+double border is near-invisible at its size. The Didot/condensed-italic pairing
+— the identity's best fused device — is used correctly but timidly.
+
+CLARITY — three findings, one of them real.
+1. Real: the bar fills end against a track that is only slightly darker than
+   they are dim; the reading edge — the one pixel that carries the value — is
+   the least defined part of the mark. On a timing sheet the mark's edge IS the
+   datum.
+2. Semantic: day and source names are plain data cells; they are row headers
+   and screen readers should announce them as such.
+3. Named, not fixed: bars are scaled per table, so Sunday's full-track 2,100
+   and Direct's full-track 5,240 are the same length one section apart. This
+   cross-section echo of the defect fixed in v3 is accepted deliberately:
+   days and week-totals are different units of analysis, each bar sits in a
+   visible full-length track that declares its own scale, and forcing a shared
+   scale would crush the daily resolution the owner reads most. The exact
+   figures sit beside every bar. A harsher fix would cost more clarity than it
+   buys.
+
+Also weighed and rejected: a share-of-week column for sources (derivable,
+adds a fourth number per row for little gain); totals rows with double rules
+(would duplicate the KPI band); any further emphasis on Sunday (tint + flag +
+gold figure is already the ceiling).
+
+STRONG DECISIONS PRESERVED: everything structural from v3 — the ledger
+grammar, color roles (green bar = visits, gold bar = signups, gold figure =
+best/peak), fastest-lap convention, flag tied to the Peak day KPI, finish-line
+close, plaque, livery stripes, palette, minimal copy, no JavaScript, system
+fonts.
+
+CHANGES MADE (surgical; no restructure is justified this round):
+- Reading edge: every bar fill gets a 2px ivory tip at its end, so the value
+  position snaps against the track in both bar colors. Serves legibility
+  first; the streamlined edge is the motorsport note, earned by function.
+- Track contrast nudged up one step so the 0-to-max range each bar lives in
+  is unambiguous — this is also what licenses the per-table scaling above.
+- Day and source names are now th scope="row" (announced as row headers);
+  visual styling unchanged.
+- Plaque inner border strengthened from soft gold to gold so the double ring
+  survives at rendered size.
+- Nothing else touched. Same purpose, same supplied figures, still fully
+  self-contained: no external requests, no scripts, no linked assets.

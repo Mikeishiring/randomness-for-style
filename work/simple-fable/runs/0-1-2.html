@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Week 01 — Site Performance</title>
+<style>
+  :root{
+    --bg:#070918;
+    --surface:rgba(20,24,52,.66);
+    --line:rgba(157,123,255,.22);
+    --ink:#ece8ff;
+    --dim:#9b94c4;
+    --green:#45f0b0;
+    --green-deep:#1d8f6c;
+    --purple:#9d7bff;
+    --magenta:#ff4fd8;
+    --magenta-deep:#a62d8a;
+    --cyan:#3fe3ff;
+    --gold:#ffd166;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font:16px/1.45 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1000px 520px at 15% -10%,rgba(255,79,216,.16),transparent 60%),
+      radial-gradient(900px 480px at 85% -8%,rgba(63,227,255,.13),transparent 60%),
+      radial-gradient(1300px 640px at 50% 118%,rgba(69,240,176,.12),transparent 65%),
+      var(--bg);
+    min-height:100vh;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:36px 20px 150px;position:relative;z-index:1}
+
+  header{display:flex;align-items:center;gap:16px;margin-bottom:26px}
+  .emblem{flex:none}
+  h1{
+    margin:0;font-size:clamp(22px,4.5vw,30px);font-weight:800;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--ink);
+    text-shadow:3px 0 0 rgba(255,79,216,.5),-3px 0 0 rgba(63,227,255,.5);
+  }
+  .sub{margin:3px 0 0;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
+  .badge{
+    margin-left:auto;font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:6px 12px;white-space:nowrap;
+  }
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;backdrop-filter:blur(4px);margin-bottom:14px}
+
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+  .kpis .card{margin:0}
+  .kpi .label{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+  .kpi .num{
+    font-size:clamp(24px,5.5vw,40px);font-weight:800;line-height:1.1;
+    font-variant-numeric:tabular-nums;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .num-visits{background-image:linear-gradient(95deg,var(--cyan),var(--green))}
+  .num-signups{background-image:linear-gradient(95deg,var(--magenta),var(--gold))}
+  .num-conv{background-image:linear-gradient(95deg,var(--magenta),var(--gold) 55%,var(--cyan))}
+
+  .sechead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  h2{margin:0;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim);font-weight:600}
+  h2::before{content:"✦ ";color:var(--gold)}
+  .legend{display:flex;gap:14px;font-size:11px;color:var(--dim);letter-spacing:.08em;align-items:center}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .dot.g{background:var(--green);box-shadow:0 0 6px rgba(69,240,176,.7)}
+  .dot.m{background:var(--magenta);box-shadow:0 0 6px rgba(255,79,216,.7)}
+
+  .grid7{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+  .vvals div,.svals div{font-size:12px;text-align:center;font-variant-numeric:tabular-nums}
+  .vvals div{color:var(--ink);margin-bottom:6px}
+  .svals div{color:#ff9fe8;margin-top:5px}
+  .vtracks>div{height:150px;display:flex;justify-content:center;align-items:flex-end}
+  .stracks>div{height:46px;display:flex;justify-content:center;align-items:flex-start}
+  .vbar{
+    width:68%;height:var(--h);border-radius:7px 7px 0 0;
+    background:linear-gradient(180deg,var(--green),var(--green-deep));
+    box-shadow:0 0 18px rgba(69,240,176,.28);
+  }
+  .vbar.peak{
+    border-top:3px solid var(--gold);
+    box-shadow:0 0 24px rgba(255,209,102,.45);
+  }
+  .sbar{
+    width:68%;height:var(--h);border-radius:0 0 6px 6px;
+    background:linear-gradient(180deg,var(--magenta),var(--magenta-deep));
+    box-shadow:0 0 14px rgba(255,79,216,.22);
+  }
+  .floor{
+    height:10px;border-radius:2px;
+    background:repeating-linear-gradient(90deg,
+      rgba(157,123,255,.38) 0 16px,
+      rgba(63,227,255,.30) 16px 32px,
+      rgba(255,79,216,.34) 32px 48px,
+      rgba(255,209,102,.26) 48px 64px);
+    border-top:1px solid rgba(236,232,255,.35);
+    border-bottom:1px solid rgba(157,123,255,.3);
+    box-shadow:0 0 14px rgba(157,123,255,.35);
+  }
+  .dlabels>div{text-align:center;margin-top:10px}
+  .dlabels .d{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+  .dlabels .c{font-size:11px;color:#cdc3f2;margin-top:2px;font-variant-numeric:tabular-nums}
+  .dlabels .c.best{color:var(--gold)}
+  .star{color:var(--gold)}
+
+  .srcgrid{display:grid;grid-template-columns:minmax(64px,auto) 1fr 1fr 60px;gap:14px 16px;align-items:center}
+  .shead{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+  .sname{font-size:14px}
+  .cell{display:flex;align-items:center;gap:10px}
+  .track{flex:1;height:10px;background:rgba(157,123,255,.12);border-radius:5px;overflow:hidden}
+  .fill{height:100%;width:var(--w);border-radius:5px}
+  .fill.g{background:linear-gradient(90deg,var(--green-deep),var(--green));box-shadow:0 0 10px rgba(69,240,176,.35)}
+  .fill.m{background:linear-gradient(90deg,var(--magenta-deep),var(--magenta));box-shadow:0 0 10px rgba(255,79,216,.3)}
+  .cell b{font-weight:600;font-size:13px;min-width:44px;text-align:right;font-variant-numeric:tabular-nums}
+  .conv{text-align:right;font-size:13px;font-variant-numeric:tabular-nums}
+  .conv.best{color:var(--gold);text-shadow:0 0 12px rgba(255,209,102,.5)}
+  .conv.low{color:var(--dim)}
+
+  .tentacles{position:fixed;bottom:0;left:0;width:100%;height:210px;pointer-events:none;z-index:0}
+
+  @media (max-width:600px){
+    .wrap{padding:24px 14px 120px}
+    header{gap:12px}
+    .kpis{gap:8px}
+    .card{padding:14px}
+    .grid7{gap:5px}
+    .vvals div,.svals div{font-size:10px}
+    .dlabels .c{font-size:10px}
+    .srcgrid{grid-template-columns:56px 1fr 1fr 48px;gap:12px 10px}
+    .cell b{min-width:38px;font-size:12px}
+    .badge{font-size:9px;letter-spacing:.14em;padding:4px 8px}
+  }
+</style>
+</head>
+<body>
+
+<svg class="tentacles" viewBox="0 0 1200 220" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+  <g fill="none" stroke-linecap="round" opacity=".2">
+    <path d="M60 230 C40 150 120 130 95 60" stroke="#9d7bff" stroke-width="22" stroke-dasharray="70 999"/>
+    <path d="M60 230 C40 150 120 130 95 60 C88 40 64 44 66 62" stroke="#9d7bff" stroke-width="9"/>
+    <path d="M190 230 C200 160 140 150 165 90" stroke="#45f0b0" stroke-width="16" stroke-dasharray="55 999"/>
+    <path d="M190 230 C200 160 140 150 165 90 C172 72 192 76 190 92" stroke="#45f0b0" stroke-width="7"/>
+    <path d="M600 235 C590 190 645 185 628 148" stroke="#9d7bff" stroke-width="8"/>
+    <path d="M1040 230 C1060 140 980 130 1010 55" stroke="#9d7bff" stroke-width="24" stroke-dasharray="75 999"/>
+    <path d="M1040 230 C1060 140 980 130 1010 55 C1020 32 1050 40 1044 60" stroke="#9d7bff" stroke-width="10"/>
+    <path d="M1140 230 C1130 170 1185 160 1162 108" stroke="#45f0b0" stroke-width="9"/>
+  </g>
+  <g fill="#c9b8ff" opacity=".18">
+    <circle cx="64" cy="171" r="5"/><circle cx="79" cy="141" r="4.5"/><circle cx="95" cy="112" r="4"/><circle cx="100" cy="88" r="3.4"/>
+    <circle cx="1037" cy="167" r="5"/><circle cx="1021" cy="137" r="4.4"/><circle cx="1007" cy="109" r="3.8"/><circle cx="1003" cy="85" r="3.2"/>
+  </g>
+</svg>
+
+<div class="wrap">
+  <header>
+    <svg class="emblem" width="60" height="84" viewBox="0 0 60 84" aria-hidden="true">
+      <defs>
+        <radialGradient id="ball" cx="35%" cy="28%" r="80%">
+          <stop offset="0" stop-color="#ffffff"/>
+          <stop offset=".35" stop-color="#cdbfff"/>
+          <stop offset=".75" stop-color="#8e7ae0"/>
+          <stop offset="1" stop-color="#4a3c96"/>
+        </radialGradient>
+        <clipPath id="ballclip"><circle cx="30" cy="27" r="17"/></clipPath>
+      </defs>
+      <line x1="30" y1="0" x2="30" y2="10" stroke="#9b94c4" stroke-width="1.5"/>
+      <circle cx="30" cy="27" r="17" fill="url(#ball)"/>
+      <g clip-path="url(#ballclip)" stroke="rgba(12,10,40,.4)" stroke-width="1" fill="none">
+        <line x1="13" y1="15" x2="47" y2="15"/>
+        <line x1="13" y1="21" x2="47" y2="21"/>
+        <line x1="13" y1="27" x2="47" y2="27"/>
+        <line x1="13" y1="33" x2="47" y2="33"/>
+        <line x1="13" y1="39" x2="47" y2="39"/>
+        <ellipse cx="30" cy="27" rx="6" ry="17"/>
+        <ellipse cx="30" cy="27" rx="12" ry="17"/>
+      </g>
+      <path d="M50 6 L51.3 9.7 L55 11 L51.3 12.3 L50 16 L48.7 12.3 L45 11 L48.7 9.7 Z" fill="#ffd166"/>
+      <path d="M9 20 L9.9 22.6 L12.5 23.5 L9.9 24.4 L9 27 L8.1 24.4 L5.5 23.5 L8.1 22.6 Z" fill="#3fe3ff"/>
+      <g fill="none" stroke-linecap="round">
+        <path d="M22 41 C18 54 30 58 23 70 C20 76 13 74 13 68" stroke="#45f0b0" stroke-width="4"/>
+        <path d="M30 44 C32 56 22 62 29 74" stroke="#9d7bff" stroke-width="4"/>
+        <path d="M38 41 C45 52 34 58 41 68 C44 73 51 70 50 64" stroke="#ff4fd8" stroke-width="3.5"/>
+      </g>
+      <g fill="#e7deff" opacity=".8">
+        <circle cx="29" cy="50" r="1.4"/><circle cx="27" cy="56" r="1.4"/><circle cx="26" cy="62" r="1.4"/>
+      </g>
+    </svg>
+    <div>
+      <h1>Week 01</h1>
+      <p class="sub">Site performance</p>
+    </div>
+    <span class="badge">Synthetic data</span>
+  </header>
+
+  <div class="kpis">
+    <div class="card kpi">
+      <div class="label">Visits</div>
+      <div class="num num-visits">12,480</div>
+    </div>
+    <div class="card kpi">
+      <div class="label">Signups</div>
+      <div class="num num-signups">624</div>
+    </div>
+    <div class="card kpi">
+      <div class="label">Conversion</div>
+      <div class="num num-conv">5.0%</div>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="sechead">
+      <h2>Daily</h2>
+      <div class="legend">
+        <span><i class="dot g"></i>visits</span>
+        <span><i class="dot m"></i>signups</span>
+        <span>conversion %</span>
+        <span><span class="star">✦</span> best</span>
+      </div>
+    </div>
+
+    <div class="grid7 vvals">
+      <div>1,420</div><div>1,600</div><div>1,780</div><div>1,640</div><div>1,920</div><div>2,020</div><div><span class="star">✦</span> 2,100</div>
+    </div>
+    <div class="grid7 vtracks">
+      <div><div class="vbar" style="--h:67.6%"></div></div>
+      <div><div class="vbar" style="--h:76.2%"></div></div>
+      <div><div class="vbar" style="--h:84.8%"></div></div>
+      <div><div class="vbar" style="--h:78.1%"></div></div>
+      <div><div class="vbar" style="--h:91.4%"></div></div>
+      <div><div class="vbar" style="--h:96.2%"></div></div>
+      <div><div class="vbar peak" style="--h:100%"></div></div>
+    </div>
+    <div class="floor"></div>
+    <div class="grid7 stracks">
+      <div><div class="sbar" style="--h:44.9%"></div></div>
+      <div><div class="sbar" style="--h:56.7%"></div></div>
+      <div><div class="sbar" style="--h:70.1%"></div></div>
+      <div><div class="sbar" style="--h:58.3%"></div></div>
+      <div><div class="sbar" style="--h:75.6%"></div></div>
+      <div><div class="sbar" style="--h:85.8%"></div></div>
+      <div><div class="sbar" style="--h:100%"></div></div>
+    </div>
+    <div class="grid7 svals">
+      <div>57</div><div>72</div><div>89</div><div>74</div><div>96</div><div>109</div><div>127</div>
+    </div>
+    <div class="grid7 dlabels">
+      <div><div class="d">Mon</div><div class="c">4.0%</div></div>
+      <div><div class="d">Tue</div><div class="c">4.5%</div></div>
+      <div><div class="d">Wed</div><div class="c">5.0%</div></div>
+      <div><div class="d">Thu</div><div class="c">4.5%</div></div>
+      <div><div class="d">Fri</div><div class="c">5.0%</div></div>
+      <div><div class="d">Sat</div><div class="c">5.4%</div></div>
+      <div><div class="d">Sun</div><div class="c best">6.0%</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="sechead">
+      <h2>Sources</h2>
+    </div>
+    <div class="srcgrid">
+      <div class="shead">Source</div>
+      <div class="shead">Visits</div>
+      <div class="shead">Signups</div>
+      <div class="shead" style="text-align:right">Conv</div>
+
+      <div class="sname">Direct</div>
+      <div class="cell"><div class="track"><div class="fill g" style="--w:100%"></div></div><b>5,240</b></div>
+      <div class="cell"><div class="track"><div class="fill m" style="--w:100%"></div></div><b>314</b></div>
+      <div class="conv best"><span class="star">✦</span> 6.0%</div>
+
+      <div class="sname">Search</div>
+      <div class="cell"><div class="track"><div class="fill g" style="--w:85.5%"></div></div><b>4,480</b></div>
+      <div class="cell"><div class="track"><div class="fill m" style="--w:71.3%"></div></div><b>224</b></div>
+      <div class="conv">5.0%</div>
+
+      <div class="sname">Social</div>
+      <div class="cell"><div class="track"><div class="fill g" style="--w:52.7%"></div></div><b>2,760</b></div>
+      <div class="cell"><div class="track"><div class="fill m" style="--w:27.4%"></div></div><b>86</b></div>
+      <div class="conv low">3.1%</div>
+    </div>
+  </section>
+</div>
+
+</body>
+</html>

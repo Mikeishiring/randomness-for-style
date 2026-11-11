@@ -45,7 +45,7 @@ The recorded reports here use no personal design skills or supplied visual refer
 - **Compare** sits beside the action and shows both pages side by side at full width. Prompt, Share, Watch demo and Sound are in the bar at the bottom of the page.
 - Compare with the brief-only result, inspect the exact prompt and critique, browse all 36 combinations, or share a selected state.
 
-These are saved results, not live model calls. The original and stronger refinement sequences are both preserved. The stronger sequence restarts from the same one-shot in a fresh context. Generated reports were not manually restyled; unchanged passes and rough edges remain visible. The exact prompts and critiques are available so someone else can repeat the procedure.
+These are saved results, not live model calls. The original and stronger refinement sequences are both preserved, and a **Newer model** switch shows a rerun of the whole experiment by a model one generation newer: identical prompts, its own one-shots and refinements, recorded nine days after the original. The stronger sequence restarts from the same one-shot in a fresh context. Generated reports were not manually restyled; unchanged passes and rough edges remain visible. The exact prompts and critiques are available so someone else can repeat the procedure, and the protocol files name the exact model behind each generation.
 
 ## Run locally
 
@@ -66,6 +66,7 @@ Open `http://localhost:8000`. Any static web server can serve the two files in `
 | `work/fixed-report/` | Viewer, 3D dice, gestures, refinement controls and interaction checks |
 | `work/simple-astra/` | Original prompts, saved reports, critiques and artifact hashes |
 | `work/strong-astra/` | Stronger refinement sequence and predecessor hashes |
+| `work/simple-fable/` | Newer-model rerun: identical prompts, its own saved reports, critiques and hashes |
 | `work/prompt-study/` | Separate matched test of the two refinement prompts |
 | `site/dist/` | Self-contained public HTML, with no runtime dependencies |
 

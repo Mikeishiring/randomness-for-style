@@ -1,0 +1,63 @@
+Critique of 5-3-3.html
+
+ORIGINALITY
+
+1. Converged but conservative: v3 repaired mechanics and invented nothing.
+   Three passes in, the whole invention budget is still the orb row, one
+   beam and a curtain edge. Everything else is a competent dark report.
+
+2. The strongest fusion on the page was never designed on purpose: the gold
+   baseline reads as a stage edge, with the glowing gold "pit" of orbs below
+   the columns — an orchestra pit under the stage. It is latent and
+   unclaimed. (It should also stay implicit: captioning a metaphor would
+   cost more than it pays, so this is noted as found value, not a change.)
+
+3. Act II is still the least in-world region: a competent table whose
+   identity is inherited colour, not an idea. The header meanwhile is pure
+   opera and the chart mostly pure sea — the two ingredients alternate by
+   section more than they merge within one.
+
+4. The playbill header formula (small-caps overline, italic Didone title,
+   double rules) is handsome and also the most predictable possible
+   rendering of "opera", done perfectly straight.
+
+CLARITY
+
+5. The per-day conversion figures — the single most decision-relevant row on
+   the page, since they carry the 4.0% → 6.0% crescendo — are set at the
+   smallest size and lowest contrast in the chart (11.5px, #a9cad2), falling
+   below 10px effective on tablet widths. The hierarchy punishes the best
+   content.
+
+6. The sources block is a table in content but divs in semantics: a screen
+   reader hears "Visits Signups Conversion" once, then three unlabeled
+   triplets of numbers. No header-cell association, and the Source column
+   has no header at all.
+
+7. The decorative fleurons (black diamonds) are pseudo-element content and
+   are announced by screen readers as "black diamond" noise either side of
+   the overline.
+
+8. Accepted limitation, not fixed: the chart's left captions scroll away
+   with the horizontal scroller on phones — the cost of keeping the chart a
+   single scalable SVG with no scripts.
+
+CHANGES APPLIED IN 5-3-4.html
+
+a. The conversion row is raised to 12.5px and brightened (#b9d6dd); the
+   left captions go to 11.5px. The crescendo is no longer the faintest
+   thing on the chart.
+b. The sources block gains table semantics via ARIA roles (table, row,
+   rowheader, columnheader, cell) plus a visually hidden "Source" column
+   header, so rows read as labelled records.
+c. The fleurons are hidden from assistive tech using the content
+   alternative-text syntax, with a plain-content fallback so older browsers
+   still render them.
+d. Nothing new is ornamented. The stage-edge/orchestra-pit reading stays
+   implicit, and no visual element moves.
+
+PRESERVED (strong decisions): all geometry, scales and encodings, the beam,
+curtain, playbill header, KPI triad, per-day conversion data, printed values,
+copy level, and self-containment. This pass is deliberately small: the two
+ingredients are developed enough that further additions would start taxing
+the report's readability, which the brief forbids.

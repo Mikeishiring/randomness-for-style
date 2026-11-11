@@ -1,0 +1,54 @@
+CRITIQUE — run 4-2-1.html
+
+Originality
+1. The fusion is shallow. Motorsport supplies every structural motif (checker strips, racing
+   stripes, italic condensed caps, the "GP" wordmark, the finish flag); fast food supplies two
+   hex values. Strip the wordmark and the checker bookends and this is a generic dark
+   dashboard with a ketchup-and-mustard palette swap — the first idea anyone would have.
+2. The checkered strips at the top AND bottom of the page are the weakest kind of theming:
+   decoration applied at the edges, never integrated with the content it frames. The bottom
+   strip in particular does nothing.
+3. The condiment colors are not a system. Mustard means "visits" in the day chart but also
+   "big number" in the tiles and "good conversion" in the sources table; red means "signups"
+   in one place and "bad conversion" in another. An identity built on two colors must spend
+   them consistently or it is just coloring-in.
+4. The "menu board" idea implied by the tiles is left undeveloped — they are ordinary stat
+   tiles with a red top border. Nothing on the page actually looks or behaves like fast-food
+   visual language (backlit board, lit numerals).
+
+Clarity
+5. Visits bars (scale max 2,100) sit directly above signups bars (scale max 127) with the
+   same bar width. Adjacent same-width bars on wildly different scales invite a false visual
+   ratio reading; the captions correct it only for readers who notice them.
+6. The axis baselines are inert grey lines; the conversion row floats beneath as free text,
+   loosely attached to its columns.
+7. The conversion color coding in the sources table (mustard above / white at / red below the
+   weekly average) references an average that is never anchored near the claim. A reader must
+   connect it to the 5.0% tile by themselves.
+8. Sources show visits as a bar but signups only as a number, so the 314 : 224 : 86 ratio —
+   arguably the week's most actionable comparison — has no visual form at all.
+9. Minor: the sources header row carries two empty spacer spans; the angled bar ends trade up
+   to 8px of length precision for the speed cue.
+
+Refinement applied (one pass)
+A. Color semantics made systematic across the whole page: mustard = visits, ketchup red =
+   signups, grey = conversion (mustard/red reserved in the conv column for best/worst only).
+   This is the real fusion: the condiments become the data encoding, not just trim.
+B. The axis baselines become thin checkered finish-line bands — the motorsport motif now does
+   the axis's job instead of bookending the page. The redundant bottom checker strip is
+   removed (addresses 2, 6).
+C. Signups bars narrowed to 60% of visits-bar width to visibly signal the different scale;
+   every bar keeps its direct value label (addresses 5).
+D. Each source row gains a thin red signups bar on the SAME scale as its visits bar, making
+   the 314 : 224 : 86 comparison visible and letting conversion be literally seen as the
+   red/mustard length ratio (addresses 3, 8).
+E. Conversion colors anchored: conv values carry a "Week average 5.0%" tooltip beside the
+   claim, and bar colors carry Visits/Signups tooltips (addresses 7, accessible disclosure
+   rather than added copy).
+F. The tiles become a lit menu board: darker backlit panel, glowing mustard numerals, red
+   menu-category labels — the fast-food half finally carries structure (addresses 1, 4).
+
+Preserved as strong decisions: the overall layout and reading order (totals, by day, by
+source); direct value labels on every bar instead of axes and gridlines; the Sunday checkered
+flag; per-day conversion row; the angled speed-cut bar ends; the wordmark; zero helper copy;
+all figures and derivations unchanged.

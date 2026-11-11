@@ -1,0 +1,57 @@
+Critique of runs/2-3-2.html (Weather + Opera, Week 01, revision 2)
+
+ORIGINALITY
+1. The opera-house cross-section exists mostly in the design notes, not on
+   the page. The "stage" is a 1px gold rule; nothing renders as proscenium,
+   footlights, or house. A reader sees a bar chart with gold stubs under it.
+   The strongest idea in the design is effectively invisible.
+2. The curtain valance hangs at the top of the web page, hundreds of pixels
+   from the theatre it belongs to. Detached from the chart, it decorates
+   nothing in particular and reads as a generic fancy page border - the
+   exact "applied as skin" failure the last critique named.
+3. The sky is seven icons floating in an empty 72px band: no backdrop, no
+   night, no depth. Weather still never touches the header, totals, or
+   sources; below the fold the identity remains close to zero (recycled bar
+   colors only).
+4. Sunday's "stars" are drawn as plus signs; at 42px they read as
+   mathematical crosses, not a clear sparkling night.
+
+CLARITY
+5. The stage line is drawn as border-bottom on each padded day column, so
+   the single most important structural line is actually dashed with 12px
+   holes. Accidental, and it undermines both the chart and the metaphor.
+6. Cascade bug: `.bandlabels .zone` wins over `.zone.pit` for align-items
+   and justify-content but not flex-direction, so "Signups" renders
+   bottom-centered in a column flex while "Visits" and "Conv." sit
+   right-aligned and vertically centered. Inconsistent geometry on the one
+   axis readers use to decode the chart.
+7. The honest-scale pit strips (6-13px) sit inside a 48px band - roughly
+   70% dead space below them. The strips look vestigial rather than
+   deliberate, which invites reading them as a rendering error.
+8. In the sky key, the drizzle strokes shrink to under 1px at 20px glyph
+   size and effectively vanish, so the key's low end is just a cloud: the
+   key under-describes the very encoding it exists to declare.
+
+REFINEMENT APPLIED
+- Built the theatre around the chart instead of asserting it: the crimson
+  valance now hangs directly over the daily chart; thin curtain legs frame
+  its sides; one continuous stage line spans the day columns with a soft
+  footlight glow rising off it; faint ivory stars dot the sky band behind
+  the glyphs. All decoration, all anchored to the data it frames, none of
+  it encoding anything.
+- Fixed the dashed stage line: a single rule drawn once across the chart
+  (pseudo-element spanning the day columns); per-column borders removed.
+- Fixed the Signups band-label alignment (row direction, right-aligned and
+  vertically centered like Visits and Conv.).
+- Tightened the pit band from 48px to 36px (mobile proportional) so the
+  honest strips occupy it purposefully; the pixels-per-visit scale is
+  preserved exactly (strip percentages recomputed for the new band).
+- Redrew Sunday's sparkles as four-point stars; thickened the key's drizzle
+  strokes so the low end of the scale is legible at 20px.
+
+KEPT (strong decisions): the stage/pit architecture, single honest scale,
+printed exact values, night-sky encoding with declared key, band labels,
+playbill header, totals, sources table, synthetic flag, Mon-Sun order.
+REJECTED as clutter or integrity risks: act numbering on section heads,
+per-day sky tints proportional to visits (double-encoding), door icons for
+sources.

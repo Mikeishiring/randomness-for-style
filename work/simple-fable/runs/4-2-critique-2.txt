@@ -1,0 +1,53 @@
+CRITIQUE — run 4-2-2.html
+
+Originality
+1. The fusion became systematic (mustard = visits, ketchup = signups everywhere) but the page
+   still owns no single memorable element. Every motif is borrowed shorthand — checker, red/
+   yellow, italic condensed caps. Nothing here couldn't be lifted from a template; the design
+   is competent assembly, not invention.
+2. The header is the emptiest zone and does the least work: a plain clipped-rectangle wordmark,
+   a big italic "WEEK 01" that is generic sports typography, and a badge. For a race report
+   crossed with a menu board, the header is neither — no grid number, no board, no order tag.
+3. The "backlit menu board" from the last pass is three separate stat tiles with a text-shadow.
+   Real menu boards are ONE lit panel with internal columns; separate cards with gaps between
+   them read as a dashboard component, so the fast-food reference still depends on being told.
+4. The h2 marker is a generic red chevron — any template's bullet. The one motif that could sit
+   there (the checker that now does the axis work) is missing.
+5. The diagonal stripe band remains the one motif applied purely as trim. Defensible as the
+   page's only divider and only diagonal, but it is the weakest survivor of the bookend
+   critique.
+
+Clarity
+6. The sources' dual bars are identified only by hover tooltips. Color semantics are taught in
+   the day chart, but a reader who starts at the bottom gets two unlabeled bar weights.
+   Tooltip-only identification is hidden, not minimal.
+7. The conversion color coding (mustard best / red worst) is anchored to the 5.0% weekly
+   average only via tooltip and the tile at the top. The reference still is not visible beside
+   the per-day or per-source claims.
+8. The sources header row still carries two silent empty spans; the bars column has no header
+   at all.
+9. Minor: tile category labels at 11px letterspaced red are near the floor of comfortable
+   contrast at that size.
+
+Refinement applied (one pass)
+A. Header develops both ingredients structurally: "01" becomes a mustard racing number plate —
+   a motorsport-native object that doubles as a fast-food order tag — carrying the period
+   information instead of decorating beside it (addresses 2, partly 1).
+B. The three tiles merge into one lit board: a single panel, thin internal rules, red category
+   labels, glowing mustard numerals — the menu-board read no longer needs explaining
+   (addresses 3).
+C. Visible bar identification in the sources table: small mustard and ketchup swatches join
+   the existing "Visits" and "Signups" column headers, so the swatch-to-bar link is taught
+   where the numbers already are — no new words, no legend row, tooltips retained as detail
+   (addresses 6, 8).
+D. The weekly reference becomes visible beside the claims: the day chart's CONV caption gains
+   a second line "WK 5.0%", anchoring both the per-day values and the best-day highlight
+   (addresses 7).
+E. The h2 marker becomes a small checker chip, replacing the generic chevron with the motif
+   the page already uses for its finish-line axes (addresses 4).
+F. The diagonal stripe band is kept deliberately: it is the page's only divider and only
+   diagonal, and it carries the two identity colors at the page's highest-energy point. Also
+   preserved: the whole reading order, direct value labels on every bar, both checkered
+   finish-line axes, narrower different-scale signups bars, same-scale source signups bars,
+   the Sunday flag, the wordmark, conversion highlights, zero helper copy, and every figure
+   and derivation (addresses 5 by argument rather than deletion).

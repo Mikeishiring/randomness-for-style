@@ -1,0 +1,56 @@
+CRITIQUE OF 4-3-1.html
+
+ORIGINALITY
+1. The fusion is costume-deep. Remove the two checker ribbons and the roman
+   numerals and what remains is a competent but generic dark dashboard: stat
+   row, bar chart, ranked table. Velvet gradient + gold + italic Didot is the
+   first idea anyone has for "opera"; a checkered strip is the first idea
+   anyone has for "motorsport". Both were applied at the page edges, where
+   decoration lives, not inside the data displays, where an identity has to
+   earn its keep.
+2. The two ingredients never meet in a single element. Opera owns the header;
+   motorsport owns the ribbons and the condensed numerals. The one genuinely
+   fused invention - finishing positions set as opera-act roman numerals - is
+   underplayed and left ambiguous (ranked by what?).
+3. "Performance" (opera performance / website performance) is the strongest
+   card and it is played silently; nothing else sustains the playbill fiction.
+4. Motorsport's own data language - finish lines, fastest-lap highlights,
+   gaps to the leader - maps directly onto weekly metrics and was ignored in
+   favor of a flag ribbon. Racing red appears exactly once, decoratively,
+   under the title; a one-use accent is not a system.
+
+CLARITY
+5. The week's actual story - conversion climbs steadily from 4.0 on Monday to
+   6.0 on Sunday, so Sunday leads on quality as well as volume - is nowhere on
+   the page. Visits and signups rise in parallel; without the ratio, the two
+   charts just say "up".
+6. In Sources, the velvet bar is unlabeled beneath three numeric columns; a
+   reader can take it to encode signups or conversion rather than visits. The
+   rank behind I/II/III is likewise implied, never stated.
+7. Craft bug: the conversion column is a fixed 6.2rem, narrower than its own
+   letter-spaced header at phone width; the header can overflow its cell.
+8. Nit: the letter-spaced date line is optically off-center by half a
+   letter-space (trailing tracking).
+9. The 58px signups track compresses 57-vs-74-scale differences, though exact
+   values are printed above each bar.
+
+CHANGES APPLIED IN 4-3-2.html
+- Red made systemic instead of decorative: it now marks the week's best -
+  Sunday's bar caps in both daily charts, Sunday's conversion figure, and
+  Direct's 6.0% - a motorsport fastest-lap highlight that the red stripe under
+  the title now belongs to.
+- Added a third daily row, "Conversion %" (4.0 4.5 5.0 4.5 5.0 5.4 6.0),
+  derived only from the supplied figures; it carries the week's story.
+- Each source bar now runs toward a checkered finish line at the end of its
+  track: the flag moves from pure decoration into the display. Direct touches
+  the line; the gap behind it shows each rival's deficit.
+- Sources heading now reads "Sources - ranked by visits", resolving both the
+  numeral ambiguity and the bar's meaning for the cost of three words.
+- Classification columns auto-size (fixes the mobile header overflow); stat
+  numerals set italic for the number-board lean while charts stay upright;
+  date-line optical centering fixed; signups track raised to 64px.
+
+KEPT
+Structure, palette, playbill header, checker ribbons as page frame, the
+two-scale daily layout with printed values, roman-numeral finishing order,
+and every supplied figure unchanged.

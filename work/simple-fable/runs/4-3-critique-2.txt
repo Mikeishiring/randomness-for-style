@@ -1,0 +1,55 @@
+CRITIQUE OF 4-3-2.html
+
+ORIGINALITY
+1. The page still takes turns instead of singing a duet. The header is pure
+   playbill; motorsport only arrives in the details below it. The strongest
+   fusion on the page - the checkered finish line inside the sources chart -
+   shows what the rest lacks: elements that read both ways at once. Most other
+   elements remain one-genre quotations placed side by side.
+2. The heading "Sources - Ranked by visits" explains but does not perform. The
+   design already runs a racing fiction (grid numerals, finish line); a plain
+   analyst's label breaks character where "finishing order" would keep it and
+   say exactly the same thing.
+3. The checker ribbons are still the most generic items on the page. After the
+   finish line moved into the data display, the top and bottom ribbons restate
+   the motif as pure trim.
+4. Opera thins out below the fold. In Sources, the operatic contribution has
+   shrunk to a typeface; programme billing conventions (italicized names, act
+   numerals - only the numerals were used) sit unused.
+5. The red "fastest lap" system is the right instinct executed timidly: a 2px
+   cap at the very top of a 190px bar is nearly invisible, so the system
+   exists mostly in the author's head.
+
+CLARITY
+6. Red is asserted, never taught. Nothing identifies it as "best of week";
+   because the caps are easy to miss, the one cross-cutting insight the color
+   carries (Sunday peaks everything; Direct converts best) risks reading as
+   decoration - the exact fault the previous pass was meant to fix.
+7. Inconsistent highlighting: among the week's three peak figures, only the
+   6.0 conversion values are red; 2,100 and 127 look no different from their
+   neighbors even though they end the same story.
+8. Minor: the daily block mixes two chart rows and one numbers-only row under
+   parallel labels; tolerable and honestly labeled.
+9. No overflow or mobile defects found in this version; the auto-sizing
+   columns fixed the previous fault.
+
+CHANGES APPLIED IN 4-3-3.html
+- Red made legible, not just present: Sunday's printed peaks (2,100 visits,
+  127 signups) are now set in the highlight red to match their caps and the
+  already-red 6.0 figures, and the winning caps are a step thicker. Red now
+  reads consistently as "best of the week" without spending a legend on it.
+- Sources heading recast as "Finishing order - By visits": same information,
+  stays in character, and names what the numerals and bars mean.
+- Source names set in italic serif, the programme-billing convention,
+  restoring the opera half of the identity in the lower page at zero cost to
+  reading.
+
+KEPT, DESPITE THE CRITIQUE
+- Checker ribbons: redundant as information, kept as frame. The opening
+  marquee and the closing flag bookend the report - the week "finishes" at
+  the foot of the page - and removing them would cost more structure than
+  their cliche costs taste.
+- Plain rectangular bars: curtain-shaped or slanted bars were considered and
+  rejected; distorting data-bearing shapes trades clarity for theme.
+- Everything else from 4-3-2: structure, palette, playbill header, roman
+  numerals, finish line, conversion row, and every supplied figure unchanged.

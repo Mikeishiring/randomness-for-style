@@ -1,0 +1,66 @@
+CRITIQUE OF 3-3-1 (harsh, originality and clarity)
+
+ORIGINALITY
+
+1. The blend is lopsided: almost all bureaucracy, with opera as set dressing.
+   The opera contribution is a flat maroon band, a scalloped strip, the word
+   "Act", an italic Didone, and "FIN". None of it uses opera's real visual
+   language — a proscenium with depth, playbill hierarchy, a cast list. The
+   curtain reads as a generic colored header, not a curtain.
+2. Cliché inventory: the rubber stamp is the laziest bureaucracy signifier
+   available, the "✦" flanks are stock ornament, and four stat boxes in a row
+   is the default dashboard move with a double outline painted on. Little here
+   could not be produced by asking for "old-timey government form".
+3. The strongest original idea — Act I as two aligned registers with a ratio
+   line, like staves in a score — is underdeveloped. It is actually just two
+   bar charts stacked. There are no shared measure lines tying the registers
+   into one instrument, which is exactly what would make the metaphor visible
+   and earn the name "score".
+4. Act II's title, "The sources", is a dead beat. The sources table is
+   literally a cast list (three named performers, their houses drawn, their
+   results tallied) and the design never notices.
+
+CLARITY
+
+1. "S ÷ V" appears twice (score register, ledger header) and is cryptic. A
+   reader should not decode an invented abbreviation to learn the page's most
+   important derived number. The same quantity is labelled three different
+   ways across the page ("Signups / Visit", "S ÷ V"), which is worse.
+2. Mobile legibility fails. The 740-unit SVG scales to roughly 315 px on a
+   phone, putting the 15 px value labels at ~6.4 px rendered. The printed
+   values are the chart's substitute for an axis, so when they become
+   illegible the chart loses its scale entirely.
+3. The gold used for small bold labels (#8a6410 on #f4ecdc) sits at roughly
+   4.6:1 — passing, but with no margin at 10 px.
+4. Vertical scanning in Act I (comparing Friday's visits, signups and rate)
+   relies on eyeballing alignment across ~200 px of empty paper with no
+   column guides.
+
+CHANGES APPLIED (one pass)
+
+- Score made a score: faint dashed measure lines now run through all three
+  registers at every day boundary, extending the baselines to meet them.
+  This develops the opera metaphor and directly fixes the vertical-scanning
+  problem — one change serving both masters.
+- Conversion named once, plainly: "S ÷ V" removed everywhere. The score's
+  ratio register is labelled "SIGNUPS / PER VISIT" in the gutter, the ledger
+  column reads "Per visit", and field No. 03 reads "Signups per visit". One
+  quantity, one vocabulary.
+- Curtain given cloth: subtle vertical fold shading over the gradient, so the
+  proscenium band reads as drapery rather than a colored div.
+- Act II retitled "The cast" — the playbill structure the table already had;
+  the "Source" column header below it keeps literal meaning one line away.
+- SVG type enlarged (values 15→19, days 12→14, ratios 13→17, register labels
+  10→12) so phone-scale rendering stays readable; geometry rechecked for
+  collisions.
+- Label gold darkened to #78560c (~5.8:1) for the small bold labels; bright
+  gold kept for bars and curtain lettering.
+
+PRESERVED (strong decisions)
+
+- The two-register daily score with printed values instead of axes; the
+  ledger grid with proportional visit bars and printed figures; the
+  "Synthetic Data" stamp as the data caveat in-identity; the overture
+  fields with form numbering; the docket line; "The daily procession"; FIN.
+- All figures, sums and ratios unchanged; no copy added beyond renamed
+  labels and one act title.

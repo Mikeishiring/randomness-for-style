@@ -1,0 +1,26 @@
+Critique of 0-1-3.html (originality, then clarity), followed by the changes applied in 0-1-4.html.
+
+ORIGINALITY — harsh
+
+1. The identity is still quarantined: emblem, beams and twinkle live in the header margin; the dance floor appears exactly once, inside one chart. The KPI cards and the Sources grid remain stock widgets any template could ship — the page's signature motif never recurs, so the design reads as a themed chart embedded in an unthemed dashboard.
+2. The Conversion KPI wears a three-color gradient while Visits and Signups each get a coherent two-color identity. One number dressed in the whole palette is indecision, not design — and it is the most important number on the page.
+3. The new motion is honest but timid in placement and brash in tempo: the only animated texture (the drifting floor) sits one pixel beneath the baselines of fourteen data bars, so the most eye-catching movement on the page is welded to its least informative element, while the rest of the page stays inert.
+
+CLARITY — harsh
+
+4. The daily chart is scrambled for anyone not looking at it: a screen reader meets seven visits values, then seven signups values, then seven day labels with percentages — three disconnected number lists with no day attached to any figure. The page's clearest chart is its least accessible content.
+5. The Sources grid is a table in costume. Visually it has columns and headers; structurally it is twelve sibling divs. Assistive tech gets no row/column relationships at all.
+6. The legend's "conversion %" entry is the only item without its visual anchor: the other three carry swatches, but the key metric's entry is set in legend-gray while the values it names are lavender. The one unanchored legend item describes the page's most important series.
+
+CHANGES APPLIED IN 0-1-4.html
+
+- Accessible daily data: the chart's visual rows are aria-hidden and a visually hidden paragraph states each day's visits, signups and conversion in order, with Sunday marked best. Sighted presentation is unchanged. (Fixes point 4.)
+- Sources gains real table semantics: role="table" with aria-label, row wrappers (display:contents, so the grid layout is untouched), columnheader and cell roles. (Fixes point 5.)
+- The legend's conversion entry is set in the same lavender as the values it names, anchoring the last unanchored legend item. (Fixes point 6.)
+- Conversion KPI simplified to a two-stop gold-to-cyan gradient: crisper numerals, a distinct identity per KPI, no more palette sampler. (Fixes point 2.)
+- The dance floor recurs: every card carries a 2px lit-tile strip along its top edge, a quiet echo of the floor that finally ties KPIs and Sources into the identity instead of leaving them generic. (Addresses point 1 without touching any data surface.)
+- Floor drift slowed from 14s to 22s so the only ambient texture motion no longer competes with the bars above it. (Addresses point 3; twinkle and reduced-motion guard unchanged.)
+
+PRESERVED (strong decisions)
+
+- The mirrored visits/signups composition, per-bar value labels, gold-means-best convention, chromatic-echo h1, emblem with beams and sparkles, tapered background tentacles, always-visible synthetic-data badge, and every figure and derivation (12,480 / 624 / 5.0%; per-day and per-source conversions) are unchanged. The quarantine criticism in point 1 is answered with the smallest recurring motif that unifies the page rather than by forcing tentacles or mirror facets into data marks, which would cost more clarity than it buys originality.

@@ -1,0 +1,69 @@
+Critique of 4-5-1.html
+
+ORIGINALITY — harsh read
+
+1. The motorsport half is the laziest possible version of itself. Checkered
+   strips top and bottom, a roundel, "racing green" bars with a single pale
+   stripe: these are the first three images anyone reaches for. Nothing of
+   motorsport's actual visual culture — pit boards, timing columns, sector
+   logic — made it in. The checker chips next to "Best day" are decoration
+   wearing the costume of meaning.
+2. The two ingredients never fuse. Green bars = motorsport, brass pins =
+   entomology, each kept in its own panel. The design is a split cabinet,
+   not a hybrid identity. The one surface where they could have met — the
+   sources table — got a generic progress bar whose faint 20px stripes align
+   to nothing and mean nothing.
+3. The entomology half stops early. The "pins" are plain lollipop circles;
+   the specimen idea ends at the pin with nothing mounted on it. Plates are
+   numbered but not treated as plates. The fake Latin binomials are whimsy
+   at half commitment.
+4. The roundel reads "01" directly beside the heading "Week 01". As a race
+   number plate the echo is defensible, but it is also the single most
+   clichéd borrow on the page.
+
+CLARITY — harsh read
+
+5. The strongest fact in the data is invisible: conversion climbs through
+   the week (4.0% Mon to 6.0% Sun; signups grew ~123% while visits grew
+   ~48%). A page whose purpose is "understand this week" buried its best
+   insight. Per-day conversion appears nowhere.
+6. The tiny checker marks under Sun in both plates are unexplained; a reader
+   must guess they mean "best day". Implied meaning without declaration.
+7. The "Share of visits" header cell carries a class collision (.track on a
+   th) patched over with inline style — fragile, misleading markup.
+8. The five-column table overflows on narrow screens with no escape hatch.
+9. Minor: conversion numbers are brass-colored, borrowing the signup-pin
+   color for a different (if related) quantity.
+
+WHAT WAS STRONG AND IS PRESERVED
+
+- Two separate direct-labelled charts instead of a dual-axis mess.
+- Specimen-case frame, pinned "Synthetic data" label, KPI plaques,
+  plate numbering, palette (paper / ink / racing green / brass).
+- The sources table's columns and numbers: nothing useful removed.
+- The roundel stays, accepted as a deliberate number-plate echo.
+
+CHANGES MADE IN 4-5-2.html
+
+A. Added a pit board (the genuine motorsport artifact the page lacked):
+   a dark ink board between the plates and the sources table showing
+   conversion for each day — Mon 4.0, Tue 4.5, Wed 5.0, Thu 4.5, Fri 5.0,
+   Sat 5.4, Sun 6.0 — with Sunday highlighted in brass with the same
+   checker chip used by the Best-day plaque. This surfaces the missing
+   insight and fuses the two identities on one surface (race telemetry,
+   mounted in the cabinet).
+B. Signup markers are now mounted specimens: each brass pin passes through
+   a small uniform beetle body (ink ellipse, split elytra) — the collection
+   metaphor completed without encoding anything in the glyph's size. Stems
+   rescaled slightly so the tallest label still clears the frame.
+C. Share-of-visits track now carries ticks at every 10%, so 42.0 / 35.9 /
+   22.1 can actually be read against the ruler instead of guessed.
+D. The checker chip now appears in three consistent places (Best-day
+   plaque, plate markers, pit-board Sunday), so its meaning is established
+   by the labelled plaque rather than left to guesswork.
+E. Fixed the th markup hack; the table now sits in a horizontal-scroll
+   wrapper with a minimum width for narrow screens.
+
+Not changed: purpose, data, totals, layout order, plate structure, palette,
+typography, header, footer. All figures remain exactly the supplied ones
+plus the same derived totals and conversions.

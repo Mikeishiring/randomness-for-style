@@ -1,0 +1,46 @@
+Critique of 0-5-3.html
+
+ORIGINALITY — the vocabulary is complete; the temptation now is excess.
+
+1. The collection is finally plural and the fusion reaches every surface:
+   pinned specimens on the cards, seals on the peaks, pins ending the
+   share bars, curls on the rules. The honest harsh reading is that the
+   identity is now pastiche executed well rather than invention — default
+   Georgia with tracked uppercase is the most generic possible "Victorian"
+   typography. The authentic next move (italic Latin binomials under each
+   specimen, a collector's key) was considered and rejected: fake taxonomy
+   is decorative filler text that adds zero information and would start
+   competing with the figures. Restraint is the correct reading of the
+   brief here, so the typography stands.
+2. The Search emblem is compositionally a shrunken sibling of the header
+   moth. Examined and kept: the repetition now reads as family resemblance
+   within one engraver's plate style, and a more exotic third wing-form
+   would buy novelty at the cost of coherence.
+3. The rate percentages are set in the teal annotation color beneath a
+   brass chart. Examined and kept: teal-deep is consistently the page's
+   annotation voice (section heads, curls), which correctly frames rate as
+   commentary spanning both metrics rather than visits data.
+
+CLARITY — three real faults remain, two of them mine from v2/v3.
+
+4. Phone width is the genuine failure. The 700-unit chart viewBox scales
+   to ~49% at 375px, rendering value labels at ~6px and axis labels at
+   ~5px — unreadable. Every version so far has shipped this.
+5. The wax seal ring introduced in v3 marks the peak in both charts, but
+   nothing on the page says what a red ring means. An unexplained symbol
+   is a clarity debt; a legend line would be more copy than the fix needs.
+6. The chart aria-labels say "rising to a sealed peak" — in-joke flavor in
+   an accessibility string is noise to a screen-reader user.
+
+CHANGES APPLIED IN 0-5-4.html (purpose, data, scales, layout unchanged):
+- Chart cases scroll horizontally on narrow screens: the SVG keeps a
+  560px minimum width (labels stay ~10px+ rendered) and the case gets
+  overflow-x auto. The drawer slides instead of the figures shrinking to
+  dust; days are sequential, so the scroll direction is natural.
+- The peak tile's label now opens with the same wax seal ring glyph used
+  in the charts, closing the symbol loop without a legend: the tile names
+  the peak, the ring shows where it sits.
+- Both aria-labels reworded to plain statements of the data ("Monday
+  1,420 rising to Sunday's peak of 2,100").
+Nothing else changed: the remaining critiques above are judged better
+served by restraint than by another layer of ornament.

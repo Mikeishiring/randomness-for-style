@@ -1,0 +1,46 @@
+Critique of 2-4-3.html (originality, then clarity), followed by the single change applied in 2-4-4.html.
+
+ORIGINALITY — harsh
+
+1. The identity is now internally consistent — a sky grammar, a seal that
+   obeys it, tariff rules, a weekend band — but it has stopped generating new
+   ideas; v3's additions were corrections, not inventions. That is the right
+   failure mode for a report (novelty must not outrun comprehension), and
+   every further idea inspected this pass fails the prompt's own test of not
+   making the report harder to understand:
+   - Recoloring signups from green to register-ink, to make the second
+     measure "ledger entries": at 10px bar scale it blurs the bars into text
+     and axis lines. The green is already mixed from the spruce ink family,
+     so it sits inside the identity. Declined.
+   - Weathering the bars or adding a horizon motif: atmosphere inside the
+     data marks. Declined twice before; still declined.
+   - A hotel-register voice for the sources ("Walk-in", "Referred"): would
+     falsify the data's own category labels. Declined.
+2. The harshest remaining truth: the concept leans on one metaphor
+   (sky = conversion) and never attempts a second. Deliberate — a second
+   encoding (say, occupancy = visits) would mean two legends on a one-glance
+   report — but it should be named as a limit of the design, not dressed up
+   as restraint without cost.
+
+CLARITY
+
+3. One genuine defect found: the legend's six glyphs are aria-hidden, so
+   assistive technology hears "Sky = conversion. 3% 4% 4½% 5% 5½% 6%" — a
+   bare list of numbers with the entire left half of the mapping missing.
+   Sighted readers get sky-to-value pairs; screen reader users get neither
+   half of the pair.
+4. Re-verified from the previous passes: the mobile Sources header now fits
+   its auto-sized column; the empty first header cell draws the rule across
+   the names column so the header underline reads as one full-width rule;
+   the weekend band runs unbroken through the rebuilt signups row; every bar
+   remains value-labeled, so the separate row scales still cannot be misread.
+
+CHANGE APPLIED IN 2-4-4.html (only this)
+
+- The six key glyphs switch from aria-hidden to role="img" with their sky
+  names (Rain, Overcast, Mostly cloudy, Partly sunny, Mostly sunny, Clear),
+  so the legend reads as pairs — "Rain 3% … Clear 6%". No visual change on
+  any viewport. (Fixes 3.)
+
+Everything else is byte-identical to 2-4-3.html: purpose, data, figures,
+layout, palette and section order unchanged.

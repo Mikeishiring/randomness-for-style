@@ -1,0 +1,65 @@
+Critique of runs/4-1-1.html
+
+ORIGINALITY
+
+1. The fusion is decals, not design. A checker strip is the motorsport sticker,
+   a disco ball is the disco sticker, and they are placed side by side without
+   ever combining. No single element reads as both ingredients at once, so the
+   identity feels assembled from clip-art rather than conceived.
+2. The disco ball is pure ornament — the first cliche available — carrying no
+   information and no trace of motorsport.
+3. Pink-orange-gold gradient type with an animated sheen on near-black is stock
+   synthwave dashboard styling. It is what every dark "fun" dashboard already
+   does; neither disco (mirror-silver, sparkle, spotlights) nor motorsport
+   (liveries, door numbers, telemetry) demanded this exact default.
+4. The data displays are entirely generic bar charts. The identity lives only
+   in the frame around the data; strip the header and footer and this could be
+   any dashboard. The brief asked the identity not to compete with the
+   information, but absence from the information is not the same thing.
+5. "Finishing order" is the one genuinely fused idea and it stops at a chip.
+   The race metaphor never touches the interesting story — Direct converts at
+   roughly twice Social's rate — and conversion gets no visual treatment at all.
+
+CLARITY
+
+6. Inconsistent chart labeling: "Visits" sits above its bars while "Signups"
+   sits below its bars, so the reader meets the gold bars before their label.
+   Worse, the two bar rows share one container and baseline rhythm, implying a
+   shared scale when the scales differ by roughly 16x.
+7. Gold means two things at once: signups (bar color) and "peak day" (Sunday's
+   recolored visits bar, value, and day label). Sunday's white-gold visits bar
+   can be parsed as a different metric rather than emphasis.
+8. Source stats are inline dim text per row. Numbers do not align vertically
+   across sources, so comparing signups or conversion across the three rows
+   means re-reading each sentence-like line. The unit words repeated three
+   times ("visits", "signups", "conversion") are copy that alignment deletes.
+9. The source track encodes visits only — information the P-chip and the
+   number already give twice — while conversion, the most decision-relevant
+   figure on the page, is never encoded.
+
+CHANGES MADE IN 4-1-2
+
+- Fused the two marks into one: the disco ball's facets are now a chequered-
+  flag pattern, a single element that is simultaneously mirror ball and
+  chequered flag. The generic facet grid is gone.
+- Peak day: replaced the gold recolor with a chequered finish-line cap on
+  Sunday's bars in both charts, with white emphasis on its values and day
+  label. Gold now means signups only, and the finish line carries meaning in
+  identity language: the week finishes at its peak.
+- Daily charts: both row labels now sit above their bars, each chart has its
+  own baseline with clear separation so the differing scales no longer share
+  an implied axis, and the row labels take their metric's color (silver for
+  visits, gold for signups), tying the coding together without a legend.
+- Sources: rebuilt as one aligned leaderboard — a single column-header row
+  (Visits / Signups / Conv.), right-aligned tabular numbers, signups in gold
+  to match the chart coding, and the repeated per-row unit copy deleted.
+  Conversion is now bold foreground ink, the strongest number in each row.
+  The visits track remains as the visual rationale for the finishing order.
+
+PRESERVED, DELIBERATELY
+
+The KPI row; direct value labels on every bar (they replace axes); the
+P1/P2/P3 podium; the dark palette and condensed italic type; the synthetic-
+data badge; and the gradient title with its restrained, reduced-motion-safe
+sheen — the strongest disco gesture on the page. Purpose, figures, and data
+are unchanged.

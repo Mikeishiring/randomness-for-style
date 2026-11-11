@@ -1,0 +1,51 @@
+Critique of 2-5-2.html (harsh, originality and clarity)
+
+ORIGINALITY
+1. The weather glyphs are still stock app iconography - the same Feather-style
+   cloud path stamped seven times, a generic emoji-grade sun - sitting inside a
+   hand-ruled Victorian cabinet next to hand-engraved beetles. The incongruity
+   is the tell: every other mark on the page is drawn, these are installed.
+   The weather ingredient remains the shallowest element of the identity.
+2. The ingredients are adjacent, not fused. The sky strip now sits over the
+   chart, which is better, but the metaphor still only decorates; it never
+   explains anything. A Victorian field log would close the loop: clearing
+   weather, better collecting. The page has that exact story in its numbers
+   and never tells it.
+
+CLARITY
+3. The report states no finding. The reader is handed bars, glyphs and tiles
+   and must do the synthesis alone. For a page whose brief is "help its owner
+   understand this week's performance", the single most useful sentence -
+   the week improved, sharply, and signups improved faster than visits -
+   is missing.
+4. The outcome metric is cramped. Signups, the number the owner presumably
+   cares most about, lives in a 48px strip under a 140px visits chart, flat-
+   tening a 2.2x Monday-to-Sunday climb into a few millimetres.
+5. The week's clearest quality signal is absent: daily signup rate rose
+   every step of the trend, 4.0% -> 6.0%. It is derivable from what is shown,
+   but a weekly report should not ask the owner to divide seven pairs of
+   numbers in their head.
+6. Defended, not changed: the register gridlines stay unlabeled because every
+   bar prints its exact value; adding an axis would duplicate them. The
+   repeated "signup rate" phrasing in the three cards is deliberate parallel
+   labeling, not filler.
+
+CHANGES APPLIED (one pass)
+- Engraved the weather glyphs: fine diagonal hatching strokes inside every
+  cloud so the sky is drawn in the same hand as the specimens and bars.
+- Added one finding line under the tiles: "The week cleared - visits up 48%
+  from Monday, signups more than doubled." It uses the weather frame to state
+  the result, fusing the two ingredients into the report's actual message
+  (1,420 -> 2,100 visits = +47.9%; 57 -> 127 signups = 2.2x).
+- Enlarged the signups band: bar scale raised from 48px to 60px max with the
+  band deepened to match, giving the outcome metric legible resolution.
+- Added a "Rate" row under the signups band with each day's signup rate
+  (4.0, 4.5, 5.0, 4.5, 5.0, 5.4, 6.0 percent), making the traffic-quality
+  trend visible without arithmetic.
+
+PRESERVED (strong decisions)
+Sky strip above the bars with the rain -> clear legend formula; register
+gridlines per 500 visits; printed values at every bar; day labels adjacent to
+the bars; data-ordered specimen sizes (116/108/84); disambiguated card lines
+("6.0% signup rate" vs "42% of the week's visits"); museum-tag tiles; the
+parchment cabinet frame; all supplied figures and derived totals unchanged.

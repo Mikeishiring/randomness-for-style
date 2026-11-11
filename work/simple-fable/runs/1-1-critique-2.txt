@@ -1,0 +1,59 @@
+CRITIQUE OF 1-1-2.html
+
+ORIGINALITY — harsh
+- The header mark has survived two rounds untouched and is still the most
+  generic object on the page: pediment, two columns, ball. Worse, the ball does
+  not read as a mirror ball — its facet lines sit at 0.55 opacity on a lavender
+  gradient, so it reads as a plain mauve sphere. The one disco icon on the page
+  fails to be disco.
+- Round 1 called the twin meander strips ornament filler; round 1's fix left
+  them as identical twins anyway. An ornament repeated verbatim at top and
+  bottom is a border, not a design decision.
+- The colonnade idea is right but undersold: a 4px capital overhang on a 44px
+  bar is invisible at reading distance, so the "columns" still scan as plain
+  bars with stripes. The 2px flute alternation also risks moire banding at
+  device-pixel rounding.
+- Disco is still entirely pigment — gold foil, flutes, faint rays. Nothing on
+  the page behaves like light: no spot, no pool, no glint. (Reintroducing
+  motion would walk back round 1's deliberate cut of the shimmer cliche; light
+  can be expressed statically.)
+- Myth remains one laurel sprig. Thin, but honest — further mythic props with
+  no data role would be kitsch, so restraint is the right call here.
+
+CLARITY — harsh
+- The new conversion mini-bars are half-done: they are centered in each
+  column, so every bar grows from a different left edge. Length encodings
+  need a common origin; centered bars make the 4.0 → 6.0 climb read as a vague
+  thickening instead of a march. The shared 0–6% scale was right, the
+  alignment wrong.
+- The scale notes (0–2,100 / 0–127 / 0–6%) fixed the dual-scale trap but are
+  set at 9px — below a comfortable floor, and they carry critical information.
+- The five-column sources table compresses hard at phone width; nothing lets
+  it breathe or scroll.
+- The stylobate baseline also runs under the label column, mildly implying an
+  eighth data column. Tolerable as a continuous floor line.
+
+KEPT — strong decisions preserved
+- Printed values everywhere; separate self-scaled tracks with stated ranges;
+  conversion on a shared 0–6% axis; the site-average tick and its one-line
+  caption; the laurel on the peak day; "dip Thu" beside the +48%; the real
+  table; the synthetic-data badge; no filler copy; no animation.
+
+CHANGES APPLIED IN 1-1-3.html
+1. Conversion re-encoded as a position, not a length: each day gets a glowing
+   cyan dot on a faint full-width track (0–6%), number printed above. A dot's
+   position needs no common left edge, the climb reads precisely — and a spot
+   of light on a dark stage is the first genuinely disco behavior on the page.
+2. The mirror ball finally mirrors: facet lines strengthened and three white
+   glint tiles added, so the header mark reads as a disco ball at a glance.
+3. The colonnade becomes legible: capitals widened (±14%) and deepened (5px);
+   flute bands widened to reduce banding.
+4. Stage light: a static warm radial pool falls on the daily chart from above,
+   lighting the colonnade like a floor — atmosphere with no motion, guarded by
+   nothing because nothing moves.
+5. The bottom meander shrinks to a short centered colophon fragment instead of
+   a verbatim repeat of the top strip.
+6. Scale notes raised to 10px; the sources table gains a horizontal-scroll
+   wrapper for phone width.
+
+Purpose, figures, layout order and all data values are unchanged.

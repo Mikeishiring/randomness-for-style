@@ -1,0 +1,58 @@
+Critique of 2-1-3.html (third pass)
+
+ORIGINALITY — harsh read
+
+1. The merge now holds — mirror-ball mark, named conditions, scattered-light
+   rays, floor line, gated motion — but the furniture around it is still
+   catalog stock: glassy rounded cards, pill badge, stat tiles. Nothing about
+   a tile says weather or disco. That said, this furniture is doing clarity
+   work (grouping, alignment, hierarchy); re-theming it would be novelty
+   bought with legibility, so it is criticized here and deliberately left.
+2. Craft slip in the new masthead: the mirror ball hangs from nothing. Its
+   stem stops mid-air three units above the ball — at 34px masthead scale
+   the missing ceiling is visible and undercuts the one mark the page owns.
+   At 40px data-icon scale the same slip is below the threshold of notice.
+3. The legend icons at 20px blur the facet detail into noise, but they only
+   need to be recognizable silhouettes next to their thresholds, which they
+   are. Noted, not changed.
+
+CLARITY — harsh read
+
+4. The new summary tile reads "6.0% / WEEK HIGH · SUN". High of what? The
+   reader must borrow context from the neighboring tile. A summary number
+   that needs its neighbor to be parsed is mislabeled.
+5. The last pass raised condition captions to 10px citing a legibility floor,
+   then left the unit labels ("visits", "signups" on Mon) at 9px. The page
+   now contradicts its own stated floor; the units are the only words at 9px.
+6. Residual, accepted risks, unchanged with reasons:
+   - A reader may take day-bar height for the rate printed above it. The bar
+     is labeled by the visits figure directly beneath, Mon carries the unit,
+     and the legend keys the rate to the ball — three bindings are enough.
+   - First-entry-only units still assume Mon is in view on phones.
+   - The static fallback (reduced motion) loses the light sweep; the gradient
+     remains, so identity degrades gracefully. Correct behavior, not a flaw.
+
+WHAT STAYS (strong decisions preserved)
+
+- All of pass 1 and 2: forecast cards, condition system, legend's single job,
+  measure-grouped sources, first-entry units, floor baseline, gated motion,
+  masthead mark, week-high summary, all figures and geometry unchanged.
+
+REFINEMENTS APPLIED (one pass — deliberately minimal)
+
+a. Masthead ball now hangs from the frame: stem extended to the top edge of
+   its own viewport (2).
+b. "week high · Sun" relabeled "rate high · Sun" so the tile names its own
+   measure (4).
+c. Unit labels raised 9px → 10px, honoring the established floor (5).
+
+REJECTED (restraint)
+
+- Re-theming cards/tiles with facet or cloud texture: decoration over data.
+- Animating anything else: current motion is ambient and far from the data;
+  more would compete with reading.
+- Legend redesign or condition words on source rows: the rows already pair
+  icon with bold %, the same lesson the cards teach.
+- At this point every remaining originality critique costs more clarity than
+  it buys; absent new data or purpose, further passes should converge, not
+  churn.

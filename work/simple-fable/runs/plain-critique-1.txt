@@ -1,0 +1,51 @@
+Critique of plain-1.html
+
+ORIGINALITY — weak.
+1. The page is assembled from stock admin-template vocabulary: three bordered KPI
+   cards in a row, white cards on an off-white ground, 10px radii, a 999px pill
+   badge, uppercase letter-spaced micro-labels. Nothing about it belongs to this
+   owner; swap the accent hue and it is any SaaS starter dashboard.
+2. The identity is only a color choice (teal + amber), and the choice is
+   arbitrary — the two hues carry no system. Signups are amber in the day chart
+   but conversion (a signups-derived rate) is plain text in the table, so the
+   coding does not even hold across sections.
+3. Typography carries no voice: one weight bump on the KPI values, otherwise a
+   single system sans at near-identical sizes. Hierarchy is done entirely with
+   small caps and gray, the laziest available move.
+
+CLARITY — mostly sound, with one real omission and two misses.
+4. Omission: conversion is one of three headline KPIs, yet the daily section
+   never shows it. The most interesting fact in the data — Sunday has both the
+   most visits AND the best rate (6.0% vs Monday's 4.0%) — must be computed by
+   the reader across two charts. The week's story is "traffic grew and got
+   warmer", and the page only tells half of it.
+5. Miss: in the source table the bar encodes visits only. Direct converting at
+   nearly twice Social's rate (6.0% vs 3.1%) is the actionable finding, and it
+   has no visual weight at all.
+6. Miss: the two day charts repeat the Mon–Sun axis twice; days should be one
+   shared axis with metric rows aligned above it. Minor, but it wastes space
+   and loosens the day-to-day comparison between metrics.
+7. The KPI row floats unconnected above the charts — acceptable, but the band
+   could share the page's ruling instead of sitting in separate boxes.
+
+STRONG DECISIONS — preserved unchanged.
+- Separate, honestly-scaled charts per metric instead of a dual-axis chart.
+- Value labels on every bar at n=7; no fake axes or gridlines.
+- Tabular numerals, minimal copy, "Synthetic data" disclosure, dark mode,
+  full self-containment. All data and derived figures unchanged.
+
+CHANGES MADE in plain-2.html
+a. Identity: dropped the boxed-card template for an editorial ledger — warm
+   paper ground, hairline rules dividing sections, serif display numerals for
+   the masthead and KPI band, sans tabular figures for all data. The pill badge
+   becomes a plain small-caps note.
+b. Coding system: green = visits, ochre = signups and the rates derived from
+   them, applied consistently in the day rows, the KPI band dots, and the
+   source table.
+c. Added a daily conversion row (dot plot on a baseline, labeled per day:
+   4.0 / 4.5 / 5.0 / 4.5 / 5.0 / 5.4 / 6.0%), so the rate trend is visible.
+d. Merged the day charts into one block with aligned columns and a single
+   shared Mon–Sun axis on a common baseline.
+e. Added an ochre conversion bar to each source row, giving the Direct-vs-
+   Social gap visual weight next to the green visits bar.
+No other content changed; purpose, figures, and arithmetic are identical.

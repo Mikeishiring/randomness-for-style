@@ -1,0 +1,61 @@
+Critique of 4-0-2.html (originality, then clarity), followed by the changes applied in 4-0-3.html.
+
+ORIGINALITY — harsh read
+
+1. The color system is half-built, which exposes the identity as surface
+   treatment. v2 established red = visits, teal = signups, purple = session
+   best — then broke its own rules everywhere channels mix: KPI deltas are
+   teal even on the visits tile, the peak-day tile renders a visits figure
+   and a signups figure in the same teal, and the sources table colors the
+   SIGNUPS column but leaves VISITS white. A telemetry system that
+   channel-codes inconsistently is a theme, not a system.
+2. Conversion numbers in the sources table are red-tinted for no semantic
+   reason. On this page red is the visits channel; borrowing it as a generic
+   accent is exactly the coat-of-paint habit v1 was criticized for.
+3. The motorsport flag vocabulary was adopted halfway. Purple-best is in, but
+   motorsport pairs it with yellow for caution, and v2's emphasis system can
+   only celebrate. The one actionable finding in the data — Social converts
+   at half Direct's rate (3.1% vs 6.0%) — receives no emphasis at all.
+4. The checkered strip remains ornament. It is the page's most generic
+   signifier and still does no informational work.
+5. The tech ingredient still rests mostly on the mono font and grid; it is
+   carried by the telemetry structure rather than developed further.
+
+CLARITY — harsh read
+
+6. Both lanes label 1.0k/2.0k and 50/100 gridlines but not the zero
+   baseline, leaving the zero-based scale implicit.
+7. Emphasis that only marks winners misleads by omission: a reader scanning
+   for problems finds nothing marked, yet the 2x source conversion gap is
+   the week's main story after the upward trend.
+8. In the KPI row, teal "+48%" under VISITS invites a false association with
+   the signups channel defined one card below.
+
+WORTH KEEPING (strong decisions preserved)
+
+- Lane-per-channel traces, every value labelled, zero-based fills, in-lane
+  channel labels, the CONV % sector row, the purple peak marking.
+- The checkered strip stays despite (4): it is the single compact at-a-glance
+  identity marker, and replacing it with a subtler device would trade
+  recognition for taste with no clarity gain.
+- Layout order, copy, KPIs, plate, notched livery corners, mobile-safe
+  sources grid.
+
+CHANGES APPLIED IN 4-0-3.html
+
+a. Channel coding completed wherever channels mix: sources VISITS column and
+   header in channel red, SIGNUPS header in channel teal; KPI deltas take
+   their tile's channel color; the peak-day tile colors 2,100 red and 127
+   teal (1, 8). Within a single-channel lane, value labels stay white — the
+   trace identifies the channel and white maximizes contrast.
+b. Unmotivated red removed from conversion figures; conversion is derived,
+   so it reads neutral white (2).
+c. The flag palette is completed: amber caution marks Social's 3.1%
+   conversion, opposite purple best on Direct's 6.0% — emphasis now points
+   at the finding as well as the win (3, 7).
+d. Zero labels added to both lane baselines (6).
+e. No further tech-ingredient additions (5): every candidate considered
+   (HUD brackets, status readout line, scanlines) was decoration that would
+   add noise without information, and the completed channel semantics are
+   themselves the instrumentation idea carried further.
+f. Data, purpose, structure and all other styling unchanged.

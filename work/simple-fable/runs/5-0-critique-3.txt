@@ -1,0 +1,49 @@
+Critique of 5-0-3.html (originality, then clarity), followed by the changes applied in 5-0-4.html.
+
+ORIGINALITY — harsh read
+
+1. The protagonist still whispers. Conversion is the page's declared story, yet it renders
+   as seven nearly identical dots. The honesty fix in the last pass (area proportional to
+   rate) shrank the radii to 4–4.9px — differences no eye can rank — and opacity steps of
+   ~0.11 on dots that small are scarcely better. "Bioluminescence as data" survives only as
+   a caption claim. The fix proved the point: size and brightness are the wrong channels
+   for a 4.0–6.0% range. The one channel that is both accurate and native to the identity —
+   a luminous chain rising through the water column, i.e. POSITION — sits unused.
+2. The sources table abandons the system halfway: the daily chart colors its value labels
+   by series (cyan-white visits, violet-white signups), while sources sets every numeral in
+   the same flat ink. A visual identity that applies to one chart and not its neighbor is a
+   style, not a system.
+3. The frame remains a template dashboard (chips, three KPI cards, two rounded panels) and
+   the speck field remains generic. Third pass, same verdict — and the same defense: the
+   skeleton is doing clarity work, and the brief forbids trading comprehension for novelty.
+   Kept, again, deliberately.
+
+CLARITY — harsh read
+
+4. The week's most interesting shape — conversion climbing Mon→Wed, dipping Thursday,
+   then climbing to a Sunday peak — is invisible as a shape. A reader must read seven
+   percentages and diff them mentally. Every other series on the page gets a geometric
+   trend; the headline series gets arithmetic homework.
+5. Numeral alignment relies entirely on the monospace stack; if a fallback serves
+   proportional figures, the table columns drift. Minor, costless to fix.
+6. The mobile scroll guard has no affordance that the chart pans; the clipped edge is the
+   only cue. Noted and accepted: any added hint is chrome the chart does not need, and the
+   clip itself is a conventional cue.
+
+WHAT HOLDS UP (kept unchanged)
+
+- Declared scales, labeled bars, no dual axis, one luminance grammar across charts.
+- Lit-fraction sources bars with full numeric columns.
+- KPI totals, synthetic chip, minimal copy, self-containment, dark-only scheme.
+
+CHANGES APPLIED IN 5-0-4.html
+
+a. The conversion strip becomes a luminous chain: each dot now sits at a height mapped to
+   its rate (24 SVG units per percentage point), linked by a faint filament. The rise and
+   the Thursday dip are now visible as shape — position carries the value; area and
+   brightness remain as reinforcement; every percentage stays printed beneath. This is the
+   deep-sea image the identity wanted (a glowing siphonophore chain) doing honest work.
+b. Sources numerals now wear their series colors, matching the daily chart's labels.
+c. font-variant-numeric: tabular-nums added to all numeric text as fallback insurance.
+d. The chart's aria-label now names the Thursday dip.
+e. Everything else — data, layout, copy, palette, structure — unchanged.

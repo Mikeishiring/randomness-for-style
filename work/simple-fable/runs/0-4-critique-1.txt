@@ -1,0 +1,52 @@
+CRITIQUE OF 0-4-1.html
+
+Originality
+- The Cthulhu ingredient is a name and a squiggle. "Grand Hotel R'lyeh" plus a
+  scroll-shaped ornament that reads as stock art deco; delete the word R'lyeh
+  and nothing on the page identifies the creature. The sucker divider reads as
+  a dotted rule. Timid.
+- The luxury-hotel ingredient is the laziest available shorthand: gold small
+  caps on a dark serif page. Every "premium" template does this. Nothing
+  hotel-specific survives — no register, plaque, menu numbering, or key line.
+- The two ingredients never interact. A deco frame sits near a tentacle; the
+  promised hybrid (a drowned grand hotel's weekly register) is absent. The
+  page would serve a whisky brand unchanged.
+- The palette is one flat idea applied uniformly. An abyss should deepen; the
+  background has no depth cue, so the identity has no atmosphere.
+
+Clarity
+- Two bar lanes with different scales sit stacked, and on mobile the lane
+  labels are display:none — unlabeled teal and gold bars invite reading
+  signups against the visits scale. A real misreading hazard, not a nitpick.
+- Bars have no baseline or gridlines; heights are only decodable through the
+  printed numbers, so the bars decorate rather than measure.
+- Source bars are scaled to Direct = 100% but nothing says so. A reader will
+  assume share of total, and a full-width Direct bar implies all traffic.
+  An unlabeled relative-to-max scale is a lie by omission.
+- "Conversion" in the KPI, "Conv." in the lane and the source rows: one
+  concept, two labels.
+- Sunday's conversion is gold for no stated reason; unexplained emphasis is
+  noise.
+- The spacer-div grid hack is brittle, and the footer ornament repeats the
+  header's while adding nothing.
+
+Kept (strong decisions)
+Abyss teal + gold restraint; serif small caps; the three-section structure
+(KPIs, by day, by source); separate per-metric lanes instead of a dual-axis
+chart; every value printed; the synthetic-data tag; no filler copy.
+
+Changes applied in 0-4-2.html
+1. Lane captions are always visible, and each lane gains a baseline and
+   labeled gridlines (1,000 / 2,000 visits; 50 / 100 signups), so the bars
+   measure instead of decorate. The spacer-row hack is gone.
+2. Source bars now encode share of the week's visits, with the share printed
+   (42% / 36% / 22%) — the unlabeled Direct=100% scale is removed.
+3. One vocabulary: "Conversion" everywhere. The unexplained gold highlight on
+   Sunday's conversion is removed; the maximum is already visible.
+4. The identity is developed instead of hinted: the background deepens down
+   the page; the header ornament is a tapered, suckered tentacle rather than
+   a scroll; a faint tentacle descends behind the header like something
+   surfacing past the marque; panels are numbered like a hotel menu (I., II.);
+   the marque sits between hairline rules. None of it carries or obscures
+   data.
+5. The duplicate footer flourish is replaced by a single small colophon mark.

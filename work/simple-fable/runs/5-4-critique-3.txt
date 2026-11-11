@@ -1,0 +1,55 @@
+Critique of runs/5-4-3.html
+
+CLARITY — harsh read
+
+1. The page's centerpiece fails on phones. The chart is a fixed 680-unit viewBox
+   scaled to container width, so on a 375px screen every label renders at roughly
+   half its nominal size: 13px visit values become ~6px, the 10px band captions ~5px.
+   The best-labeled chart on the page is unreadable precisely where most owners will
+   glance at it. Three passes of polish and nobody sized the type for the medium.
+2. Accessibility contradiction: the sources column header carries aria-hidden, so a
+   screen reader hears "Direct, 5,240, 314, 6.0%" with no column names announced
+   anywhere — the one semantic aid in the section was deliberately hidden from the
+   only audience that needed it. The visual design got three rounds of care; the
+   non-visual reading got none.
+3. The gold wayfinding ink (--gold-dim at 0.68 alpha) sits near the contrast floor
+   for 10-11px letterspaced caps on the panel ground. Elegance chosen at the expense
+   of the labels' first job: being read.
+4. The luminous rate row sits under the signups band; a careless reader could take it
+   for an axis of those bars. The separating hairline and its own SIGNUP RATE caption
+   make this unlikely — flagged, accepted.
+
+ORIGINALITY — harsh read
+
+5. The identity is now coherent — the light-means-conversion motif runs end to end,
+   and the beacon ornament genuinely fuses the two ingredients — but the fusion lives
+   in exactly one element. The panels, section rules, and table never let gold and
+   glow touch. Considered seeding beacons into every section rule and rejected it:
+   repeating the mark turns a signature into wallpaper. The restrained answer is to
+   leave it, so no change; noted as the design's remaining ceiling.
+6. Structure remains the dashboard triptych, defended in both earlier critiques for
+   the same reason: it answers the owner's question in reading order. Still true.
+
+STRONG DECISIONS — preserved
+
+- Three direct-labeled bands on one day axis; exact values on every mark; no
+  dual-scale overlay.
+- One page-wide color rule (visits pale cyan, signups gold, rates luminous).
+- Minimal copy; synthetic-data caveat; abyss depth; double-hairline panels.
+
+CHANGES APPLIED (one pass, data and purpose unchanged)
+
+a. Chart type now scales for the medium: below 560px the SVG text sizes step up
+   (values 13 to 18 and 12 to 16 units, day labels 11 to 14, captions 10 to 13), so
+   rendered text on a phone stays near 8-9px instead of 5-6px. Positions were
+   checked against the new sizes; no collisions. Fixes 1.
+b. Sources header exposed to assistive tech: aria-hidden removed, so column names
+   are announced before the rows. Full ARIA table-role scaffolding was considered
+   and rejected as fragile with the decorative bar column; header-first linear
+   reading is correct and robust for a three-row list. Fixes 2.
+c. --gold-dim raised from 0.68 to 0.78 alpha, lifting every label, caption, day
+   name, and column header above the contrast floor while keeping the dimmed-gold
+   register. Fixes 3.
+
+No other changes: the remaining originality criticisms (5, 6) have cures worse than
+the condition, per the reasoning above.

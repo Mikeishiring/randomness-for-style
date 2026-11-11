@@ -1,0 +1,75 @@
+Critique of 1-3-1.html (harsh, originality and clarity), followed by the changes applied in 1-3-2.html.
+
+ORIGINALITY
+
+1. The identity is mostly a classical-luxury veneer. Gold on velvet, a high-contrast serif,
+   a meander band: that combination decorates any upscale restaurant menu or perfume box.
+   Only two decisions are actually original — visits drawn as fluted marble columns and
+   signups drawn as noteheads on a staff — and both stop at the chart. The header and the
+   sources table carry no developed identity beyond palette.
+
+2. "Greek myths" is not in the page at all. Columns, meander, laurel are Greek
+   *architecture and ornament*; there is no myth. Worse, the laurel sprig is the single
+   most generic classical sign available. The obvious fusion was missed: opera was born
+   from Greek myth — the first operas (Peri's Euridice, Monteverdi's L'Orfeo) are the
+   Orpheus story, and the lyre inside a laurel wreath is the historic opera-house crest.
+   One emblem could have carried both ingredients at once; instead the page hedges with
+   stock garnish.
+
+3. The opera ingredient is reduced to a curtain and five gridlines. The "staff" is a dot
+   plot wearing a costume: the noteheads have no stems, so at a glance they read as
+   ordinary round markers and the musical conceit evaporates. The curtain's swags are
+   uniform and flat — closer to clipart than to drawn fabric.
+
+4. The playbill framing ("Week 01" as a production) is asserted by typography and then
+   abandoned: nothing else on the page treats the seven days as seven nights of a run.
+
+CLARITY
+
+5. The gold accent meaning "peak" (Sunday column cap, label, value, conversion) is never
+   established; a reader must infer it. Tolerable — the tooltip says "peak day" — but it
+   is an implicit convention doing real work.
+
+6. In the sources table, the signups segment is drawn at the same scale as visits — the
+   honest choice — but the legend says only "of which signups". At Social's 1.6% the gold
+   sliver is about five pixels and can read as a rendering artifact rather than a segment.
+   The track has no boundary, so bar end and sliver have nothing to register against.
+
+7. Structural fragility: the bottom meander band fills with url(#fret), a pattern defined
+   inside the *header* SVG. Same-document references across inline SVGs work today, but
+   the band silently vanishes if the header is removed or the reference handling changes.
+
+8. The Didot/Bodoni stack degrades to Times New Roman on most Windows machines, losing
+   much of the playbill voice. Unfixable while self-contained (no linked fonts); the
+   letter-spacing and scale carry the identity in the fallback. Accepted constraint.
+
+CONSIDERED AND REJECTED (clarity would have paid for identity)
+
+- Renaming sections or days as "Act I–VII" / "The Chorus": acts belong inside one opera,
+  and operatic names would displace the labels a reader needs. Rejected as primary labels;
+  added only as subdued secondary numerals under the columns (the days stay primary).
+- A crescendo hairpin under the melody: true in aggregate (signups swell 57 → 127) but it
+  editorializes past the Thursday dip. The per-day conversion strip already tells it.
+- Mythic epithets for Direct/Search/Social: obscures the only names the owner uses.
+- Any added prose (epigraph, takeaway line): the figures and accents already demonstrate
+  the story; copy would be filler.
+
+CHANGES APPLIED IN 1-3-2.html (everything else preserved: data, layout, both charts'
+scales and values, stats, table figures, tooltips)
+
+a. Masthead emblem: the laurel sprigs flanking the title are replaced by one composed
+   crest — a lyre within a laurel wreath — the Orpheus emblem that fuses Greek myth with
+   opera. Drawn inline, decorative, aria-hidden.
+b. Noteheads gain short down-stems so the signups panel unmistakably reads as a melody,
+   not a scatter. Stems are equal length and encode nothing.
+c. Subdued gold numerals I–VII sit between the column bases and the day labels: the seven
+   nights of the run, secondary to Mon–Sun. Staff and conversion strip shift down to make
+   room; all signup coordinates recomputed for the same 40–120 scale.
+d. Table legend now says "signups · same scale", and the bar track gets a faint inset
+   hairline so the Social sliver registers as a segment against a bounded bar.
+e. The bottom meander band gets its own pattern definition (no cross-SVG dependency).
+f. The curtain hem is doubled (a second, fainter trim line) for depth; swag geometry
+   unchanged.
+
+No figures, labels, scales, or claims changed. The revision develops both ingredients
+where it is free and leaves the reading of the data exactly as it was.

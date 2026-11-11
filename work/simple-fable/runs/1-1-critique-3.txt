@@ -1,0 +1,52 @@
+CRITIQUE OF 1-1-3.html
+
+ORIGINALITY — harsh
+- The identity is top-heavy. Three rounds in, everything below the "Sources"
+  heading is an untouched admin table: the colonnade stops at the section
+  break, and neither ingredient ever reaches the bottom third of the page.
+- The KPI row is four generic rounded rectangles that any dashboard ships
+  with. The page's first data moment has nothing Greek or disco about it.
+- Same metric, two costumes: conversion is a glowing spot of light in the
+  daily chart but a flat length bar in the table. The page invented one
+  genuinely original device in round 2 and then didn't trust it enough to make
+  it the system. That is the mark of decoration, not identity.
+- The surviving ornaments (rays, sparkles, meander strip and colophon) are now
+  doing the right amount of work; no further development is justified there.
+
+CLARITY — harsh
+- Encoding the same quantity two different ways forces the reader to relearn
+  it mid-page. Worse, the asymmetry is informative in the wrong direction: the
+  table's conversion bars carry a site-average tick, the daily dots do not, so
+  "above or below average?" is answerable for sources but not for days — and
+  the daily trend is where that question first arises.
+- The tick's caption sits under the table, far from the chart where a reader
+  first wants it; shared method should be stated once, at first use.
+- The chart containers rely on aria-label on bare divs, which is not reliably
+  exposed without a role.
+- The dot track at 88% column width gives away precision room on phones,
+  where the seven dots are already only a few pixels apart.
+- The stylobate line still runs under the label column, faintly implying an
+  eighth data column (carried from v2; tolerable, unchanged).
+
+KEPT — strong decisions preserved
+- Every figure printed; stated ranges on every track; the colonnade bars,
+  laurel, stage-light pool, mirror-ball mark, meander strip and colophon; the
+  real table with Share kept; the synthetic-data badge; "dip Thu"; no filler
+  copy; no motion. The visits bars in the table stay length bars — length is
+  the right encoding for a count, and restraint beats a matching gimmick.
+
+CHANGES APPLIED IN 1-1-4.html
+1. One device for conversion everywhere: the table's conversion bars are
+   replaced by the same glowing dot-on-track (0–6%) used for days, and the
+   site-average tick (5.0%) now sits on every conversion track on the page,
+   daily chart included — same mapping, same scale, same light.
+2. The single caption explaining the tick and the 0–6% span moves to first
+   use, directly under the daily chart; the table's separate note is removed
+   (one stated method, two uses).
+3. The KPI cards become plinths: a solid gold base edge under each, hairline
+   elsewhere, so the week's totals stand on pedestals — Greek weight on a
+   previously generic zone, with zero text or layout change.
+4. role="group" added to the labelled chart container; dot tracks widened to
+   94% on phones for precision.
+
+Purpose, figures, layout order and all data values are unchanged.

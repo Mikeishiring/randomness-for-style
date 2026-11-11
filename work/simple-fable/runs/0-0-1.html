@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Site Performance — Week 01</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --abyss: #050d12;
+    --panel: #0a1a21;
+    --panel-edge: #12333c;
+    --ink: #c9e8e0;
+    --dim: #5e8a84;
+    --glow: #3ef0c0;
+    --glow-soft: #8ff5dd;
+    --violet: #9a7bff;
+    --violet-dim: #6e55c4;
+    --serif: "Palatino Linotype", Palatino, Georgia, serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background:
+      radial-gradient(1100px 500px at 50% -180px, rgba(62,240,192,.10), transparent 70%),
+      radial-gradient(900px 700px at 85% 110%, rgba(110,85,196,.08), transparent 65%),
+      var(--abyss);
+    color: var(--ink);
+    font-family: var(--serif);
+    min-height: 100vh;
+  }
+  .deep {
+    position: fixed; bottom: -30px; width: 340px; max-width: 46vw;
+    pointer-events: none; z-index: 0;
+  }
+  .deep.l { left: -40px; }
+  .deep.r { right: -40px; transform: scaleX(-1); }
+  main {
+    position: relative; z-index: 1;
+    max-width: 880px; margin: 0 auto; padding: 36px 16px 56px;
+  }
+  header {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    padding-bottom: 20px; margin-bottom: 24px;
+    border-bottom: 1px solid var(--panel-edge);
+  }
+  h1 {
+    font-size: 20px; font-weight: 600; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--glow-soft);
+    text-shadow: 0 0 18px rgba(62,240,192,.35);
+  }
+  .spacer { flex: 1; }
+  .period { font-family: var(--mono); font-size: 14px; color: var(--ink); }
+  .chip {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
+    color: var(--dim); border: 1px solid var(--panel-edge);
+    border-radius: 999px; padding: 3px 10px;
+  }
+  .stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px; margin-bottom: 24px;
+  }
+  .stat {
+    background: var(--panel); border: 1px solid var(--panel-edge);
+    border-radius: 10px; padding: 14px 16px;
+    box-shadow: inset 0 0 30px rgba(62,240,192,.03);
+  }
+  .stat dt {
+    font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--dim); margin-bottom: 6px;
+  }
+  .stat dd {
+    font-family: var(--mono); font-size: 26px; color: var(--glow);
+    text-shadow: 0 0 14px rgba(62,240,192,.3);
+  }
+  .stat.alt dd { color: var(--violet); text-shadow: 0 0 14px rgba(154,123,255,.3); }
+  .stat dd small { font-size: 14px; color: var(--dim); margin-left: 4px; }
+  section {
+    background: var(--panel); border: 1px solid var(--panel-edge);
+    border-radius: 10px; padding: 18px 18px 14px; margin-bottom: 24px;
+    box-shadow: inset 0 0 40px rgba(62,240,192,.03);
+  }
+  h2 {
+    font-size: 12px; font-weight: 600; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--dim); margin-bottom: 12px;
+  }
+  svg.chart { width: 100%; height: auto; display: block; }
+  .srcgrid {
+    display: grid;
+    grid-template-columns: 58px 1fr 56px 44px 44px;
+    gap: 8px 10px; align-items: center;
+    font-family: var(--mono); font-size: 13px;
+  }
+  .srcgrid .h {
+    font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--dim);
+  }
+  .srcgrid .num { text-align: right; }
+  .srcgrid .v { color: var(--glow); }
+  .srcgrid .s { color: var(--violet); }
+  .srcgrid .c { color: var(--ink); }
+  .name { font-family: var(--serif); font-size: 14px; letter-spacing: .04em; }
+  .track {
+    height: 14px; border-radius: 7px; background: rgba(18,51,60,.5);
+    overflow: hidden;
+  }
+  .fill {
+    height: 100%; border-radius: 7px;
+    background: linear-gradient(90deg, #0f4f4e, var(--glow));
+    box-shadow: 0 0 10px rgba(62,240,192,.35);
+  }
+</style>
+</head>
+<body>
+
+<svg class="deep l" viewBox="0 0 340 380" aria-hidden="true">
+  <g fill="none" stroke="#3ef0c0" stroke-linecap="round" opacity=".09">
+    <path d="M30 400 C 10 300, 120 280, 110 200 C 102 140, 20 130, 55 70" stroke-width="20"/>
+    <path d="M120 400 C 150 320, 80 270, 130 210 C 170 165, 230 190, 215 120" stroke-width="14"/>
+    <path d="M210 400 C 250 340, 200 300, 250 250 C 290 212, 330 240, 320 180" stroke-width="9"/>
+  </g>
+  <g fill="#3ef0c0" opacity=".10">
+    <circle cx="96" cy="250" r="4"/><circle cx="84" cy="300" r="5"/>
+    <circle cx="70" cy="350" r="6"/><circle cx="150" cy="255" r="3.5"/>
+    <circle cx="135" cy="320" r="4.5"/><circle cx="250" cy="300" r="3.5"/>
+  </g>
+</svg>
+<svg class="deep r" viewBox="0 0 340 380" aria-hidden="true">
+  <g fill="none" stroke="#9a7bff" stroke-linecap="round" opacity=".07">
+    <path d="M40 400 C 20 310, 130 290, 115 205 C 105 145, 30 135, 60 75" stroke-width="18"/>
+    <path d="M140 400 C 170 330, 100 280, 150 220 C 190 175, 250 200, 235 130" stroke-width="12"/>
+  </g>
+  <g fill="#9a7bff" opacity=".08">
+    <circle cx="100" cy="260" r="4"/><circle cx="88" cy="315" r="5"/><circle cx="165" cy="265" r="3.5"/>
+  </g>
+</svg>
+
+<main>
+  <header>
+    <svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true">
+      <circle cx="20" cy="16" r="10" fill="none" stroke="#3ef0c0" stroke-width="1.6"/>
+      <ellipse cx="20" cy="16" rx="2.1" ry="5.6" fill="#3ef0c0"/>
+      <g fill="none" stroke="#3ef0c0" stroke-width="1.6" stroke-linecap="round" opacity=".8">
+        <path d="M13 25 C 11 30, 6 31, 5 36"/>
+        <path d="M20 26.5 C 20 31, 17 33, 18 38"/>
+        <path d="M27 25 C 29 30, 34 31, 35 36"/>
+      </g>
+    </svg>
+    <h1>Site Performance</h1>
+    <span class="spacer"></span>
+    <span class="period">Week 01</span>
+    <span class="chip">synthetic</span>
+  </header>
+
+  <dl class="stats">
+    <div class="stat"><dt>Visits</dt><dd>12,480</dd></div>
+    <div class="stat alt"><dt>Signups</dt><dd>624</dd></div>
+    <div class="stat"><dt>Conversion</dt><dd>5.0<small>%</small></dd></div>
+    <div class="stat"><dt>Peak day</dt><dd>Sun<small>2,100</small></dd></div>
+  </dl>
+
+  <section>
+    <h2>Visits by day</h2>
+    <svg class="chart" viewBox="0 0 740 250" role="img"
+         aria-label="Daily visits: Mon 1420, Tue 1600, Wed 1780, Thu 1640, Fri 1920, Sat 2020, Sun 2100. Rising through the week, peaking Sunday.">
+      <defs>
+        <linearGradient id="gV" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0" stop-color="#0f4f4e"/>
+          <stop offset="1" stop-color="#3ef0c0"/>
+        </linearGradient>
+        <linearGradient id="gS" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0" stop-color="#352566"/>
+          <stop offset="1" stop-color="#9a7bff"/>
+        </linearGradient>
+        <filter id="glowV" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#3ef0c0" flood-opacity=".3"/>
+        </filter>
+        <filter id="glowS" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#9a7bff" flood-opacity=".3"/>
+        </filter>
+      </defs>
+      <g stroke="#123a40" stroke-dasharray="2 5">
+        <line x1="50" y1="200" x2="736" y2="200"/>
+        <line x1="50" y1="143.3" x2="736" y2="143.3"/>
+        <line x1="50" y1="86.7" x2="736" y2="86.7"/>
+        <line x1="50" y1="30" x2="736" y2="30"/>
+      </g>
+      <g font-family="ui-monospace,Consolas,monospace" font-size="11" fill="#4e7a76" text-anchor="end">
+        <text x="44" y="204">0</text>
+        <text x="44" y="147">700</text>
+        <text x="44" y="91">1400</text>
+        <text x="44" y="34">2100</text>
+      </g>
+      <g fill="url(#gV)" filter="url(#glowV)">
+        <rect x="72"  y="85"   width="54" height="115"  rx="7"/>
+        <rect x="170" y="70.5" width="54" height="129.5" rx="7"/>
+        <rect x="268" y="55.9" width="54" height="144.1" rx="7"/>
+        <rect x="366" y="67.2" width="54" height="132.8" rx="7"/>
+        <rect x="464" y="44.6" width="54" height="155.4" rx="7"/>
+        <rect x="562" y="36.5" width="54" height="163.5" rx="7"/>
+        <rect x="660" y="30"   width="54" height="170"  rx="7"/>
+      </g>
+      <g font-family="ui-monospace,Consolas,monospace" font-size="13" fill="#bfe9de" text-anchor="middle">
+        <text x="99"  y="77">1,420</text>
+        <text x="197" y="62">1,600</text>
+        <text x="295" y="48">1,780</text>
+        <text x="393" y="59">1,640</text>
+        <text x="491" y="37">1,920</text>
+        <text x="589" y="29">2,020</text>
+        <text x="687" y="22">2,100</text>
+      </g>
+      <g font-family="Palatino Linotype,Georgia,serif" font-size="13" fill="#5e8a84" text-anchor="middle">
+        <text x="99"  y="224">Mon</text>
+        <text x="197" y="224">Tue</text>
+        <text x="295" y="224">Wed</text>
+        <text x="393" y="224">Thu</text>
+        <text x="491" y="224">Fri</text>
+        <text x="589" y="224">Sat</text>
+        <text x="687" y="224">Sun</text>
+      </g>
+    </svg>
+
+    <h2 style="margin-top:18px">Signups by day</h2>
+    <svg class="chart" viewBox="0 0 740 152" role="img"
+         aria-label="Daily signups: Mon 57, Tue 72, Wed 89, Thu 74, Fri 96, Sat 109, Sun 127. Rising through the week, peaking Sunday.">
+      <g stroke="#123a40" stroke-dasharray="2 5">
+        <line x1="50" y1="110" x2="736" y2="110"/>
+        <line x1="50" y1="76.9" x2="736" y2="76.9"/>
+        <line x1="50" y1="43.9" x2="736" y2="43.9"/>
+      </g>
+      <g font-family="ui-monospace,Consolas,monospace" font-size="11" fill="#4e7a76" text-anchor="end">
+        <text x="44" y="114">0</text>
+        <text x="44" y="81">60</text>
+        <text x="44" y="48">120</text>
+      </g>
+      <g fill="url(#gS)" filter="url(#glowS)">
+        <rect x="72"  y="78.6" width="54" height="31.4" rx="6"/>
+        <rect x="170" y="70.3" width="54" height="39.7" rx="6"/>
+        <rect x="268" y="60.9" width="54" height="49.1" rx="6"/>
+        <rect x="366" y="69.2" width="54" height="40.8" rx="6"/>
+        <rect x="464" y="57.1" width="54" height="52.9" rx="6"/>
+        <rect x="562" y="49.9" width="54" height="60.1" rx="6"/>
+        <rect x="660" y="40"   width="54" height="70"   rx="6"/>
+      </g>
+      <g font-family="ui-monospace,Consolas,monospace" font-size="13" fill="#cfc2f5" text-anchor="middle">
+        <text x="99"  y="71">57</text>
+        <text x="197" y="62">72</text>
+        <text x="295" y="53">89</text>
+        <text x="393" y="61">74</text>
+        <text x="491" y="49">96</text>
+        <text x="589" y="42">109</text>
+        <text x="687" y="32">127</text>
+      </g>
+      <g font-family="Palatino Linotype,Georgia,serif" font-size="13" fill="#5e8a84" text-anchor="middle">
+        <text x="99"  y="134">Mon</text>
+        <text x="197" y="134">Tue</text>
+        <text x="295" y="134">Wed</text>
+        <text x="393" y="134">Thu</text>
+        <text x="491" y="134">Fri</text>
+        <text x="589" y="134">Sat</text>
+        <text x="687" y="134">Sun</text>
+      </g>
+    </svg>
+  </section>
+
+  <section>
+    <h2>Sources</h2>
+    <div class="srcgrid">
+      <span></span><span></span>
+      <span class="h num">Visits</span>
+      <span class="h num">Signups</span>
+      <span class="h num">Conv</span>
+
+      <span class="name">Direct</span>
+      <span class="track"><span class="fill" style="width:100%"></span></span>
+      <span class="num v">5,240</span>
+      <span class="num s">314</span>
+      <span class="num c">6.0%</span>
+
+      <span class="name">Search</span>
+      <span class="track"><span class="fill" style="width:85.5%"></span></span>
+      <span class="num v">4,480</span>
+      <span class="num s">224</span>
+      <span class="num c">5.0%</span>
+
+      <span class="name">Social</span>
+      <span class="track"><span class="fill" style="width:52.7%"></span></span>
+      <span class="num v">2,760</span>
+      <span class="num s">86</span>
+      <span class="num c">3.1%</span>
+    </div>
+  </section>
+</main>
+</body>
+</html>

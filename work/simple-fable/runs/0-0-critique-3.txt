@@ -1,0 +1,43 @@
+Critique of runs/0-0-3.html
+
+ORIGINALITY — the system is forming, but unevenly.
+1. The palette is quietly semantic — teal = visits/above the surface, violet =
+   signups/below — and that is the page's best unification. Yet the Conversion
+   stat tile glows teal, claiming conversion for the visits world and breaking
+   the one system that works. Conversion bridges both series; everywhere else
+   (chart row, table column) it is set in pale ink. The tile is the outlier.
+2. The waterline — the identity's centerpiece — is a dead-straight 1.5px line.
+   A surface over an abyss with no life on it. The inter-bar gaps sit empty on
+   exactly that line: free space the motif never uses.
+3. The stat tiles remain four stock KPI rectangles. Considered dressing them
+   (glowing rules, motif corners) and rejected it: four repeated flourishes is
+   wallpaper, and the tiles' plainness lets the chart carry. Accepted, not fixed.
+4. The craft slipped in places: a stray span with an undefined visually-hidden
+   class in the table head, an aria-hidden th. Sloppiness is the opposite of
+   identity.
+
+CLARITY — one genuine defect, two paper cuts.
+1. DEFECT: the day chart is a fixed 740-unit SVG scaled to container width. At
+   phone width (~343px of content) its 13px labels render at roughly 6px —
+   unreadable. The page silently destroys its own detail on small screens.
+2. The sources table's first column (source names) has no column header, so
+   assistive tech announces "Direct" with no context; the decorative second
+   column's th carried aria-hidden, which is invalid on a column header.
+3. The paired visits bar and signups dot still show no scale; within-column
+   comparison works, cross-encoding comparison is unstated. Acceptable — the
+   exact numbers sit beside each graphic — noted, not changed.
+
+REVISION (one pass)
+- Mobile fix: the chart now lives in an overflow-x container with a 620px
+  minimum width, so small screens pan a legible chart instead of shrinking it
+  into noise. Desktop is unchanged.
+- Conversion stat tile recolored to pale ink, completing the semantic palette:
+  teal = visits, violet = signups, pale = conversion, everywhere.
+- Small bioluminescent ripples added along the waterline in the empty gaps
+  between columns — the surface gets life exactly where no data lives, at low
+  opacity, touching nothing legible.
+- Sources table head repaired: visible "Source" column header, stray undefined
+  class removed, no aria-hidden on headers.
+- Left alone: all figures and scales, the waterline chart's geometry, the
+  conversion row, the sucker-dot encoding, tiles, header, chip, tentacles, and
+  the copy level. No change for its own sake.

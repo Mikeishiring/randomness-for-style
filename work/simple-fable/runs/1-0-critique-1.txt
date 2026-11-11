@@ -1,0 +1,47 @@
+CRITIQUE — Week 01, first pass (1-0-1.html)
+
+ORIGINALITY
+1. The brief says Greek *myths*; the page delivers Greek *architecture*. Meander, columns,
+   pediment — all temple, no story. The only mythic object is a lightning bolt hidden in a
+   KPI tile. As shipped, the identity could be any generic "antiquity" template.
+2. The Tech half is nearly absent. Dark panels and hairlines are a default dashboard look,
+   not a statement. Nothing fuses the two ingredients; they are layered, not combined —
+   and the fusion is the brief.
+3. Columns-as-bars is the one genuinely original move, and it is underbuilt: capitals are
+   two flat rects, flutes are three faint strokes, shafts have no taper. At a glance they
+   read as bars wearing hats.
+4. The pediment mark is clip-art grade: a triangle over three sticks.
+5. The meander appears twice at the page edges and nowhere else — a sticker, not a system.
+6. Georgia has no tabular figures; font-variant-numeric quietly does nothing, so any
+   number alignment was luck, not design.
+
+CLARITY / HONESTY
+7. The conversion mini-bars sit in a visible track, so Direct's 6.0% fills 100% of its
+   container — the strongest "full tank" signal on the page attached to the smallest
+   number on the page. Misleading. The visits tracks whisper the same lie.
+8. The "1k / 2k" dashed gridlines are redundant (every column carries its value) and
+   cryptically abbreviated besides.
+9. The sources block is a div grid with no table semantics — a screen reader gets word soup.
+10. Kept honest and good: zero-based bars, the per-day funnel alignment
+    (visits -> signups -> conversion), the synthetic-data chip, labeled values everywhere,
+    minimal copy.
+
+CHANGES APPLIED IN 1-0-2.html
+- Type system now carries the fusion: every word is serif (inscription), every figure is
+  monospace (telemetry). Replaces the non-functioning tabular-nums.
+- Myth made explicit at minimal cost: each traffic source carries its patron epithet —
+  Direct/Hermes, Search/Athena, Social/Dionysus — one muted word each, no explanatory prose.
+- The meander gains terminal pads at its hook ends so the fret reads as circuit trace: one
+  mark that is both ingredients at once.
+- Columns rebuilt: tapered shafts (entasis), trapezoid echinus under the abacus, four
+  flutes. They now read as columns at thumbnail size.
+- Conversion and visits bars lose their container tracks: pure zero-based length, no false
+  share-of-max signal.
+- Redundant gridlines and "1k/2k" labels removed.
+- Sources block is now a real <table> with scoped headers.
+- Pediment mark gets the same two-step stylobate as the chart.
+
+PRESERVED
+Data, figures and derived rates unchanged. Layout order, KPI row with trend and peak
+sublines, aligned daily funnel, stylobate zero line, gold-capital Sunday highlight, dark
+marble/gold palette, synthetic-data chip, and the no-filler copy policy all stay.

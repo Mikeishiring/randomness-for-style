@@ -1,0 +1,44 @@
+Critique of 5-2-3.html (harsh, originality and clarity), then changes applied in 5-2-4.html.
+
+ORIGINALITY
+
+1. Three passes in, every identity move has been perimeter work: awning strips, dotted
+   rules, background speckles, twinkle timing. The chart — the centerpiece and the reason
+   the page exists — is still the most generic artifact on it: uniformly filled rounded
+   bars that would survive any rebrand untouched. Neither ingredient has yet been allowed
+   to shape a data mark.
+2. The glow is sourceless. Bioluminescent animals carry photophores — the light has an
+   anatomical origin at an edge or point. These bars glow from everywhere and nowhere,
+   which is exactly how every generic neon dashboard glows. The sea ingredient deserves
+   light with a location.
+3. The awning strip now repeats on five surfaces; it verges on wallpaper. Accepted as
+   system consistency rather than changed — varying it per surface would read as error.
+
+CLARITY
+
+4. A real craft defect: both speckle layers are position:fixed pseudo-elements, and
+   unpositioned content paints below positioned boxes in the same stacking context — so
+   the "background" plankton actually floats in front of the cards. Marine snow can land
+   on a KPI numeral. The dots are 2px at low alpha, so the harm is small, but the layering
+   is simply wrong: a background that is not behind.
+5. The feDropShadow glow softens every bar's top edge — the one pixel row that encodes the
+   value. The current design trades the most information-bearing edge for mood.
+6. Still strong and untouched: the per-band daily small multiples with exact labels, share
+   bars that sum to the week's total, conversion defined once as signups / visits, the
+   semantic palette (sea-cyan traffic, food-mustard signups, ketchup rate), reduced-motion
+   guards, and the menu grammar.
+7. Remaining accepted trade-offs, unchanged from previous rounds: unsignalled horizontal
+   chart scroll on phones; no numeric share labels on the share bars.
+
+CHANGES APPLIED (two, each fixing a named defect; everything else preserved)
+
+- Speckle layers sent behind the content with z-index:-1 (they still sit above the page
+  background). The plankton is now actually background. Fixes 4.
+- Each bar gains a crisp photophore cap: a 4px bright rim inset at the exact bar top
+  (bright cyan on visits, bright mustard on signups), drawn outside the blur filter so it
+  stays sharp. One mark fixes 2 and 5 together: the glow gets a source at the creature's
+  edge, and the eye gets back a hard, precise line at the exact encoded value — the caps
+  read like a dot plot laid over the bars, making day-to-day height comparison easier,
+  not harder. Fixes 2 and 5, and finally puts an ingredient inside the data marks (1).
+- Nothing else changed: data, geometry, copy, layout, animations, and all accepted
+  trade-offs stand as decided in earlier rounds.

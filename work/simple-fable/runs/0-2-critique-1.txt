@@ -1,0 +1,70 @@
+Critique of runs/0-2-1.html (harsh pass on originality and clarity)
+
+ORIGINALITY
+
+1. The fusion is garnish, not structure. Strip the header (name, burger logo,
+   checker strip, corner tentacles) and what remains is a generic dark admin
+   dashboard with a mustard/red palette. The two ingredients decorate the page;
+   they barely touch the information surfaces, which is where identity would
+   actually earn its keep.
+
+2. The one structural idea with real promise - visits above a waterline,
+   signups hanging into "the deep" - is underdeveloped. The waterline is a flat
+   2px border that says nothing about water, the deep gradient is nearly
+   invisible, and the hanging bars read as an upside-down bar chart before they
+   read as anything eldritch.
+
+3. Fast food contributes only a palette and a checker strip that fades out with
+   an arbitrary mask, committing to nothing. No menu-board structure, no menu
+   typography; the drive-thru exists in the name alone.
+
+4. The sources card is template-grade: pill meters that could ship in any admin
+   kit. Neither ingredient reaches it at all.
+
+5. The red offset text-shadow on the title is the single most cliched
+   "fast food" move available, applied at full strength.
+
+CLARITY
+
+6. The "-> 6.0%" rate chips lean on an aria-label; a sighted reader must leap
+   to the KPI tile on another card to learn what the arrow means.
+
+7. The daily chart uses two scales (0-2,100 above, 0-127 below) and never says
+   so. Every bar is value-labeled, so it is honest, but adjacent bar heights
+   across the waterline invite a false comparison.
+
+8. The legend dots sit far from the bars and duplicate what zone labels could
+   say in place; the zones themselves are unlabeled.
+
+9. The "best day" emphasis on Sunday (slightly brighter gradient, bold value)
+   is too subtle to perceive. Emphasis nobody can see is dead code.
+
+10. In sources, both meters per row are drawn at equal full width for Direct
+    (5,240 visits vs 314 signups) because each metric is scaled to its own max.
+    Same-width adjacent bars for different magnitudes invite misreading, and
+    nothing visually distinguishes the two tracks beyond hue.
+
+CHANGES APPLIED IN 0-2-2.html
+
+- Waterline is now an actual wave (inline SVG strip); the deep zone is darker
+  and holds its own label. Signup bars gain a faint sucker texture so they read
+  as tentacles reaching down from the surface - identity fused into the chart
+  without changing any bar height.
+- Zones are labeled in place with their scales ("Visits - 0-2,100",
+  "Signups - 0-127"), fixing 7 and 8; the detached legend is removed.
+- Sunday peak gets a visible column tint across both zones plus the mustard
+  day label, fixing 9.
+- KPI row becomes one menu-board panel with dashed dividers instead of three
+  floating cards; sources become menu items with dotted leader lines running
+  from name to rate chip (the rate as the "price"), giving fast food a
+  structural role, fixing 3 and 4.
+- Rate chips drop the arrow; a muted "visits -> signups" header sits directly
+  above the chip column, fixing 6. Signup meters are thinner than visit
+  meters so the two tracks cannot be read as one scale, fixing 10.
+- Title shadow darkened to deep ketchup; checker strip becomes a confident
+  two-tone tile band instead of a fading mask, addressing 5 within the
+  diner-signage register rather than abandoning it.
+
+Kept: all figures and derived totals, value-labeled bars, zero-baseline
+scaling, the burger-with-eyes logo, corner tentacles, card structure and
+reading order. Purpose and data unchanged.

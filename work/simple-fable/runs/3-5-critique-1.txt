@@ -1,0 +1,39 @@
+CRITIQUE OF 3-5-1.html
+
+Originality
+1. The identity is unevenly applied. Victorian insect collecting lives only in the
+   three source cards; the largest element on the page — the daily chart — is a
+   generic hatched bar chart that any "antique" theme could own. The 3px circles on
+   the bar tops were meant as specimen pins but are far too small to read as anything.
+2. Much of the surface is stock antiquarianism rather than the two named ingredients:
+   parchment, diagonal hatching, and a printer's fleuron (❦). The fleuron is borrowed
+   decoration doing no work; it belongs to neither bureaucracy nor entomology.
+3. Bureaucracy is present only as nouns (FORM W-01, a stamp, numbered sections) but it
+   never acts. Clerks mark records — yet nothing on the page is checked, circled, or
+   approved. The summary names Sunday as the peak day while the record itself carries
+   no such mark.
+4. The collection has no case. Victorian specimens sit pinned inside bordered,
+   labelled drawers; here the source cards get borders and pins while the chart floats
+   unframed on the sheet.
+
+Clarity
+5. The muted label ink (#6f6148) runs light at 10–11px on parchment; marginal contrast
+   on the row labels, day labels, and summary captions.
+6. Nothing ties the summary's "Peak day — Sunday" back to the chart; the reader must
+   re-derive it from seven value labels.
+7. Sound and kept: two separate panels instead of a dual-axis chart, a value on every
+   bar, the labelled signup-rate row, dotted ledger leaders, the SYNTHETIC DATA stamp
+   as a working caveat, and the beetle/moth/ant mapping to Direct/Search/Social.
+
+Changes applied in 3-5-2.html
+- Removed the fleuron divider; spacing alone separates masthead from summary.
+- The daily record now sits inside a bordered specimen case on the same ground as the
+  source cards — the drawer the week is pinned into.
+- The visits bars are properly pinned: a shaft passes through each bar top to a head
+  above it, with the value label above the pin. The identity now sits on the data
+  instead of beside it. Signup bars stay plain to avoid doubling the noise.
+- A red clerk's ellipse circles Sunday's 2,100 — the inspector's mark that connects
+  the record to the "Peak day" summary entry without adding a word.
+- Darkened the muted label ink (#6f6148 → #5e5137) for small-size contrast.
+- Everything else is unchanged: data, scales, per-bar values, rate row, stamp, cards,
+  share bars, responsive behaviour.

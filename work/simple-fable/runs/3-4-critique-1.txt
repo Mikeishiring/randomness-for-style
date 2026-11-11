@@ -1,0 +1,63 @@
+Critique of 3-4-1.html (harsh, originality and clarity)
+
+ORIGINALITY
+1. The blend is mostly surface dressing. Cream paper, gold double border, a
+   crest, a stamp: that is the generic "vintage official document" look, not a
+   developed Bureaucracy x Luxury-hotel identity. Nothing on the page is
+   specifically *hotel* — no concierge cue, no registry-desk object — and the
+   bureaucracy is garnish: "Form WPR-7" appears twice and does no work the
+   second time.
+2. The crest is clip-art heraldry: two circles and "W·01". It commits to
+   neither a hotel monogram nor an official seal.
+3. The stamp is the right instinct but visually timid — a neat styled div at
+   78% opacity, nothing rubber about it, and it sits politely clear of
+   everything instead of overlapping the document like a real stamp.
+4. The charts carry none of the identity. They are default bar charts on blank
+   paper; a hotel register would be ruled, a bureau chart would sit on a grid.
+5. One typographic voice everywhere: letterspaced small caps for headers,
+   tiles, table heads, captions and footer alike. A luxury surface
+   differentiates display from rubric; this one whispers at a single volume.
+
+CLARITY
+6. Real defect: at phone width the sources grid hides the sign-ups and
+   conversion numbers (hide-s). That deletes useful detail rather than
+   reflowing it.
+7. The gold conversion strip is overlaid on the visits bar at a different
+   scale, and the page has to confess it in a legend caption ("scaled to 6.0%
+   max") — the one place it explains itself, which means the encoding is not
+   self-evident. At 5px tall it is also nearly invisible.
+8. The two daily charts rhyme visually but use different scales; Sunday's
+   sign-ups bar is almost as tall as Sunday's visits bar. Value labels rescue
+   it, but the form invites misreading.
+9. The most decision-useful fact — daily conversion rising steadily from 4.0%
+   to 6.0% — is buried as the last column of the table. Nothing visual
+   carries it.
+10. Repetition without purpose: "Form WPR-7" twice, the registry name twice.
+
+CHANGES APPLIED IN 3-4-2.html
+- Crest redrawn as a concierge bell inside the double ring: the one object
+  that says hotel front desk, kept as plain inline SVG.
+- Faint ledger ruling added behind both charts: register texture that also
+  gives rough relative reading, no fake shared scale implied.
+- Conversion made first-class: its own small gold bar beside the printed % in
+  the sources grid, and inline gold bars in the ledger's conversion column so
+  the 4.0% -> 6.0% weekly climb is visible. The overlay strip and its
+  explanatory legend are deleted.
+- Consistent colour grammar: green = visits, gold = sign-ups/conversion,
+  applied to charts, tiles, bars. Gold darkened for contrast on paper.
+- Mobile no longer hides data: the sources grid compresses (smaller type and
+  gaps) instead of dropping columns; every number stays visible.
+- Stamp inked harder: stronger colour, double impression, rotated and
+  overlapping the header rule.
+- Repetition cut: form number once in the header; the footer becomes a
+  bureaucratic close ("End of return") instead of repeating it.
+- Display hierarchy: larger title, demoted rubric line.
+
+PRESERVED (strong decisions)
+- Purpose, all supplied figures and derivations (12,480 / 624 / 5.0%).
+- Paper-on-felt palette, double-rule borders, section rules with gold
+  "Section A/B/C" markers.
+- Totals tiles, the full ledger table with double-rule total row, the
+  proportional source bars, the synthetic-data stamp as provenance.
+- Two separate daily charts (different colours signal different measures).
+- System fonts only; fully self-contained; minimal copy.

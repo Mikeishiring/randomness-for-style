@@ -1,0 +1,65 @@
+Critique of 5-3-1.html
+
+ORIGINALITY
+
+1. "Dark page with glowing cyan bars" is the default dark-mode dashboard, not
+   deep-sea bioluminescence. The abyss does no work: there is no depth, no
+   light-from-the-surface, and the 6px maroon border-top is an invisible token
+   gesture at a curtain. Swap the labels and this could ship as any stock dark
+   theme.
+
+2. Opera is asserted by vocabulary ("Act I", "Act II") and a double rule, not
+   by design. With no loaded fonts the stack lands on Georgia for nearly every
+   viewer, which has none of the high-contrast Didone letterforms the playbill
+   gesture depends on. The identity rests on two words and an italic title.
+
+3. The two ingredients never actually combine; they run in parallel colour
+   channels (cyan = sea, gold = gilt) with no shared idea. The data itself
+   offers the fusion — every measure rises all week to a Sunday peak, a
+   crescendo to a finale — and the design never stages it.
+
+4. The signup orbs are the one invented element, and they fail as an encoding:
+   the halo/core double circle makes the size ambiguous, and the halo radii
+   span only 13–20px, so the row reads as decoration with numbers attached.
+
+CLARITY
+
+5. Graphical integrity bug in Sources: the visits bar is scaled to 5,240 =
+   full width and the signups bar directly beneath it to 314 = full width.
+   Adjacent bars on different scales invite a false read — Direct looks as if
+   signups nearly match visits when they are 6% of them. The printed numbers
+   rescue the reader; the picture still lies.
+
+6. The most useful fact for the owner — conversion climbing 4.0% to 6.0%
+   across the week, Sunday best on every measure — appears nowhere. Only the
+   weekly 5.0% average is shown.
+
+7. At phone width the 940-unit viewBox scales the 14px value labels to about
+   5px: unreadable, with no mitigation.
+
+8. Nothing tells the reader that orb size means anything; the "Signups"
+   caption labels the row, not the encoding.
+
+CHANGES APPLIED IN 5-3-2.html
+
+a. Sources bars now share one scale (percent of the largest source's visits).
+   The signup slivers are honest and show, visually, that roughly one visit in
+   twenty converts; sliver-to-bar proportion now mirrors source quality. The
+   conversion column stays.
+b. Added a quiet per-day conversion row (4.0% → 6.0%) under the signups row:
+   the crescendo becomes visible data, not prose.
+c. Orbs rebuilt as single circles with area proportional to signups
+   (r = 22·√(s/127)), a faint ring marking the true radius; the range widens
+   to 14.7–22px and the encoded size is no longer ambiguous.
+d. Staged the finale: a soft vertical shaft of light behind Sunday's column —
+   stage spotlight and surface light in one device, anchored to the data peak.
+e. Replaced the flat maroon line with a scalloped velvet curtain edge with a
+   gold hem (pure CSS) and flanked the overline with small fleurons: opera
+   made physical instead of verbal.
+f. The chart keeps a 760px minimum width and scrolls horizontally on narrow
+   screens so every label stays legible.
+
+PRESERVED (strong decisions): the playbill header with double rules, the KPI
+triad, printed values on every mark, the cast-list source rows with the
+conversion column, the act labels, and the copy level — no new prose was
+added, only data and captions.

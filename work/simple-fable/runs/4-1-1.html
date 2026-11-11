@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 Performance</title>
+<style>
+  :root{
+    --asphalt:#0c0a12;
+    --panel:#161220;
+    --line:#2a2438;
+    --ink:#f3effa;
+    --dim:#a79fbd;
+    --pink:#ff2d78;
+    --orange:#ff7a18;
+    --gold:#ffd34d;
+    --silver:#cfd3e6;
+    --grad:linear-gradient(100deg,var(--pink),var(--orange) 55%,var(--gold));
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--asphalt);
+    color:var(--ink);
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    font-variant-numeric:tabular-nums;
+    line-height:1.3;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 16px 48px}
+
+  .checker{
+    height:12px;
+    background:repeating-conic-gradient(rgba(243,239,250,.85) 0 25%,transparent 0 50%) 0 0/12px 12px;
+  }
+
+  header{padding:36px 0 28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .ball{flex:none}
+  h1{
+    font-family:"Arial Narrow","Avenir Next Condensed","Helvetica Neue",Arial,sans-serif;
+    font-style:italic;
+    font-weight:900;
+    font-size:clamp(2.6rem,8vw,4.2rem);
+    letter-spacing:-.01em;
+    text-transform:uppercase;
+    background:linear-gradient(100deg,var(--pink),var(--orange) 30%,var(--gold) 48%,#fff 58%,var(--orange) 72%,var(--pink));
+    background-size:200% 100%;
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    animation:sheen 7s linear infinite;
+  }
+  @keyframes sheen{to{background-position:-200% 0}}
+  @media (prefers-reduced-motion:reduce){h1{animation:none}}
+  .sub{display:flex;align-items:center;gap:10px;margin-top:6px}
+  .sub span{
+    font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);
+  }
+  .badge{
+    font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--gold);border:1px solid var(--gold);border-radius:999px;
+    padding:3px 10px;
+  }
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:36px}
+  @media (max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px 16px;position:relative;overflow:hidden;
+  }
+  .kpi::before{
+    content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--grad);
+  }
+  .kpi dt{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+  .kpi dd{
+    font-family:"Arial Narrow","Avenir Next Condensed",Arial,sans-serif;
+    font-style:italic;font-weight:900;font-size:1.9rem;
+  }
+  .kpi dd small{font-size:.95rem;color:var(--dim);font-style:normal;font-weight:400}
+
+  h2{
+    font-family:"Arial Narrow","Avenir Next Condensed",Arial,sans-serif;
+    font-style:italic;font-weight:900;text-transform:uppercase;
+    font-size:1.15rem;letter-spacing:.06em;margin:0 0 14px;
+  }
+  h2 em{font-style:italic;color:var(--gold)}
+  section{margin-bottom:40px}
+
+  .chart{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:18px 16px 14px;
+  }
+  .rowlabel{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin:2px 0 10px}
+  .bars{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:8px;
+    align-items:end;border-bottom:1px solid var(--line);
+  }
+  .bars.visits{height:206px}
+  .bars.signups{height:104px;margin-top:18px}
+  .col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%}
+  .val{font-size:.74rem;color:var(--silver)}
+  .bar{
+    width:70%;max-width:46px;border-radius:3px 3px 0 0;
+    background:linear-gradient(180deg,var(--orange),var(--pink));
+  }
+  .signups .bar{background:linear-gradient(180deg,#ffe9a3,var(--gold))}
+  .signups .val{color:var(--gold)}
+  .peak .bar{background:linear-gradient(180deg,#fff,var(--gold))}
+  .peak .val{color:var(--gold);font-weight:700}
+  .days{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:8px}
+  .days span{
+    text-align:center;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
+  }
+  .days .peakday{color:var(--gold)}
+
+  .source{display:grid;grid-template-columns:auto 1fr;gap:10px 14px;align-items:center;
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px;margin-bottom:10px;
+  }
+  .pos{
+    font-family:"Arial Narrow","Avenir Next Condensed",Arial,sans-serif;
+    font-style:italic;font-weight:900;font-size:1.25rem;width:2.2em;text-align:center;
+    border-radius:6px;padding:2px 0;color:var(--asphalt);
+  }
+  .p1{background:var(--gold)}
+  .p2{background:var(--silver)}
+  .p3{background:#c98a5e}
+  .srchead{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+  .srchead strong{
+    font-family:"Arial Narrow","Avenir Next Condensed",Arial,sans-serif;
+    font-style:italic;font-weight:900;text-transform:uppercase;font-size:1.05rem;letter-spacing:.04em;
+  }
+  .srchead span{font-size:.8rem;color:var(--dim)}
+  .track{
+    grid-column:2;height:12px;border-radius:999px;background:#0e0b16;border:1px solid var(--line);
+    overflow:hidden;
+  }
+  .fill{height:100%;background:var(--grad);border-radius:999px}
+
+  footer{margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="checker" aria-hidden="true"></div>
+
+<div class="wrap">
+
+  <header>
+    <svg class="ball" width="60" height="60" viewBox="0 0 64 64" aria-hidden="true">
+      <defs>
+        <radialGradient id="ballg" cx="35%" cy="28%" r="80%">
+          <stop offset="0" stop-color="#ffffff"/>
+          <stop offset=".45" stop-color="#cfd3e6"/>
+          <stop offset="1" stop-color="#5d617c"/>
+        </radialGradient>
+        <pattern id="facets" width="8" height="8" patternUnits="userSpaceOnUse">
+          <rect width="8" height="8" fill="none" stroke="rgba(12,10,18,.5)" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <circle cx="32" cy="32" r="29" fill="url(#ballg)"/>
+      <circle cx="32" cy="32" r="29" fill="url(#facets)"/>
+    </svg>
+    <div>
+      <h1>Week 01</h1>
+      <div class="sub">
+        <span>Website performance</span>
+        <span class="badge">Synthetic data</span>
+      </div>
+    </div>
+  </header>
+
+  <dl class="kpis">
+    <div class="kpi"><dt>Visits</dt><dd>12,480</dd></div>
+    <div class="kpi"><dt>Signups</dt><dd>624</dd></div>
+    <div class="kpi"><dt>Conversion</dt><dd>5.0%</dd></div>
+    <div class="kpi"><dt>Peak day</dt><dd>Sun <small>2,100 visits</small></dd></div>
+  </dl>
+
+  <section aria-label="Daily visits and signups">
+    <h2>Day by day</h2>
+    <div class="chart">
+      <p class="rowlabel">Visits</p>
+      <div class="bars visits">
+        <div class="col"><span class="val">1,420</span><div class="bar" style="height:108px"></div></div>
+        <div class="col"><span class="val">1,600</span><div class="bar" style="height:122px"></div></div>
+        <div class="col"><span class="val">1,780</span><div class="bar" style="height:136px"></div></div>
+        <div class="col"><span class="val">1,640</span><div class="bar" style="height:125px"></div></div>
+        <div class="col"><span class="val">1,920</span><div class="bar" style="height:146px"></div></div>
+        <div class="col"><span class="val">2,020</span><div class="bar" style="height:154px"></div></div>
+        <div class="col peak"><span class="val">2,100</span><div class="bar" style="height:160px"></div></div>
+      </div>
+      <div class="bars signups">
+        <div class="col"><span class="val">57</span><div class="bar" style="height:29px"></div></div>
+        <div class="col"><span class="val">72</span><div class="bar" style="height:36px"></div></div>
+        <div class="col"><span class="val">89</span><div class="bar" style="height:45px"></div></div>
+        <div class="col"><span class="val">74</span><div class="bar" style="height:37px"></div></div>
+        <div class="col"><span class="val">96</span><div class="bar" style="height:48px"></div></div>
+        <div class="col"><span class="val">109</span><div class="bar" style="height:55px"></div></div>
+        <div class="col peak"><span class="val">127</span><div class="bar" style="height:64px"></div></div>
+      </div>
+      <p class="rowlabel" style="margin:6px 0 0">Signups</p>
+      <div class="days">
+        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span>
+        <span>Fri</span><span>Sat</span><span class="peakday">Sun</span>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Traffic sources ranked by visits">
+    <h2>Sources <em>— finishing order</em></h2>
+
+    <div class="source">
+      <span class="pos p1">P1</span>
+      <div class="srchead">
+        <strong>Direct</strong>
+        <span>5,240 visits</span><span>314 signups</span><span>6.0% conversion</span>
+      </div>
+      <div class="track"><div class="fill" style="width:100%"></div></div>
+    </div>
+
+    <div class="source">
+      <span class="pos p2">P2</span>
+      <div class="srchead">
+        <strong>Search</strong>
+        <span>4,480 visits</span><span>224 signups</span><span>5.0% conversion</span>
+      </div>
+      <div class="track"><div class="fill" style="width:85.5%"></div></div>
+    </div>
+
+    <div class="source">
+      <span class="pos p3">P3</span>
+      <div class="srchead">
+        <strong>Social</strong>
+        <span>2,760 visits</span><span>86 signups</span><span>3.1% conversion</span>
+      </div>
+      <div class="track"><div class="fill" style="width:52.7%"></div></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="checker" aria-hidden="true"></div>
+</footer>
+
+</body>
+</html>

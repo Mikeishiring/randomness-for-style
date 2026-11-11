@@ -2,6 +2,7 @@ import {execFileSync} from 'node:child_process';
 const checks = [
   'scripts/build.mjs',
   'work/simple-astra/check.mjs',
+  'work/simple-fable/check.mjs',
   'work/fixed-report/check-built.mjs',
   'work/fixed-report/check-play.mjs',
   'work/fixed-report/check-dice.mjs',

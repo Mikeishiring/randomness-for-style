@@ -1,0 +1,55 @@
+CRITIQUE OF 3-3-3 (harsh, originality and clarity)
+
+ORIGINALITY
+
+1. The design has settled into its identity; the danger now is ornament for
+   ornament's sake. Pass-3 candidates were tested against that:
+   - Stamp overlapping the flourish (stamps never sit in reserved
+     whitespace): REJECTED. Centered layout means the overlap would land on
+     the "WEEKLY RETURN" text itself; off-center absolute placement collides
+     with the title at phone widths. Authenticity is not worth illegibility.
+   - Gold mini-meters for the "Per visit" column: REJECTED. The page has an
+     implicit grammar — counts are drawn, rates are printed — and it holds
+     everywhere (score registers 1–2 drawn, register 3 printed; ledger
+     visits drawn, rates printed). Meters would break the grammar to restate
+     three two-digit numbers that compare instantly as figures.
+   - Tassels, perforation edges, "E. & O.E.": REJECTED as cliché, joke, and
+     obscurity respectively.
+2. What still rings generic: the overture's four identical boxes remain the
+   least characterful section, and "FIN" closes the opera but nothing closes
+   the bureaucracy at the foot. Both are noted and left: every concrete
+   remedy tried on paper (a signature line, a date field, differentiated
+   box sizes) added fake data or false hierarchy to a page of real figures.
+
+CLARITY
+
+1. Field No. 04 is an incomplete summary. "Sun · 2,100 visits · 127 signups"
+   omits that Sunday is also the conversion peak (6.0%) — the page's own
+   headline vocabulary, established by field No. 03 and the score's third
+   register, is missing from the one field that summarizes the best day.
+   FIXED: sub now reads "2,100 visits · 127 signups · 6.0%", completing the
+   triple that Act I corroborates column by column.
+2. The cast ledger is built from divs, so a screen reader hears an unlabeled
+   soup where a sighted reader sees a table. The bars are also announced as
+   nothing while being the row's most prominent element. FIXED: table/row/
+   columnheader/cell roles added, the drawn-bar column header given an
+   accessible name ("Visits, drawn to scale"), and the decorative tracks
+   marked aria-hidden so the printed figures remain the single source.
+3. Day labels sit between the second and third registers, so scanning
+   register 1 requires dropping past register 2 to name a column. Measured
+   against the fix (duplicating MON–SUN above register 1), the duplication
+   costs more than the trace saves — the measure lines exist precisely to
+   carry the eye. ACCEPTED as is.
+4. "The daily procession" drifts liturgical rather than operatic. It is
+   established identity, instantly intelligible, and renaming it now would
+   churn an already-strong decision. ACCEPTED as is.
+
+CHANGES APPLIED (one pass)
+
+- Field No. 04 completed with Sunday's 6.0% signups-per-visit.
+- Table semantics on the cast ledger (role=table/row/columnheader/cell),
+  an accessible name for the drawn-bar column, aria-hidden on the
+  decorative bar tracks.
+
+Nothing else met the bar. Both changes are additive detail and semantics;
+no figure, layout, or identity decision from 3-3-3 was altered.

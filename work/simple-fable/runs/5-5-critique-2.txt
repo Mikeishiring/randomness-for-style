@@ -1,0 +1,47 @@
+CRITIQUE OF 5-5-2.html
+
+ORIGINALITY — harsh
+- Pass 2's one genuinely new visual — the stacked bars in Plate II — is also its
+  worst idea. The cyan bar is normalized to 5,240 and the amber bar to 314, yet
+  they share a left origin in one column with no axis. Direct shows two bars at
+  full width, inviting the read that signups rival visits. Novelty was bought at
+  the price of graphical integrity.
+- The KPI row is still three identically stamped mini-plates, each with its own
+  pin. The "template repetition" criticized in pass 1 was patched elsewhere but
+  survives here. A Victorian collector writes ONE label card with ruled fields,
+  not three tiny plates for three numbers; three pins for three figures is
+  ornament inflation.
+- The deep-sea ingredient has stopped developing at glow effects. Noted, but the
+  obvious next moves (light rays, depth parallax, animated drift) would tax
+  clarity and add no information. Restraint is the right call; this is a
+  boundary, not a defect to fix.
+- The radiance rings are uniform regardless of magnitude — decorative, not
+  data-bearing. Left alone deliberately: sizing them to value would merely
+  double-encode the y-position and add noise.
+
+CLARITY — harsh
+- The Plate II cross-color comparison is actively misleading (above). This is
+  the only material clarity defect found.
+- The per-day conversion row is the dimmest text on the page, yet it carries the
+  week's most interesting trend: 4.0% rising to 6.0%. Underweighted.
+- Minor: three separate KPI plates fragment what is really a single reading —
+  "12,480 visits became 624 signups at 5.0%."
+
+KEPT (strong decisions preserved unchanged)
+- Compartment dividers tying each day's visits, signups and conversion together;
+  lit bar caps and dot glow attached to the marks; panel labels and table headers
+  carrying the color legend; moth wing spots echoing the encoding; real table
+  semantics; every value printed; minimal copy; the synthetic-data tag; honest
+  zero-based Plate I scales.
+
+REFINEMENT APPLIED (one pass, in 5-5-3.html)
+1. Plate II bars now share one scale (max 5,240 visits). The amber signups bar is
+   6.0% / 4.3% / 1.6% of the track with a glowing end-marker, so within a row the
+   amber-to-cyan length ratio IS the conversion rate, and across rows the amber
+   bars still compare 314 : 224 : 86 truthfully. Small but honest beats big but
+   false; the adjacent numbers carry the precision.
+2. The three KPI plates merge into a single catalog-label plate with ruled
+   internal dividers and one pin — one label card, three fields.
+3. The daily conversion row is lightened one step (#9db4bd in chart and table)
+   to match its interest.
+Purpose, data, Plate I geometry and the overall layout order are unchanged.

@@ -1,0 +1,67 @@
+CRITIQUE OF 3-1-2.html
+
+ORIGINALITY — harsh
+
+1. The fusion is real now but thin in places. The chrome-horizon lettering is
+   a one-off: it appears on the title and nowhere else, so the strongest
+   disco signature on the page reads as a logo treatment rather than a
+   system. (Extending chrome fills to the §1 figures was considered and
+   rejected: 36px chrome digits trade legibility for flourish, and the
+   entry rule under each figure already carries the gradient. The device
+   stays singular by choice, not oversight — noted so the next pass does not
+   "fix" it.)
+2. The mirror ball is still pure garnish. It earns its place as an instant
+   genre cue, but nothing on the page would miss it.
+3. The section strips are bare title bars. Real forms annotate their boxes —
+   marginal notes, definitions, "see box 2c" — and the page uses none of
+   that vocabulary even where a definition is actually needed (see 5).
+
+CLARITY — harsh
+
+4. Moving to one shared day axis fixed the duplicate row but created a new
+   fault: the signup-rate row now sits BELOW the signups chart, roughly
+   120px and two captions away from the Mon–Sun labels it depends on. The
+   reader maps 5.4% to Sat by counting columns across an intervening chart.
+   Worse than v1 on this one point.
+5. The rate row's meaning rests entirely on its caption; the % values are
+   visually identical in weight to the data labels above them.
+6. The lone pink 6.0% is unexplained emphasis. Nothing on the page says why
+   one cell is pink; the reader must connect it to the §1 peak-day entry on
+   their own.
+7. §3 is half-encoded: visits get a comparison bar, signups are bare
+   numbers. The week's main story — Social converts at half the rate of
+   Direct — exists only as digits in the last column. The panel spends its
+   ink on the dimension with the least spread.
+8. With v2's removal of legend swatches (correct for §2's single-series
+   charts), §3 has no mechanism left to identify a second series if one is
+   added — and point 7 requires adding one.
+
+REVISION APPLIED
+
+- Daily signup rates moved INTO the day-axis band: each cell now reads
+  "Mon / 4.0%", with the rate in pink mono directly between the visits bar
+  above and the signups bar below — physically seated between the two
+  figures it is computed from. The separate rate block, its caption and its
+  extra rule are deleted; §2 loses a full detached row and gains locality.
+- The §2 section strip now carries a form-style marginal definition on its
+  right end — "% = signups ÷ visits" — so the pink figures are defined at
+  the moment they are first seen, in bureaucratic register rather than a
+  caption paragraph.
+- The lone Sunday highlight is retired: all rates share the pink ink, the
+  maximum is self-evident in a seven-cell row, and §1 already names the
+  peak day. Unexplained one-cell emphasis was noise, not information.
+- §3 now encodes both series: each source row carries a violet-pink visits
+  bar (scaled to max visits) over a thin gold signups bar (scaled to max
+  signups). Social's gold bar collapsing to a quarter while its visits bar
+  holds half makes the conversion story visible before the 3.1% is read.
+- Small functional swatches added to the §3 VISITS and SIGNUPS column
+  headers to bind numbers to bars — legitimate here (two series, one panel),
+  unlike the single-series swatches removed in v2.
+
+PRESERVED
+
+Chrome-horizon title, dance-floor divider, faceted mirror-tile bars, filled
+entry rules in §1, the diverging shared-axis chart, stamp, punched holes,
+margin rule, mirror ball, § numbering, every supplied figure and every
+derived figure (totals, per-day rates, per-source rates), printed values on
+all bars. Purpose and data unchanged; page remains fully self-contained.

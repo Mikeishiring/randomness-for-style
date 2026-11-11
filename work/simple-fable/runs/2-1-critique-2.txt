@@ -1,0 +1,62 @@
+Critique of 2-1-2.html (second pass)
+
+ORIGINALITY — harsh read
+
+1. The masthead is still rented. Uppercase gradient caps over a dark field is
+   the single most common neon-template move on the web; the lockup contains
+   nothing of this page's own system. The mirror ball — the one mark that is
+   actually ours — never appears at masthead scale, only as a 40px data icon.
+2. The disco has the lights off. Disco's defining ingredient is moving light,
+   and the page is entirely static: the "sparkle" layer is frozen confetti,
+   the gradient never sweeps, nothing glints. A still photograph of a disco
+   is a storage room.
+3. The condition system (Overcast / Partly lit / Full disco) is now the
+   strongest original element, but it carries the whole merge alone; the
+   typography and bars contribute generic synthwave, not disco-weather.
+
+CLARITY — harsh read
+
+4. The day bars float. Seven separate wells imply a shared scale but no
+   baseline is drawn; the eye re-derives the floor from bar bottoms. A
+   weather strip (and a dance floor) both have a ground line — this page has
+   neither.
+5. A weather report leads with the high. The week's high rate (Sun, 6.0%) is
+   buried inside the seventh card; the stats row restates three totals and no
+   extreme, so the one number a "weather report" promises is missing from the
+   summary.
+6. Condition captions are set at 9px — below comfortable legibility on a
+   dark ground. The words were added to decode the icons; at this size they
+   barely do their job.
+7. Minor, accepted: first-entry-only units depend on Mon staying in view in
+   the horizontal scroll on phones. Noted, not changed — the alternative
+   (repeating units seven times) was the prior version's noise.
+
+WHAT STAYS (strong decisions preserved)
+
+- Forecast cards with rate-as-temperature and named conditions.
+- The legend's single job and its position between the two sections it keys.
+- Sources grouped by measure: volume (bar + counts) left, rate (icon + %)
+  right.
+- First-entry units, totals row, synthetic badge, all figures and chart
+  geometry unchanged.
+
+REFINEMENTS APPLIED (one pass)
+
+a. Masthead mark: the mirror ball now hangs beside the title at masthead
+   scale — the page's own mark instead of type-only template styling (1).
+b. Lights on, politely: the title gradient sweeps slowly and the ambient
+   glow layer breathes, both only under prefers-reduced-motion:
+   no-preference, both far from the data, nothing moves inside charts (2).
+c. Dance-floor baseline: each day card draws the bar well's floor line at
+   the shared zero, anchoring the common scale and giving the strip its
+   ground (4).
+d. Week-high tile added to the summary row — "6.0% · week high · Sun" —
+   next to the signup-rate tile it qualifies (5).
+e. Condition captions raised to 10px (6).
+
+REJECTED (restraint)
+
+- Mirrored reflections under the bars: would read as negative values.
+- Themed section titles ("Floor", "Fronts"): ambiguity for one joke.
+- Animating rays or bars: motion adjacent to data competes with reading it.
+- No palette, layout, data or copy changes beyond the above.

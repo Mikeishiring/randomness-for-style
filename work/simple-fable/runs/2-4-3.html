@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01</title>
+<style>
+:root{
+  --paper:#f4efe2;
+  --card:#fdfaf2;
+  --ink:#2b332c;
+  --ink-soft:#56614f;
+  --gold:#ac8a3f;
+  --gold-deep:#8d6f2e;
+  --green:#41564a;
+  --hair:#dcd1b6;
+  --muted:#8d8470;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:linear-gradient(180deg,#f6f1e5 0%,#f2ebda 100%);
+  color:var(--ink);
+  font-family:Didot,"Bodoni MT","Cormorant Garamond",Georgia,"Times New Roman",serif;
+  font-variant-numeric:tabular-nums;
+  line-height:1.35;
+}
+.page{max-width:900px;margin:0 auto;padding:46px 20px 64px}
+
+/* ---------- masthead ---------- */
+.mast{text-align:center}
+.crest{width:46px;height:46px;margin:0 auto;display:block}
+.ring{fill:none;stroke:var(--gold);stroke-width:1.1}
+.ring.thin{stroke-width:.55}
+.titleline{display:flex;align-items:center;gap:22px;margin-top:14px}
+.titleline::before,.titleline::after{content:"";flex:1;height:1px;background:var(--hair)}
+h1{
+  margin:0;font-weight:500;
+  font-size:clamp(28px,6vw,42px);
+  letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;
+  padding-left:.2em; /* optical balance for tracking */
+}
+.tag{margin-top:10px;font-size:9px;letter-spacing:.36em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- stat strip (tariff board) ---------- */
+.stats{
+  display:flex;justify-content:center;
+  max-width:560px;margin:28px auto 6px;padding:14px 0;
+  border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);
+}
+.stat{padding:2px 28px;text-align:center}
+.stat + .stat{border-left:1px solid var(--hair)}
+.stat .v{font-size:30px;letter-spacing:.02em}
+.stat .l{margin-top:5px;font-size:9px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- cards ---------- */
+.card{
+  background:var(--card);
+  border:1px solid var(--hair);
+  outline:1px solid var(--hair);
+  outline-offset:4px;
+  margin:38px 6px 0;
+  padding:24px 26px 30px;
+}
+.cap{
+  display:flex;align-items:center;gap:16px;margin:0 0 22px;
+  font-size:10.5px;font-weight:500;letter-spacing:.34em;text-transform:uppercase;color:var(--gold-deep);
+}
+.cap::before,.cap::after{content:"";flex:1;height:1px;background:var(--hair)}
+
+/* ---------- glyphs ---------- */
+.glyph{display:block;width:30px;height:30px}
+.glyph.sm{width:20px;height:20px}
+.glyph.src{width:22px;height:22px}
+.sun{stroke:var(--gold);fill:rgba(172,138,63,.16);stroke-width:1.5;stroke-linecap:round}
+.cloud{stroke:var(--ink-soft);fill:#f5f0e1;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.drops{stroke:var(--ink-soft);fill:none;stroke-width:1.5;stroke-linecap:round}
+
+/* ---------- week board ---------- */
+.board{display:grid;grid-template-columns:54px repeat(7,1fr)}
+.rl{
+  display:flex;align-items:flex-end;justify-content:flex-end;
+  font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  padding:0 10px 4px 0;
+}
+.rl.axis{border-bottom:1px solid var(--hair)}
+.sky{display:flex;justify-content:center;padding:2px 0 5px}
+.day{text-align:center;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);padding-left:.24em}
+.cv{text-align:center;font-size:12.5px;color:var(--ink-soft);padding:2px 0 16px}
+.cv.best{color:var(--gold-deep)}
+.we{background:rgba(172,138,63,.055)} /* weekend band */
+.bc{
+  display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
+  border-bottom:1px solid var(--hair);padding:0 7px;
+}
+.bc.v{height:98px}
+.bc.s{height:72px;padding-top:16px}
+.bc .n{font-size:10.5px;color:var(--ink-soft);margin-bottom:3px}
+.bc i{display:block;width:100%;max-width:34px;border-radius:1px 1px 0 0}
+.bc.v i{background:var(--gold)}
+.bc.s i{background:var(--green)}
+
+/* ---------- key ---------- */
+.key{display:flex;justify-content:center;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-top:20px}
+.keycap{font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);align-self:center;margin-right:4px}
+.ki{display:flex;flex-direction:column;align-items:center;gap:2px}
+.ki em{font-style:normal;font-size:9.5px;color:var(--muted)}
+
+/* ---------- sources ---------- */
+.src{display:grid;grid-template-columns:minmax(64px,auto) 96px 1fr 1fr;gap:14px 16px;align-items:center}
+.sh{
+  font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--hair);padding-bottom:7px;align-self:end;
+}
+.sname{font-size:16px}
+.ssky{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-soft)}
+.hbar{display:flex;align-items:center;gap:10px}
+.track{flex:1;height:12px;border-left:1px solid var(--hair)}
+.track i{display:block;height:100%;border-radius:0 1px 1px 0}
+.track.v i{background:var(--gold)}
+.track.s i{background:var(--green)}
+.hbar .n{font-size:11.5px;color:var(--ink-soft);min-width:3.2em;text-align:right}
+
+@media (max-width:620px){
+  .page{padding:32px 12px 48px}
+  .stat{padding:2px 14px}
+  .stat .v{font-size:23px}
+  .card{padding:18px 12px 22px;margin:30px 2px 0}
+  .board{grid-template-columns:38px repeat(7,1fr)}
+  .rl{padding-right:6px}
+  .glyph{width:24px;height:24px}
+  .day{font-size:8.5px;letter-spacing:.12em;padding-left:.12em}
+  .cv{font-size:10.5px}
+  .bc{padding:0 3px}
+  .bc.s{padding:16px 3px 0}
+  .bc .n{font-size:9px}
+  .src{grid-template-columns:minmax(48px,auto) minmax(64px,auto) 1fr 1fr;gap:12px 8px}
+  .sh{letter-spacing:.14em}
+  .sname{font-size:13.5px}
+  .ssky{font-size:10.5px;gap:5px}
+  .glyph.src{width:18px;height:18px}
+  .hbar .n{font-size:10px;min-width:2.9em}
+  .key{gap:13px}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="sun-full">
+      <circle cx="12" cy="12" r="4.1"/>
+      <path d="M12 3.2v2.3M12 18.5v2.3M3.2 12h2.3M18.5 12h2.3M5.8 5.8l1.6 1.6M16.6 16.6l1.6 1.6M5.8 18.2l1.6-1.6M16.6 7.4l1.6-1.6"/>
+    </g>
+    <path id="cloud-base" d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+    <symbol id="g-clear" viewBox="0 0 24 24">
+      <use href="#sun-full" class="sun"/>
+    </symbol>
+    <symbol id="g-mostly-sunny" viewBox="0 0 24 24">
+      <use href="#sun-full" class="sun" transform="translate(9.5,8.6) scale(.78) translate(-12,-12)"/>
+      <use href="#cloud-base" class="cloud" transform="translate(9,9.6) scale(.58)"/>
+    </symbol>
+    <symbol id="g-partly" viewBox="0 0 24 24">
+      <use href="#sun-full" class="sun" transform="translate(9,7.6) scale(.72) translate(-12,-12)"/>
+      <use href="#cloud-base" class="cloud" transform="translate(2.2,3.4) scale(.82)"/>
+    </symbol>
+    <symbol id="g-mostly-cloudy" viewBox="0 0 24 24">
+      <use href="#sun-full" class="sun" transform="translate(17.2,6.6) scale(.6) translate(-12,-12)"/>
+      <use href="#cloud-base" class="cloud" transform="translate(1.2,2.6) scale(.9)"/>
+    </symbol>
+    <symbol id="g-overcast" viewBox="0 0 24 24">
+      <use href="#cloud-base" class="cloud" transform="translate(1.2,1.6) scale(.95)"/>
+    </symbol>
+    <symbol id="g-rain" viewBox="0 0 24 24">
+      <use href="#cloud-base" class="cloud" transform="translate(2.6,.2) scale(.8)"/>
+      <path class="drops" d="M9.4 18.4l-1 2.6M14 18.4l-1 2.6"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="page">
+
+  <header class="mast">
+    <!-- The crest bears the week's overall sky: 5.0% conversion = partly sunny, per the key. -->
+    <svg class="crest" viewBox="0 0 48 48" aria-hidden="true">
+      <circle class="ring" cx="24" cy="24" r="22.4"/>
+      <circle class="ring thin" cx="24" cy="24" r="19"/>
+      <use href="#g-partly" x="13" y="13" width="22" height="22"/>
+    </svg>
+    <div class="titleline"><h1>Week 01</h1></div>
+    <p class="tag">Synthetic data</p>
+
+    <div class="stats">
+      <div class="stat"><div class="v">12,480</div><div class="l">Visits</div></div>
+      <div class="stat"><div class="v">624</div><div class="l">Signups</div></div>
+      <div class="stat"><div class="v">5.0%</div><div class="l">Conversion</div></div>
+    </div>
+  </header>
+
+  <section class="card">
+    <h2 class="cap">The Week</h2>
+
+    <div class="board">
+      <span class="rl"></span>
+      <div class="sky"><svg class="glyph" role="img" aria-label="Overcast"><use href="#g-overcast"/></svg></div>
+      <div class="sky"><svg class="glyph" role="img" aria-label="Mostly cloudy"><use href="#g-mostly-cloudy"/></svg></div>
+      <div class="sky"><svg class="glyph" role="img" aria-label="Partly sunny"><use href="#g-partly"/></svg></div>
+      <div class="sky"><svg class="glyph" role="img" aria-label="Mostly cloudy"><use href="#g-mostly-cloudy"/></svg></div>
+      <div class="sky"><svg class="glyph" role="img" aria-label="Partly sunny"><use href="#g-partly"/></svg></div>
+      <div class="sky we"><svg class="glyph" role="img" aria-label="Mostly sunny"><use href="#g-mostly-sunny"/></svg></div>
+      <div class="sky we"><svg class="glyph" role="img" aria-label="Clear"><use href="#g-clear"/></svg></div>
+
+      <span class="rl"></span>
+      <div class="day">Mon</div><div class="day">Tue</div><div class="day">Wed</div>
+      <div class="day">Thu</div><div class="day">Fri</div><div class="day we">Sat</div>
+      <div class="day we">Sun</div>
+
+      <span class="rl"></span>
+      <div class="cv">4.0%</div><div class="cv">4.5%</div><div class="cv">5.0%</div>
+      <div class="cv">4.5%</div><div class="cv">5.0%</div><div class="cv we">5.4%</div>
+      <div class="cv best we">6.0%</div>
+
+      <span class="rl axis">Visits</span>
+      <div class="bc v"><span class="n">1,420</span><i style="height:67.6%"></i></div>
+      <div class="bc v"><span class="n">1,600</span><i style="height:76.2%"></i></div>
+      <div class="bc v"><span class="n">1,780</span><i style="height:84.8%"></i></div>
+      <div class="bc v"><span class="n">1,640</span><i style="height:78.1%"></i></div>
+      <div class="bc v"><span class="n">1,920</span><i style="height:91.4%"></i></div>
+      <div class="bc v we"><span class="n">2,020</span><i style="height:96.2%"></i></div>
+      <div class="bc v we"><span class="n">2,100</span><i style="height:100%"></i></div>
+
+      <span class="rl axis">Signups</span>
+      <div class="bc s"><span class="n">57</span><i style="height:44.9%"></i></div>
+      <div class="bc s"><span class="n">72</span><i style="height:56.7%"></i></div>
+      <div class="bc s"><span class="n">89</span><i style="height:70.1%"></i></div>
+      <div class="bc s"><span class="n">74</span><i style="height:58.3%"></i></div>
+      <div class="bc s"><span class="n">96</span><i style="height:75.6%"></i></div>
+      <div class="bc s we"><span class="n">109</span><i style="height:85.8%"></i></div>
+      <div class="bc s we"><span class="n">127</span><i style="height:100%"></i></div>
+    </div>
+
+    <div class="key">
+      <span class="keycap">Sky = conversion</span>
+      <span class="ki"><svg class="glyph sm" aria-hidden="true"><use href="#g-rain"/></svg><em>3%</em></span>
+      <span class="ki"><svg class="glyph sm" aria-hidden="true"><use href="#g-overcast"/></svg><em>4%</em></span>
+      <span class="ki"><svg class="glyph sm" aria-hidden="true"><use href="#g-mostly-cloudy"/></svg><em>4½%</em></span>
+      <span class="ki"><svg class="glyph sm" aria-hidden="true"><use href="#g-partly"/></svg><em>5%</em></span>
+      <span class="ki"><svg class="glyph sm" aria-hidden="true"><use href="#g-mostly-sunny"/></svg><em>5½%</em></span>
+      <span class="ki"><svg class="glyph sm" aria-hidden="true"><use href="#g-clear"/></svg><em>6%</em></span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="cap">Sources</h2>
+
+    <div class="src">
+      <span class="sh"></span>
+      <span class="sh">Conversion</span>
+      <span class="sh">Visits</span>
+      <span class="sh">Signups</span>
+
+      <span class="sname">Direct</span>
+      <span class="ssky"><svg class="glyph src" role="img" aria-label="Clear"><use href="#g-clear"/></svg>6.0%</span>
+      <span class="hbar"><span class="track v"><i style="width:100%"></i></span><span class="n">5,240</span></span>
+      <span class="hbar"><span class="track s"><i style="width:100%"></i></span><span class="n">314</span></span>
+
+      <span class="sname">Search</span>
+      <span class="ssky"><svg class="glyph src" role="img" aria-label="Partly sunny"><use href="#g-partly"/></svg>5.0%</span>
+      <span class="hbar"><span class="track v"><i style="width:85.5%"></i></span><span class="n">4,480</span></span>
+      <span class="hbar"><span class="track s"><i style="width:71.3%"></i></span><span class="n">224</span></span>
+
+      <span class="sname">Social</span>
+      <span class="ssky"><svg class="glyph src" role="img" aria-label="Rain"><use href="#g-rain"/></svg>3.1%</span>
+      <span class="hbar"><span class="track v"><i style="width:52.7%"></i></span><span class="n">2,760</span></span>
+      <span class="hbar"><span class="track s"><i style="width:27.4%"></i></span><span class="n">86</span></span>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

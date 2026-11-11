@@ -1,0 +1,54 @@
+Critique of 3-4-2.html (harsh, originality and clarity)
+
+ORIGINALITY
+1. The refinement polished rather than developed. Structure, rhythm and layout
+   are unchanged from the first pass; the bell crest and inked stamp improved
+   the hotel voice, but the bureaucracy ingredient is still garnish — one
+   dotted filled-in blank and a form number. No form mechanics actually work
+   on this page.
+2. The ledger ruling added behind the charts is a fake: lines at arbitrary
+   pixel heights that look like a grid but correspond to no values. That is
+   decoration masquerading as structure — worse than honest blank paper,
+   because a reader may try to read against it.
+3. The composition is entirely centered and symmetric. Defensible for a
+   certificate, but it means the identity does all its work in the first 200
+   pixels; below the header, this could be any tasteful cream dashboard with
+   a serif font.
+
+CLARITY
+4. "Share of visits" is a header that promises a share and never prints one.
+   The bars encode proportion of the largest source (Direct = 100% width),
+   not share of the week, and the adjacent number column is absolute visits.
+   The one number the column name asks for — 42.0% / 35.9% / 22.1% — appears
+   nowhere.
+5. The cross-chart scale trap remains: Sunday's sign-ups bar (127) is nearly
+   as tall as Sunday's visits bar (2,100). Colour separates the measures, but
+   nothing states the scales; with no axis values, the only defence is the
+   per-bar labels.
+6. The conversion mini-bars (.cbar) are bare <i> elements: decorative to a
+   screen reader but not marked as such, so they risk being announced as
+   empty emphasis.
+7. Minor: the 6.0%-max scale of the conversion bars is implicit (full bar =
+   best observed rate). The printed % beside each bar keeps this safe, so it
+   is noted, not fixed — any added explanation would cost more than it buys.
+
+CHANGES APPLIED IN 3-4-3.html
+- The fake ruling is made honest: gridlines now sit at real values on each
+  chart's own scale — 500 / 1,000 / 1,500 / 2,000 visits and 25 / 50 / 75 /
+  100 / 125 sign-ups — with small left-edge value labels. The ruling keeps
+  its register texture, becomes a true axis, and makes the two different
+  scales explicit, which also answers point 5.
+- Share of visits printed inside each source bar: 42.0%, 35.9%, 22.1%
+  (sums to 100.0). The column now delivers what its header names, and the
+  absolute visits column keeps its role.
+- aria-hidden="true" on all decorative conversion bars; the printed
+  percentages remain the accessible content.
+
+NOT CHANGED, DELIBERATELY
+- The centered certificate composition, tiles, ledger table, stamp, crest,
+  palette and colour grammar (green = visits, gold = sign-ups/conversion):
+  these are the strong decisions the brief says to preserve, and asymmetry
+  or added form theatrics (checkboxes, certification lines, "carried
+  forward" labels) would add words and ink without adding information —
+  developing the bureaucracy ingredient at the reader's expense.
+- All figures, derivations and the purpose of the page are unchanged.

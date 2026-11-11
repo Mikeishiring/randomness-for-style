@@ -1,0 +1,57 @@
+CRITIQUE OF 3-0-3.html
+
+ORIGINALITY
+- The continuous-form move finally fused the two ingredients, but the page
+  lost its nerve about the consequences. Real green-bar stock is a
+  two-voice object: preprinted chrome in a pale second ink, data struck
+  over it in black. This page prints labels, rules and figures all in the
+  same voice, so the medium is quoted rather than inhabited.
+- The Consolas "machine layer" was indicted in the last round as an
+  imperceptible private joke -- and it survived anyway, on two box numbers
+  and a footer line. Keeping a device you cannot defend is worse than
+  choosing it the first time.
+- The ink story is incoherent: red means "signups series" in the bars and
+  "worst value" in the conversion column, two unrelated semantics sharing
+  one hue on one page. Blue likewise moonlights as both the visits series
+  and the peak marker (defensible -- the peak IS a visits peak -- but
+  nobody decided that; it happened).
+
+CLARITY
+- Red's double duty is the page's one real misreading risk: Social's red
+  bar and Social's red "worst" flag look like the same statement, and
+  Monday's signup bar looks pre-flagged as a problem.
+- Sunday prints both bars at 100% because each column normalizes to its
+  own maximum; adjacent full bars imply the two series peaked in equal
+  proportion. The printed values rescue it, but the coincidence was never
+  examined. (Accepted here: within-column scaling with printed values is
+  the standard contract, and an axis note would add copy that the numbers
+  already provide.)
+- The part bands look like table captions but are not programmatically
+  associated with their tables; assistive tech hears two anonymous tables.
+- A document doing continuous-form cosplay has no print stylesheet -- the
+  desk-blotter background and double outline would print as-is. Irony.
+
+KEPT (strong decisions)
+- Sprocket strips and green-bar striping, the form frame, numbered boxes,
+  black part bands, merged labeled bar columns with printed values,
+  segmented fills, glyph high/low markers, the stamp, totals alignment,
+  scope attributes, legend wording, all figures.
+
+CHANGES APPLIED
+1. Ink discipline. Blue = visits series and the peak marker. Black = data,
+   including the signups bars (impact-ink, printout-true). Red appears
+   only as exception ink: the stamp and the flagged lowest conversions.
+   The highest conversions keep their glyph and bold weight without a
+   color; the glyphs were already carrying the meaning.
+2. Preprint voice. Secondary chrome -- column headers, box labels and
+   numbers, the footer line -- shifts to a preprint blue-grey, separating
+   the preprinted form from the machine-struck figures. Rules and bands
+   stay ink; contrast stays comfortably above AA.
+3. The vestigial Consolas layer is deleted. One face, as one printer
+   would have had.
+4. Part headings get ids and each table an aria-labelledby; the legend's
+   glyphs now render in the same styles they annotate.
+5. A minimal print stylesheet: white ground, no desk padding or double
+   outline, full-opacity stamp.
+6. Revision counter -> 4.
+Purpose, figures, tables, derived values and structure unchanged.

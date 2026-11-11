@@ -1,0 +1,66 @@
+CRITIQUE — run 1-2-2 (Agora Grill, Week 01), second pass
+
+ORIGINALITY — harsh read
+
+1. The identity still lives at the edges. Frieze top and bottom, a logo, three
+   epithets, one star: the border is Greek, the furniture is generic. The page's
+   biggest surfaces — the KPI grid, the chart plane, the table, the source rows —
+   would be at home in any admin template. The chart, the single largest element,
+   carries the least identity.
+2. Fast food is still the junior partner, roughly 70/30. Its whole case is one
+   burger logo, Impact numerals, and a double-rule total. No menu device actually
+   appears in the body of the report: no leaders, no ticket, no price treatment.
+   "Combine" was the brief; this is Greek with a side of fries.
+3. The two-voice system (Impact caps = menu board, serif italic = myth) was
+   introduced last pass but used in exactly one section. A voice that appears
+   once is not a system; the daily chart and the totals have no myth voice at all.
+4. The peak star is the safest possible mark — it reads kids-menu sticker or
+   generic "best", not myth. It works, but it is the least original choice
+   available.
+
+CLARITY — harsh read
+
+5. The signups legend sits at the top of the card while the gold segments sit at
+   the bottom of the bars — the eye travels the full card height to connect them.
+   Tolerable (the table beneath carries exact values), but the linkage is indirect.
+6. "42% of all" is slightly vague about its base (all visits), though the cell
+   label "Visits" makes the reading near-certain.
+7. KPI delta lines use red bold for emphasis (+48%, +123%) while red elsewhere
+   means conversion/price. A minor double duty for the accent color.
+8. None of these rise to a misreading. The report is clear; the remaining deficit
+   is identity depth, not comprehension.
+
+PRESERVED (strong decisions, kept deliberately)
+
+- Structure, all figures, chart geometry, same-scale signups segments, full
+  numeric table, myth-title + literal-subtitle headers, epithets, palette,
+  frieze, card system, peak star and its highlight column.
+- No new prose: the page still explains itself through labels and numbers.
+
+CHANGES APPLIED IN 1-2-3 (one pass, each justified)
+
+a. Myth voice carried into the chart: a small serif-italic "the summit" sits
+   beside Sunday's star. It names the maximum in the chart itself (clarity:
+   direct annotation at the data) and extends the two-voice system beyond a
+   single section (originality: the voices now alternate across the page). (3,4,5)
+b. Fast food finally enters the body: the totals row becomes a true menu line —
+   dotted leaders between "Total" and its three figures, over the existing
+   double rule. The most recognizable menu device doing legitimate work,
+   guiding the eye from label to numbers; hidden on narrow screens where the
+   row wraps. (2)
+
+CHANGES CONSIDERED AND REJECTED
+
+- Temple-column capitals on the bars: decorates the exact edge where bar length
+  is read; a clarity cost for an identity gain — rejected.
+- Direct "57"/"127" labels on the gold segments: duplicates the table at sizes
+  too small to stay legible — rejected.
+- Price-style superscript % on conversion figures: fussy, inconsistent with the
+  KPI tile, no informational gain — rejected.
+- Replacing the star with a drawn laurel: higher myth fidelity, real risk of a
+  scruffy mark I cannot preview; the star plus "the summit" now does the job —
+  rejected.
+
+Third-pass restraint is deliberate: the data presentation was already sound, so
+this pass deepens the two ingredients in the two places they were absent and
+changes nothing else.

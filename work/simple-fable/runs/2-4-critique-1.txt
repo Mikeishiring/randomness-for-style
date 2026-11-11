@@ -1,0 +1,54 @@
+Critique of 2-4-1.html (originality, then clarity), followed by the changes applied in 2-4-2.html.
+
+ORIGINALITY — harsh
+
+1. The sky-as-conversion encoding is the single genuine invention, and everything
+   else coasts on it. Remove the glyphs and what remains is template luxury:
+   ivory ground, letterspaced capitals, a double hairline frame. Nothing is
+   specifically *hotel* — no tariff-board structure, no concierge-card
+   conventions. The crest is an anonymous ring any spa brochure could wear.
+2. The cloud is the stock Feather icon path, so the most original element is
+   drawn with the least original marks. The glyphs read as flat UI icons, not
+   printed engravings: pure outline, no ink, no wash.
+3. The weekend lift — the week's actual shape, and the defining rhythm of a
+   hotel — is left entirely to inference from day labels. The chart knows it
+   and says nothing.
+
+CLARITY
+
+4. In Sources the column is headed "Sky" but the load-bearing value is the
+   unlabeled percentage beside the glyph; the reader must carry the legend's
+   definition over from the previous card to know what 3.1% is.
+5. The Visits and Signups bar rows sit on separate scales and nothing says so
+   explicitly. Mitigated in practice: each row's tallest bar touches its own
+   printed maximum and every bar carries its value, so magnitudes cannot be
+   misread — but it is an implicit convention, not a stated one.
+6. Glyphs carrying aria-labels lacked role="img"; some screen readers will
+   skip them.
+
+CHANGES APPLIED IN 2-4-2.html (and only these)
+
+- Sources header "Sky" renamed "Conversion". The glyph remains the sky mark;
+  the number is now named where it appears. (Fixes 4.)
+- A faint gold wash behind the Sat–Sun columns of the week board makes the
+  weekend pattern a stated fact of the chart rather than an inference, with
+  no words added. The signups row was rebuilt with padding instead of margin
+  so the band runs unbroken. (Addresses 3.)
+- Engraving pass on the glyphs: translucent gold wash inside the sun, warm
+  ink-wash fill on the clouds. The marks now read as printed, not icon-font;
+  the cloud geometry is kept because it is legible at 20px and redrawing it
+  risks clarity for novelty's sake. (Addresses 2, partially concedes it.)
+- The stat strip is framed above and below by hairlines, a tariff board — the
+  hotel ingredient doing structural work instead of ambient styling.
+  (Addresses 1 within the no-added-copy constraint.)
+- role="img" added to labeled glyphs. (Fixes 6.)
+
+DECLINED, DELIBERATELY
+
+- No High/Low line and no forecast prose: both would duplicate values already
+  printed on the bars. No caption renames — "Outlook" would misdescribe a
+  retrospective report.
+- No explicit separate-scale annotation (5): every bar is value-labeled and
+  each row self-labels its maximum, so an axis note would restate numbers
+  already on the page.
+- Purpose, data, figures, layout and section order are unchanged.

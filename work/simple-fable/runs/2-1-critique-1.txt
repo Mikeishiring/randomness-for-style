@@ -1,0 +1,71 @@
+Critique of 2-1-1.html (Weather + Disco weekly report)
+
+ORIGINALITY — harsh read
+
+1. The one genuinely merged idea — the disco ball standing in for the sun — is
+   underbuilt. At 40px the blue sphere with a grid reads as a beach ball or a
+   globe, not a mirror ball. No hanger stem, no mirrored facet glints, no
+   scattered colored light. The single motif that carries the whole identity
+   is not recognizable as itself.
+2. Everything else disco is stock synthwave: pink/cyan/gold gradient title,
+   glassy dark cards, glow shadows. That palette is the default "dark neon
+   dashboard" of a thousand templates. Strip the three icons and nothing on
+   the page says disco specifically — fail of the identity-removal test.
+3. The weather half is borrowed app furniture used generically. The 7-day
+   card strip is the weather-app cliche, and the page does not commit to the
+   convention it borrowed: the rate plays the "temperature" role but nothing
+   names the conditions. The metaphor ("overcast", "clear") exists only in
+   aria-labels, so sighted readers never actually get the weather report —
+   they get cards with an unexplained ball.
+4. The background sparkle dots are decoration at homeopathic opacity; they
+   neither commit to a texture nor earn their bytes.
+
+CLARITY — harsh read
+
+5. The legend is overloaded and does double duty badly. "bars: visits · ball:
+   signup rate" is crammed in as a 'key' beside three thresholds; and the
+   thresholds are only stated under the Daily strip while the Sources rows
+   reuse the same icon scale a full section later, relying on memory.
+6. In Sources, the bar encodes visits while the adjacent big bold number is
+   the rate. Bar length and headline number encode different measures sitting
+   millimetres apart; in this dataset they happen to rank the same way, which
+   hides rather than removes the trap.
+7. Sunday's gold "peak" border is an unexplained encoding. No key, no label.
+   The tallest bar and the shine icon already mark the day; the border is a
+   third, silent marker.
+8. "signups" is spelled out seven times across the day cards — repetition
+   doing the work a single column label should do.
+9. The icon on day cards duplicates what the rate number says, which is fine
+   as redundant encoding — but because the conditions are unnamed, the icon
+   costs a legend lookup instead of paying for itself on sight.
+
+WHAT STAYS (strong decisions preserved)
+
+- Forecast-card structure with shared baseline bars: visits shape + per-day
+  detail in one surface.
+- Rate as the "temperature" of each day; icon as its condition.
+- The same condition scale applied to sources, exposing Social's weak 3.1%.
+- Totals row, synthetic-data badge, dark floor, tabular numerals, all data
+  and derived figures unchanged.
+
+REFINEMENTS APPLIED (one pass)
+
+a. Rebuilt the ball as a mirror ball: hanger stem, silver-violet facet
+   gradient, lit facet cells (white/cyan/pink), and for the top condition the
+   uniform gold sun-rays became alternating pink/cyan/gold scattered light
+   with a glint spark — disco and weather in one mark (addresses 1, 2).
+b. Named the conditions on the day cards — OVERCAST / PARTLY LIT / FULL
+   DISCO — tiny labels that make the weather report legible on sight and
+   give the merged identity visible words, not just aria-text (3, 9).
+c. Legend reduced to one job: the three condition icons with their signup-
+   rate thresholds, still placed between the two sections it serves (5).
+d. Sources rows regrouped by measure: name + visits bar with its counts
+   directly beneath (volume), icon + bold % together at the right (rate), so
+   bar length can no longer be misread as the rate (6).
+e. Removed the unexplained Sunday border (7).
+f. Units stated once, on the first entry of each series — "1,420 visits /
+   57 signups" on Mon, "5,240 visits · 314 signups" on Direct — bare aligned
+   numbers after (8).
+
+Not changed: palette (kept but now anchored by a real mirror-ball motif),
+layout order, chart geometry, all figures, self-containment.

@@ -1,0 +1,46 @@
+CRITIQUE — Week 01, third pass (1-0-3.html)
+
+ORIGINALITY
+1. The identity has reached diminishing returns, and pretending otherwise would be the
+   real failure. Serif-inscription words against mono-telemetry figures, fluted columns
+   carrying the data, the meander-as-circuit with its terminal pads now echoed in every
+   heading rule, the bolt at the actual peak — the two ingredients are finally in the
+   same marks. What remains undeveloped is deliberate: the KPI tiles stay plain because
+   four headline numbers must outrank the ornament, and further myth layering (temple-
+   front tiles, laurel wreaths, god glyphs) would cost comprehension to buy charm.
+2. The pediment mark is still the stock triangle-over-columns that two critiques have
+   sneered at. True, and it stays: at 44px, every richer redraw sketched (owl, wreath,
+   meander in the architrave) degrades into mush. A mediocre mark beats an illegible one.
+3. The epithet tooltips are a half-built door: no visual affordance says the source names
+   hold anything, so on desktop nobody hovers — and on touch the titles are unreachable
+   entirely. Decoration that hides its own meaning.
+
+CLARITY
+4. The disqualifying find: the page was graded desktop-first and collapses at phone
+   width. The daily SVG scales uniformly, so at 375px its 10px captions render at ~5px
+   and the conversion row becomes decorative fuzz. Three rounds of preaching about
+   honest, labeled values — and on a phone the labels are unreadable. That contradicts
+   the entire clarity record of this experiment.
+5. Encodings, scales, zero baselines, table semantics, contrast: re-checked, all hold
+   from v3. No data lies found.
+
+CHANGES APPLIED IN 1-0-4.html
+- The daily chart now sits in a horizontally scrollable region with a 620px minimum
+  render width. On phones the chart keeps legible text and scrolls sideways — the
+  standard honest tradeoff — instead of shrinking its labels past readability. Desktop
+  rendering is unchanged.
+- cursor:help on the titled source rows, the smallest possible hint that the patron
+  epithets carry a disclosure. (Touch users still get only the visible word; accepted,
+  since the epithet is flavor, not information.)
+
+CONSIDERED AND REJECTED
+- Redrawing the pediment mark (worse at size), duplicating the chart as a separate
+  mobile layout (two charts to keep truthful instead of one), merging the duplicated
+  meander pattern defs (code hygiene, no user-facing effect), any further mythic
+  ornament (would start competing with the figures).
+
+PRESERVED
+Everything else from v3: all data and derived rates, layout order, the serif/mono type
+system, tapered fluted columns on the stylobate, gold Sunday peak with bolt, trackless
+zero-based bars, real table with scoped headers and aria-hidden epithets, AA-passing
+micro-labels, synthetic-data chip, meander-circuit bands.

@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 Performance</title>
+<style>
+  :root{
+    --bg:#0b0d10;
+    --panel:#12151a;
+    --line:#ffffff14;
+    --text:#e8eaed;
+    --dim:#8a919c;
+    --red:#e10600;
+    --red-soft:#ff5a52;
+    --teal:#2de0c8;
+    --best:#c05cff;
+    --mono:ui-monospace,"Cascadia Mono","SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:
+      repeating-linear-gradient(45deg,#ffffff03 0 2px,transparent 2px 6px),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    min-height:100vh;
+  }
+  .checker{
+    height:10px;
+    background:repeating-conic-gradient(#e8eaed 0% 25%,#0b0d10 0% 50%) 0 0/14px 14px;
+    border-bottom:2px solid var(--red);
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:28px 16px 48px}
+
+  header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+  .plate{
+    background:var(--red);color:#fff;
+    font:italic 800 26px/1 var(--sans);
+    letter-spacing:.5px;
+    padding:10px 14px 10px 12px;
+    clip-path:polygon(0 0,100% 0,100% 100%,10px 100%,0 calc(100% - 10px));
+  }
+  h1{
+    font:italic 800 26px/1.1 var(--sans);
+    text-transform:uppercase;letter-spacing:1.5px;
+  }
+  .badge{
+    margin-left:auto;
+    font:600 11px/1 var(--mono);
+    letter-spacing:1.5px;
+    color:var(--dim);
+    border:1px solid var(--line);
+    padding:6px 10px;
+  }
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:26px}
+  .kpi{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:3px solid var(--red);
+    padding:14px 16px;
+    clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%);
+  }
+  .kpi.best{border-left-color:var(--best)}
+  .kpi .label{font:600 10px/1 var(--mono);letter-spacing:2px;color:var(--dim);text-transform:uppercase}
+  .kpi .value{font:700 30px/1.15 var(--mono);margin-top:8px}
+  .kpi.best .value{color:var(--best)}
+  .kpi .delta{font:600 12px/1 var(--mono);color:var(--teal);margin-top:6px}
+  .kpi .delta span{color:var(--dim)}
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    padding:18px 18px 14px;
+    margin-bottom:22px;
+    clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+  }
+  .card-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+  .card-head h2{
+    font:italic 800 15px/1 var(--sans);
+    text-transform:uppercase;letter-spacing:2px;
+  }
+  .card-head h2::before{content:"";display:inline-block;width:18px;height:3px;background:var(--red);margin-right:8px;vertical-align:middle}
+
+  svg{display:block;width:100%;height:auto}
+  .gridline{stroke:#ffffff10}
+  .gridlabel{font:10px var(--mono);fill:var(--dim)}
+  .chlabel{font:600 11px var(--mono);letter-spacing:2px}
+  .ptlabel{font:11px var(--mono);fill:var(--text);text-anchor:middle}
+  .daylabel{font:600 11px var(--mono);fill:var(--dim);text-anchor:middle;letter-spacing:1px}
+  .convlabel{font:600 11px var(--mono);fill:var(--dim);text-anchor:middle}
+  .best-text{fill:var(--best)}
+
+  .src{display:grid;grid-template-columns:1fr 80px 64px 60px;gap:6px 14px;align-items:center;margin-top:14px;font-family:var(--mono)}
+  .src.head{margin-top:0}
+  .srchead{font:600 10px/1 var(--mono);letter-spacing:1.5px;color:var(--dim);text-align:right}
+  .srcname{font:italic 700 13px var(--sans);text-transform:uppercase;letter-spacing:1px}
+  .srcbar{grid-column:1/-1;height:12px;background:#ffffff0a;position:relative}
+  .srcbar b{
+    position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--red),#ff3b30);
+    clip-path:polygon(0 0,calc(100% - 6px) 0,100% 100%,0 100%);
+  }
+  .num{text-align:right;font:600 14px var(--mono)}
+  .num.s{color:var(--teal)}
+  .num.c{color:var(--red-soft)}
+  .num.best{color:var(--best)}
+</style>
+</head>
+<body>
+<div class="checker" aria-hidden="true"></div>
+<div class="wrap">
+
+  <header>
+    <div class="plate">WK&nbsp;01</div>
+    <h1>Site Performance</h1>
+    <div class="badge">SYNTHETIC DATA</div>
+  </header>
+
+  <section class="kpis">
+    <div class="kpi">
+      <div class="label">Visits</div>
+      <div class="value">12,480</div>
+      <div class="delta">+48% <span>Mon→Sun</span></div>
+    </div>
+    <div class="kpi">
+      <div class="label">Signups</div>
+      <div class="value">624</div>
+      <div class="delta">+123% <span>Mon→Sun</span></div>
+    </div>
+    <div class="kpi">
+      <div class="label">Conversion</div>
+      <div class="value">5.0%</div>
+    </div>
+    <div class="kpi best">
+      <div class="label">Peak day</div>
+      <div class="value">SUN</div>
+      <div class="delta">2,100 <span>visits</span> · 127 <span>signups</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>Daily telemetry</h2>
+    </div>
+
+    <svg viewBox="0 0 680 168" role="img" aria-label="Visits per day: Mon 1,420; Tue 1,600; Wed 1,780; Thu 1,640; Fri 1,920; Sat 2,020; Sun 2,100. Sunday is the week's best.">
+      <text class="chlabel" x="4" y="12" fill="#e10600">VISITS</text>
+      <line class="gridline" x1="36" y1="150" x2="662" y2="150"/>
+      <line class="gridline" x1="36" y1="92.9" x2="662" y2="92.9"/>
+      <line class="gridline" x1="36" y1="35.7" x2="662" y2="35.7"/>
+      <text class="gridlabel" x="4" y="96">1.0k</text>
+      <text class="gridlabel" x="4" y="39">2.0k</text>
+      <line class="gridline" x1="60" y1="16" x2="60" y2="150"/>
+      <line class="gridline" x1="155" y1="16" x2="155" y2="150"/>
+      <line class="gridline" x1="250" y1="16" x2="250" y2="150"/>
+      <line class="gridline" x1="345" y1="16" x2="345" y2="150"/>
+      <line class="gridline" x1="440" y1="16" x2="440" y2="150"/>
+      <line class="gridline" x1="535" y1="16" x2="535" y2="150"/>
+      <line class="gridline" x1="630" y1="16" x2="630" y2="150"/>
+      <path fill="#e10600" fill-opacity=".12" d="M60,150 L60,68.9 L155,58.6 L250,48.3 L345,56.3 L440,40.3 L535,34.6 L630,30 L630,150 Z"/>
+      <polyline fill="none" stroke="#e10600" stroke-width="2" stroke-linejoin="round" points="60,68.9 155,58.6 250,48.3 345,56.3 440,40.3 535,34.6 630,30"/>
+      <circle cx="60" cy="68.9" r="3" fill="#e10600"/>
+      <circle cx="155" cy="58.6" r="3" fill="#e10600"/>
+      <circle cx="250" cy="48.3" r="3" fill="#e10600"/>
+      <circle cx="345" cy="56.3" r="3" fill="#e10600"/>
+      <circle cx="440" cy="40.3" r="3" fill="#e10600"/>
+      <circle cx="535" cy="34.6" r="3" fill="#e10600"/>
+      <circle cx="630" cy="30" r="3" fill="#e10600"/>
+      <circle cx="630" cy="30" r="6" fill="none" stroke="#c05cff" stroke-width="1.5"/>
+      <text class="ptlabel" x="60" y="58.9">1,420</text>
+      <text class="ptlabel" x="155" y="48.6">1,600</text>
+      <text class="ptlabel" x="250" y="38.3">1,780</text>
+      <text class="ptlabel" x="345" y="46.3">1,640</text>
+      <text class="ptlabel" x="440" y="30.3">1,920</text>
+      <text class="ptlabel" x="535" y="24.6">2,020</text>
+      <text class="ptlabel" x="630" y="18">2,100</text>
+    </svg>
+
+    <svg viewBox="0 0 680 212" role="img" aria-label="Signups per day: Mon 57; Tue 72; Wed 89; Thu 74; Fri 96; Sat 109; Sun 127. Conversion per day: 4.0, 4.5, 5.0, 4.5, 5.0, 5.4, 6.0 percent; Sunday is the week's best.">
+      <text class="chlabel" x="4" y="12" fill="#2de0c8">SIGNUPS</text>
+      <line class="gridline" x1="36" y1="150" x2="662" y2="150"/>
+      <line class="gridline" x1="36" y1="102.8" x2="662" y2="102.8"/>
+      <line class="gridline" x1="36" y1="55.5" x2="662" y2="55.5"/>
+      <text class="gridlabel" x="4" y="106">50</text>
+      <text class="gridlabel" x="4" y="59">100</text>
+      <line class="gridline" x1="60" y1="16" x2="60" y2="150"/>
+      <line class="gridline" x1="155" y1="16" x2="155" y2="150"/>
+      <line class="gridline" x1="250" y1="16" x2="250" y2="150"/>
+      <line class="gridline" x1="345" y1="16" x2="345" y2="150"/>
+      <line class="gridline" x1="440" y1="16" x2="440" y2="150"/>
+      <line class="gridline" x1="535" y1="16" x2="535" y2="150"/>
+      <line class="gridline" x1="630" y1="16" x2="630" y2="150"/>
+      <path fill="#2de0c8" fill-opacity=".10" d="M60,150 L60,96.1 L155,82 L250,65.9 L345,80.1 L440,59.3 L535,47 L630,30 L630,150 Z"/>
+      <polyline fill="none" stroke="#2de0c8" stroke-width="2" stroke-linejoin="round" points="60,96.1 155,82 250,65.9 345,80.1 440,59.3 535,47 630,30"/>
+      <circle cx="60" cy="96.1" r="3" fill="#2de0c8"/>
+      <circle cx="155" cy="82" r="3" fill="#2de0c8"/>
+      <circle cx="250" cy="65.9" r="3" fill="#2de0c8"/>
+      <circle cx="345" cy="80.1" r="3" fill="#2de0c8"/>
+      <circle cx="440" cy="59.3" r="3" fill="#2de0c8"/>
+      <circle cx="535" cy="47" r="3" fill="#2de0c8"/>
+      <circle cx="630" cy="30" r="3" fill="#2de0c8"/>
+      <circle cx="630" cy="30" r="6" fill="none" stroke="#c05cff" stroke-width="1.5"/>
+      <text class="ptlabel" x="60" y="86.1">57</text>
+      <text class="ptlabel" x="155" y="72">72</text>
+      <text class="ptlabel" x="250" y="55.9">89</text>
+      <text class="ptlabel" x="345" y="70.1">74</text>
+      <text class="ptlabel" x="440" y="49.3">96</text>
+      <text class="ptlabel" x="535" y="37">109</text>
+      <text class="ptlabel" x="630" y="18">127</text>
+      <text class="daylabel" x="60" y="176">MON</text>
+      <text class="daylabel" x="155" y="176">TUE</text>
+      <text class="daylabel" x="250" y="176">WED</text>
+      <text class="daylabel" x="345" y="176">THU</text>
+      <text class="daylabel" x="440" y="176">FRI</text>
+      <text class="daylabel" x="535" y="176">SAT</text>
+      <text class="daylabel best-text" x="630" y="176">SUN</text>
+      <text class="gridlabel" x="2" y="198">CONV %</text>
+      <text class="convlabel" x="60" y="198">4.0</text>
+      <text class="convlabel" x="155" y="198">4.5</text>
+      <text class="convlabel" x="250" y="198">5.0</text>
+      <text class="convlabel" x="345" y="198">4.5</text>
+      <text class="convlabel" x="440" y="198">5.0</text>
+      <text class="convlabel" x="535" y="198">5.4</text>
+      <text class="convlabel best-text" x="630" y="198">6.0</text>
+    </svg>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>Traffic sources</h2>
+    </div>
+
+    <div class="src head">
+      <span></span>
+      <span class="srchead">VISITS</span>
+      <span class="srchead">SIGNUPS</span>
+      <span class="srchead">CONV</span>
+    </div>
+
+    <div class="src">
+      <span class="srcname">Direct</span>
+      <span class="num">5,240</span>
+      <span class="num s">314</span>
+      <span class="num best">6.0%</span>
+      <span class="srcbar"><b style="width:100%"></b></span>
+    </div>
+
+    <div class="src">
+      <span class="srcname">Search</span>
+      <span class="num">4,480</span>
+      <span class="num s">224</span>
+      <span class="num c">5.0%</span>
+      <span class="srcbar"><b style="width:85.5%"></b></span>
+    </div>
+
+    <div class="src">
+      <span class="srcname">Social</span>
+      <span class="num">2,760</span>
+      <span class="num s">86</span>
+      <span class="num c">3.1%</span>
+      <span class="srcbar"><b style="width:52.7%"></b></span>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

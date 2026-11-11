@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 · Website Performance</title>
+<style>
+  :root{
+    --abyss:#020a12;
+    --ink:#c8dde2;
+    --bright:#f2fbf9;
+    --dim:#8fb3bd;
+    --cyan:#5ef2d8;
+    --gold:#d9b36c;
+    --gold-soft:#e6c98f;
+    --rule:rgba(217,179,108,.4);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{background:var(--abyss)}
+  body{
+    position:relative;
+    background:
+      radial-gradient(1100px 520px at 50% -8%, #0a2436 0%, #041320 48%, var(--abyss) 82%) fixed,
+      var(--abyss);
+    color:var(--ink);
+    font-family:"Didot","Bodoni MT","Playfair Display",Georgia,"Times New Roman",serif;
+    padding:0 16px 72px;
+  }
+  /* Velvet curtain edge with gold hem */
+  body::before{
+    content:"";position:absolute;inset:0 0 auto 0;height:22px;
+    background-image:
+      radial-gradient(circle at 16px -9px, transparent 19px, rgba(217,179,108,.55) 19px, rgba(217,179,108,.55) 20.5px, transparent 21.5px),
+      radial-gradient(circle at 16px -9px, #4a1522 0 13px, #300d18 20px, transparent 21px);
+    background-size:32px 22px;
+    background-repeat:repeat-x;
+  }
+  main{max-width:940px;margin:0 auto}
+  .sr-only{
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+    overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+  }
+
+  /* Playbill header */
+  header{
+    text-align:center;
+    margin-top:50px;
+    padding:26px 0 30px;
+    border-top:4px double var(--rule);
+    border-bottom:4px double var(--rule);
+  }
+  .over{
+    font-size:12px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--gold-soft);
+  }
+  .over::before,.over::after{
+    content:"◆";
+    content:"◆" / "";
+    font-size:8px;color:rgba(217,179,108,.6);vertical-align:2px;
+  }
+  .over::before{margin-right:14px}
+  .over::after{margin-left:14px}
+  h1{
+    font-style:italic;font-weight:400;
+    font-size:clamp(46px,9vw,76px);
+    line-height:1.05;margin-top:10px;
+    color:#f0e2c4;
+    text-shadow:0 0 28px rgba(217,179,108,.3);
+  }
+  .synthetic{
+    display:inline-block;margin-top:16px;
+    font-size:10px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--dim);
+    border:1px solid rgba(143,179,189,.45);
+    border-radius:999px;padding:4px 14px 3px;
+  }
+
+  /* KPI row */
+  .kpis{
+    display:flex;flex-wrap:wrap;justify-content:center;
+    gap:28px 64px;margin:46px 0 10px;text-align:center;
+  }
+  .kpis b{
+    display:block;font-weight:400;
+    font-size:clamp(34px,6vw,48px);line-height:1;
+  }
+  .kpis .visits b{color:#e8fffa;text-shadow:0 0 22px rgba(94,242,216,.5)}
+  .kpis .signups b{color:#f6e8cd;text-shadow:0 0 22px rgba(217,179,108,.5)}
+  .kpis .conv b{color:var(--bright);text-shadow:0 0 18px rgba(200,230,240,.35)}
+  .kpis span{
+    display:block;margin-top:9px;
+    font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);
+  }
+
+  /* Acts */
+  section{margin-top:58px}
+  h2{
+    display:flex;align-items:center;gap:16px;
+    font-weight:400;font-size:12px;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--gold);white-space:nowrap;
+  }
+  h2::after{content:"";flex:1;height:1px;background:var(--rule)}
+
+  /* Daily chart */
+  figure{margin-top:26px;overflow-x:auto}
+  svg{display:block;width:100%;height:auto;min-width:760px}
+  .sv{font-size:14px;fill:#e9f7f3}
+  .sg{font-size:13px;fill:var(--gold-soft)}
+  .sd{font-size:12px;letter-spacing:.22em;fill:#9fc0c8}
+  .sc{font-size:11.5px;letter-spacing:.26em;fill:var(--dim)}
+  .scv{font-size:12.5px;letter-spacing:.04em;fill:#b9d6dd}
+
+  /* Sources */
+  .cast{margin-top:26px}
+  .row,.cast-head{
+    display:grid;grid-template-columns:5.6rem 1fr 4.6rem;
+    gap:0 18px;align-items:center;
+  }
+  .cast-head{
+    font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--dim);
+    padding-bottom:12px;border-bottom:1px solid rgba(217,179,108,.22);
+  }
+  .legend{display:flex;gap:22px}
+  .legend i{
+    display:inline-block;width:14px;height:7px;border-radius:2px;
+    margin-right:7px;vertical-align:1px;
+  }
+  .legend .lv i{background:linear-gradient(90deg,#0a4752,var(--cyan));box-shadow:0 0 10px rgba(94,242,216,.5)}
+  .legend .ls i{background:linear-gradient(90deg,#6b4c22,var(--gold-soft));box-shadow:0 0 10px rgba(217,179,108,.5)}
+  .cast-head .ch-conv{text-align:right}
+  .row{padding:17px 0;border-bottom:1px solid rgba(143,179,189,.14)}
+  .name{
+    font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--bright);
+  }
+  .bars{display:grid;gap:7px}
+  .bar{
+    display:grid;grid-template-columns:1fr 3.6rem;gap:0 10px;
+    align-items:center;font-size:13px;
+  }
+  .track{display:block}
+  .track i{
+    display:block;height:10px;border-radius:2px;
+    background:linear-gradient(90deg,#0a4752,#36cdb4 60%,var(--cyan));
+    box-shadow:0 0 14px rgba(94,242,216,.4);
+  }
+  .bar.s .track i{
+    height:6px;min-width:3px;
+    background:linear-gradient(90deg,#5c421e,#c79d57 60%,var(--gold-soft));
+    box-shadow:0 0 12px rgba(217,179,108,.45);
+  }
+  .bar em{font-style:normal;color:#e9f7f3;text-align:right}
+  .bar.s em{color:var(--gold-soft)}
+  .conv{
+    text-align:right;font-size:24px;color:var(--bright);
+    text-shadow:0 0 14px rgba(200,230,240,.3);
+  }
+
+  @media (max-width:540px){
+    .row,.cast-head{grid-template-columns:4.2rem 1fr 3.4rem;gap:0 12px}
+    .kpis{gap:24px 36px}
+    .legend{gap:12px}
+    .conv{font-size:19px}
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <header>
+    <p class="over">Website Performance</p>
+    <h1>Week 01</h1>
+    <span class="synthetic">Synthetic data</span>
+  </header>
+
+  <div class="kpis">
+    <div class="visits"><b>12,480</b><span>Visits</span></div>
+    <div class="signups"><b>624</b><span>Signups</span></div>
+    <div class="conv"><b>5.0%</b><span>Conversion</span></div>
+  </div>
+
+  <section>
+    <h2>Act I · Daily</h2>
+    <figure>
+      <svg viewBox="0 0 940 360" role="img"
+           aria-label="Daily visits as columns, signups as glowing orbs sized by count, and conversion rate per day; all rise from Monday, 1,420 visits, 57 signups, 4.0 percent, to a Sunday peak of 2,100 visits, 127 signups and 6.0 percent">
+        <defs>
+          <linearGradient id="bar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#8ef7e2"/>
+            <stop offset=".45" stop-color="#36cdb4"/>
+            <stop offset="1" stop-color="#0a4752"/>
+          </linearGradient>
+          <linearGradient id="barMax" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#d8fff6"/>
+            <stop offset=".4" stop-color="#5ef2d8"/>
+            <stop offset="1" stop-color="#0e5c63"/>
+          </linearGradient>
+          <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#eafffb" stop-opacity=".13"/>
+            <stop offset=".55" stop-color="#eafffb" stop-opacity=".05"/>
+            <stop offset="1" stop-color="#eafffb" stop-opacity="0"/>
+          </linearGradient>
+          <radialGradient id="orb">
+            <stop offset="0" stop-color="#fff6e3"/>
+            <stop offset=".4" stop-color="#eac17c"/>
+            <stop offset=".85" stop-color="#d9b36c" stop-opacity=".35"/>
+            <stop offset="1" stop-color="#d9b36c" stop-opacity=".12"/>
+          </radialGradient>
+          <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="7" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <rect x="824" y="0" width="92" height="356" fill="url(#beam)"/>
+
+        <text class="sc" x="88" y="216" text-anchor="end">Visits</text>
+        <text class="sc" x="88" y="292" text-anchor="end">Signups</text>
+        <text class="sc" x="88" y="352" text-anchor="end">Conversion</text>
+
+        <g filter="url(#glow)">
+          <rect x="118" y="105" width="64" height="115" rx="3" fill="url(#bar)"/>
+          <rect x="238" y="90"  width="64" height="130" rx="3" fill="url(#bar)"/>
+          <rect x="358" y="76"  width="64" height="144" rx="3" fill="url(#bar)"/>
+          <rect x="478" y="87"  width="64" height="133" rx="3" fill="url(#bar)"/>
+          <rect x="598" y="65"  width="64" height="155" rx="3" fill="url(#bar)"/>
+          <rect x="718" y="56"  width="64" height="164" rx="3" fill="url(#bar)"/>
+          <rect x="838" y="50"  width="64" height="170" rx="3" fill="url(#barMax)"/>
+        </g>
+        <line x1="100" y1="220" x2="920" y2="220" stroke="rgba(217,179,108,.35)"/>
+
+        <text class="sv" x="150" y="95" text-anchor="middle">1,420</text>
+        <text class="sv" x="270" y="80" text-anchor="middle">1,600</text>
+        <text class="sv" x="390" y="66" text-anchor="middle">1,780</text>
+        <text class="sv" x="510" y="77" text-anchor="middle">1,640</text>
+        <text class="sv" x="630" y="55" text-anchor="middle">1,920</text>
+        <text class="sv" x="750" y="46" text-anchor="middle">2,020</text>
+        <text class="sv" x="870" y="40" text-anchor="middle">2,100</text>
+
+        <text class="sd" x="150" y="246" text-anchor="middle">MON</text>
+        <text class="sd" x="270" y="246" text-anchor="middle">TUE</text>
+        <text class="sd" x="390" y="246" text-anchor="middle">WED</text>
+        <text class="sd" x="510" y="246" text-anchor="middle">THU</text>
+        <text class="sd" x="630" y="246" text-anchor="middle">FRI</text>
+        <text class="sd" x="750" y="246" text-anchor="middle">SAT</text>
+        <text class="sd" x="870" y="246" text-anchor="middle">SUN</text>
+
+        <g stroke="rgba(230,201,143,.5)" stroke-width=".75">
+          <circle cx="150" cy="288" r="14.7" fill="url(#orb)"/>
+          <circle cx="270" cy="288" r="16.6" fill="url(#orb)"/>
+          <circle cx="390" cy="288" r="18.4" fill="url(#orb)"/>
+          <circle cx="510" cy="288" r="16.8" fill="url(#orb)"/>
+          <circle cx="630" cy="288" r="19.1" fill="url(#orb)"/>
+          <circle cx="750" cy="288" r="20.4" fill="url(#orb)"/>
+          <circle cx="870" cy="288" r="22"   fill="url(#orb)"/>
+        </g>
+
+        <text class="sg" x="150" y="328" text-anchor="middle">57</text>
+        <text class="sg" x="270" y="328" text-anchor="middle">72</text>
+        <text class="sg" x="390" y="328" text-anchor="middle">89</text>
+        <text class="sg" x="510" y="328" text-anchor="middle">74</text>
+        <text class="sg" x="630" y="328" text-anchor="middle">96</text>
+        <text class="sg" x="750" y="328" text-anchor="middle">109</text>
+        <text class="sg" x="870" y="328" text-anchor="middle">127</text>
+
+        <text class="scv" x="150" y="352" text-anchor="middle">4.0%</text>
+        <text class="scv" x="270" y="352" text-anchor="middle">4.5%</text>
+        <text class="scv" x="390" y="352" text-anchor="middle">5.0%</text>
+        <text class="scv" x="510" y="352" text-anchor="middle">4.5%</text>
+        <text class="scv" x="630" y="352" text-anchor="middle">5.0%</text>
+        <text class="scv" x="750" y="352" text-anchor="middle">5.4%</text>
+        <text class="scv" x="870" y="352" text-anchor="middle">6.0%</text>
+      </svg>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Act II · Sources</h2>
+    <div class="cast" role="table" aria-label="Sources">
+      <div class="cast-head" role="row">
+        <span role="columnheader"><span class="sr-only">Source</span></span>
+        <span class="legend" role="columnheader">
+          <span class="lv"><i></i>Visits</span>
+          <span class="ls"><i></i>Signups</span>
+        </span>
+        <span class="ch-conv" role="columnheader">Conversion</span>
+      </div>
+
+      <div class="row" role="row">
+        <span class="name" role="rowheader">Direct</span>
+        <div class="bars" role="cell">
+          <div class="bar"><span class="track"><i style="width:100%"></i></span><em>5,240</em></div>
+          <div class="bar s"><span class="track"><i style="width:6%"></i></span><em>314</em></div>
+        </div>
+        <span class="conv" role="cell">6.0%</span>
+      </div>
+
+      <div class="row" role="row">
+        <span class="name" role="rowheader">Search</span>
+        <div class="bars" role="cell">
+          <div class="bar"><span class="track"><i style="width:85.5%"></i></span><em>4,480</em></div>
+          <div class="bar s"><span class="track"><i style="width:4.3%"></i></span><em>224</em></div>
+        </div>
+        <span class="conv" role="cell">5.0%</span>
+      </div>
+
+      <div class="row" role="row">
+        <span class="name" role="rowheader">Social</span>
+        <div class="bars" role="cell">
+          <div class="bar"><span class="track"><i style="width:52.7%"></i></span><em>2,760</em></div>
+          <div class="bar s"><span class="track"><i style="width:1.6%"></i></span><em>86</em></div>
+        </div>
+        <span class="conv" role="cell">3.1%</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

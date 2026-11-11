@@ -1,0 +1,56 @@
+Critique of 5-0-1.html (originality, then clarity), followed by the changes applied in 5-0-2.html.
+
+ORIGINALITY — harsh read
+
+1. The identity is a palette, not an idea. Dark navy + cyan glow + monospace numerals is the
+   default costume of every crypto/tech dashboard. Nothing on the page could only come from
+   the deep sea: no depth, no darkness doing work, no sense that light is scarce and
+   therefore meaningful.
+2. The bioluminescence is purely decorative. Static specks sprinkled with radial-gradients
+   and an identical drop-shadow on every bar. When everything glows equally, glow is a
+   Photoshop filter, not bioluminescence. Real bioluminescence flares where something
+   happens; here the data's one story (conversion rising all week, Sunday peak) gets no
+   luminous emphasis at all.
+3. The composition is stock: chip row, three KPI cards, two bordered section cards. The
+   layout owes nothing to either ingredient. The "tech" half amounts to letterspaced caps
+   and a mono stack — table stakes, not an instrument.
+
+CLARITY — harsh read
+
+4. The daily chart's two bar panels use different scales (max 2,100 vs max 127) and never
+   say so. A tall Sunday signups bar sits under a short Monday visits bar; only bar width
+   hints that they are not comparable. No ticks, no axis, nothing declares the scales.
+5. The most useful number on the page — daily conversion, the week's actual story — is the
+   faintest text on the page: 11px #8aa3c0 on dark, cryptic "CONV" label, below comfortable
+   contrast. The insight is typeset as a footnote.
+6. Sources: the visits bar and signups bar in the same row are each scaled to their own
+   column maximum. Honest per column, but stacking them per row invites reading the two
+   lengths against each other, which encodes nothing.
+7. #5e7693 labels fail contrast; empty header spacer spans are markup noise; on mobile the
+   column headers vanish and are replaced by 9px uppercase labels.
+
+WHAT WAS WORTH KEEPING (and is kept)
+
+- Separate visits/signups panels instead of a lying dual axis.
+- Every bar directly labeled with its value; no tooltips, no JS, no copy.
+- The per-day conversion row existing at all, and conversion as a first-class column
+  for sources.
+- KPI totals, synthetic-data chip, self-containment, system fonts, dark-only scheme.
+
+CHANGES APPLIED IN 5-0-2.html
+
+a. Luminance now carries data (develops bioluminescence as information, not decoration):
+   the daily conversion row becomes a strip of glowing dots whose radius and brightness
+   scale with the rate — the week literally brightens from Monday 4.0% to Sunday 6.0%.
+   Values beneath are larger and brighter; they are the story, no longer a footnote.
+b. Each source is now one bar: a dim, dark body sized by visits with a luminous violet
+   segment lit from the left sized by signups — the lit fraction IS the conversion rate,
+   like a glowing organ on a dark animal. One scale per chart, cross-readable lengths,
+   and the misreadable second bar column is gone. Numeric visits / signups / conv columns
+   keep every figure.
+c. Scale ticks added (develops the tech-instrument half and fixes the undeclared scales):
+   faint soundings at 1k/2k on the visits panel and 50/100 on the signups panel.
+d. Contrast repairs: conversion values and tick labels lifted; cryptic label kept short
+   but legible; empty spacer markup reduced; mobile layout gives each value its unit
+   word instead of 9px floating labels.
+e. Everything else — layout, KPI row, header, palette, copy level, data — unchanged.

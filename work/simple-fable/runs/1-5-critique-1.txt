@@ -1,0 +1,70 @@
+CRITIQUE OF 1-5-1.html
+
+ORIGINALITY — harsh reading
+
+1. The Greek ingredient is skin-deep. It amounts to one meander strip at the top
+   and three italic binomials. The meander is the single most predictable Greek
+   signifier available, and it is applied as a detached decorative band with no
+   relationship to anything below it. Strip the band and the three names and the
+   page is a generic "old paper" dashboard. Nothing Greek structures the page or
+   touches the data.
+
+2. The Victorian ingredient stops at quotation. Insect plates, double-rule
+   museum-label frames, letterspaced caps: all correct, none surprising. The
+   daily chart's "pins" read as an ordinary lollipop chart; the entomological
+   conceit is invisible unless you are told about it.
+
+3. The two ingredients fuse exactly once — Athena's moth carries owl eyespots,
+   and the binomials encode their source's behaviour (Hermes directus, Athena
+   quaerens, Echo gregaria). That is the best idea on the page and it is nearly
+   invisible. Psyche, the obvious myth-insect bridge, goes unused; Greek pottery,
+   the obvious visual vocabulary, goes unused.
+
+4. Typography is default Georgia with tracking. Serviceable, not distinctive.
+
+CLARITY — harsh reading
+
+5. The conversion row is orphaned. Day labels sit between the visits and signups
+   bands, so Sunday's 6.0% is roughly 170px below its day label with no column
+   guide. Tracing a column across that gap is real work. Worst defect on the page.
+
+6. Conversion is never defined. "Signups ÷ visits" is standard, but the page
+   makes the reader supply the relationship between its three rows.
+
+7. In the source cards, each metric's bar is scaled to the leading source for
+   that metric. The convention is honest but unstated, and within a card it
+   invites a false reading: Direct shows equal full-length bars for 5,240 visits
+   and a 6.0% rate. Values are labeled, which limits the damage, but the scale
+   should be declared once.
+
+8. Accepted tradeoffs, defended: the chart scrolls horizontally on phones rather
+   than shrinking below legibility; marks are uniform with no peak-day
+   highlighting, because every value is labeled and Sunday's lead is visible
+   without editorial color.
+
+CHANGES APPLIED
+
+- Daily chart regrouped: both count bands stack first, then day labels with the
+  conversion percentages directly beneath them. Day and rate now read as one
+  specimen label; the orphan is gone. (Fixes 5.)
+- Conversion row labeled "signups ÷ visits" at the row head, defining the KPI
+  and the card rows in one place. (Fixes 6.)
+- One consolidated scale note under Sources: "Bars scaled to the leading
+  source." Covers all nine bars without per-card copy. (Fixes 7.)
+- Greek pottery joined to Victorian mounting: a faint terracotta amphora
+  silhouette now sits behind each pinned specimen, so every source plate fuses
+  both ingredients in the artifact itself rather than in a border. (Develops 1,
+  3; decorative, 13% opacity, aria-hidden, no clarity cost.)
+- The meander is no longer one detached strip: section rules under "Sources"
+  now use a muted key pattern, accent key at the head. The motif recurs through
+  the page instead of captioning it. (Develops 1.)
+
+PRESERVED DELIBERATELY
+
+- Two separately scaled count bands instead of a dual-axis chart; every value
+  labeled; derived conversions shown as rates, not bars mixed with counts.
+- The myth binomials and owl eyespots — the one working fusion, now supported
+  rather than replaced.
+- Synthetic-data tag beside the title; museum-label frames; palette and dark
+  theme; aria-hidden plates with text names carrying meaning.
+- All figures unchanged and drawn only from the supplied data.

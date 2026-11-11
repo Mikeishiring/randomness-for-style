@@ -1,0 +1,50 @@
+CRITIQUE — Week 01, second pass (1-0-2.html)
+
+ORIGINALITY
+1. The fusion is still compartmentalized: myth lives in the ornament (meander, columns,
+   epithets) and tech lives in the typography (mono figures). Only the daily chart holds
+   both at once. The KPI tiles are four generic stat boxes with a gold lid; the heading
+   rules are plain hairlines. The circuit-trace idea introduced in the meander pads was
+   never extended into the page it decorates.
+2. The epithets are inert. Hermes, Athena and Dionysus sit under the source names doing
+   nothing: a reader who knows the gods gets a smile, a reader who doesn't gets noise.
+   Worse, each one is read aloud by a screen reader as part of the source name —
+   "Direct Hermes" — so the decoration actively damages the accessible table that v2
+   congratulated itself on.
+3. The Zeus bolt is an 11px afterthought parked in a KPI tile corner, away from the data
+   it refers to. A victory mark belongs at the victory: Sunday's column, where the week
+   peaks. Decorating the tile AND the chart would cheapen it; decorating the tile alone
+   mislocates it.
+4. The signup bars are plain rects sitting under seven carefully built columns — the
+   bottom half of the chart looks like it was drawn by a different, lazier hand.
+
+CLARITY
+5. Contrast failure across every micro-label: --faint #6d6858 on the #171a22 panel is
+   about 3.1:1 — below AA for the KPI labels, table headers, epithets and the VISITS /
+   SIGNUPS / CONV. captions. The smallest, most load-bearing words on the page are the
+   hardest to read.
+6. The encodings themselves hold up: zero-based trackless bars, labeled values, the
+   per-day funnel, scoped table headers. No data lies found in v2.
+
+CHANGES APPLIED IN 1-0-3.html
+- --faint lightened to #8f8a7d (about 5:1 on panel); SVG captions updated to match. All
+  micro-labels now pass AA.
+- Epithets marked aria-hidden so the table reads cleanly; each source row instead carries
+  a title tooltip naming the patron's domain (Hermes the messenger, Athena wisdom,
+  Dionysus the gathering) — occasional detail in disclosure, no added visible copy.
+- The bolt moves from the Peak day tile into the chart, beside Sunday's 2,100 label. The
+  tile keeps its plain "Sun" value.
+- Heading rules become circuit traces: the hairline now terminates in a small gold pad,
+  echoing the meander's terminals inside the page body.
+- Signup bars get a lighter top edge so they read as cut stone blocks — same built
+  quality as the columns above, no change to their geometry or values.
+
+CONSIDERED AND REJECTED
+- Explaining the epithets in visible text (filler; the tooltip carries it).
+- Styling the KPI tiles as temple fronts (ornament would start competing with the four
+  numbers that matter most).
+
+PRESERVED
+All data, derived rates, layout order, the serif-words / mono-figures system, tapered
+fluted columns, stylobate, gold Sunday highlight, honest trackless bars, real table
+semantics, synthetic-data chip, meander-circuit bands.

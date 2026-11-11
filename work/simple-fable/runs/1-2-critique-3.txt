@@ -1,0 +1,62 @@
+CRITIQUE — run 1-2-3 (Agora Grill, Week 01), third pass
+
+THE MISS ALL PREVIOUS PASSES SHOULD HAVE CAUGHT
+
+1. The stylesheet declares a global rule: svg{display:block;width:100%;height:auto}.
+   It was written for the chart but it also matches the 64px header logo, whose
+   width="64" attribute loses to CSS width:100%. The logo therefore does not
+   render at its designed size: as a flex item with a percentage width, an
+   aspect-ratio'd viewBox and no intrinsic size, it inflates against the brand
+   container instead of sitting at 64px beside the wordmark. Two "harsh" passes
+   critiqued epithet phrasing while a sizing defect sat in the header. That is
+   the clarity failure of this iteration history: critique aimed at taste, not
+   at verification.
+
+ORIGINALITY — harsh read
+
+2. The two-voice system (Impact = menu board, Georgia italic = myth) now runs
+   through sources and chart, but the KPI strip still speaks only one voice.
+   Acceptable: tiles are the densest surface and extra voice there would mean
+   extra words, which the brief's clarity constraint outweighs.
+3. The peak star appears once, in the chart, while "Best day — Sunday" states the
+   same fact in the KPI strip with no shared mark. Same fact, two unlinked
+   presentations — a missed chance for the identity to do connective work.
+4. Otherwise the identity has reached its sensible depth for this format: frieze,
+   logo, epithets, summit, leaders, double rule. Pushing further (patterned
+   fills, illustrated gods, ticket die-cuts) would start taxing the report.
+
+CLARITY — harsh read
+
+5. "the summit" is blue while its star is gold — one annotation, two hues. Gold
+   text would fail contrast on cream (~1.9:1), so blue (the myth-voice color) is
+   the correct, if slightly impure, choice. No change.
+6. Dotted leaders, thin signup bars, share suffixes, labelled best-day numbers:
+   all landed; no regressions found on re-reading the markup.
+
+PRESERVED (strong decisions, kept deliberately)
+
+- All figures, chart geometry, same-scale signups segments, numeric table,
+  section header system, epithets, summit annotation, leaders, double rule,
+  palette, responsive rules.
+
+CHANGES APPLIED IN 1-2-4 (one pass, each justified)
+
+a. Scoped the chart's sizing rule to .chart-card svg so the header logo (and any
+   future inline icon) renders at its attribute size. Defect fix; no visual
+   intent changed anywhere else. (1)
+b. The gold star now also precedes "Sunday" in the best-day tile: one mark, one
+   meaning, in both places the peak is stated. Links summary to evidence without
+   a word of copy. (3)
+
+CHANGES CONSIDERED AND REJECTED
+
+- Recoloring KPI emphasis (+48%, +123%) away from red: red is the page accent,
+  not a conversion-only code; churn without gain — rejected.
+- Shortening the signups legend: the long phrase is what makes a subtle encoding
+  legible — rejected.
+- Any further identity layering: diminishing returns reached; the remaining
+  risk is decoration without information — rejected.
+
+If a further pass is requested, the correct result is likely an identical file:
+the report now says everything the data supports, and both ingredients work in
+every section where they can earn their place.

@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Form WK-01</title>
+<style>
+  :root {
+    --desk: #e7e3d6;
+    --paper: #f4f1e7;
+    --sheet: #fbf9f2;
+    --ink: #17191c;
+    --rule: #17191c;
+    --faint: #8a8574;
+    --blue: #1c3f7a;
+    --red: #b3261e;
+    --greenbar: #e9efe2;
+    --peak: #dde6f1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--desk);
+    color: var(--ink);
+    font-family: "Courier New", Courier, monospace;
+    font-variant-numeric: tabular-nums;
+    padding: 24px 16px 48px;
+  }
+  .machine { font-family: Consolas, "Lucida Console", "Courier New", monospace; }
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* Continuous-form sheet */
+  .form {
+    position: relative;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 22px;
+    border: 2px solid var(--rule);
+    outline: 1px solid var(--rule);
+    outline-offset: 3px;
+    background: var(--sheet);
+  }
+  .form::before, .form::after {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 22px;
+    background-image: radial-gradient(circle, var(--desk) 2.5px, rgba(23,25,28,.35) 3px, transparent 3.8px);
+    background-size: 22px 26px;
+    background-position: center 10px;
+    background-repeat: repeat-y;
+  }
+  .form::before { left: 0; border-right: 1px dashed var(--faint); }
+  .form::after  { right: 0; border-left: 1px dashed var(--faint); }
+
+  /* Masthead */
+  .masthead {
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--rule);
+  }
+  .masthead .id {
+    padding: 14px 16px;
+    border-right: 1px solid var(--rule);
+    min-width: 110px;
+  }
+  .masthead .id .no { font-size: 11px; letter-spacing: .12em; }
+  .masthead .id .code { font-size: 26px; font-weight: 700; }
+  .masthead .title {
+    flex: 1 1 300px;
+    padding: 14px 16px;
+    border-right: 1px solid var(--rule);
+  }
+  .masthead .title h1 {
+    font-size: 17px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .masthead .title .period {
+    margin-top: 4px;
+    font-size: 12px;
+    letter-spacing: .1em;
+  }
+  .masthead .title .period b { border-bottom: 1px solid var(--ink); padding: 0 6px; }
+  .masthead .stampcell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    flex: 0 0 auto;
+  }
+  .stamp {
+    transform: rotate(-6deg);
+    border: 3px double var(--red);
+    color: var(--red);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .22em;
+    padding: 6px 10px 5px 12px;
+    text-transform: uppercase;
+    opacity: .85;
+    white-space: nowrap;
+  }
+
+  /* Summary boxes */
+  .boxes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 2px solid var(--rule);
+  }
+  .box {
+    padding: 12px 14px 14px;
+    border-right: 1px solid var(--rule);
+    position: relative;
+  }
+  .box:last-child { border-right: 0; }
+  .box .n {
+    position: absolute;
+    top: 0; left: 0;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .box .label {
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    margin: 10px 0 2px;
+    color: #44474d;
+  }
+  .box .value { font-size: 24px; font-weight: 700; }
+  .box .value small { font-size: 13px; font-weight: 400; }
+
+  /* Part headers */
+  .part {
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+  }
+
+  /* Green-bar ledger tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    text-align: left;
+    font-weight: 400;
+    color: #44474d;
+    padding: 8px 10px 6px;
+    border-bottom: 1px solid var(--rule);
+  }
+  tbody td, tbody th, tfoot td, tfoot th {
+    padding: 7px 10px;
+    vertical-align: middle;
+    text-align: left;
+    font-size: 13px;
+  }
+  tbody tr:nth-child(even) > * { background: var(--greenbar); }
+  tfoot td, tfoot th {
+    border-top: 2px solid var(--rule);
+    font-weight: 700;
+    background: var(--paper);
+  }
+  th.num, td.num { text-align: right; white-space: nowrap; }
+  tbody th[scope="row"] { font-weight: 700; width: 4em; }
+
+  /* Segmented dot-matrix bars */
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 140px;
+  }
+  .bar .track {
+    flex: 1;
+    height: 12px;
+    background: var(--sheet);
+    border: 1px solid var(--ink);
+  }
+  .bar .fill {
+    height: 100%;
+    background: repeating-linear-gradient(90deg, var(--blue) 0 5px, transparent 5px 7px);
+  }
+  .bar.red .fill {
+    background: repeating-linear-gradient(90deg, var(--red) 0 5px, transparent 5px 7px);
+  }
+  .bar .v { min-width: 4.5em; text-align: right; }
+  .bar.red .v { min-width: 3em; }
+
+  tbody tr.peak > * { background: var(--peak); }
+  tr.peak th[scope="row"]::after { content: " ●"; color: var(--blue); font-size: 10px; }
+
+  .hi { color: var(--blue); font-weight: 700; }
+  .lo { color: var(--red); font-weight: 700; }
+
+  .footrule {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 10px;
+    letter-spacing: .12em;
+    padding: 6px 14px;
+    border-top: 2px solid var(--rule);
+    color: #44474d;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 16px 16px 32px; }
+    .form { padding: 0 14px; }
+    .form::before, .form::after {
+      width: 14px;
+      background-size: 14px 22px;
+      background-position: center 8px;
+    }
+    .boxes { grid-template-columns: repeat(2, 1fr); }
+    .box:nth-child(2) { border-right: 0; }
+    .box:nth-child(1), .box:nth-child(2) { border-bottom: 1px solid var(--rule); }
+    .masthead .title { border-right: 0; }
+    .masthead .stampcell {
+      border-top: 1px solid var(--rule);
+      width: 100%;
+      justify-content: flex-end;
+    }
+    table { font-size: 12px; }
+    thead th { padding: 7px 6px 5px; letter-spacing: .06em; }
+    tbody td, tbody th, tfoot td, tfoot th { padding: 6px 6px; font-size: 12px; }
+    .bar { min-width: 72px; gap: 5px; }
+    .bar .v { min-width: 3.6em; }
+    .bar.red .v { min-width: 2.4em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="form">
+
+  <header class="masthead">
+    <div class="id">
+      <div class="no">FORM</div>
+      <div class="code">WK-01</div>
+    </div>
+    <div class="title">
+      <h1>Weekly Website Performance Return</h1>
+      <div class="period">PERIOD: <b>WEEK 01</b></div>
+    </div>
+    <div class="stampcell">
+      <div class="stamp">Synthetic Data</div>
+    </div>
+  </header>
+
+  <section class="boxes">
+    <div class="box">
+      <span class="n machine">1</span>
+      <div class="label">Total visits</div>
+      <div class="value">12,480</div>
+    </div>
+    <div class="box">
+      <span class="n machine">2</span>
+      <div class="label">Total signups</div>
+      <div class="value">624</div>
+    </div>
+    <div class="box">
+      <span class="n machine">3</span>
+      <div class="label">Conversion</div>
+      <div class="value">5.0<small>%</small></div>
+    </div>
+    <div class="box">
+      <span class="n machine">4</span>
+      <div class="label">Peak day</div>
+      <div class="value">Sun <small>2,100</small></div>
+    </div>
+  </section>
+
+  <h2 class="part">Part I — Daily Record</h2>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Day</th>
+        <th scope="col">Visits</th>
+        <th scope="col">Signups</th>
+        <th scope="col" class="num">Conv.</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Mon</th>
+        <td><div class="bar"><div class="track" aria-hidden="true"><div class="fill" style="width:67.6%"></div></div><span class="v">1,420</span></div></td>
+        <td><div class="bar red"><div class="track" aria-hidden="true"><div class="fill" style="width:44.9%"></div></div><span class="v">57</span></div></td>
+        <td class="num lo">▼ 4.0%</td>
+      </tr>
+      <tr>
+        <th scope="row">Tue</th>
+        <td><div class="bar"><div class="track" aria-hidden="true"><div class="fill" style="width:76.2%"></div></div><span class="v">1,600</span></div></td>
+        <td><div class="bar red"><div class="track" aria-hidden="true"><div class="fill" style="width:56.7%"></div></div><span class="v">72</span></div></td>
+        <td class="num">4.5%</td>
+      </tr>
+      <tr>
+        <th scope="row">Wed</th>
+        <td><div class="bar"><div class="track" aria-hidden="true"><div class="fill" style="width:84.8%"></div></div><span class="v">1,780</span></div></td>
+        <td><div class="bar red"><div class="track" aria-hidden="true"><div class="fill" style="width:70.1%"></div></div><span class="v">89</span></div></td>
+        <td class="num">5.0%</td>
+      </tr>
+      <tr>
+        <th scope="row">Thu</th>
+        <td><div class="bar"><div class="track" aria-hidden="true"><div class="fill" style="width:78.1%"></div></div><span class="v">1,640</span></div></td>
+        <td><div class="bar red"><div class="track" aria-hidden="true"><div class="fill" style="width:58.3%"></div></div><span class="v">74</span></div></td>
+        <td class="num">4.5%</td>
+      </tr>
+      <tr>
+        <th scope="row">Fri</th>
+        <td><div class="bar"><div class="track" aria-hidden="true"><div class="fill" style="width:91.4%"></div></div><span class="v">1,920</span></div></td>
+        <td><div class="bar red"><div class="track" aria-hidden="true"><div class="fill" style="width:75.6%"></div></div><span class="v">96</span></div></td>
+        <td class="num">5.0%</td>
+      </tr>
+      <tr>
+        <th scope="row">Sat</th>
+        <td><div class="bar"><div class="track" aria-hidden="true"><div class="fill" style="width:96.2%"></div></div><span class="v">2,020</span></div></td>
+        <td><div class="bar red"><div class="track" aria-hidden="true"><div class="fill" style="width:85.8%"></div></div><span class="v">109</span></div></td>
+        <td class="num">5.4%</td>
+      </tr>
+      <tr class="peak">
+        <th scope="row">Sun<span class="sr-only"> (peak)</span></th>
+        <td><div class="bar"><div class="track" aria-hidden="true"><div class="fill" style="width:100%"></div></div><span class="v">2,100</span></div></td>
+        <td><div class="bar red"><div class="track" aria-hidden="true"><div class="fill" style="width:100%"></div></div><span class="v">127</span></div></td>
+        <td class="num hi">▲ 6.0%</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th scope="row">Total</th>
+        <td class="num">12,480</td>
+        <td class="num">624</td>
+        <td class="num">5.0%</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <h2 class="part">Part II — Traffic Sources</h2>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Source</th>
+        <th scope="col">Visits</th>
+        <th scope="col" class="num">Share</th>
+        <th scope="col" class="num">Signups</th>
+        <th scope="col" class="num">Conv.</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Direct</th>
+        <td><div class="bar"><div class="track" aria-hidden="true"><div class="fill" style="width:100%"></div></div><span class="v">5,240</span></div></td>
+        <td class="num">42.0%</td>
+        <td class="num">314</td>
+        <td class="num hi">▲ 6.0%</td>
+      </tr>
+      <tr>
+        <th scope="row">Search</th>
+        <td><div class="bar"><div class="track" aria-hidden="true"><div class="fill" style="width:85.5%"></div></div><span class="v">4,480</span></div></td>
+        <td class="num">35.9%</td>
+        <td class="num">224</td>
+        <td class="num">5.0%</td>
+      </tr>
+      <tr>
+        <th scope="row">Social</th>
+        <td><div class="bar"><div class="track" aria-hidden="true"><div class="fill" style="width:52.7%"></div></div><span class="v">2,760</span></div></td>
+        <td class="num">22.1%</td>
+        <td class="num">86</td>
+        <td class="num lo">▼ 3.1%</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th scope="row">Total</th>
+        <td class="num">12,480</td>
+        <td class="num">100%</td>
+        <td class="num">624</td>
+        <td class="num">5.0%</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="footrule">
+    <span class="machine">FORM WK-01 · REV 3 · EOF</span>
+    <span>● peak day · ▲ highest conv. · ▼ lowest conv.</span>
+  </div>
+
+</div>
+
+</body>
+</html>

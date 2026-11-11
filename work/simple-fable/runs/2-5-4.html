@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 Field Report</title>
+<style>
+  :root{
+    --paper:#f6efdd;
+    --paper2:#ece1c6;
+    --desk:#e7dcbf;
+    --ink:#2e2a23;
+    --soft:#6e6552;
+    --rule:#c8ba98;
+    --green:#4e6e5d;
+    --ox:#7a3b2e;
+    --brass:#a0802f;
+    color-scheme: light;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--desk);
+    background-image:radial-gradient(1100px 700px at 50% -10%, #efe4c9, var(--desk));
+    color:var(--ink);
+    font-family:Georgia,'Palatino Linotype','Book Antiqua','Times New Roman',serif;
+    padding:28px 16px 48px;
+  }
+  .frame{
+    max-width:920px;margin:0 auto;background:var(--paper);
+    border:1.5px solid var(--ink);outline:1px solid var(--ink);outline-offset:4px;
+    padding:34px clamp(18px,4vw,44px) 40px;
+  }
+  header{text-align:center;margin-bottom:26px}
+  .ornament{display:block;margin:0 auto 10px}
+  h1{font-size:clamp(26px,4.5vw,34px);font-weight:normal;letter-spacing:.04em}
+  .sub{
+    margin-top:8px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--soft);
+  }
+  /* museum-tag stat tiles */
+  .tiles{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:28px 0 16px;
+  }
+  .tile{
+    position:relative;border:1px solid var(--soft);background:#f9f3e4;
+    padding:20px 10px 14px;text-align:center;
+  }
+  .tile::before{
+    content:"";position:absolute;top:7px;left:50%;transform:translateX(-50%);
+    width:7px;height:7px;border-radius:50%;border:1px solid var(--soft);background:var(--paper);
+  }
+  .tile .k{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--soft)}
+  .tile .n{font-size:clamp(20px,3.4vw,28px);margin-top:6px}
+  .finding{text-align:center;font-style:italic;font-size:13.5px;margin:0 0 10px}
+  /* plate headers */
+  h2{
+    display:flex;align-items:baseline;gap:12px;font-weight:normal;font-size:17px;
+    margin:34px 0 4px;
+  }
+  h2 .pl{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ox)}
+  h2::after{content:"";flex:1;border-bottom:1px solid var(--rule);transform:translateY(-4px)}
+  .legend{font-size:12px;color:var(--soft);font-style:italic;margin-bottom:16px}
+  /* weekly register */
+  .band,.striprow,.dayrow,.raterow{
+    --gut:52px;--gap:6px;
+    display:grid;grid-template-columns:var(--gut) repeat(7,1fr);gap:var(--gap);align-items:end;
+  }
+  .gut{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);padding-bottom:3px}
+  .vcol{position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}
+  .vcol .num{font-size:12.5px}
+  .bar{
+    width:min(46px,72%);border:1px solid var(--ink);
+    background-color:var(--green);
+    background-image:repeating-linear-gradient(135deg,rgba(246,239,221,.35) 0 1.5px,transparent 1.5px 5px);
+  }
+  .bar.s{background-color:var(--ox)}
+  .bandA{position:relative;border-bottom:1.5px solid var(--ink)}
+  .bandA .vcol{height:168px}
+  .vgrid{
+    position:absolute;left:calc(var(--gut) + var(--gap));right:0;bottom:0;height:140px;
+    background-image:repeating-linear-gradient(to top,transparent 0 32.33px,var(--rule) 32.33px 33.33px);
+    opacity:.55;pointer-events:none;
+  }
+  .striprow{align-items:end;text-align:center;margin-bottom:6px}
+  .cond{display:flex;flex-direction:column;align-items:center;gap:1px}
+  .cond .w{font-size:10.5px;font-style:italic;color:var(--soft)}
+  .dayrow{text-align:center;margin:6px 0 14px}
+  .dayrow .d{font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+  .bandB{border-bottom:1px solid var(--soft)}
+  .bandB .vcol{height:88px}
+  .bandB .num{font-size:11.5px;color:var(--ox)}
+  .raterow{text-align:center;margin-top:6px}
+  .raterow .r{font-size:11px;color:var(--soft)}
+  .raterow .gut{padding-bottom:0}
+  /* specimen cases */
+  .cases{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+  .case{
+    border:1px solid var(--soft);background:#f9f3e4;padding:14px 14px 16px;
+  }
+  .fig{
+    height:150px;display:flex;align-items:flex-end;justify-content:center;
+    border:1px solid var(--rule);background:
+      radial-gradient(240px 140px at 50% 30%, #fbf6e8, #f3ebd6);
+    margin-bottom:12px;
+  }
+  .case .figno{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ox)}
+  .case .name{font-size:19px;margin:2px 0 8px}
+  .case .big{font-size:24px}
+  .case .big small{font-size:12px;color:var(--soft);letter-spacing:.04em}
+  .case .line{font-size:13px;margin:4px 0 10px}
+  .track{height:9px;border:1px solid var(--soft);background:var(--paper2)}
+  .track .fill{height:100%;background:var(--brass)}
+  .share{font-size:11px;color:var(--soft);margin-top:4px;letter-spacing:.06em}
+  @media (max-width:620px){
+    .tiles{grid-template-columns:repeat(2,1fr)}
+    .cases{grid-template-columns:1fr}
+    .band,.striprow,.dayrow,.raterow{--gut:34px;--gap:3px}
+    .vcol .num{font-size:10.5px}
+    .bandB .num{font-size:10px}
+    .dayrow .d{font-size:10px;letter-spacing:.06em}
+    .raterow .r{font-size:9.5px}
+    .cond .w{display:none}
+  }
+</style>
+</head>
+<body>
+<main class="frame">
+
+  <header>
+    <svg class="ornament" width="180" height="12" viewBox="0 0 180 12" aria-hidden="true">
+      <line x1="0" y1="6" x2="70" y2="6" stroke="#c8ba98" stroke-width="1"/>
+      <line x1="110" y1="6" x2="180" y2="6" stroke="#c8ba98" stroke-width="1"/>
+      <circle cx="77" cy="6" r="1.4" fill="#6e6552"/>
+      <circle cx="103" cy="6" r="1.4" fill="#6e6552"/>
+      <path d="M90 1 L96 6 L90 11 L84 6 Z" fill="#a0802f" stroke="#2e2a23" stroke-width=".8"/>
+    </svg>
+    <h1>Week 01 &mdash; Field Report</h1>
+    <p class="sub">Website performance &middot; synthetic data</p>
+  </header>
+
+  <section class="tiles">
+    <div class="tile"><div class="k">Visits</div><div class="n">12,480</div></div>
+    <div class="tile"><div class="k">Signups</div><div class="n">624</div></div>
+    <div class="tile"><div class="k">Signup rate</div><div class="n">5.0%</div></div>
+    <div class="tile"><div class="k">Best day</div><div class="n">Sunday</div></div>
+  </section>
+
+  <p class="finding">The week cleared &mdash; visits up 48% from Monday, signups more than doubled.</p>
+
+  <section>
+    <h2><span class="pl">Plate I</span> Daily visits &amp; signups</h2>
+    <p class="legend">rain &rarr; clear &nbsp;=&nbsp; fewer &rarr; more visits</p>
+
+    <div class="striprow" aria-hidden="true">
+      <div></div>
+      <div class="cond">
+        <svg width="26" height="28" viewBox="0 0 24 28"><g transform="translate(0 -1) scale(.95)"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" fill="#cbbf9f" stroke="#2e2a23" stroke-width="1.4"/><g stroke="#2e2a23" stroke-width=".8" opacity=".45" stroke-linecap="round" fill="none"><path d="M6.5 15.5 L9 13"/><path d="M10 16 L12.5 13.5"/><path d="M13.5 16.5 L16 14"/></g></g><g stroke="#2e2a23" stroke-width="1.5" stroke-linecap="round"><line x1="7.5" y1="21" x2="6.3" y2="24.6"/><line x1="12" y1="21" x2="10.8" y2="24.6"/><line x1="16.5" y1="21" x2="15.3" y2="24.6"/></g></svg>
+        <span class="w">rain</span>
+      </div>
+      <div class="cond">
+        <svg width="26" height="28" viewBox="0 0 24 28"><g transform="translate(0 -1) scale(.95)"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" fill="#e7dcc2" stroke="#2e2a23" stroke-width="1.4"/><g stroke="#2e2a23" stroke-width=".8" opacity=".45" stroke-linecap="round" fill="none"><path d="M6.5 15.5 L9 13"/><path d="M10 16 L12.5 13.5"/><path d="M13.5 16.5 L16 14"/></g></g><g stroke="#2e2a23" stroke-width="1.5" stroke-linecap="round"><line x1="9" y1="21" x2="7.8" y2="24.4"/><line x1="14" y1="21" x2="12.8" y2="24.4"/></g></svg>
+        <span class="w">drizzle</span>
+      </div>
+      <div class="cond">
+        <svg width="26" height="28" viewBox="0 0 24 28"><g transform="translate(0 2)"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" fill="#e7dcc2" stroke="#2e2a23" stroke-width="1.4"/><g stroke="#2e2a23" stroke-width=".8" opacity=".45" stroke-linecap="round" fill="none"><path d="M6.5 15.5 L9 13"/><path d="M10 16 L12.5 13.5"/><path d="M13.5 16.5 L16 14"/></g></g></svg>
+        <span class="w">overcast</span>
+      </div>
+      <div class="cond">
+        <svg width="26" height="28" viewBox="0 0 24 28"><g transform="translate(0 -1) scale(.95)"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" fill="#e7dcc2" stroke="#2e2a23" stroke-width="1.4"/><g stroke="#2e2a23" stroke-width=".8" opacity=".45" stroke-linecap="round" fill="none"><path d="M6.5 15.5 L9 13"/><path d="M10 16 L12.5 13.5"/><path d="M13.5 16.5 L16 14"/></g></g><g stroke="#2e2a23" stroke-width="1.5" stroke-linecap="round"><line x1="9" y1="21" x2="7.8" y2="24.4"/><line x1="14" y1="21" x2="12.8" y2="24.4"/></g></svg>
+        <span class="w">drizzle</span>
+      </div>
+      <div class="cond">
+        <svg width="26" height="28" viewBox="0 0 24 28"><circle cx="16" cy="9" r="4" fill="#b08a2e" stroke="#2e2a23" stroke-width="1.3"/><g stroke="#2e2a23" stroke-width=".7" opacity=".4" stroke-linecap="round" fill="none"><path d="M13.8 10.8 L15.4 9.2"/><path d="M15 11.6 L16.8 9.9"/><path d="M16.4 11.8 L18 10.2"/></g><g stroke="#2e2a23" stroke-width="1.4" stroke-linecap="round"><line x1="16" y1="2.5" x2="16" y2="1"/><line x1="21.5" y1="9" x2="23" y2="9"/><line x1="20" y1="5" x2="21.3" y2="3.7"/><line x1="20" y1="13" x2="21.3" y2="14.3"/></g><g transform="translate(-1 6) scale(.88)"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" fill="#e7dcc2" stroke="#2e2a23" stroke-width="1.5"/><g stroke="#2e2a23" stroke-width=".8" opacity=".45" stroke-linecap="round" fill="none"><path d="M6.5 15.5 L9 13"/><path d="M10 16 L12.5 13.5"/><path d="M13.5 16.5 L16 14"/></g></g></svg>
+        <span class="w">clearing</span>
+      </div>
+      <div class="cond">
+        <svg width="26" height="28" viewBox="0 0 24 28"><circle cx="10.5" cy="11" r="4.5" fill="#b08a2e" stroke="#2e2a23" stroke-width="1.3"/><g stroke="#2e2a23" stroke-width=".7" opacity=".4" stroke-linecap="round" fill="none"><path d="M8 13 L9.8 11.2"/><path d="M9.2 14 L11.2 12"/><path d="M10.8 14.2 L12.5 12.5"/></g><g stroke="#2e2a23" stroke-width="1.4" stroke-linecap="round"><line x1="10.5" y1="4" x2="10.5" y2="2"/><line x1="10.5" y1="18" x2="10.5" y2="20"/><line x1="3.5" y1="11" x2="1.5" y2="11"/><line x1="17.5" y1="11" x2="19.5" y2="11"/><line x1="5.6" y1="6.1" x2="4.2" y2="4.7"/><line x1="15.4" y1="6.1" x2="16.8" y2="4.7"/><line x1="5.6" y1="15.9" x2="4.2" y2="17.3"/></g><g transform="translate(9 12) scale(.58)"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" fill="#e7dcc2" stroke="#2e2a23" stroke-width="1.8"/><g stroke="#2e2a23" stroke-width=".9" opacity=".45" stroke-linecap="round" fill="none"><path d="M6.5 15.5 L9 13"/><path d="M10 16 L12.5 13.5"/><path d="M13.5 16.5 L16 14"/></g></g></svg>
+        <span class="w">fair</span>
+      </div>
+      <div class="cond">
+        <svg width="26" height="28" viewBox="0 0 24 28"><circle cx="12" cy="14" r="5" fill="#b08a2e" stroke="#2e2a23" stroke-width="1.4"/><g stroke="#2e2a23" stroke-width=".7" opacity=".4" stroke-linecap="round" fill="none"><path d="M9.3 16 L11.3 14"/><path d="M10.5 17 L12.8 14.7"/><path d="M12 17.3 L14 15.3"/></g><g stroke="#2e2a23" stroke-width="1.5" stroke-linecap="round"><line x1="12" y1="6.5" x2="12" y2="3.5"/><line x1="12" y1="21.5" x2="12" y2="24.5"/><line x1="4.5" y1="14" x2="1.5" y2="14"/><line x1="19.5" y1="14" x2="22.5" y2="14"/><line x1="6.7" y1="8.7" x2="4.6" y2="6.6"/><line x1="17.3" y1="8.7" x2="19.4" y2="6.6"/><line x1="6.7" y1="19.3" x2="4.6" y2="21.4"/><line x1="17.3" y1="19.3" x2="19.4" y2="21.4"/></g></svg>
+        <span class="w">clear</span>
+      </div>
+    </div>
+
+    <div class="band bandA" role="img" aria-label="Visits by day: Monday 1,420; Tuesday 1,600; Wednesday 1,780; Thursday 1,640; Friday 1,920; Saturday 2,020; Sunday 2,100.">
+      <div class="vgrid" aria-hidden="true"></div>
+      <div class="gut" aria-hidden="true">Visits</div>
+      <div class="vcol" aria-hidden="true"><span class="num">1,420</span><div class="bar" style="height:95px"></div></div>
+      <div class="vcol" aria-hidden="true"><span class="num">1,600</span><div class="bar" style="height:107px"></div></div>
+      <div class="vcol" aria-hidden="true"><span class="num">1,780</span><div class="bar" style="height:119px"></div></div>
+      <div class="vcol" aria-hidden="true"><span class="num">1,640</span><div class="bar" style="height:109px"></div></div>
+      <div class="vcol" aria-hidden="true"><span class="num">1,920</span><div class="bar" style="height:128px"></div></div>
+      <div class="vcol" aria-hidden="true"><span class="num">2,020</span><div class="bar" style="height:135px"></div></div>
+      <div class="vcol" aria-hidden="true"><span class="num">2,100</span><div class="bar" style="height:140px"></div></div>
+    </div>
+
+    <div class="dayrow">
+      <div></div>
+      <div class="d">Mon</div><div class="d">Tue</div><div class="d">Wed</div>
+      <div class="d">Thu</div><div class="d">Fri</div><div class="d">Sat</div><div class="d">Sun</div>
+    </div>
+
+    <div class="band bandB" role="img" aria-label="Signups by day: Monday 57; Tuesday 72; Wednesday 89; Thursday 74; Friday 96; Saturday 109; Sunday 127.">
+      <div class="gut" aria-hidden="true">Signups</div>
+      <div class="vcol" aria-hidden="true"><span class="num">57</span><div class="bar s" style="height:27px"></div></div>
+      <div class="vcol" aria-hidden="true"><span class="num">72</span><div class="bar s" style="height:34px"></div></div>
+      <div class="vcol" aria-hidden="true"><span class="num">89</span><div class="bar s" style="height:42px"></div></div>
+      <div class="vcol" aria-hidden="true"><span class="num">74</span><div class="bar s" style="height:35px"></div></div>
+      <div class="vcol" aria-hidden="true"><span class="num">96</span><div class="bar s" style="height:45px"></div></div>
+      <div class="vcol" aria-hidden="true"><span class="num">109</span><div class="bar s" style="height:52px"></div></div>
+      <div class="vcol" aria-hidden="true"><span class="num">127</span><div class="bar s" style="height:60px"></div></div>
+    </div>
+
+    <div class="raterow" role="img" aria-label="Signup rate by day: Monday 4.0%; Tuesday 4.5%; Wednesday 5.0%; Thursday 4.5%; Friday 5.0%; Saturday 5.4%; Sunday 6.0%.">
+      <div class="gut" aria-hidden="true">Rate</div>
+      <div class="r" aria-hidden="true">4.0%</div><div class="r" aria-hidden="true">4.5%</div><div class="r" aria-hidden="true">5.0%</div>
+      <div class="r" aria-hidden="true">4.5%</div><div class="r" aria-hidden="true">5.0%</div><div class="r" aria-hidden="true">5.4%</div><div class="r" aria-hidden="true">6.0%</div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="pl">Plate II</span> Sources</h2>
+    <div class="cases">
+
+      <div class="case">
+        <div class="fig">
+          <svg viewBox="0 0 120 128" width="116" aria-hidden="true">
+            <ellipse cx="60" cy="120" rx="28" ry="5" fill="#2e2a23" opacity=".1"/>
+            <defs>
+              <g id="bL" stroke="#2e2a23" fill="none" stroke-linecap="round">
+                <path d="M48 44 C38 38 30 32 23 23" stroke-width="2.2"/>
+                <path d="M23 23 L17 20" stroke-width="2.2"/>
+                <path d="M40 66 C28 64 20 68 12 66" stroke-width="2.2"/>
+                <path d="M12 66 L6 70" stroke-width="2.2"/>
+                <path d="M44 86 C34 94 28 102 22 112" stroke-width="2.2"/>
+                <path d="M22 112 L15 115" stroke-width="2.2"/>
+                <path d="M55 22 C47 12 39 8 31 11" stroke-width="1.8"/>
+              </g>
+            </defs>
+            <use href="#bL"/>
+            <use href="#bL" transform="translate(120 0) scale(-1 1)"/>
+            <circle cx="31" cy="11" r="2.4" fill="#2e2a23"/>
+            <circle cx="89" cy="11" r="2.4" fill="#2e2a23"/>
+            <circle cx="60" cy="27" r="8" fill="#3d5247" stroke="#2e2a23" stroke-width="1.6"/>
+            <ellipse cx="60" cy="42" rx="15" ry="11" fill="#43604f" stroke="#2e2a23" stroke-width="1.6"/>
+            <path d="M60 48 C37 50 34 78 44 100 C50 111 56 116 60 116 C64 116 70 111 76 100 C86 78 83 50 60 48 Z" fill="#4e6e5d" stroke="#2e2a23" stroke-width="1.8"/>
+            <line x1="60" y1="50" x2="60" y2="115" stroke="#2e2a23" stroke-width="1.4"/>
+            <g fill="#2e2a23" opacity=".55">
+              <circle cx="50" cy="66" r="2"/><circle cx="70" cy="66" r="2"/>
+              <circle cx="47" cy="82" r="2"/><circle cx="73" cy="82" r="2"/>
+              <circle cx="52" cy="97" r="2"/><circle cx="68" cy="97" r="2"/>
+            </g>
+            <ellipse cx="50" cy="64" rx="3.5" ry="9" fill="#f6efdd" opacity=".25" transform="rotate(-12 50 64)"/>
+            <line x1="67" y1="10" x2="61" y2="46" stroke="#8a8578" stroke-width="2.2"/>
+            <circle cx="67.8" cy="8" r="3.6" fill="#b5ae9b" stroke="#2e2a23" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <div class="figno">Fig. 1</div>
+        <div class="name">Direct</div>
+        <div class="big">5,240 <small>visits</small></div>
+        <div class="line">314 signups &middot; 6.0% signup rate</div>
+        <div class="track"><div class="fill" style="width:42%"></div></div>
+        <div class="share">42% of the week's visits</div>
+      </div>
+
+      <div class="case">
+        <div class="fig">
+          <svg viewBox="0 0 150 120" width="108" aria-hidden="true">
+            <ellipse cx="75" cy="110" rx="34" ry="5" fill="#2e2a23" opacity=".1"/>
+            <defs>
+              <g id="mL">
+                <path d="M75 52 C52 28 26 22 13 31 C7 44 16 58 33 64 C48 69 64 64 75 56 Z" fill="#8f7142" stroke="#2e2a23" stroke-width="1.8"/>
+                <path d="M27 36 C40 41 56 49 70 55" stroke="#5c4526" stroke-width="1.3" fill="none" opacity=".8"/>
+                <path d="M20 45 C34 50 50 56 66 60" stroke="#5c4526" stroke-width="1.3" fill="none" opacity=".8"/>
+                <circle cx="33" cy="42" r="4.2" fill="#4a3a22" stroke="#2e2a23" stroke-width="1"/>
+                <circle cx="33" cy="42" r="1.4" fill="#f6efdd"/>
+                <path d="M75 60 C62 70 50 80 44 92 C52 100 66 97 72 84 C75 76 75 66 75 60 Z" fill="#a98f5e" stroke="#2e2a23" stroke-width="1.6"/>
+                <path d="M52 86 C58 88 64 87 69 82" stroke="#5c4526" stroke-width="1.2" fill="none" opacity=".7"/>
+                <path d="M72 38 C63 25 53 17 45 15 C51 23 60 33 69 43 Z" fill="#6e552f" opacity=".9" stroke="#2e2a23" stroke-width="1"/>
+              </g>
+            </defs>
+            <use href="#mL"/>
+            <use href="#mL" transform="translate(150 0) scale(-1 1)"/>
+            <ellipse cx="75" cy="70" rx="6" ry="20" fill="#6e552f" stroke="#2e2a23" stroke-width="1.4"/>
+            <g stroke="#2e2a23" stroke-width="1" opacity=".6">
+              <line x1="70" y1="60" x2="80" y2="60"/>
+              <line x1="69.3" y1="68" x2="80.7" y2="68"/>
+              <line x1="69.5" y1="76" x2="80.5" y2="76"/>
+              <line x1="70.5" y1="84" x2="79.5" y2="84"/>
+            </g>
+            <circle cx="75" cy="48" r="8" fill="#6e552f" stroke="#2e2a23" stroke-width="1.4"/>
+            <circle cx="75" cy="38" r="4.5" fill="#5a4525" stroke="#2e2a23" stroke-width="1.2"/>
+            <line x1="81" y1="6" x2="76" y2="46" stroke="#8a8578" stroke-width="2.2"/>
+            <circle cx="81.8" cy="4.5" r="3.6" fill="#b5ae9b" stroke="#2e2a23" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <div class="figno">Fig. 2</div>
+        <div class="name">Search</div>
+        <div class="big">4,480 <small>visits</small></div>
+        <div class="line">224 signups &middot; 5.0% signup rate</div>
+        <div class="track"><div class="fill" style="width:36%"></div></div>
+        <div class="share">36% of the week's visits</div>
+      </div>
+
+      <div class="case">
+        <div class="fig">
+          <svg viewBox="0 0 130 120" width="84" aria-hidden="true">
+            <ellipse cx="65" cy="110" rx="26" ry="4.5" fill="#2e2a23" opacity=".1"/>
+            <defs>
+              <g id="fL">
+                <path d="M65 54 C50 34 30 22 15 25 C8 39 16 56 34 63 C46 67 58 62 65 57 Z" fill="#5a6b86" stroke="#2e2a23" stroke-width="1.8"/>
+                <path d="M65 54 C50 45 36 36 22 30" stroke="#2e2a23" stroke-width=".9" opacity=".45" fill="none"/>
+                <path d="M65 56 C50 51 36 47 18 44" stroke="#2e2a23" stroke-width=".9" opacity=".45" fill="none"/>
+                <circle cx="27" cy="37" r="3" fill="#7a3b2e"/>
+                <circle cx="37" cy="47" r="2.4" fill="#7a3b2e"/>
+                <circle cx="23" cy="33" r="1.1" fill="#f6efdd"/>
+                <path d="M65 60 C54 66 44 75 42 87 C47 97 60 95 64 83 C66 75 65 67 65 60 Z" fill="#6d7f9c" stroke="#2e2a23" stroke-width="1.6"/>
+                <circle cx="51" cy="83" r="2.4" fill="#7a3b2e"/>
+                <path d="M63 38 C57 28 51 21 45 17" stroke="#2e2a23" stroke-width="1.4" fill="none"/>
+                <circle cx="45" cy="17" r="2" fill="#2e2a23"/>
+              </g>
+            </defs>
+            <use href="#fL"/>
+            <use href="#fL" transform="translate(130 0) scale(-1 1)"/>
+            <ellipse cx="65" cy="62" rx="4.5" ry="19" fill="#3a3a33" stroke="#2e2a23" stroke-width="1.2"/>
+            <circle cx="65" cy="40" r="4.5" fill="#3a3a33" stroke="#2e2a23" stroke-width="1.2"/>
+            <line x1="70" y1="8" x2="66" y2="48" stroke="#8a8578" stroke-width="2.2"/>
+            <circle cx="70.7" cy="6.5" r="3.4" fill="#b5ae9b" stroke="#2e2a23" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <div class="figno">Fig. 3</div>
+        <div class="name">Social</div>
+        <div class="big">2,760 <small>visits</small></div>
+        <div class="line">86 signups &middot; 3.1% signup rate</div>
+        <div class="track"><div class="fill" style="width:22%"></div></div>
+        <div class="share">22% of the week's visits</div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

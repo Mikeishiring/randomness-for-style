@@ -3,6 +3,7 @@
 !/.gitignore
 !/.gitattributes
 !/README.md
+!/tweet-thread.md
 !/package.json
 !/scripts/
 /scripts/*
@@ -64,6 +65,16 @@
 !/work/simple-astra/refinement-prompt.txt
 !/work/simple-astra/plain-refinement-prompt.txt
 !/work/simple-astra/runs/
+!/work/simple-fable/
+/work/simple-fable/*
+!/work/simple-fable/prompts.mjs
+!/work/simple-fable/catalog.mjs
+!/work/simple-fable/check.mjs
+!/work/simple-fable/protocol.json
+!/work/simple-fable/recorded.json
+!/work/simple-fable/refinement-prompt.txt
+!/work/simple-fable/plain-refinement-prompt.txt
+!/work/simple-fable/runs/
 !/work/strong-astra/
 /work/strong-astra/*
 !/work/strong-astra/catalog.mjs

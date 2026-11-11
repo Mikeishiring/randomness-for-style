@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 Performance</title>
+<style>
+  :root{
+    --night:#171029;
+    --night-2:#221743;
+    --panel:rgba(255,255,255,.045);
+    --line:rgba(233,185,73,.28);
+    --marble:#f3ecdd;
+    --dim:#b9ab93;
+    --gold:#e9b949;
+    --gold-hi:#ffe9a8;
+    --gold-lo:#9a6f1f;
+    --magenta:#ff4fa0;
+    --magenta-lo:#8f2458;
+    --cyan:#5fe6d6;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{
+    background:var(--night);
+    background-image:linear-gradient(180deg,var(--night-2),var(--night) 420px);
+    color:var(--marble);
+    font-family:"Didot","Bodoni MT","Playfair Display",Georgia,"Times New Roman",serif;
+    line-height:1.4;
+    padding:0 16px 48px;
+    position:relative;
+    min-height:100vh;
+  }
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background:repeating-conic-gradient(from -52deg at 50% -12%,
+      transparent 0deg 9deg,
+      rgba(233,185,73,.10) 9deg 11deg,
+      transparent 11deg 21deg,
+      rgba(255,79,160,.08) 21deg 23deg,
+      transparent 23deg 33deg,
+      rgba(95,230,214,.07) 33deg 35deg);
+    pointer-events:none;
+  }
+  .wrap{max-width:920px;margin:0 auto;position:relative}
+
+  header{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:40px 0 20px}
+  .mark{flex:0 0 auto}
+  h1{
+    font-size:clamp(28px,6vw,46px);
+    font-weight:600;
+    letter-spacing:.06em;
+    background:linear-gradient(105deg,var(--gold-lo),var(--gold-hi) 38%,var(--gold) 62%,#fff3cf);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+  }
+  .badge{
+    display:inline-block;margin-top:8px;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--dim);border:1px solid var(--line);border-radius:999px;
+    padding:3px 12px;
+  }
+
+  .key{display:block;width:100%;margin:4px 0 30px}
+  .key.end{margin:44px 0 0}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+  .kpi{
+    background:var(--panel);border:1px solid var(--line);border-radius:6px;
+    padding:16px 18px 14px;
+  }
+  .kpi .lbl{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+  .kpi .num{font-size:36px;color:var(--gold-hi);font-variant-numeric:tabular-nums;line-height:1.15;margin-top:4px}
+  .kpi .sub{font-size:13px;color:var(--dim);margin-top:2px;font-variant-numeric:tabular-nums}
+  .kpi .sub b{color:var(--marble);font-weight:600}
+
+  h2{
+    font-size:13px;letter-spacing:.3em;text-transform:uppercase;font-weight:600;
+    color:var(--gold);margin:42px 0 18px;display:flex;align-items:center;gap:14px;
+  }
+  h2::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  .chart{
+    display:grid;grid-template-columns:62px repeat(7,1fr);gap:6px;
+    background:var(--panel);border:1px solid var(--line);border-radius:6px;
+    padding:20px 16px 14px;
+  }
+  .col{display:flex;flex-direction:column;align-items:center}
+  .track{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;width:100%;
+    border-bottom:1px solid var(--line)}
+  .t-v{height:164px}
+  .t-s{height:106px;margin-top:14px}
+  .val{font-size:11px;color:var(--gold-hi);font-variant-numeric:tabular-nums;margin-bottom:3px}
+  .val.m{color:var(--magenta)}
+  .bar{width:min(44px,72%);border-radius:3px 3px 0 0;position:relative}
+  .bar::before{content:"";position:absolute;top:0;left:-9%;right:-9%;height:4px;border-radius:1px}
+  .b-v{background-image:
+      repeating-linear-gradient(90deg,rgba(58,37,4,.30) 0 2px,rgba(255,255,255,.22) 2px 3px,transparent 3px 8px),
+      linear-gradient(180deg,var(--gold-hi),var(--gold) 30%,var(--gold-lo))}
+  .b-v::before{background:var(--gold-hi)}
+  .b-s{background-image:
+      repeating-linear-gradient(90deg,rgba(80,10,45,.30) 0 2px,rgba(255,255,255,.22) 2px 3px,transparent 3px 8px),
+      linear-gradient(180deg,#ffb7d9,var(--magenta) 30%,var(--magenta-lo))}
+  .b-s::before{background:#ffb7d9}
+  .day{height:22px;display:flex;align-items:flex-end;gap:4px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-top:8px}
+  .peak .day{color:var(--marble);font-weight:600}
+  .conv{height:32px;width:100%;display:flex;flex-direction:column;align-items:center;gap:3px;
+    font-size:12px;color:var(--cyan);font-variant-numeric:tabular-nums;margin-top:4px}
+  .conv i{display:block;height:3px;border-radius:2px;background:linear-gradient(90deg,#1e6e63,var(--cyan))}
+  .peak .conv{font-weight:700}
+  .lab .track{align-items:flex-start;justify-content:flex-end;gap:1px}
+  .lab .conv{align-items:flex-start;color:var(--dim)}
+  .rowlab{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+  .scalenote{font-size:9px;letter-spacing:.08em;color:var(--dim);opacity:.85;font-variant-numeric:tabular-nums}
+
+  table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  th,td{padding:12px 14px;text-align:left;font-variant-numeric:tabular-nums}
+  th{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);font-weight:600;border-bottom:1px solid var(--line)}
+  td{border-bottom:1px solid rgba(233,185,73,.12);font-size:15px}
+  tr:last-child td{border-bottom:none}
+  td.r,th.r{text-align:right}
+  .src{color:var(--gold-hi);letter-spacing:.08em}
+  .vbar{height:9px;border-radius:2px;margin-top:6px;
+    background-image:
+      repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 1px,transparent 1px 6px),
+      linear-gradient(90deg,var(--gold-lo),var(--gold))}
+  .ctrack{position:relative;margin-top:6px}
+  .cbar{height:9px;border-radius:2px;
+    background-image:
+      repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 1px,transparent 1px 6px),
+      linear-gradient(90deg,#1e6e63,var(--cyan))}
+  .tick{position:absolute;left:83.3%;top:-2px;width:2px;height:13px;background:var(--marble);opacity:.85}
+  .cell-visits{min-width:180px}
+  .share{color:var(--dim)}
+  .convnum{color:var(--cyan)}
+  .note{font-size:11px;color:var(--dim);margin-top:8px;letter-spacing:.05em}
+
+  @media (max-width:560px){
+    .chart{grid-template-columns:46px repeat(7,1fr);gap:4px;padding:14px 8px 10px}
+    .t-v{height:150px}
+    .val{font-size:10px}
+    .day{font-size:10px;letter-spacing:.06em}
+    .conv{font-size:11px}
+    th,td{padding:9px 8px;font-size:13px}
+    .cell-visits{min-width:110px}
+    .kpi .num{font-size:30px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <svg class="mark" width="112" height="96" viewBox="0 0 120 100" role="img" aria-label="A disco ball hanging inside a Greek temple">
+      <defs>
+        <radialGradient id="ball" cx="38%" cy="32%" r="75%">
+          <stop offset="0" stop-color="#fdf6ff"/>
+          <stop offset="45%" stop-color="#cdb9ea"/>
+          <stop offset="100%" stop-color="#6e5a9e"/>
+        </radialGradient>
+        <clipPath id="ballclip"><circle cx="60" cy="58" r="17"/></clipPath>
+      </defs>
+      <!-- pediment -->
+      <path d="M10 30 L60 6 L110 30 Z" fill="none" stroke="#e9b949" stroke-width="2.5" stroke-linejoin="round"/>
+      <!-- columns -->
+      <g fill="#e9b949">
+        <rect x="12" y="32" width="18" height="4"/><rect x="15" y="36" width="12" height="54"/><rect x="12" y="90" width="18" height="4"/>
+        <rect x="90" y="32" width="18" height="4"/><rect x="93" y="36" width="12" height="54"/><rect x="90" y="90" width="18" height="4"/>
+      </g>
+      <!-- hanging disco ball -->
+      <line x1="60" y1="30" x2="60" y2="41" stroke="#e9b949" stroke-width="1.5"/>
+      <circle cx="60" cy="58" r="17" fill="url(#ball)"/>
+      <g clip-path="url(#ballclip)" stroke="#2e2350" stroke-width=".8" opacity=".55">
+        <line x1="43" y1="46" x2="77" y2="46"/><line x1="43" y1="52" x2="77" y2="52"/>
+        <line x1="43" y1="58" x2="77" y2="58"/><line x1="43" y1="64" x2="77" y2="64"/>
+        <line x1="43" y1="70" x2="77" y2="70"/>
+        <line x1="48" y1="41" x2="48" y2="75"/><line x1="54" y1="41" x2="54" y2="75"/>
+        <line x1="60" y1="41" x2="60" y2="75"/><line x1="66" y1="41" x2="66" y2="75"/>
+        <line x1="72" y1="41" x2="72" y2="75"/>
+      </g>
+      <circle cx="60" cy="58" r="17" fill="none" stroke="#e9b949" stroke-width="1.2"/>
+      <!-- sparkles -->
+      <path d="M38 48 l1.1 3.4 3.4 1.1 -3.4 1.1 -1.1 3.4 -1.1 -3.4 -3.4 -1.1 3.4 -1.1 Z" fill="#5fe6d6"/>
+      <path d="M84 64 l1.1 3.4 3.4 1.1 -3.4 1.1 -1.1 3.4 -1.1 -3.4 -3.4 -1.1 3.4 -1.1 Z" fill="#ff4fa0"/>
+    </svg>
+    <div>
+      <h1>WEEK&nbsp;01 · SITE&nbsp;PERFORMANCE</h1>
+      <span class="badge">Synthetic data</span>
+    </div>
+  </header>
+
+  <svg class="key" height="16" aria-hidden="true">
+    <defs>
+      <pattern id="meander1" width="20" height="16" patternUnits="userSpaceOnUse">
+        <path d="M0 14 H20 M15 14 V2 H5 V9 H10 V5" fill="none" stroke="#e9b949" stroke-width="2" opacity=".7"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="16" fill="url(#meander1)"/>
+  </svg>
+
+  <section class="kpis" aria-label="Week totals">
+    <div class="kpi">
+      <div class="lbl">Visits</div>
+      <div class="num">12,480</div>
+      <div class="sub">Mon → Sun <b>+48%</b> · dip Thu</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Signups</div>
+      <div class="num">624</div>
+      <div class="sub">Mon → Sun <b>+123%</b></div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Conversion</div>
+      <div class="num">5.0%</div>
+      <div class="sub">peak <b>6.0%</b> on Sun</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Peak day</div>
+      <div class="num">Sun</div>
+      <div class="sub"><b>2,100</b> visits · <b>127</b> signups</div>
+    </div>
+  </section>
+
+  <h2>Daily</h2>
+  <div class="chart" aria-label="Daily visits, signups and conversion; every value is labelled and each row states its own scale">
+    <div class="col lab">
+      <div class="track t-v"><span class="rowlab">Visits</span><span class="scalenote">0–2,100</span></div>
+      <div class="track t-s"><span class="rowlab">Signups</span><span class="scalenote">0–127</span></div>
+      <div class="day"></div>
+      <div class="conv"><span class="rowlab">Conv.</span><span class="scalenote">0–6%</span></div>
+    </div>
+
+    <div class="col">
+      <div class="track t-v"><span class="val">1,420</span><div class="bar b-v" style="height:95px"></div></div>
+      <div class="track t-s"><span class="val m">57</span><div class="bar b-s" style="height:36px"></div></div>
+      <div class="day">Mon</div>
+      <div class="conv"><span>4.0%</span><i style="width:67%"></i></div>
+    </div>
+    <div class="col">
+      <div class="track t-v"><span class="val">1,600</span><div class="bar b-v" style="height:107px"></div></div>
+      <div class="track t-s"><span class="val m">72</span><div class="bar b-s" style="height:45px"></div></div>
+      <div class="day">Tue</div>
+      <div class="conv"><span>4.5%</span><i style="width:75%"></i></div>
+    </div>
+    <div class="col">
+      <div class="track t-v"><span class="val">1,780</span><div class="bar b-v" style="height:119px"></div></div>
+      <div class="track t-s"><span class="val m">89</span><div class="bar b-s" style="height:56px"></div></div>
+      <div class="day">Wed</div>
+      <div class="conv"><span>5.0%</span><i style="width:83%"></i></div>
+    </div>
+    <div class="col">
+      <div class="track t-v"><span class="val">1,640</span><div class="bar b-v" style="height:109px"></div></div>
+      <div class="track t-s"><span class="val m">74</span><div class="bar b-s" style="height:47px"></div></div>
+      <div class="day">Thu</div>
+      <div class="conv"><span>4.5%</span><i style="width:75%"></i></div>
+    </div>
+    <div class="col">
+      <div class="track t-v"><span class="val">1,920</span><div class="bar b-v" style="height:128px"></div></div>
+      <div class="track t-s"><span class="val m">96</span><div class="bar b-s" style="height:60px"></div></div>
+      <div class="day">Fri</div>
+      <div class="conv"><span>5.0%</span><i style="width:83%"></i></div>
+    </div>
+    <div class="col">
+      <div class="track t-v"><span class="val">2,020</span><div class="bar b-v" style="height:135px"></div></div>
+      <div class="track t-s"><span class="val m">109</span><div class="bar b-s" style="height:69px"></div></div>
+      <div class="day">Sat</div>
+      <div class="conv"><span>5.4%</span><i style="width:90%"></i></div>
+    </div>
+    <div class="col peak">
+      <div class="track t-v"><span class="val">2,100</span><div class="bar b-v" style="height:140px"></div></div>
+      <div class="track t-s"><span class="val m">127</span><div class="bar b-s" style="height:80px"></div></div>
+      <div class="day">
+        <svg width="16" height="12" viewBox="0 0 16 12" role="img" aria-label="laurel, peak day">
+          <path d="M8 11 C8 6 10 2 14 1 C13 5 11 9 8 11 Z M8 11 C8 6 6 2 2 1 C3 5 5 9 8 11 Z" fill="#e9b949"/>
+        </svg>
+        Sun
+      </div>
+      <div class="conv"><span>6.0%</span><i style="width:100%"></i></div>
+    </div>
+  </div>
+
+  <h2>Sources</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Source</th>
+        <th class="cell-visits">Visits</th>
+        <th class="r">Share</th>
+        <th class="r">Signups</th>
+        <th class="cell-visits">Conversion</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="src">Direct</td>
+        <td class="cell-visits">5,240<div class="vbar" style="width:100%"></div></td>
+        <td class="r share">42%</td>
+        <td class="r">314</td>
+        <td class="cell-visits"><span class="convnum">6.0%</span>
+          <div class="ctrack"><div class="cbar" style="width:100%"></div><i class="tick"></i></div></td>
+      </tr>
+      <tr>
+        <td class="src">Search</td>
+        <td class="cell-visits">4,480<div class="vbar" style="width:85.5%"></div></td>
+        <td class="r share">36%</td>
+        <td class="r">224</td>
+        <td class="cell-visits"><span class="convnum">5.0%</span>
+          <div class="ctrack"><div class="cbar" style="width:83.3%"></div><i class="tick"></i></div></td>
+      </tr>
+      <tr>
+        <td class="src">Social</td>
+        <td class="cell-visits">2,760<div class="vbar" style="width:52.7%"></div></td>
+        <td class="r share">22%</td>
+        <td class="r">86</td>
+        <td class="cell-visits"><span class="convnum">3.1%</span>
+          <div class="ctrack"><div class="cbar" style="width:51.7%"></div><i class="tick"></i></div></td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="note">tick — site average conversion, 5.0% (axis 0–6%)</p>
+
+  <svg class="key end" height="16" aria-hidden="true">
+    <defs>
+      <pattern id="meander2" width="20" height="16" patternUnits="userSpaceOnUse">
+        <path d="M0 14 H20 M15 14 V2 H5 V9 H10 V5" fill="none" stroke="#e9b949" stroke-width="2" opacity=".7"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="16" fill="url(#meander2)"/>
+  </svg>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+CRITIQUE OF 1-1-1.html
+
+ORIGINALITY — harsh
+- "Greek myths" arrived as Greek architecture clip-art: a pediment, two columns,
+  a meander strip. There is no myth in it — no laurel, no oracle, no victory, no
+  narrative. The header mark is what any brief containing the word "Greece"
+  produces on the first try.
+- Disco is a checklist: one ball, two sparkles, an animated rainbow shimmer on
+  the title. The shimmer is the stock move for "disco" and the conic laser rays
+  are set so faint (0.05-0.07 alpha) they are effectively absent — dead code
+  posing as atmosphere.
+- The two ingredients never touch the data. Strip the palette and this is a
+  generic dark dashboard: KPI cards, grouped bars, a table. The identity lives
+  in the margins (header, border strips) instead of in how the numbers are
+  drawn. The two meander strips are identical bookends — ornament filler.
+- Gold/magenta/cyan tips toward synthwave rather than disco, and nothing reads
+  as marble or inscription beyond some letterspacing.
+
+CLARITY — harsh
+- The daily chart's two self-scaled tracks share one card, equal bar widths and
+  no stated scales: Sunday's 127 signups draws a bar more than half the height
+  of 2,100 visits. It is honest only if the reader finds the 10px row labels
+  and then guesses that the scales differ. The scales must be stated.
+- Conversion — the page's only real story (a 4.0% to 6.0% climb; Social at
+  roughly half the site rate) — is the least visible element on the page: bare
+  12px numbers with no encoding and no visible trend.
+- "Mon → Sun +48%" implies a clean climb and hides the Thursday dip, which the
+  bars show but nothing asserts.
+- The table's conversion mini-bars are scaled to Direct = 100%, an arbitrary
+  ceiling. Social merely looks "shortest" instead of measurably below the 5.0%
+  site average.
+- The facet grid (both axes) on ~40px bars is texture noise, and 9.5px value
+  labels on mobile sit at the legibility floor.
+- The peak day is marked with an unexplained glow — decoration standing in for
+  a statement.
+
+KEPT — strong decisions preserved
+- Every value is printed; no unlabeled encodings. Visits and signups stay on
+  separate tracks instead of a dual-axis lie. Sources stay a real table. The
+  synthetic-data badge stays beside the title. Minimal copy, dark-only
+  identity, no filler prose. The Share column stays: the visits bars show size
+  relative to the largest source, the share figures show share of the total —
+  different facts.
+
+CHANGES APPLIED IN 1-1-2.html
+1. The bars are now the identity: each bar is a fluted column with a capital,
+   so the daily chart reads as a mirrored colonnade — Greek structure, disco
+   surface. The capital caps at the exact data height; the datum edge is
+   unchanged and every value stays printed.
+2. Myth with meaning: a gold laurel sprig crowns the peak day (Sun) in place
+   of the unexplained glow — laurel as the mark of victory.
+3. Scales stated: each track label now carries its range (0–2,100 / 0–127 /
+   0–6%), and both tracks sit on their own baseline line (a stylobate).
+4. Conversion encoded: a small bar on a shared 0–6% scale under each day's
+   rate makes the week-long climb visible at a glance.
+5. The table's conversion bars are redrawn on a true 0–6% axis with a tick at
+   the 5.0% site average, captioned once below the table.
+6. The Thursday dip is named in the visits KPI sub-line next to the +48%.
+7. The title's shimmer animation is removed in favor of a static gold-foil
+   gradient; the laser rays are raised to visible strength; the horizontal
+   facet stripes are dropped from the daily bars (vertical flutes only), and
+   the smallest mobile labels are raised off the legibility floor.
+
+Purpose, figures, layout order and all data values are unchanged.

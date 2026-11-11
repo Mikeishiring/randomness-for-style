@@ -1,0 +1,29 @@
+Critique of 1-4-1.html (originality, then clarity), followed by the changes applied in 1-4-2.html.
+
+ORIGINALITY — harsh
+1. The "Greek myths" ingredient is not myth at all; it is gift-shop classicism. A meander border, pillar-shaped bars, gold on ink: the first three moves anyone would make, and the design stops there. Nothing mythic structures the page — no sense of a house, a week as a passage, honor conferred on the victor day. Pillars-as-bars is the single most obvious pun available and it is asked to carry the whole theme.
+2. The "luxury hotel" ingredient is the default luxury kit — letterspaced small caps, Didot, gold hairlines — shared by every perfume box and steakhouse menu. Nothing is hotel-specific: no register or ledger quality, no notion of arrivals and guests, which the data begs for.
+3. The two ingredients coexist rather than combine. Meander (Greek) sits next to small caps (hotel); neither modifies the other, and neither does analytical work except the gold capital on Sunday's pillar — the one honest fusion moment in the page.
+4. The masthead ornament (two hairlines and a diamond) is stock filler that could sit on any "elegant" template.
+5. Gold is spent decoratively (borders, tag, ornament) and informationally (signups, peak) with no consistent meaning, so the identity has no grammar.
+
+CLARITY — harsh
+6. The daily chart stacks two bar registers on different scales: Sunday's signups bar (127) stands exactly as tall as Sunday's visits pillar (2,100). Labels mitigate; they do not excuse inviting a false cross-read. Worse, the signups bars almost exactly repeat the visits silhouette, so the second register adds nearly no information for its cost.
+7. The week's most useful finding — conversion rising from 4.0% Monday to 6.0% Sunday — is buried as a row of muted 12px percentages with no visual form. The page decorates the obvious (traffic grows) and whispers the insight.
+8. The sources table uses one bar language for two scales: ink bars scale to 5,240 visits, gold bars to 6.0% conversion, distinguished only by color. Social's half-width gold bar can be misread as "about half the signups".
+9. The left register label "Conv." abbreviates a word spelled out everywhere else — cheap inconsistency on a page selling precision.
+10. The dark-mode block declares --hairline twice (a dead line); harmless but sloppy.
+11. Day labels sit between the two registers, so the lower bars hang beneath labels that belong to the upper chart as much as to them.
+
+CHANGES APPLIED in 1-4-2.html
+A. One gold grammar (answers 5, 6, 7, 8): gold now means exactly one thing on every surface — the rate at which visitors become signups. The signups bar register is replaced by a conversion register on a single stated scale, so the rising gold staircase across the week demonstrates the buried finding instead of whispering it. Signup counts are preserved as numerals in their own labeled row (detail kept; redundant bars dropped). In the sources table the gold bars move to the same global conversion scale (max 6.0%, Sunday's rate), so all gold bars on the page are mutually comparable; ink remains traffic, marble remains the house.
+B. Laurel for the victor (answers 3, 4): the stock diamond ornament is replaced by a drawn laurel — the mythic mark of honor — and the same gold capital still crowns Sunday, the week's victor, tying masthead to chart.
+C. Label fixed (answers 9): "Conv." becomes "Conversion".
+D. Dead CSS line removed (answers 10).
+E. Register order (answers 11): each day column now reads as one ledger entry — visits, day, signups, conversion — with left-hand register labels anchoring every row.
+
+PRESERVED (strong decisions)
+Pillar colonnade with capitals for visits; meander bands; marble/ink/gold palette and type pairing; three-stat band; minimal copy with no prose; synthetic-data tag; printed values beside every bar; sr-only data table mirroring the chart; sources table structure and figures. Purpose and data unchanged; all figures remain the supplied values or direct arithmetic on them.
+
+NOT CHANGED, considered and rejected
+Renaming metrics to themed vocabulary ("Arrivals", "Guests") would develop the hotel ingredient at the direct cost of comprehension; the data's own terms stay. A pediment-shaped masthead and leaf-detailed column capitals were rejected as decoration that competes with the information.

@@ -1,0 +1,53 @@
+CRITIQUE OF 5-1-2.html
+
+Originality — better dressed, same body.
+- The skeleton is still the default dashboard template: header, three KPI
+  tiles, two glass cards in one column. The fusion motifs (flecks, faceted
+  ball, floor strips) are appliqué on a layout any generator produces.
+- Disco stays decoration-deep: pink, a ball, some glints. Nothing of disco
+  reaches the typography or the composition; every label is plain system
+  sans, and the H1 gradient-clip is the one trick every neon page uses.
+- Bioluminescence still has no behavior. An organism lights up where it is
+  stimulated; this chart glows evenly everywhere, like a backlit sign. The
+  glow is ambience, not response.
+- The page recites numbers but develops no emphasis. The week's two actual
+  findings — the Sunday peak and Social's weak conversion — carry no visual
+  weight anywhere. A report that highlights nothing is a table with mood
+  lighting.
+
+Clarity — one real gap, one hack, two soft spots.
+- Sources: signups and conversion exist only as numerals. The lane draws
+  visits alone, so the comparison that matters most — how little of
+  Social's traffic converts — is invisible until the reader divides in
+  their head.
+- The sources header row is positioned with empty aria-hidden spacer spans:
+  fragile markup doing layout's job, and the grid carries no table
+  semantics for what is plainly a table.
+- Lanes scaled to the max (Direct = 100%) can still be misread as share of
+  total; adjacent absolute numbers mitigate but don't remove it.
+- Chart labels bottom out at 10.5px on narrow phones — legible as real
+  pixels, but at the floor.
+
+Kept — these were right and stay.
+- Two aligned day panels with direct labels and no axis clutter; the KPI
+  trio with derived conversion; the fleck motif and faceted ball; the
+  dance-floor baselines; the synthetic badge; minimal copy; the sr-only
+  daily table; every figure.
+
+Changes applied in 5-1-3.html.
+1. Signups are now drawn inside each source lane as a nested magenta bar on
+   the same absolute scale as visits, so conversion is visible as how far
+   the pink reaches along the cyan. Social's gap becomes a picture instead
+   of an arithmetic exercise. Numbers all remain.
+2. Bioluminescent response where the data peaks: Sunday's bars — the
+   week's maximum in both series — glow brighter than the rest, and their
+   labels brighten with them. Height still carries the value; glow only
+   points at the peak.
+3. The sources grid is rebuilt as a real table: header cells with
+   semantics, no spacer-span hack, and the lane column gets a screen-reader
+   label. The separate sr-only duplication is no longer needed for sources.
+4. Depth develops down the page: the lower card sits visibly deeper
+   (darker surface, dimmer edge) and the page floor fades further toward
+   black — surface light at the top, abyss at the bottom.
+Data, figures, purpose and all other structure unchanged; the page remains
+fully self-contained.

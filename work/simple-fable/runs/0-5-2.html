@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Visitation Ledger</title>
+<style>
+  :root{
+    --abyss:#0c1816;
+    --abyss-2:#10211d;
+    --parchment:#ece1c6;
+    --parchment-2:#e3d5b2;
+    --parchment-3:#d9c99f;
+    --ink:#2b241c;
+    --ink-faded:#6d5f49;
+    --rule:#b7a67e;
+    --teal:#1f5c52;
+    --teal-deep:#143f38;
+    --brass:#96762f;
+    --brass-deep:#6f5620;
+    --wax:#7c2e2a;
+    --pin:#4a4740;
+    --eldritch:#3e7f6c;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:radial-gradient(1200px 800px at 50% -200px, var(--abyss-2), var(--abyss) 70%);
+    color:var(--ink);
+    font-family:Georgia,'Iowan Old Style','Times New Roman',serif;
+  }
+  .sea{position:relative;min-height:100vh;overflow:hidden;padding:40px 16px 56px}
+  .tentacle{position:absolute;pointer-events:none}
+  .tentacle.tl{top:-30px;left:-40px;opacity:.25}
+  .tentacle.br{bottom:-50px;right:-40px;opacity:.22}
+  .spores{position:absolute;left:0;right:0;bottom:0;width:100%;height:160px;pointer-events:none;opacity:.3}
+
+  .cabinet{
+    position:relative;
+    max-width:880px;margin:0 auto;
+    background:
+      radial-gradient(900px 500px at 30% 0%, rgba(255,252,240,.5), rgba(255,252,240,0) 60%),
+      var(--parchment);
+    border:3px solid var(--brass-deep);
+    outline:1px solid var(--rule);
+    outline-offset:-10px;
+    box-shadow:0 0 0 6px rgba(0,0,0,.35),0 30px 60px rgba(0,0,0,.5);
+    padding:38px clamp(18px,5vw,54px) 46px;
+  }
+
+  header{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+  .plate{flex:0 0 auto}
+  h1{
+    font-size:clamp(24px,4vw,34px);font-weight:normal;margin:0;
+    letter-spacing:.06em;
+  }
+  .tags{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+  .tag{
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    border:1px solid var(--rule);background:var(--parchment-2);
+    padding:4px 10px;color:var(--ink-faded);
+  }
+  .tag.synthetic{border-color:var(--wax);color:var(--wax)}
+
+  .ornule{display:flex;align-items:center;gap:8px;margin:34px 0 18px}
+  .ornule .line{flex:1;height:1px;background:var(--rule)}
+  .ornule .curl{flex:0 0 auto;display:block}
+  .ornule h2{
+    margin:0 6px;font-size:13px;font-weight:normal;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--teal-deep);white-space:nowrap;
+  }
+
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
+  .tile{
+    background:var(--parchment-2);border:1px solid var(--rule);
+    border-top:3px solid var(--brass);
+    padding:14px 12px 12px;text-align:center;position:relative;
+  }
+  .tile:nth-child(odd){transform:rotate(-.5deg)}
+  .tile:nth-child(even){transform:rotate(.45deg)}
+  .tile .pinhead{
+    position:absolute;top:-6px;left:50%;margin-left:-4px;width:8px;height:8px;
+    border-radius:50%;background:var(--pin);
+    box-shadow:0 1px 1px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .tile b{display:block;font-size:clamp(19px,2.6vw,26px);font-weight:normal}
+  .tile span{
+    display:block;margin-top:4px;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-faded);
+  }
+
+  .case{
+    background:var(--parchment-2);
+    border:1px solid var(--rule);
+    box-shadow:inset 0 2px 10px rgba(74,62,38,.25);
+    padding:18px 10px 8px;
+  }
+  .case svg{display:block;width:100%;height:auto}
+
+  .sources{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .source{
+    position:relative;background:var(--parchment-2);border:1px solid var(--rule);
+    padding:22px 16px 16px;text-align:center;
+  }
+  .source .no{
+    position:absolute;top:8px;left:10px;font-size:10px;
+    letter-spacing:.14em;color:var(--ink-faded);
+  }
+  .source .pinhead{
+    position:absolute;top:10px;left:50%;margin-left:-4px;width:8px;height:8px;
+    border-radius:50%;background:var(--pin);
+    box-shadow:0 1px 1px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .source .pinhead::after{
+    content:"";position:absolute;top:7px;left:3px;width:2px;height:9px;
+    background:linear-gradient(var(--pin), rgba(74,71,64,0));
+  }
+  .source h3{
+    margin:8px 0 10px;font-size:13px;font-weight:normal;
+    letter-spacing:.26em;text-transform:uppercase;color:var(--teal-deep);
+  }
+  .source .big{font-size:28px}
+  .source .big small{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faded)}
+  .source .row{margin-top:8px;font-size:14px;color:var(--ink)}
+  .source .row em{font-style:normal;color:var(--ink-faded)}
+  .share{margin-top:14px}
+  .share .track{height:8px;background:var(--parchment-3);border:1px solid var(--rule)}
+  .share .fill{height:100%;background:var(--teal)}
+  .share figcaption{margin-top:5px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faded);text-align:right}
+  figure{margin:0}
+
+  @media (max-width:720px){
+    .tiles{grid-template-columns:repeat(2,1fr)}
+    .sources{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="sea">
+
+  <svg class="tentacle tl" width="340" height="340" viewBox="0 0 340 340" aria-hidden="true">
+    <path d="M-20,320 C70,290 120,250 110,190 C102,140 50,130 56,92 C62,58 104,58 118,86 C130,110 118,134 96,138"
+          fill="none" stroke="var(--eldritch)" stroke-width="26" stroke-linecap="round"/>
+    <g fill="var(--abyss)">
+      <circle cx="56" cy="300" r="5"/><circle cx="92" cy="268" r="5"/><circle cx="108" cy="228" r="5"/>
+      <circle cx="104" cy="178" r="4"/><circle cx="78" cy="140" r="4"/><circle cx="70" cy="100" r="3.5"/>
+      <circle cx="96" cy="80" r="3"/><circle cx="116" cy="104" r="3"/>
+    </g>
+  </svg>
+  <svg class="tentacle br" width="360" height="360" viewBox="0 0 360 360" aria-hidden="true">
+    <path d="M360,340 C300,250 320,200 270,170 C222,142 180,170 160,140 C140,110 170,76 202,88 C228,98 232,130 212,144"
+          fill="none" stroke="var(--eldritch)" stroke-width="24" stroke-linecap="round"/>
+    <g fill="var(--abyss)">
+      <circle cx="330" cy="290" r="5"/><circle cx="310" cy="240" r="5"/><circle cx="286" cy="198" r="4.5"/>
+      <circle cx="244" cy="166" r="4"/><circle cx="198" cy="156" r="4"/><circle cx="168" cy="126" r="3.5"/>
+      <circle cx="186" cy="98" r="3"/><circle cx="216" cy="110" r="3"/>
+    </g>
+  </svg>
+  <svg class="spores" viewBox="0 0 1600 160" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <g fill="var(--eldritch)">
+      <circle cx="120" cy="120" r="2.5"/><circle cx="240" cy="90" r="1.5"/><circle cx="420" cy="135" r="2"/>
+      <circle cx="610" cy="105" r="1.5"/><circle cx="880" cy="128" r="2.5"/><circle cx="1020" cy="84" r="1.5"/>
+      <circle cx="1240" cy="118" r="2"/><circle cx="1430" cy="96" r="1.5"/><circle cx="1540" cy="132" r="2.5"/>
+    </g>
+  </svg>
+
+  <main class="cabinet">
+    <header>
+      <svg class="plate" width="92" height="92" viewBox="0 0 92 92" aria-hidden="true">
+        <circle cx="46" cy="46" r="42" fill="var(--parchment-2)" stroke="var(--brass-deep)" stroke-width="2"/>
+        <circle cx="46" cy="46" r="36" fill="none" stroke="var(--rule)" stroke-width="1"/>
+        <g stroke="var(--ink)" stroke-width="1.4" fill="none" stroke-linecap="round">
+          <ellipse cx="30" cy="40" rx="15" ry="8" transform="rotate(-24 30 40)"/>
+          <ellipse cx="62" cy="40" rx="15" ry="8" transform="rotate(24 62 40)"/>
+          <ellipse cx="46" cy="47" rx="6" ry="13"/>
+          <circle cx="46" cy="31" r="6"/>
+          <path d="M42,36 C40,46 35,52 32,60"/>
+          <path d="M46,37 C46,48 44,56 45,64"/>
+          <path d="M50,36 C52,46 57,52 60,60"/>
+          <path d="M41,26 C38,22 36,20 33,19"/>
+          <path d="M51,26 C54,22 56,20 59,19"/>
+        </g>
+        <g fill="var(--ink)">
+          <circle cx="43.6" cy="30" r="1.1"/><circle cx="48.4" cy="30" r="1.1"/>
+        </g>
+        <line x1="46" y1="14" x2="46" y2="54" stroke="var(--pin)" stroke-width="1.6"/>
+        <circle cx="46" cy="14" r="3" fill="var(--wax)"/>
+      </svg>
+      <div>
+        <h1>Weekly Visitation Ledger</h1>
+        <div class="tags">
+          <span class="tag">Week 01</span>
+          <span class="tag synthetic">Synthetic specimen</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="tiles">
+      <div class="tile"><span class="pinhead"></span><b>12,480</b><span>visits</span></div>
+      <div class="tile"><span class="pinhead"></span><b>624</b><span>signups</span></div>
+      <div class="tile"><span class="pinhead"></span><b>5.0%</b><span>signup rate</span></div>
+      <div class="tile"><span class="pinhead"></span><b>Sun</b><span>peak · 2,100 visits</span></div>
+    </div>
+
+    <div class="ornule">
+      <svg class="curl" width="26" height="12" viewBox="0 0 26 12" aria-hidden="true"><path d="M25,10 C15,10 9,8 7.5,4 C6.6,1.4 9.4,0 10.8,2 C11.8,3.5 10,5 8,4.4" fill="none" stroke="var(--teal-deep)" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <div class="line"></div><h2>Visits by day</h2><div class="line"></div>
+      <svg class="curl" width="26" height="12" viewBox="0 0 26 12" aria-hidden="true"><g transform="translate(26,0) scale(-1,1)"><path d="M25,10 C15,10 9,8 7.5,4 C6.6,1.4 9.4,0 10.8,2 C11.8,3.5 10,5 8,4.4" fill="none" stroke="var(--teal-deep)" stroke-width="1.4" stroke-linecap="round"/></g></svg>
+    </div>
+    <div class="case">
+      <svg viewBox="0 0 700 236" role="img" aria-label="Bar chart of daily visits, Monday 1,420 rising to Sunday 2,100">
+        <g stroke="var(--rule)" stroke-width="1" stroke-dasharray="2 4">
+          <line x1="36" y1="166" x2="652" y2="166"/>
+          <line x1="36" y1="132" x2="652" y2="132"/>
+          <line x1="36" y1="98"  x2="652" y2="98"/>
+          <line x1="36" y1="64"  x2="652" y2="64"/>
+        </g>
+        <g font-size="10" fill="var(--ink-faded)" text-anchor="end">
+          <text x="32" y="203">0</text>
+          <text x="32" y="169">500</text>
+          <text x="32" y="135">1000</text>
+          <text x="32" y="101">1500</text>
+          <text x="32" y="67">2000</text>
+        </g>
+
+        <g fill="var(--teal)" stroke="var(--teal-deep)" stroke-width="1">
+          <rect x="40"  y="103" width="56" height="97"/>
+          <rect x="132" y="91"  width="56" height="109"/>
+          <rect x="224" y="79"  width="56" height="121"/>
+          <rect x="316" y="88"  width="56" height="112"/>
+          <rect x="408" y="69"  width="56" height="131"/>
+          <rect x="500" y="62"  width="56" height="138"/>
+          <rect x="592" y="57"  width="56" height="143"/>
+        </g>
+
+        <g stroke="var(--pin)" stroke-width="1.5">
+          <line x1="68"  y1="81" x2="68"  y2="115"/>
+          <line x1="160" y1="69" x2="160" y2="103"/>
+          <line x1="252" y1="57" x2="252" y2="91"/>
+          <line x1="344" y1="66" x2="344" y2="100"/>
+          <line x1="436" y1="47" x2="436" y2="81"/>
+          <line x1="528" y1="40" x2="528" y2="74"/>
+          <line x1="620" y1="35" x2="620" y2="69"/>
+        </g>
+        <g fill="var(--pin)">
+          <polygon points="66,115 70,115 68,122"/>
+          <polygon points="158,103 162,103 160,110"/>
+          <polygon points="250,91 254,91 252,98"/>
+          <polygon points="342,100 346,100 344,107"/>
+          <polygon points="434,81 438,81 436,88"/>
+          <polygon points="526,74 530,74 528,81"/>
+          <polygon points="618,69 622,69 620,76"/>
+        </g>
+        <g fill="var(--wax)">
+          <circle cx="68"  cy="81" r="3"/><circle cx="160" cy="69" r="3"/><circle cx="252" cy="57" r="3"/>
+          <circle cx="344" cy="66" r="3"/><circle cx="436" cy="47" r="3"/><circle cx="528" cy="40" r="3"/>
+          <circle cx="620" cy="35" r="3"/>
+        </g>
+
+        <g font-size="13" fill="var(--ink)" text-anchor="middle">
+          <text x="68"  y="71">1,420</text>
+          <text x="160" y="59">1,600</text>
+          <text x="252" y="47">1,780</text>
+          <text x="344" y="56">1,640</text>
+          <text x="436" y="37">1,920</text>
+          <text x="528" y="30">2,020</text>
+          <text x="620" y="25">2,100</text>
+        </g>
+
+        <line x1="36" y1="200" x2="652" y2="200" stroke="var(--ink)" stroke-width="1.5"/>
+        <g font-size="12" fill="var(--ink-faded)" text-anchor="middle" letter-spacing="2">
+          <text x="68" y="222">MON</text><text x="160" y="222">TUE</text><text x="252" y="222">WED</text>
+          <text x="344" y="222">THU</text><text x="436" y="222">FRI</text><text x="528" y="222">SAT</text>
+          <text x="620" y="222">SUN</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="ornule">
+      <svg class="curl" width="26" height="12" viewBox="0 0 26 12" aria-hidden="true"><path d="M25,10 C15,10 9,8 7.5,4 C6.6,1.4 9.4,0 10.8,2 C11.8,3.5 10,5 8,4.4" fill="none" stroke="var(--teal-deep)" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <div class="line"></div><h2>Signups by day</h2><div class="line"></div>
+      <svg class="curl" width="26" height="12" viewBox="0 0 26 12" aria-hidden="true"><g transform="translate(26,0) scale(-1,1)"><path d="M25,10 C15,10 9,8 7.5,4 C6.6,1.4 9.4,0 10.8,2 C11.8,3.5 10,5 8,4.4" fill="none" stroke="var(--teal-deep)" stroke-width="1.4" stroke-linecap="round"/></g></svg>
+    </div>
+    <div class="case">
+      <svg viewBox="0 0 700 202" role="img" aria-label="Bar chart of daily signups, Monday 57 rising to Sunday 127, with signup rate per day">
+        <g stroke="var(--rule)" stroke-width="1" stroke-dasharray="2 4">
+          <line x1="36" y1="112" x2="652" y2="112"/>
+          <line x1="36" y1="84"  x2="652" y2="84"/>
+          <line x1="36" y1="56"  x2="652" y2="56"/>
+        </g>
+        <g font-size="10" fill="var(--ink-faded)" text-anchor="end">
+          <text x="32" y="143">0</text>
+          <text x="32" y="115">40</text>
+          <text x="32" y="87">80</text>
+          <text x="32" y="59">120</text>
+        </g>
+
+        <g fill="var(--brass)" stroke="var(--brass-deep)" stroke-width="1">
+          <rect x="40"  y="100" width="56" height="40"/>
+          <rect x="132" y="89"  width="56" height="51"/>
+          <rect x="224" y="77"  width="56" height="63"/>
+          <rect x="316" y="88"  width="56" height="52"/>
+          <rect x="408" y="72"  width="56" height="68"/>
+          <rect x="500" y="63"  width="56" height="77"/>
+          <rect x="592" y="51"  width="56" height="89"/>
+        </g>
+
+        <g stroke="var(--pin)" stroke-width="1.5">
+          <line x1="68"  y1="78" x2="68"  y2="112"/>
+          <line x1="160" y1="67" x2="160" y2="101"/>
+          <line x1="252" y1="55" x2="252" y2="89"/>
+          <line x1="344" y1="66" x2="344" y2="100"/>
+          <line x1="436" y1="50" x2="436" y2="84"/>
+          <line x1="528" y1="41" x2="528" y2="75"/>
+          <line x1="620" y1="29" x2="620" y2="63"/>
+        </g>
+        <g fill="var(--pin)">
+          <polygon points="66,112 70,112 68,119"/>
+          <polygon points="158,101 162,101 160,108"/>
+          <polygon points="250,89 254,89 252,96"/>
+          <polygon points="342,100 346,100 344,107"/>
+          <polygon points="434,84 438,84 436,91"/>
+          <polygon points="526,75 530,75 528,82"/>
+          <polygon points="618,63 622,63 620,70"/>
+        </g>
+        <g fill="var(--wax)">
+          <circle cx="68"  cy="78" r="3"/><circle cx="160" cy="67" r="3"/><circle cx="252" cy="55" r="3"/>
+          <circle cx="344" cy="66" r="3"/><circle cx="436" cy="50" r="3"/><circle cx="528" cy="41" r="3"/>
+          <circle cx="620" cy="29" r="3"/>
+        </g>
+
+        <g font-size="13" fill="var(--ink)" text-anchor="middle">
+          <text x="68"  y="68">57</text>
+          <text x="160" y="57">72</text>
+          <text x="252" y="45">89</text>
+          <text x="344" y="56">74</text>
+          <text x="436" y="40">96</text>
+          <text x="528" y="31">109</text>
+          <text x="620" y="19">127</text>
+        </g>
+
+        <line x1="36" y1="140" x2="652" y2="140" stroke="var(--ink)" stroke-width="1.5"/>
+        <g font-size="12" fill="var(--ink-faded)" text-anchor="middle" letter-spacing="2">
+          <text x="68" y="160">MON</text><text x="160" y="160">TUE</text><text x="252" y="160">WED</text>
+          <text x="344" y="160">THU</text><text x="436" y="160">FRI</text><text x="528" y="160">SAT</text>
+          <text x="620" y="160">SUN</text>
+        </g>
+        <text x="32" y="180" font-size="10" fill="var(--ink-faded)" text-anchor="end">rate</text>
+        <g font-size="11" fill="var(--teal-deep)" text-anchor="middle">
+          <text x="68" y="180">4.0%</text><text x="160" y="180">4.5%</text><text x="252" y="180">5.0%</text>
+          <text x="344" y="180">4.5%</text><text x="436" y="180">5.0%</text><text x="528" y="180">5.4%</text>
+          <text x="620" y="180">6.0%</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="ornule">
+      <svg class="curl" width="26" height="12" viewBox="0 0 26 12" aria-hidden="true"><path d="M25,10 C15,10 9,8 7.5,4 C6.6,1.4 9.4,0 10.8,2 C11.8,3.5 10,5 8,4.4" fill="none" stroke="var(--teal-deep)" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <div class="line"></div><h2>Sources</h2><div class="line"></div>
+      <svg class="curl" width="26" height="12" viewBox="0 0 26 12" aria-hidden="true"><g transform="translate(26,0) scale(-1,1)"><path d="M25,10 C15,10 9,8 7.5,4 C6.6,1.4 9.4,0 10.8,2 C11.8,3.5 10,5 8,4.4" fill="none" stroke="var(--teal-deep)" stroke-width="1.4" stroke-linecap="round"/></g></svg>
+    </div>
+    <div class="sources">
+      <div class="source">
+        <span class="no">No. I</span>
+        <span class="pinhead"></span>
+        <h3>Direct</h3>
+        <div class="big">5,240 <small>visits</small></div>
+        <div class="row">314 signups · <em>6.0% rate</em></div>
+        <figure class="share">
+          <div class="track"><div class="fill" style="width:42%"></div></div>
+          <figcaption>42% of visits</figcaption>
+        </figure>
+      </div>
+      <div class="source">
+        <span class="no">No. II</span>
+        <span class="pinhead"></span>
+        <h3>Search</h3>
+        <div class="big">4,480 <small>visits</small></div>
+        <div class="row">224 signups · <em>5.0% rate</em></div>
+        <figure class="share">
+          <div class="track"><div class="fill" style="width:35.9%"></div></div>
+          <figcaption>36% of visits</figcaption>
+        </figure>
+      </div>
+      <div class="source">
+        <span class="no">No. III</span>
+        <span class="pinhead"></span>
+        <h3>Social</h3>
+        <div class="big">2,760 <small>visits</small></div>
+        <div class="row">86 signups · <em>3.1% rate</em></div>
+        <figure class="share">
+          <div class="track"><div class="fill" style="width:22.1%"></div></div>
+          <figcaption>22% of visits</figcaption>
+        </figure>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

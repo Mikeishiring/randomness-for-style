@@ -1,0 +1,61 @@
+Critique of runs/5-4-1.html
+
+ORIGINALITY — harsh read
+
+1. The composition is the default analytics template with a palette swap: three KPI
+   boxes, a bar chart, a source table. Neither ingredient changed a single structural
+   decision. "Deep-sea bioluminescence" is five background specks nobody will notice
+   and a cyan gradient; "luxury hotel" is letterspaced small caps and one diamond —
+   the most cliched possible luxury marker, doing no work.
+2. The abyss never appears. The background depth gradient is so faint and so uniform
+   behind opaque panels that the page reads "dark theme", not "light in deep water".
+   Bioluminescence means points of light against graded darkness; here glow is applied
+   evenly as box-shadow on every cyan element, which flattens it into a theme color
+   instead of an emphasis system.
+3. The luxury craft is skin-deep. The double hairline frame on panels is a good
+   instinct, but there is no system behind the gold: it frames everything and
+   highlights nothing.
+
+CLARITY — harsh read
+
+4. Worst risk on the page: the daily chart's two bands share a day axis but use
+   different scales (max 2,100 vs max 127), and only a detached legend names the
+   series. A fast reader can compare gold bar heights against cyan ones. Per-bar
+   value labels mitigate; the legend-at-a-distance does not.
+5. Series color coding is inconsistent across the page: signups are gold in the chart
+   and table but cream in the KPI row; the derived rate glows in the KPI row but is
+   plain cream in the table. The reader gets no reusable rule for what color means.
+6. CSS defect: in the sources header row, the data color classes (.c-visits etc.)
+   override the intended gold small-caps color, so column headers render in data
+   colors. Header and data lose their visual distinction.
+7. "Rate" as a column header is ambiguous alone (rate of what?); the KPI row says
+   "Signup rate" and the table should echo it.
+
+STRONG DECISIONS — preserved
+
+- Only supplied figures plus their sums/rates; synthetic-data caveat kept visible.
+- Two separated bands on one day axis (no dual-scale overlay lie), every bar labeled
+  with its exact value.
+- Minimal copy: labels, numbers, one caveat; no helper prose.
+- Serif/gold frame vs sans/tabular data split; dark ground; panel double hairline.
+
+CHANGES APPLIED (one pass, data and purpose unchanged)
+
+a. Direct labeling replaces the legend: small-caps VISITS / SIGNUPS captions sit
+   inside the chart at the top-left of each band. Fixes 4 with fewer words.
+b. One color rule page-wide: visits pale cyan, signups gold, derived rates luminous
+   cyan with glow — in the KPIs, the chart, and the table. Glow is now reserved for
+   bar top-caps and rates (the light = conversion motif); source-bar glow reduced.
+   Fixes 2 (partly), 5.
+c. Sources header colors scoped so headers stay gold small caps; "Rate" renamed
+   "Signup rate"; rate column widened. Fixes 6, 7.
+d. Abyss developed: a vertical depth gradient (faint teal light above, near-black
+   below), slightly translucent panels so the depth reads through, two more faint
+   specks near the header. Ornament refined (wider rules, smaller dim diamond).
+   Addresses 1-3 without adding any copy or new chart elements.
+
+Not changed: layout structure (KPIs / Daily / Sources) — it serves the owner's
+question directly; restructuring for novelty's own sake would cost clarity. The
+sources rows remain divs rather than a semantic table; converting would complicate
+the narrow-screen reflow for little gain on a single-page report — accepted and
+noted.

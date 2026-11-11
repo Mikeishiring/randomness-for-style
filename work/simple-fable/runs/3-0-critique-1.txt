@@ -1,0 +1,53 @@
+CRITIQUE OF 3-0-1.html
+
+ORIGINALITY
+- The government-form pastiche is the first idea anyone reaches for with
+  "bureaucracy": a FORM number, Part I/II black bands, numbered boxes, a
+  rubber stamp. It is executed competently, but it is a costume borrowed
+  whole from the IRS, not a synthesis of two ingredients.
+- Tech barely exists. Courier reads as typewriter -- bureaucracy again --
+  and the background grid is so faint it is subliminal. One ingredient ate
+  the other.
+- The bars are stock dashboard bars: soft tinted tracks, a modern SaaS
+  convention. They belong to neither identity and dilute the hard-ruled
+  language of the rest of the page.
+- "SYNTHETIC DATA" as a rubber stamp is the most obvious provenance gag
+  available. Honest, but zero invention.
+
+CLARITY
+- Part I's signup bars have no column header and no values: an anonymous
+  red bar, silently normalized to a different maximum than the visits bars
+  beside it. It invites ratio misreading and scans as decoration.
+- The mobile stylesheet hides the fourth column of every table. In Part II
+  that column is the actual signups data. Data loss on phones -- a bug,
+  not a trade-off.
+- Red/blue conversion coloring is never explained. Red "4.0%" implies
+  failure when it is merely the week minimum. The footer legend explains
+  bar hues, not these.
+- The totals row fakes alignment with a left-aligned span inside an empty
+  bar container, so the weekly total does not sit under the daily values.
+- An empty <th> sits over the signup bars; no scope attributes anywhere.
+
+KEPT (strong decisions)
+- Form frame and masthead, numbered summary boxes, black part bands,
+  ledger tables with dotted leaders, peak-row highlight, the stamp's
+  honesty about synthetic data, tabular monospace figures, and the derived
+  share/conversion columns.
+
+CHANGES APPLIED
+1. Each signups number+bar merged into one labeled "Signups" column with
+   its value shown; every bar now has a header and a number; the empty
+   header is gone.
+2. Bars redrawn as hard-ruled, segmented dot-matrix fills on paper tracks:
+   one mark language that reads as both printout (tech) and tally
+   (bureaucracy), replacing the generic dashboard bars.
+3. Tech developed explicitly: a CSS barcode strip captioned with the
+   week's control figures, and a terminal face (Consolas) for the machine
+   layer -- box numbers, barcode caption, and the footer record line
+   ("REV 2 - EOF") -- against the typewriter face of the form layer.
+4. Conversion week-high/low now marked with ^ / v glyph prefixes plus a
+   legend; color is no longer the only signal.
+5. Mobile no longer hides data columns; bars compress instead.
+6. Totals right-aligned under their columns with ordinary cells; scope
+   attributes added to headers and row labels.
+Purpose, figures, table structure and all derived values unchanged.

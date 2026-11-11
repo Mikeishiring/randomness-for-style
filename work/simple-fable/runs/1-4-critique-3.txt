@@ -1,0 +1,25 @@
+Critique of 1-4-3.html (originality, then clarity), followed by the changes applied in 1-4-4.html.
+
+ORIGINALITY — harsh
+1. The victor grammar is taught and then abandoned. V3's best idea — the masthead laurel recurring to crown Sunday — appears exactly once. The sources ledger has its own undisputed victor (Direct leads every column: 5,240 visits, 314 signups, 6.0% conversion) and receives nothing. A symbol used once is an ornament; used consistently it becomes a language. The page stops one step short of the language.
+2. The section glyphs are cohesion, not invention: the same meander tile photocopied at 13px. They tie the middle of the page to the frame, which was the goal, but no new form was risked anywhere in this pass.
+3. The masthead remains the safest composition available — centered over-line, title, wreath, tag. Three passes in, the identity has deepened entirely through small marks while the largest surface on the page has not moved once.
+4. The tonal wash added in v3 is so faint it is nearly a no-op; it answers "the marble is flat paint" on paper more than on screen.
+
+CLARITY — harsh
+5. V3 shipped a layout defect. At phone width a day column is roughly 33px wide; the peak numeral with two flanking sprigs needs about 44px. The crowning mark — the pass's headline change — overflows or wraps its column precisely where space is scarcest. Decoration was allowed to compromise the grid.
+6. background-attachment: fixed on the body wash is a known mobile-rendering liability (janky or ignored on iOS) attached to a purely decorative layer. A decoration should never be the riskiest line of CSS on the page.
+7. The sr-only caption names Sunday as the week's best day, but the sources table — a real, AT-readable table — got no equivalent caption, so the two ledgers are unevenly served.
+8. The sprigs are decorative SVGs; inside the aria-hidden chart they are covered, but the pattern has no explicit decorative marking of its own, which becomes a hole the moment a sprig is used outside that container.
+
+CHANGES APPLIED in 1-4-4.html
+A. The grammar completes (answers 1): Direct — best source in every column — is crowned with the same laurel sprigs and gold mark as Sunday. In the chart the crown sits on the victor's figure (the numeral at the top of the column); in the ledger it sits on the victor's name (how a ledger row is read). One mark, one meaning, both ledgers.
+B. Mobile defect fixed (answers 5): below 560px the sprigs are hidden entirely rather than shrunk; the gold numeral, gold capital and gold row name continue to carry the mark. The grid is never again hostage to a flourish.
+C. Risky decoration de-risked (answers 6): background-attachment: fixed removed; the wash stays, anchored normally.
+D. Accessible parity (answers 7, 8): the sources table gains an sr-only caption naming visits, signups, conversion by source and Direct as the week's best source, mirroring the daily caption; every sprig now carries aria-hidden explicitly.
+
+PRESERVED (strong decisions)
+The gold grammar (gold = conversion, one shared scale); the conversion staircase; pillar colonnade and capitals; meander bands and section glyphs; laurel crowning the victor; signups preserved as numerals; three-stat band; sources table figures and structure; minimal copy; synthetic-data tag; sr-only daily table. Purpose and data unchanged; every figure remains the supplied values or direct arithmetic on them.
+
+NOT CHANGED, considered and rejected
+Reworking the masthead composition (item 3): three stable passes of identity hang off that plaque; redesigning it now is novelty risk with no comprehension gain. Strengthening the wash (item 4): a stronger texture starts competing with content; faint is the correct side of that line. Crowning per-column bests in the table (three crowns on one row is noise; the ledger has one victor). A visible "best day/source" text label (the recurring mark plus captions state it without adding interface copy).

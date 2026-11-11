@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Performance Return</title>
+<style>
+  :root{
+    color-scheme: light;
+    --desk:#241a36;
+    --paper:#f8f3e6;
+    --ink:#22253a;
+    --pink:#f0168c;
+    --violet:#7b2ff7;
+    --gold:#e2820a;
+    --chrome:linear-gradient(180deg,#8a3cff 0%,#f0168c 46%,#6d1050 50%,#ffd23c 53%,#e2820a 100%);
+    --entry:linear-gradient(90deg,#7b2ff7,#f0168c,#e2820a);
+    --grad-bar:linear-gradient(180deg,#7b2ff7,#f0168c);
+    --grad-gold:linear-gradient(180deg,#ffd23c,#e2820a);
+    --facet:linear-gradient(rgba(255,255,255,.25) 1px,transparent 1px),
+            linear-gradient(90deg,rgba(255,255,255,.25) 1px,transparent 1px);
+    --mono:"Courier New",Courier,monospace;
+    --black:"Arial Black","Franklin Gothic Medium",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--desk);
+    font-family:Arial,Helvetica,sans-serif;
+    color:var(--ink);
+    padding:28px 16px 48px;
+  }
+  .sheet{
+    position:relative;
+    max-width:880px;
+    margin:0 auto;
+    background:var(--paper);
+    border:2px solid var(--ink);
+    box-shadow:0 14px 40px rgba(0,0,0,.45);
+    padding:28px 32px 36px 88px;
+  }
+  /* ruled-form margin line, in disco pink */
+  .sheet::before{
+    content:"";
+    position:absolute;
+    left:60px;top:0;bottom:0;
+    width:2px;
+    background:var(--pink);
+  }
+  /* punched filing holes */
+  .sheet::after{
+    content:"";
+    position:absolute;
+    left:16px;top:0;bottom:0;
+    width:18px;
+    background:
+      radial-gradient(circle 8px at 9px 14%, var(--desk) 97%, transparent),
+      radial-gradient(circle 8px at 9px 50%, var(--desk) 97%, transparent),
+      radial-gradient(circle 8px at 9px 86%, var(--desk) 97%, transparent);
+  }
+
+  .form-line{
+    display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    font:700 12px/1.4 var(--mono);
+    letter-spacing:.18em;text-transform:uppercase;
+  }
+  .masthead{
+    display:flex;align-items:center;gap:18px;
+    margin:10px 0 18px;flex-wrap:wrap;
+  }
+  /* 70s chrome lettering: hard horizon, sky above, gold ground below */
+  h1{
+    margin:0;flex:1;min-width:240px;
+    font:900 clamp(27px,5vw,46px)/1.02 var(--black);
+    text-transform:uppercase;letter-spacing:.01em;
+    background:var(--chrome);
+    -webkit-background-clip:text;background-clip:text;
+    color:transparent;
+  }
+  .ball{flex:none}
+  .stamp{
+    flex:none;align-self:flex-start;
+    transform:rotate(-7deg);
+    border:3px double var(--pink);border-radius:4px;
+    color:var(--pink);
+    font:700 12px/1.2 var(--mono);
+    letter-spacing:.22em;text-transform:uppercase;
+    padding:9px 12px 8px;opacity:.88;
+  }
+  /* lit dance-floor strip: square tiles, ink grout */
+  .floor{
+    height:12px;margin:0 0 22px;
+    border-block:2px solid var(--ink);
+    background:repeating-linear-gradient(90deg,
+      #f0168c 0 14px,   var(--ink) 14px 16px,
+      #7b2ff7 16px 30px,var(--ink) 30px 32px,
+      #f5a623 32px 46px,var(--ink) 46px 48px);
+  }
+
+  section{border:2px solid var(--ink);margin-bottom:22px}
+  .sec-head{
+    background:var(--ink);color:var(--paper);
+    font:700 12px/1 var(--mono);
+    letter-spacing:.22em;text-transform:uppercase;
+    padding:8px 14px;
+  }
+  .sec-head.split{
+    display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  .sec-head .note{letter-spacing:.14em}
+
+  /* § 1 — figures filed on chrome entry rules */
+  .totals{display:grid;grid-template-columns:repeat(4,1fr)}
+  .cell{padding:16px 14px 18px;border-left:2px solid var(--ink)}
+  .cell:first-child{border-left:0}
+  .cell .lbl{
+    font:700 11px/1 var(--mono);letter-spacing:.18em;
+    text-transform:uppercase;display:block;margin-bottom:10px;
+  }
+  .cell .num{
+    font:900 clamp(24px,3.6vw,36px)/1 var(--black);
+    display:block;
+    padding-bottom:10px;
+    border-style:solid;border-width:0 0 3px;
+    border-image:var(--entry) 1;
+  }
+  .cell .sub{
+    font:700 11px/1.3 var(--mono);display:block;margin-top:8px;
+  }
+
+  /* § 2 — one shared day axis; visits above, signups below,
+     each day's rate filed in the axis band between them */
+  .chartwrap{padding:18px 16px 16px}
+  .metric{
+    font:700 11px/1 var(--mono);letter-spacing:.18em;
+    text-transform:uppercase;margin:4px 0 10px;
+  }
+  .metric.below{margin:10px 0 0}
+  .bars{display:flex;gap:8px;height:150px}
+  .bars .col{flex:1;display:flex;flex-direction:column;height:100%;min-width:0}
+  .up .col{justify-content:flex-end}
+  .bars.down{height:76px}
+  .down .col{justify-content:flex-start}
+  .col .val{
+    font:700 11px/1 var(--mono);text-align:center;
+    white-space:nowrap;
+  }
+  .up .col .val{margin-bottom:5px}
+  .down .col .val{margin-top:5px}
+  .col .bar{
+    border:1px solid var(--ink);
+    background-image:var(--facet),var(--grad-bar);
+    background-size:7px 7px,7px 7px,100% 100%;
+  }
+  .down .col .bar{
+    background-image:var(--facet),var(--grad-gold);
+    background-size:7px 7px,7px 7px,100% 100%;
+  }
+  .axis{
+    display:flex;gap:8px;
+    border-block:2px solid var(--ink);
+    padding:6px 0;margin:6px 0;
+  }
+  .axis .dc{
+    flex:1;min-width:0;
+    display:flex;flex-direction:column;gap:4px;align-items:center;
+  }
+  .axis b{
+    font:700 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+  }
+  .axis i{
+    font:700 11px/1 var(--mono);font-style:normal;
+    color:var(--pink);white-space:nowrap;
+  }
+
+  /* § 3 — sources, both series encoded */
+  .srcwrap{padding:16px}
+  .srcgrid{
+    display:grid;
+    grid-template-columns:minmax(64px,auto) 1fr 70px 70px 54px;
+    gap:10px 12px;align-items:center;
+  }
+  .srcgrid .h{
+    font:700 10px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;
+    border-bottom:2px solid var(--ink);padding-bottom:6px;
+    white-space:nowrap;
+  }
+  .srcgrid .h.r,.srcgrid .n{text-align:right}
+  .srcgrid .name{
+    font:700 13px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;
+  }
+  .srcgrid .n{font:700 13px/1 var(--mono);white-space:nowrap}
+  .sw{
+    display:inline-block;width:8px;height:8px;
+    border:1px solid var(--ink);vertical-align:middle;margin-right:4px;
+  }
+  .sw.v{background:var(--grad-bar)}
+  .sw.s{background:var(--grad-gold)}
+  .track{display:flex;flex-direction:column;gap:2px;justify-content:center}
+  .track i{
+    display:block;
+    border:1px solid var(--ink);
+    background-size:7px 7px,7px 7px,100% 100%;
+  }
+  .track .v{height:12px;background-image:var(--facet),var(--grad-bar)}
+  .track .s{height:7px;background-image:var(--facet),var(--grad-gold)}
+
+  @media (max-width:620px){
+    .sheet{padding:20px 16px 26px 60px}
+    .sheet::before{left:42px}
+    .sheet::after{left:8px}
+    .totals{grid-template-columns:1fr 1fr}
+    .cell:nth-child(3){border-left:0}
+    .cell:nth-child(n+3){border-top:2px solid var(--ink)}
+    .bars{gap:4px}.axis{gap:4px}
+    .col .val{font-size:9px}
+    .axis b{font-size:9px}
+    .axis i{font-size:9px}
+    .srcgrid{grid-template-columns:56px 1fr 54px 46px 40px;gap:8px 8px}
+    .srcgrid .n,.srcgrid .name{font-size:11px}
+  }
+</style>
+</head>
+<body>
+<main class="sheet">
+
+  <div class="form-line">
+    <span>Form WK-01</span>
+    <span>Period · Week 01</span>
+  </div>
+
+  <div class="masthead">
+    <svg class="ball" width="52" height="62" viewBox="0 0 52 62" aria-hidden="true">
+      <defs>
+        <pattern id="facets" width="8" height="8" patternUnits="userSpaceOnUse">
+          <rect width="8" height="8" fill="#ddd3f0"/>
+          <rect width="4" height="4" fill="#f7c5e0"/>
+          <rect x="4" y="4" width="4" height="4" fill="#ffe3a1"/>
+        </pattern>
+        <radialGradient id="shine" cx="35%" cy="30%" r="75%">
+          <stop offset="0" stop-color="#ffffff" stop-opacity=".75"/>
+          <stop offset=".5" stop-color="#ffffff" stop-opacity="0"/>
+          <stop offset="1" stop-color="#22253a" stop-opacity=".45"/>
+        </radialGradient>
+      </defs>
+      <line x1="26" y1="0" x2="26" y2="10" stroke="#22253a" stroke-width="2"/>
+      <circle cx="26" cy="36" r="24" fill="url(#facets)" stroke="#22253a" stroke-width="2"/>
+      <circle cx="26" cy="36" r="24" fill="url(#shine)"/>
+    </svg>
+    <h1>Weekly Performance Return</h1>
+    <span class="stamp">Synthetic<br>Data</span>
+  </div>
+
+  <div class="floor"></div>
+
+  <section aria-labelledby="s1">
+    <h2 class="sec-head" id="s1">§ 1 · Totals</h2>
+    <div class="totals">
+      <div class="cell">
+        <span class="lbl">Visits</span>
+        <span class="num">12,480</span>
+      </div>
+      <div class="cell">
+        <span class="lbl">Signups</span>
+        <span class="num">624</span>
+      </div>
+      <div class="cell">
+        <span class="lbl">Signup rate</span>
+        <span class="num">5.0%</span>
+      </div>
+      <div class="cell">
+        <span class="lbl">Peak day</span>
+        <span class="num">Sun</span>
+        <span class="sub">2,100 visits · 127 signups</span>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s2">
+    <h2 class="sec-head split" id="s2"><span>§ 2 · By Day</span><span class="note">% = signups ÷ visits</span></h2>
+    <div class="chartwrap">
+
+      <p class="metric">Visits</p>
+      <div class="bars up">
+        <div class="col"><span class="val">1,420</span><div class="bar" style="height:67.6%"></div></div>
+        <div class="col"><span class="val">1,600</span><div class="bar" style="height:76.2%"></div></div>
+        <div class="col"><span class="val">1,780</span><div class="bar" style="height:84.8%"></div></div>
+        <div class="col"><span class="val">1,640</span><div class="bar" style="height:78.1%"></div></div>
+        <div class="col"><span class="val">1,920</span><div class="bar" style="height:91.4%"></div></div>
+        <div class="col"><span class="val">2,020</span><div class="bar" style="height:96.2%"></div></div>
+        <div class="col"><span class="val">2,100</span><div class="bar" style="height:100%"></div></div>
+      </div>
+
+      <div class="axis">
+        <span class="dc"><b>Mon</b><i>4.0%</i></span>
+        <span class="dc"><b>Tue</b><i>4.5%</i></span>
+        <span class="dc"><b>Wed</b><i>5.0%</i></span>
+        <span class="dc"><b>Thu</b><i>4.5%</i></span>
+        <span class="dc"><b>Fri</b><i>5.0%</i></span>
+        <span class="dc"><b>Sat</b><i>5.4%</i></span>
+        <span class="dc"><b>Sun</b><i>6.0%</i></span>
+      </div>
+
+      <div class="bars down">
+        <div class="col"><div class="bar" style="height:44.9%"></div><span class="val">57</span></div>
+        <div class="col"><div class="bar" style="height:56.7%"></div><span class="val">72</span></div>
+        <div class="col"><div class="bar" style="height:70.1%"></div><span class="val">89</span></div>
+        <div class="col"><div class="bar" style="height:58.3%"></div><span class="val">74</span></div>
+        <div class="col"><div class="bar" style="height:75.6%"></div><span class="val">96</span></div>
+        <div class="col"><div class="bar" style="height:85.8%"></div><span class="val">109</span></div>
+        <div class="col"><div class="bar" style="height:100%"></div><span class="val">127</span></div>
+      </div>
+      <p class="metric below">Signups</p>
+
+    </div>
+  </section>
+
+  <section aria-labelledby="s3">
+    <h2 class="sec-head" id="s3">§ 3 · By Source</h2>
+    <div class="srcwrap">
+      <div class="srcgrid">
+        <span class="h">Source</span>
+        <span class="h"></span>
+        <span class="h r"><span class="sw v"></span>Visits</span>
+        <span class="h r"><span class="sw s"></span>Signups</span>
+        <span class="h r">Rate</span>
+
+        <span class="name">Direct</span>
+        <span class="track"><i class="v" style="width:100%"></i><i class="s" style="width:100%"></i></span>
+        <span class="n">5,240</span>
+        <span class="n">314</span>
+        <span class="n">6.0%</span>
+
+        <span class="name">Search</span>
+        <span class="track"><i class="v" style="width:85.5%"></i><i class="s" style="width:71.3%"></i></span>
+        <span class="n">4,480</span>
+        <span class="n">224</span>
+        <span class="n">5.0%</span>
+
+        <span class="name">Social</span>
+        <span class="track"><i class="v" style="width:52.7%"></i><i class="s" style="width:27.4%"></i></span>
+        <span class="n">2,760</span>
+        <span class="n">86</span>
+        <span class="n">3.1%</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

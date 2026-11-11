@@ -1,0 +1,59 @@
+CRITIQUE OF 0-3-3.html
+
+ORIGINALITY — harsh
+
+1. The emblem has shipped unchanged through three versions and is now the weakest thing on
+   the page: an eye ringed by tentacles — pure Cthulhu, zero opera. The single mark whose
+   job is to fuse the two ingredients carries only one of them. Everything below the
+   masthead evolved; the figurehead never did.
+
+2. Identity still rides on furniture, not on the marks. Curtains, waves, ornaments and an
+   emblem do the theming while every data mark remains a plain rectangle. In a page whose
+   best idea is "signups hang in the deep", the things hanging in the deep are generic
+   boxes. The one place identity cannot be dismissed as decoration — the encoding itself —
+   is the one place it never reached.
+
+3. The corner background tentacle is the stock "faint oversized motif" move every dark
+   themed page makes. Tolerable, but nobody would call it an idea.
+
+CLARITY — harsh
+
+4. The page's real clarity failure is invisible: to a screen reader, Act I is three
+   disconnected runs of numbers — all seven visit counts, then seven day names with
+   percentages, then seven signup counts — with no programmatic association between a day
+   and its values. The chart that sighted readers praise is noise to assistive technology.
+
+5. Act II's stacked values are bare numbers ("5,240", "314") whose units exist only in a
+   color legend; the conversion percentages are bare too. Color-keyed association is fine
+   for the eye and meaningless to AT.
+
+6. Beyond that, no visual change is justified: scales are honest, every mark is labeled,
+   the legend is consistent across acts, the dividers now vary, copy is minimal. Further
+   visual churn would be redesign for its own sake.
+
+PRESERVED DELIBERATELY
+
+The waterline chart, daily conversion at the surface, nested subset bars in Act II, the
+shared legend, italic-rate convention, tiles, curtains, dividers, palette, printed values,
+and all copy. The teal visits towers stay plain rectangles on purpose — the orderly
+surface against the tentacled deep is the contrast that tells the story.
+
+CHANGES APPLIED IN 0-3-4.html
+
+A. The emblem is redrawn as a proscenium (addresses 1): tentacle curtains hang inside a
+   stage arch, framing the watching eye, with a row of footlights at the stage floor. The
+   one identity mark now performs the fusion the page is named for.
+
+B. Tentacle tips on the deep (addresses 2): each hanging signups bar is rectangular for
+   most of its length and tapers to a tip at its true end. Length — the encoding — is
+   unchanged and still ends exactly at the value; only the final width tapers. Identity
+   enters the marks themselves, and only in the deep, where the metaphor lives.
+
+C. A screen-reader layer (addresses 4, 5): the Act I grid is marked decorative and a
+   visually-hidden table carries day, visits, signups and conversion as associated rows;
+   Act II's values and percentages gain hidden unit words (visits, signups, conversion).
+   Nothing visible changes; nothing is removed.
+
+D. Nothing else is touched, including the background tentacle (3): replacing ambient
+   decoration is churn, not improvement, and the fusion now has two load-bearing homes —
+   the emblem and the marks.

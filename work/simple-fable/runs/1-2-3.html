@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agora Grill — Week 01</title>
+<style>
+  :root{
+    --ink:#262013;
+    --muted:#6d6354;
+    --cream:#f6eed9;
+    --paper:#fffbf2;
+    --blue:#2b4d9b;
+    --blue-dk:#1d3a7c;
+    --red:#c93a2b;
+    --gold:#e8a51d;
+    --gold-soft:#fdf3dd;
+    --shadow:4px 4px 0 rgba(43,77,155,.16);
+  }
+  *{box-sizing:border-box}
+  html{color-scheme:light}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font:15px/1.45 "Segoe UI",system-ui,-apple-system,sans-serif;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:28px 16px 48px}
+  .display{font-family:Impact,"Haettenschweiler","Arial Narrow Bold","Arial Black",sans-serif;font-weight:400}
+
+  /* Greek key frieze */
+  .frieze{
+    height:20px;
+    padding:3px 0;
+    border-top:3px solid var(--blue);
+    border-bottom:3px solid var(--blue);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='20'%3E%3Cpath d='M3 20 V4 H20 V13 H10 V8 H15' fill='none' stroke='%232b4d9b' stroke-width='3'/%3E%3C/svg%3E");
+    background-repeat:repeat-x;
+    background-position:left center;
+    background-clip:content-box;
+  }
+
+  /* Header */
+  header{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:14px}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand h1{margin:0;font-size:34px;letter-spacing:.06em;color:var(--blue-dk);text-transform:uppercase}
+  .brand .sub{margin:2px 0 0;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--red);font-weight:700}
+  .period{text-align:right}
+  .period .wk{font-size:44px;line-height:1;color:var(--red);letter-spacing:.04em}
+  .chip{
+    display:inline-block;margin-top:6px;padding:2px 10px;font-size:11px;font-weight:800;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--blue);border:2px solid var(--blue);border-radius:999px;background:var(--paper)
+  }
+
+  /* Sections */
+  section{margin-top:26px}
+  h2{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 12px}
+  h2 .myth{font-family:Impact,"Haettenschweiler","Arial Narrow Bold","Arial Black",sans-serif;font-weight:400;font-size:21px;letter-spacing:.1em;color:var(--red);text-transform:uppercase}
+  h2 .lit{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+
+  .card{background:var(--paper);border:2px solid var(--blue);border-radius:14px;box-shadow:var(--shadow)}
+
+  /* KPI combo tiles */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .kpi{padding:14px 16px}
+  .kpi .label{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+  .kpi .value{font-size:36px;line-height:1.1;color:var(--ink);margin-top:2px}
+  .kpi .delta{font-size:12px;font-weight:700;color:var(--muted);margin-top:4px}
+  .kpi .delta b{color:var(--red)}
+
+  /* Daily chart */
+  .chart-card{padding:16px}
+  .legend{display:flex;gap:18px;justify-content:flex-end;margin-bottom:6px;font-size:12px;font-weight:700;color:var(--muted)}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .legend .v i{background:var(--blue)}
+  .legend .s i{background:var(--gold)}
+  svg{display:block;width:100%;height:auto}
+
+  table{width:100%;border-collapse:collapse;margin-top:14px;font-size:14px}
+  th,td{padding:7px 6px;text-align:right;border-top:1px solid #e3d8bf}
+  th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  thead th{border-top:none}
+  td{font-weight:600;font-variant-numeric:tabular-nums}
+  .best{background:var(--gold-soft)}
+
+  /* Sources */
+  .menu{padding:4px 16px}
+  .src{display:grid;grid-template-columns:190px 1.5fr 1.5fr 120px;gap:16px;align-items:center;padding:14px 0;border-top:1px solid #e3d8bf}
+  .src:first-child{border-top:none}
+  .s-name .nm{font-size:19px;letter-spacing:.05em;color:var(--ink);text-transform:uppercase}
+  .s-name .ep{display:block;margin-top:3px;font:italic 13px Georgia,"Times New Roman",serif;color:var(--blue)}
+  .stat .lbl{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .stat .num{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;margin:1px 0 5px}
+  .stat .share{font-size:12px;font-weight:600;color:var(--muted)}
+  .track{height:10px;border-radius:999px;background:var(--cream);border:1px solid #e0d4b8;overflow:hidden}
+  .track.thin{height:6px}
+  .fill{height:100%;border-radius:999px}
+  .fill.v{background:var(--blue)}
+  .fill.s{background:var(--gold)}
+  .conv{text-align:right}
+  .conv .lbl{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .conv .num{font-size:34px;line-height:1.1;color:var(--red)}
+  .total{display:flex;align-items:baseline;justify-content:space-between;gap:0;flex-wrap:wrap;padding:12px 0;border-top:5px double var(--blue);font-weight:800;font-size:14px;letter-spacing:.04em}
+  .total span{font-variant-numeric:tabular-nums}
+  .total .dots{flex:1;min-width:20px;margin:0 10px 4px;border-bottom:3px dotted #cdbd93;align-self:flex-end}
+  .total .t-conv{color:var(--red)}
+
+  footer{margin-top:34px}
+
+  @media (max-width:700px){
+    .kpis{grid-template-columns:1fr 1fr}
+    .src{grid-template-columns:1fr 1fr}
+    .s-name{grid-column:1/-1}
+    .conv{grid-column:1/-1;text-align:left}
+    .period .wk{font-size:36px}
+    .brand h1{font-size:28px}
+    .total{gap:16px}
+    .total .dots{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <svg width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Temple with a burger between its columns">
+        <path d="M4 18 L32 4 L60 18 Z" fill="#2b4d9b"/>
+        <rect x="6" y="20" width="52" height="4" fill="#2b4d9b"/>
+        <rect x="8" y="26" width="7" height="29" fill="#2b4d9b"/>
+        <rect x="49" y="26" width="7" height="29" fill="#2b4d9b"/>
+        <path d="M19 38 a13 9 0 0 1 26 0 Z" fill="#e8a51d"/>
+        <circle cx="26" cy="33.5" r="1.3" fill="#fffbf2"/>
+        <circle cx="32" cy="32" r="1.3" fill="#fffbf2"/>
+        <circle cx="38" cy="33.5" r="1.3" fill="#fffbf2"/>
+        <rect x="19" y="39" width="26" height="3" fill="#c93a2b"/>
+        <rect x="19" y="43" width="26" height="4" rx="2" fill="#6b3a21"/>
+        <rect x="19" y="48" width="26" height="5" rx="2.5" fill="#e8a51d"/>
+        <rect x="4" y="55" width="56" height="4" fill="#2b4d9b"/>
+      </svg>
+      <div>
+        <h1 class="display">Agora Grill</h1>
+        <p class="sub">Site performance</p>
+      </div>
+    </div>
+    <div class="period">
+      <div class="wk display">Week 01</div>
+      <span class="chip">Synthetic data</span>
+    </div>
+  </header>
+
+  <div class="frieze" aria-hidden="true"></div>
+
+  <section aria-labelledby="h-order">
+    <h2 id="h-order"><span class="myth">The Week's Order</span><span class="lit">Week 01 totals</span></h2>
+    <div class="kpis">
+      <div class="card kpi">
+        <div class="label">Visits</div>
+        <div class="value display">12,480</div>
+        <div class="delta"><b>+48%</b> Mon → Sun</div>
+      </div>
+      <div class="card kpi">
+        <div class="label">Signups</div>
+        <div class="value display">624</div>
+        <div class="delta"><b>+123%</b> Mon → Sun</div>
+      </div>
+      <div class="card kpi">
+        <div class="label">Conversion</div>
+        <div class="value display">5.0%</div>
+        <div class="delta">4.0% → <b>6.0%</b> over the week</div>
+      </div>
+      <div class="card kpi">
+        <div class="label">Best day</div>
+        <div class="value display">Sunday</div>
+        <div class="delta"><b>2,100</b> visits · <b>127</b> signups</div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-daily">
+    <h2 id="h-daily"><span class="myth">The Daily Feast</span><span class="lit">Visits &amp; signups by day</span></h2>
+    <div class="card chart-card">
+      <div class="legend">
+        <span class="v"><i></i>Visits</span>
+        <span class="s"><i></i>Signups — the gold base of each bar</span>
+      </div>
+      <svg viewBox="0 0 700 292" role="img" aria-label="Daily visits Monday to Sunday, rising from 1,420 to 2,100; signups shown to the same scale as the gold base of each bar, rising from 57 to 127; Sunday, the peak, is marked with a gold star labelled the summit">
+        <g stroke="#e3d8bf" stroke-width="1">
+          <line x1="40" y1="208" x2="692" y2="208"/>
+          <line x1="40" y1="158" x2="692" y2="158"/>
+          <line x1="40" y1="108" x2="692" y2="108"/>
+          <line x1="40" y1="58" x2="692" y2="58"/>
+        </g>
+        <g font-size="10" fill="#6d6354" text-anchor="end">
+          <text x="34" y="261">0</text>
+          <text x="34" y="211">500</text>
+          <text x="34" y="161">1000</text>
+          <text x="34" y="111">1500</text>
+          <text x="34" y="61">2000</text>
+        </g>
+
+        <g fill="#2b4d9b">
+          <rect x="57.5"  y="116" width="58" height="142" rx="3"/>
+          <rect x="150.5" y="98"  width="58" height="160" rx="3"/>
+          <rect x="243.5" y="80"  width="58" height="178" rx="3"/>
+          <rect x="336.5" y="94"  width="58" height="164" rx="3"/>
+          <rect x="429.5" y="66"  width="58" height="192" rx="3"/>
+          <rect x="522.5" y="56"  width="58" height="202" rx="3"/>
+          <rect x="615.5" y="48"  width="58" height="210" rx="3"/>
+        </g>
+        <g fill="#e8a51d" stroke="#fffbf2" stroke-width="1">
+          <rect x="57.5"  y="252.3" width="58" height="5.7"/>
+          <rect x="150.5" y="250.8" width="58" height="7.2"/>
+          <rect x="243.5" y="249.1" width="58" height="8.9"/>
+          <rect x="336.5" y="250.6" width="58" height="7.4"/>
+          <rect x="429.5" y="248.4" width="58" height="9.6"/>
+          <rect x="522.5" y="247.1" width="58" height="10.9"/>
+          <rect x="615.5" y="245.3" width="58" height="12.7"/>
+        </g>
+
+        <g font-family="Impact,'Haettenschweiler','Arial Narrow Bold','Arial Black',sans-serif" font-size="15" fill="#1d3a7c" text-anchor="middle">
+          <text x="86.5"  y="108">1,420</text>
+          <text x="179.5" y="90">1,600</text>
+          <text x="272.5" y="72">1,780</text>
+          <text x="365.5" y="86">1,640</text>
+          <text x="458.5" y="58">1,920</text>
+          <text x="551.5" y="48">2,020</text>
+          <text x="644.5" y="40">2,100</text>
+        </g>
+
+        <path d="M644.5 12 L646.38 17.41 L652.11 17.53 L647.54 20.99 L649.2 26.47 L644.5 23.2 L639.8 26.47 L641.46 20.99 L636.89 17.53 L642.62 17.41 Z" fill="#e8a51d"/>
+        <text x="630" y="23" text-anchor="end" font-style="italic" font-family="Georgia,'Times New Roman',serif" font-size="13" fill="#2b4d9b">the summit</text>
+
+        <line x1="40" y1="258" x2="692" y2="258" stroke="#2b4d9b" stroke-width="2"/>
+
+        <g font-size="12" font-weight="700" fill="#262013" text-anchor="middle">
+          <text x="86.5"  y="279">Mon</text>
+          <text x="179.5" y="279">Tue</text>
+          <text x="272.5" y="279">Wed</text>
+          <text x="365.5" y="279">Thu</text>
+          <text x="458.5" y="279">Fri</text>
+          <text x="551.5" y="279">Sat</text>
+          <text x="644.5" y="279">Sun</text>
+        </g>
+      </svg>
+
+      <table>
+        <thead>
+          <tr><th scope="col"></th><th scope="col">Mon</th><th scope="col">Tue</th><th scope="col">Wed</th><th scope="col">Thu</th><th scope="col">Fri</th><th scope="col">Sat</th><th scope="col" class="best">Sun</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Visits</td><td>1,420</td><td>1,600</td><td>1,780</td><td>1,640</td><td>1,920</td><td>2,020</td><td class="best">2,100</td></tr>
+          <tr><td>Signups</td><td>57</td><td>72</td><td>89</td><td>74</td><td>96</td><td>109</td><td class="best">127</td></tr>
+          <tr><td>Conversion</td><td>4.0%</td><td>4.5%</td><td>5.0%</td><td>4.5%</td><td>5.0%</td><td>5.4%</td><td class="best">6.0%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-roads">
+    <h2 id="h-roads"><span class="myth">The Three Roads</span><span class="lit">Traffic by source</span></h2>
+    <div class="card menu">
+
+      <div class="src">
+        <div class="s-name">
+          <div class="nm display">Direct</div>
+          <span class="ep">Hermes · the straight road</span>
+        </div>
+        <div class="stat">
+          <div class="lbl">Visits</div>
+          <div class="num">5,240 <span class="share">· 42% of all</span></div>
+          <div class="track"><div class="fill v" style="width:100%"></div></div>
+        </div>
+        <div class="stat">
+          <div class="lbl">Signups</div>
+          <div class="num">314</div>
+          <div class="track thin"><div class="fill s" style="width:100%"></div></div>
+        </div>
+        <div class="conv">
+          <div class="lbl">Conversion</div>
+          <div class="num display">6.0%</div>
+        </div>
+      </div>
+
+      <div class="src">
+        <div class="s-name">
+          <div class="nm display">Search</div>
+          <span class="ep">the Oracle · asked and answered</span>
+        </div>
+        <div class="stat">
+          <div class="lbl">Visits</div>
+          <div class="num">4,480 <span class="share">· 36% of all</span></div>
+          <div class="track"><div class="fill v" style="width:85.5%"></div></div>
+        </div>
+        <div class="stat">
+          <div class="lbl">Signups</div>
+          <div class="num">224</div>
+          <div class="track thin"><div class="fill s" style="width:71.3%"></div></div>
+        </div>
+        <div class="conv">
+          <div class="lbl">Conversion</div>
+          <div class="num display">5.0%</div>
+        </div>
+      </div>
+
+      <div class="src">
+        <div class="s-name">
+          <div class="nm display">Social</div>
+          <span class="ep">the Sirens · the distant song</span>
+        </div>
+        <div class="stat">
+          <div class="lbl">Visits</div>
+          <div class="num">2,760 <span class="share">· 22% of all</span></div>
+          <div class="track"><div class="fill v" style="width:52.7%"></div></div>
+        </div>
+        <div class="stat">
+          <div class="lbl">Signups</div>
+          <div class="num">86</div>
+          <div class="track thin"><div class="fill s" style="width:27.4%"></div></div>
+        </div>
+        <div class="conv">
+          <div class="lbl">Conversion</div>
+          <div class="num display">3.1%</div>
+        </div>
+      </div>
+
+      <div class="total">
+        <span>Total</span><i class="dots" aria-hidden="true"></i>
+        <span>12,480 visits</span><i class="dots" aria-hidden="true"></i>
+        <span>624 signups</span><i class="dots" aria-hidden="true"></i>
+        <span class="t-conv">5.0% conversion</span>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="frieze" aria-hidden="true"></div>
+  </footer>
+
+</div>
+</body>
+</html>

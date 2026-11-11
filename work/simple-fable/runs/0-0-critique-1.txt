@@ -1,0 +1,46 @@
+Critique of runs/0-0-1.html
+
+ORIGINALITY — weak. The page is a stock dark dashboard wearing a thin costume.
+1. The "Cthulhu" half is decoration, not design: a small eye sigil and two corner
+   tentacles at opacity .07-.10 that barely register on most screens. Remove them
+   and nothing else changes — the identity is detachable, which means it was never
+   an identity. The prompt asked to COMBINE the two ingredients; here they are
+   merely co-located (abyss palette + sticker).
+2. The "Tech" half is the default move: monospace numerals, dashed gridlines,
+   glowing gradient bars with rounded tops. That is the 2015 crypto-dashboard look,
+   indistinguishable from a thousand dark-theme templates.
+3. The one structural idea the theme offers — depth, a surface with something
+   vast beneath it — was considered during the first pass and dropped. The charts
+   are ordinary upward bars; the abyss never organizes anything.
+4. Palatino small-caps at 11-20px reads as generic tracking, not eldritch. The
+   serif earns nothing at these sizes.
+
+CLARITY — mostly sound, with three real faults.
+1. Visits and signups are split into two charts with duplicated day axes. The
+   reader must correlate Sun 2,100 with Sun 127 across separate blocks, and the
+   duplication buys nothing.
+2. Per-day conversion is omitted entirely. It climbs 4.0% -> 6.0% across the week
+   — the most interesting fact in the data — and the flat 5.0% stat tile hides it.
+   That is useful detail removed, exactly what the brief forbade.
+3. In Sources, only visits get a bar. Signups (and therefore Social's weak 3.1%)
+   must be computed by reading numbers; no visual comparison exists.
+Minor: Sun's value label crowds the top tick; violet 13px numerals are low
+contrast; the sources header row carries two empty grid cells.
+
+WHAT SURVIVES — the stat row, the synthetic chip, exact figures with no
+explanatory filler, honest separate scales, and the restrained copy. Kept.
+
+REVISION (one pass)
+- Merged the two day charts into a single waterline chart: visits rise above a
+  glowing surface line, signups hang below it as tentacle-tip bars on their own
+  labeled downward axis. The abyss now does structural work — the strongest
+  motif the theme offers — while each series keeps its own honest scale, and the
+  duplicated axis is gone. Small "Visits ^ / Signups v" axis labels prevent the
+  down-means-more misread.
+- Added the missing per-day conversion row (4.0 -> 6.0%) under the day labels.
+- Sources rows now carry a second thin violet bar for signups (scaled to the max
+  source), so Social's weakness is visible at a glance; numbers unchanged.
+- Raised tentacle/sucker ambience opacity slightly so the identity registers
+  without touching the content layer; lightened the dim label color and the
+  violet numerals for contrast; gave value labels more headroom.
+- Left alone: data, stat tiles, header, chip, palette, copy level.

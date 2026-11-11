@@ -1,0 +1,58 @@
+Critique of runs/5-4-2.html
+
+ORIGINALITY — harsh read
+
+1. The one original idea on the page — light means conversion — is left half built.
+   Rates glow in the KPI row and in the sources table, but the chart, the largest
+   surface, contains no rate at all. The signups band shows raw counts whose rise
+   mostly restates the visits rise; the actual story of the week (conversion improves
+   toward the weekend, 4.0% Monday to 6.0% Sunday) is nowhere on the page. The owner
+   must do mental division to find the most decision-relevant fact the data holds.
+2. The header ornament is still a stock diamond between rules — the generic luxury
+   glyph every template reaches for, dimmed in the last pass but not rethought. The
+   two ingredients never actually touch anywhere on the page: gold frames things,
+   cyan fills things, and no element fuses them.
+3. Structure remains the dashboard triptych. Defensible (it answers the owner's
+   question directly), but it means identity still lives entirely in surface
+   treatment. The only cure that does not tax clarity is deepening the one motif the
+   page owns — see 1.
+
+CLARITY — harsh read
+
+4. Mobile defect: the sources header keeps its empty .c-bar span, whose grid-area
+   "bar" does not exist in the narrow grid template. The span lands in an implicit
+   extra column, stealing a gap's width from the name column, so the right-aligned
+   Visits / Signups / Rate headers sit about 10px left of the numbers they label.
+   Header-to-column misalignment is a direct clarity failure.
+5. Sources bars are scaled to the largest source (Direct = full width), but nothing
+   says so; a reader could take them for share of total. The adjacent exact numbers
+   keep this from misleading, and an axis or scale note would cost more than it buys
+   on a three-row list — flagged, accepted.
+6. The chart's aria-label describes visits and signups but, once a rate row exists,
+   must carry the rate story too, or screen-reader users get less than sighted ones.
+
+STRONG DECISIONS — preserved
+
+- Direct band captions in the chart (VISITS / SIGNUPS) instead of a detached legend.
+- One page-wide color rule: visits pale cyan, signups gold, derived rates luminous.
+- Exact value labels on every bar; separated bands rather than a dual-scale overlay.
+- Minimal copy, visible synthetic-data caveat, double-hairline luxury panels, abyss
+  depth gradient.
+
+CHANGES APPLIED (one pass, data and purpose unchanged)
+
+a. Daily signup-rate row added beneath the signups band, direct-labeled like the
+   other bands and set in the luminous rate treatment: 4.0 / 4.5 / 5.0 / 4.5 / 5.0 /
+   5.4 / 6.0 percent. The light-means-conversion motif now runs through every
+   section, and the week's real finding is on the page instead of left as mental
+   arithmetic. All values derived from supplied figures only. Fixes 1.
+b. Ornament rebuilt as a fused identity mark: the gold hairlines now meet a small
+   glowing cyan point — luxury rule and bioluminescent light in one element,
+   replacing the stock diamond. Fixes 2.
+c. Sources header's placeholder bar cell hidden in the narrow layout, so header
+   labels align with their columns again. Fixes 4.
+d. Chart aria-label extended with the rate trend. Fixes 6.
+
+Not changed: the triptych structure (see 3), the relative-to-max source bars (see
+5), and the div-based sources rows noted in the previous critique — same reasoning
+holds.

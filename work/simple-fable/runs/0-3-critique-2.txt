@@ -1,0 +1,59 @@
+CRITIQUE OF 0-3-2.html
+
+ORIGINALITY — harsh
+
+1. The fusion now lives in exactly one place. Act I earned its identity (waved waterline,
+   conversion at the surface, signups in the deep), but Act II abandons the sea entirely:
+   it is a plain horizontal bar list wearing opera typography. The page's two ingredients
+   combine in one chart and merely coexist everywhere else.
+
+2. The same ornament divider is stamped twice, identically. A playbill varies its
+   ornaments; mechanical repetition reads as a rubber stamp, not engraving.
+
+3. The masthead is still stock playbill: emblem, small caps, italic note. Defensible — it
+   is clear and quiet — but nothing in it could not have shipped with v1.
+
+CLARITY — harsh
+
+4. The honest shared scale introduced in v2 made Act II's gold bars vestigial: Social's
+   86 signups is an 8px nub sitting alone on its own full-width track row. The encoding is
+   truthful and nearly useless — a whole row of vertical space spent on a mark the eye can
+   barely find. Honesty won; the presentation lost.
+
+5. Two different kinds of number share one gold voice. Daily conversion (a rate) and
+   signup counts are both set in bright gold; only the % sign separates them. Skimmed
+   fast, "4.0%" and "57" sit in adjacent bands wearing the same uniform.
+
+6. Act II spends two track rows per source when the relationship between the two series is
+   a subset — signups are visits. The structure hides that truth; the reader must infer it
+   from the legend and arithmetic.
+
+PRESERVED DELIBERATELY
+
+The waterline chart with daily conversion at the surface, the shared three-item legend,
+the overture tiles, both curtains, the emblem, the palette, printed values on every mark,
+and the minimal copy all stay. The masthead (3) is left alone: changing typography now
+would be churn that risks the page's restraint without a clarity gain, and the available
+system serif cannot honestly impersonate condensed poster type.
+
+CHANGES APPLIED IN 0-3-3.html
+
+A. Nested subset bars in Act II (addresses 1, 4, 6): each source is now one track — the
+   gold signups bar sits inside the teal visits bar, on the same scale. The subset
+   relation is encoded directly, conversion is visible as the filled fraction of each
+   bar's mouth, Social's weakness reads at a glance, and the act loses a row of bulk per
+   source. Both values are printed, stacked and color-keyed beside each bar, so no detail
+   from v2 is lost.
+
+B. Rates set in italic (addresses 5): every conversion value — the legend chip, the
+   percentages at the waterline, the per-source percentages — is now italic gold, while
+   counts stay roman. One small typographic rule separates rate from count everywhere,
+   and italic numerals are native playbill vocabulary.
+
+C. An entr'acte, not a rubber stamp (addresses 2): the divider between the acts becomes a
+   waterline wave flanked by the ruled lines, quoting Act I's surface; the first divider
+   keeps its tentacle curls. Variation where opera would vary, repetition removed.
+
+D. Nothing else is touched. Act II's palette and structure now carry the sea through the
+   subset metaphor itself (the converted fraction at the mouth of each current), which
+   develops the ingredient without adding a word of copy or a drop of decoration.

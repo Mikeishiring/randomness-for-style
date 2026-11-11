@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Week 01 Performance</title>
+<style>
+  :root{
+    --night:#101729;
+    --night-high:#1c2a4b;
+    --ivory:#f2ecdd;
+    --moon:#ece6d2;
+    --muted:#9aa4bd;
+    --gold:#d7b561;
+    --gold-soft:rgba(215,181,97,.38);
+    --cloud:#8fa0bf;
+    --cloud-high:#b9c6e0;
+    --rain:#7f93b8;
+    --curtain:#4a1a27;
+    --serif:"Didot","Bodoni MT","Playfair Display",Georgia,"Times New Roman",serif;
+    --labelw:100px;
+    --sky:72px;
+    --stage:218px;
+    --pit:36px;
+    --dayh:26px;
+    --convh:18px;
+    --barw:34px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--night);
+    background-image:radial-gradient(1100px 540px at 50% -8%,var(--night-high) 0%,rgba(28,42,75,0) 62%);
+    color:var(--ivory);
+    font-family:var(--serif);
+    line-height:1.4;
+    padding:52px 16px 72px;
+  }
+  .sheet{max-width:860px;margin:0 auto}
+
+  /* ornament rule with central diamond */
+  .ornament{display:flex;align-items:center;gap:12px}
+  .ornament::before,.ornament::after{
+    content:"";flex:1;height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold-soft) 30%,var(--gold-soft) 70%,transparent);
+  }
+  .ornament i{width:7px;height:7px;border:1px solid var(--gold);transform:rotate(45deg)}
+
+  header{text-align:center;margin-bottom:44px}
+  h1{
+    font-size:clamp(44px,8vw,68px);
+    font-weight:400;
+    letter-spacing:.04em;
+    margin:18px 0 10px;
+  }
+  .sub{
+    display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;
+    font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);
+    margin-bottom:20px;
+  }
+  .chip{
+    font-size:10px;letter-spacing:.22em;color:var(--gold);
+    border:1px solid var(--gold-soft);border-radius:2px;padding:3px 8px 2px;
+  }
+
+  .totals{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    margin:40px 0 52px;
+  }
+  .stat{text-align:center;padding:4px 8px}
+  .stat + .stat{border-left:1px solid rgba(215,181,97,.22)}
+  .stat .n{font-size:clamp(28px,5.5vw,42px);letter-spacing:.02em}
+  .stat .l{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+
+  .shead{
+    display:flex;align-items:center;gap:14px;
+    font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);
+    margin:52px 0 24px;
+  }
+  .shead::before,.shead::after{content:"";flex:1;height:1px;background:var(--gold-soft)}
+
+  .skykey{
+    display:flex;justify-content:center;align-items:center;gap:8px;
+    font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+    margin-bottom:22px;
+  }
+  .skykey svg{width:20px;height:20px}
+  .skykey .arr{color:var(--gold-soft)}
+
+  /* the theatre: curtain, legs, night backdrop */
+  .theatre{
+    position:relative;
+    padding-top:38px;
+    background-image:
+      radial-gradient(circle 1px at 15% 9%, rgba(236,230,210,.55) 99%, transparent 100%),
+      radial-gradient(circle 1px at 32% 15%, rgba(236,230,210,.38) 99%, transparent 100%),
+      radial-gradient(circle 1.5px at 55% 7%, rgba(236,230,210,.5) 99%, transparent 100%),
+      radial-gradient(circle 1px at 70% 13%, rgba(236,230,210,.4) 99%, transparent 100%),
+      radial-gradient(circle 1px at 88% 10%, rgba(236,230,210,.5) 99%, transparent 100%),
+      radial-gradient(circle 1.5px at 44% 19%, rgba(236,230,210,.3) 99%, transparent 100%);
+  }
+  .theatre::before,.theatre::after{
+    content:"";position:absolute;top:0;bottom:0;width:8px;pointer-events:none;
+    background:linear-gradient(180deg,rgba(74,26,39,.95),rgba(74,26,39,0) 70%);
+  }
+  .theatre::before{left:0}
+  .theatre::after{right:0}
+  .valance{position:absolute;top:0;left:0;width:100%;height:30px;display:block;pointer-events:none}
+
+  /* daily chart: opera-house cross-section */
+  .chart{
+    position:relative;
+    display:grid;grid-template-columns:var(--labelw) repeat(7,1fr);
+  }
+  .chart::before{ /* footlight glow above the stage line */
+    content:"";position:absolute;left:var(--labelw);right:0;
+    top:calc(var(--sky) + var(--stage) - 14px);height:14px;
+    background:linear-gradient(180deg,rgba(215,181,97,0),rgba(215,181,97,.16));
+    pointer-events:none;
+  }
+  .chart::after{ /* continuous stage line */
+    content:"";position:absolute;left:var(--labelw);right:0;
+    top:calc(var(--sky) + var(--stage));height:1px;
+    background:var(--gold-soft);
+    pointer-events:none;
+  }
+  .zone{width:100%}
+  .zone.sky{height:var(--sky);display:flex;justify-content:center;align-items:flex-start}
+  .zone.stage{height:var(--stage);display:flex;align-items:flex-end;justify-content:center}
+  .zone.pit{height:var(--pit);display:flex;flex-direction:column;align-items:center;gap:5px}
+  .zone.dayl{height:var(--dayh);display:flex;align-items:flex-end;justify-content:center}
+  .zone.conv{height:var(--convh);display:flex;align-items:flex-end;justify-content:center}
+
+  .day{display:flex;flex-direction:column;align-items:center;padding:0 6px}
+  .glyph{width:42px;height:42px;flex:none}
+  .bar{
+    position:relative;width:var(--barw);border-radius:2px 2px 0 0;
+    background:linear-gradient(180deg,var(--cloud-high),var(--cloud));
+  }
+  .bar .val{
+    position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);
+    white-space:nowrap;font-size:11px;letter-spacing:.03em;color:var(--cloud-high);
+  }
+  .strip{
+    width:var(--barw);border-radius:0 0 2px 2px;
+    background:linear-gradient(180deg,#e8c87b,#a98a43);
+  }
+  .pval{font-size:11px;color:var(--gold)}
+  .dayl{font-size:13px;letter-spacing:.2em;text-transform:uppercase}
+  .conv{font-size:11px;color:var(--muted)}
+
+  .bandlabels .zone{
+    display:flex;align-items:center;justify-content:flex-end;
+    padding-right:12px;
+    font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+  }
+  .bandlabels .zone.sky,.bandlabels .zone.dayl{visibility:hidden}
+  .bandlabels .zone.pit{flex-direction:row;height:var(--pit)}
+  .bandlabels .zone.stage{height:var(--stage)}
+  .bandlabels .zone.conv{height:var(--convh);align-items:flex-end}
+  .bandlabels .sm{display:none}
+
+  /* sources */
+  .sources{
+    display:grid;grid-template-columns:110px 1fr 86px;
+    column-gap:18px;row-gap:26px;align-items:center;
+  }
+  .chead{
+    font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+    text-align:right;align-self:end;
+  }
+  .sname{display:flex;align-items:center;gap:9px;font-size:15px;letter-spacing:.06em}
+  .sglyph{width:22px;height:22px;flex:none}
+  .sbars{display:grid;row-gap:7px;border-left:1px solid var(--gold-soft)}
+  .sbar{display:flex;align-items:center;gap:10px}
+  .sbar i{display:block;height:12px;border-radius:0 2px 2px 0;min-width:2px}
+  .sbar i.visits{background:linear-gradient(180deg,var(--cloud-high),var(--cloud))}
+  .sbar i.signups{height:10px;background:linear-gradient(180deg,#e8c87b,#a98a43)}
+  .sbar span{font-size:11.5px;white-space:nowrap}
+  .sbar.v span{color:var(--cloud-high)}
+  .sbar.s span{color:var(--gold)}
+  .sconv{font-size:17px;text-align:right}
+
+  @media (max-width:560px){
+    :root{
+      --labelw:48px;--sky:54px;--stage:160px;--pit:26px;--dayh:20px;--convh:15px;--barw:18px;
+    }
+    body{padding:40px 10px 56px}
+    .theatre{padding-top:32px}
+    .theatre::before,.theatre::after{width:5px}
+    .glyph{width:30px;height:30px}
+    .day{padding:0 2px}
+    .zone.pit{gap:3px}
+    .bar .val{font-size:9px}
+    .pval{font-size:9px}
+    .dayl{font-size:10px;letter-spacing:.12em}
+    .conv{font-size:9px}
+    .bandlabels .zone{font-size:8px;letter-spacing:.02em;padding-right:5px}
+    .bandlabels .lg{display:none}
+    .bandlabels .sm{display:inline}
+    .sources{grid-template-columns:76px 1fr 54px;column-gap:10px}
+    .sname{font-size:13px;gap:6px}
+    .sglyph{width:15px;height:15px}
+    .sconv{font-size:14px}
+    .chead{font-size:8px;letter-spacing:.12em}
+    .skykey{font-size:9px;letter-spacing:.1em}
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <header>
+    <div class="ornament" aria-hidden="true"><i></i></div>
+    <h1>Week 01</h1>
+    <p class="sub">Website performance <span class="chip">Synthetic data</span></p>
+    <div class="ornament" aria-hidden="true"><i></i></div>
+  </header>
+
+  <div class="totals">
+    <div class="stat"><div class="n">12,480</div><div class="l">Visits</div></div>
+    <div class="stat"><div class="n">624</div><div class="l">Signups</div></div>
+    <div class="stat"><div class="n">5.0%</div><div class="l">Conversion</div></div>
+  </div>
+
+  <div class="shead">Daily</div>
+
+  <div class="skykey">
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <g fill="#8fa0bf">
+        <circle cx="22" cy="36" r="10"/><circle cx="34" cy="30" r="12"/><circle cx="44" cy="37" r="9"/>
+        <rect x="18" y="33" width="34" height="12" rx="6"/>
+      </g>
+      <g stroke="#7f93b8" stroke-width="4" stroke-linecap="round" fill="none">
+        <path d="M26 51l-3 8"/><path d="M38 51l-3 8"/>
+      </g>
+    </svg>
+    <span class="arr">&#8594;</span>
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <circle cx="32" cy="32" r="13" fill="#ece6d2"/>
+    </svg>
+    <span class="txt">Visits, low to high</span>
+  </div>
+
+  <div class="theatre">
+
+    <svg class="valance" viewBox="0 0 700 30" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 0H700V14a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0Z" fill="#4a1a27"/>
+      <path d="M700 14a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0a25 13 0 0 1 -50 0" fill="none" stroke="rgba(215,181,97,.45)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+    </svg>
+
+    <div class="chart">
+
+      <div class="bandlabels" aria-hidden="true">
+        <div class="zone sky"></div>
+        <div class="zone stage"><span>Visits</span></div>
+        <div class="zone pit"><span>Signups</span></div>
+        <div class="zone dayl"></div>
+        <div class="zone conv"><span><span class="lg">Conversion</span><span class="sm">Conv.</span></span></div>
+      </div>
+
+      <div class="day" role="img" aria-label="Monday: 1,420 visits, 57 signups, 4.0 percent conversion">
+        <div class="zone sky">
+          <svg class="glyph" viewBox="0 0 64 64" aria-hidden="true">
+            <g fill="#8fa0bf">
+              <circle cx="22" cy="36" r="10"/><circle cx="34" cy="30" r="12"/><circle cx="44" cy="37" r="9"/>
+              <rect x="18" y="33" width="34" height="12" rx="6"/>
+            </g>
+            <g stroke="#7f93b8" stroke-width="2.5" stroke-linecap="round" fill="none">
+              <path d="M26 51l-3 7"/><path d="M38 51l-3 7"/>
+            </g>
+          </svg>
+        </div>
+        <div class="zone stage"><div class="bar" style="height:67.6%"><span class="val">1,420</span></div></div>
+        <div class="zone pit"><div class="strip" style="height:16.4%"></div><span class="pval">57</span></div>
+        <div class="zone dayl">Mon</div>
+        <div class="zone conv">4.0%</div>
+      </div>
+
+      <div class="day" role="img" aria-label="Tuesday: 1,600 visits, 72 signups, 4.5 percent conversion">
+        <div class="zone sky">
+          <svg class="glyph" viewBox="0 0 64 64" aria-hidden="true">
+            <g fill="#8fa0bf">
+              <circle cx="22" cy="38" r="10"/><circle cx="34" cy="32" r="12"/><circle cx="44" cy="39" r="9"/>
+              <rect x="18" y="35" width="34" height="12" rx="6"/>
+            </g>
+          </svg>
+        </div>
+        <div class="zone stage"><div class="bar" style="height:76.2%"><span class="val">1,600</span></div></div>
+        <div class="zone pit"><div class="strip" style="height:20.8%"></div><span class="pval">72</span></div>
+        <div class="zone dayl">Tue</div>
+        <div class="zone conv">4.5%</div>
+      </div>
+
+      <div class="day" role="img" aria-label="Wednesday: 1,780 visits, 89 signups, 5.0 percent conversion">
+        <div class="zone sky">
+          <svg class="glyph" viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="40" cy="22" r="8" fill="#ece6d2"/>
+            <g fill="#8fa0bf">
+              <circle cx="20" cy="42" r="9"/><circle cx="31" cy="36" r="11"/><circle cx="41" cy="43" r="8"/>
+              <rect x="16" y="40" width="32" height="11" rx="5.5"/>
+            </g>
+          </svg>
+        </div>
+        <div class="zone stage"><div class="bar" style="height:84.8%"><span class="val">1,780</span></div></div>
+        <div class="zone pit"><div class="strip" style="height:25.7%"></div><span class="pval">89</span></div>
+        <div class="zone dayl">Wed</div>
+        <div class="zone conv">5.0%</div>
+      </div>
+
+      <div class="day" role="img" aria-label="Thursday: 1,640 visits, 74 signups, 4.5 percent conversion">
+        <div class="zone sky">
+          <svg class="glyph" viewBox="0 0 64 64" aria-hidden="true">
+            <g fill="#8fa0bf">
+              <circle cx="22" cy="38" r="10"/><circle cx="34" cy="32" r="12"/><circle cx="44" cy="39" r="9"/>
+              <rect x="18" y="35" width="34" height="12" rx="6"/>
+            </g>
+          </svg>
+        </div>
+        <div class="zone stage"><div class="bar" style="height:78.1%"><span class="val">1,640</span></div></div>
+        <div class="zone pit"><div class="strip" style="height:21.3%"></div><span class="pval">74</span></div>
+        <div class="zone dayl">Thu</div>
+        <div class="zone conv">4.5%</div>
+      </div>
+
+      <div class="day" role="img" aria-label="Friday: 1,920 visits, 96 signups, 5.0 percent conversion">
+        <div class="zone sky">
+          <svg class="glyph" viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="40" cy="22" r="8" fill="#ece6d2"/>
+            <g fill="#8fa0bf">
+              <circle cx="20" cy="42" r="9"/><circle cx="31" cy="36" r="11"/><circle cx="41" cy="43" r="8"/>
+              <rect x="16" y="40" width="32" height="11" rx="5.5"/>
+            </g>
+          </svg>
+        </div>
+        <div class="zone stage"><div class="bar" style="height:91.4%"><span class="val">1,920</span></div></div>
+        <div class="zone pit"><div class="strip" style="height:27.7%"></div><span class="pval">96</span></div>
+        <div class="zone dayl">Fri</div>
+        <div class="zone conv">5.0%</div>
+      </div>
+
+      <div class="day" role="img" aria-label="Saturday: 2,020 visits, 109 signups, 5.4 percent conversion">
+        <div class="zone sky">
+          <svg class="glyph" viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="32" cy="30" r="11" fill="#ece6d2"/>
+          </svg>
+        </div>
+        <div class="zone stage"><div class="bar" style="height:96.2%"><span class="val">2,020</span></div></div>
+        <div class="zone pit"><div class="strip" style="height:31.4%"></div><span class="pval">109</span></div>
+        <div class="zone dayl">Sat</div>
+        <div class="zone conv">5.4%</div>
+      </div>
+
+      <div class="day" role="img" aria-label="Sunday: 2,100 visits, 127 signups, 6.0 percent conversion">
+        <div class="zone sky">
+          <svg class="glyph" viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="32" cy="30" r="11" fill="#ece6d2"/>
+            <path d="M51 10L52.4 13.6 56 15 52.4 16.4 51 20 49.6 16.4 46 15 49.6 13.6Z" fill="#ece6d2"/>
+            <path d="M14 18L15 21 18 22 15 23 14 26 13 23 10 22 13 21Z" fill="#ece6d2"/>
+          </svg>
+        </div>
+        <div class="zone stage"><div class="bar" style="height:100%"><span class="val">2,100</span></div></div>
+        <div class="zone pit"><div class="strip" style="height:36.6%"></div><span class="pval">127</span></div>
+        <div class="zone dayl">Sun</div>
+        <div class="zone conv">6.0%</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="shead">By source</div>
+
+  <div class="sources">
+    <div></div><div></div><div class="chead">Conversion</div>
+
+    <div class="sname">
+      <svg class="sglyph" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="30" r="12" fill="#ece6d2"/>
+      </svg>
+      Direct
+    </div>
+    <div class="sbars" role="img" aria-label="Direct: 5,240 visits, 314 signups">
+      <div class="sbar v"><i class="visits" style="width:100%"></i><span>5,240</span></div>
+      <div class="sbar s"><i class="signups" style="width:6.0%"></i><span>314</span></div>
+    </div>
+    <div class="sconv">6.0%</div>
+
+    <div class="sname">
+      <svg class="sglyph" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="40" cy="22" r="8" fill="#ece6d2"/>
+        <g fill="#8fa0bf">
+          <circle cx="20" cy="42" r="9"/><circle cx="31" cy="36" r="11"/><circle cx="41" cy="43" r="8"/>
+          <rect x="16" y="40" width="32" height="11" rx="5.5"/>
+        </g>
+      </svg>
+      Search
+    </div>
+    <div class="sbars" role="img" aria-label="Search: 4,480 visits, 224 signups">
+      <div class="sbar v"><i class="visits" style="width:85.5%"></i><span>4,480</span></div>
+      <div class="sbar s"><i class="signups" style="width:4.3%"></i><span>224</span></div>
+    </div>
+    <div class="sconv">5.0%</div>
+
+    <div class="sname">
+      <svg class="sglyph" viewBox="0 0 64 64" aria-hidden="true">
+        <g fill="#8fa0bf">
+          <circle cx="22" cy="36" r="10"/><circle cx="34" cy="30" r="12"/><circle cx="44" cy="37" r="9"/>
+          <rect x="18" y="33" width="34" height="12" rx="6"/>
+        </g>
+        <g stroke="#7f93b8" stroke-width="3" stroke-linecap="round" fill="none">
+          <path d="M26 51l-3 7"/><path d="M38 51l-3 7"/>
+        </g>
+      </svg>
+      Social
+    </div>
+    <div class="sbars" role="img" aria-label="Social: 2,760 visits, 86 signups">
+      <div class="sbar v"><i class="visits" style="width:52.7%"></i><span>2,760</span></div>
+      <div class="sbar s"><i class="signups" style="width:1.6%"></i><span>86</span></div>
+    </div>
+    <div class="sconv">3.1%</div>
+  </div>
+
+  <div class="ornament" style="margin-top:56px" aria-hidden="true"><i></i></div>
+
+</div>
+</body>
+</html>

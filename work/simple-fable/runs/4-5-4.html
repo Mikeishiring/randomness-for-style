@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 — Site Performance</title>
+<style>
+  :root{
+    --paper:#f3ecdb;
+    --paper-deep:#ece3cd;
+    --ink:#27211a;
+    --ink-soft:#5c5344;
+    --green:#1c4633;
+    --green-deep:#143527;
+    --brass:#a0762c;
+    --brass-deep:#7c5a1f;
+    --brass-bright:#d3a84f;
+    --rule:#c9bda0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--paper-deep);
+    color:var(--ink);
+    font-family:Georgia,"Times New Roman",serif;
+    padding:28px 16px 48px;
+    line-height:1.4;
+  }
+  .checker{
+    height:12px;
+    background:
+      repeating-conic-gradient(var(--ink) 0% 25%, var(--paper) 0% 50%)
+      0 0 / 12px 12px;
+  }
+  .case{
+    max-width:960px;
+    margin:0 auto;
+    background:var(--paper);
+    border:1px solid var(--ink);
+    outline:3px solid var(--green-deep);
+    outline-offset:4px;
+    box-shadow:0 10px 30px rgba(39,33,26,.25);
+  }
+  .inner{padding:28px 32px 36px}
+
+  /* header */
+  header{
+    display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+    padding-bottom:20px;border-bottom:1px solid var(--ink);
+  }
+  .roundel{
+    width:72px;height:72px;border-radius:50%;
+    background:#fdf9ee;
+    border:3px solid var(--ink);
+    box-shadow:0 0 0 2px #fdf9ee, 0 0 0 3px var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    font-size:30px;font-weight:bold;letter-spacing:1px;
+    flex:none;
+  }
+  h1{
+    font-size:30px;font-weight:normal;letter-spacing:.02em;
+  }
+  .over{
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--green);
+  }
+  .tag{
+    margin-left:auto;
+    position:relative;
+    border:1px solid var(--ink);
+    background:#fdf9ee;
+    padding:7px 14px 6px;
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    transform:rotate(-2deg);
+    color:var(--ink-soft);
+  }
+  .tag::before{ /* entomology pin through the label */
+    content:"";
+    position:absolute;top:-7px;left:50%;
+    width:7px;height:7px;border-radius:50%;
+    background:var(--brass);
+    border:1px solid var(--brass-deep);
+    box-shadow:0 7px 0 -2px var(--brass-deep);
+  }
+
+  /* kpi plaques */
+  .plaques{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    gap:14px;
+    margin:24px 0 30px;
+  }
+  .plaque{
+    border:1px solid var(--ink);
+    background:#fdf9ee;
+    padding:14px 16px 12px;
+    box-shadow:inset 0 0 0 3px var(--paper), inset 0 0 0 4px var(--rule);
+  }
+  .plaque .k{
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .plaque .v{
+    font-size:30px;margin-top:4px;color:var(--green-deep);
+    font-variant-numeric:tabular-nums;
+  }
+  .plaque .s{font-size:13px;color:var(--ink-soft);margin-top:2px}
+  .chip{
+    display:inline-block;width:12px;height:12px;vertical-align:-1px;
+    background:
+      conic-gradient(var(--ink) 0 25%, var(--paper) 0 50%,
+                     var(--ink) 0 75%, var(--paper) 0) ;
+    border:1px solid var(--ink);
+    margin-right:6px;
+  }
+
+  /* chart plates */
+  h2{
+    font-size:13px;font-weight:normal;
+    letter-spacing:.2em;text-transform:uppercase;
+    color:var(--green-deep);
+    margin-bottom:2px;
+  }
+  .plate-no{
+    font-size:11px;font-style:italic;color:var(--ink-soft);
+    letter-spacing:.06em;
+  }
+  .plates{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media (max-width:760px){.plates{grid-template-columns:1fr}}
+  .plate{
+    border:1px solid var(--rule);
+    background:#faf4e4;
+    padding:16px 14px 10px;
+  }
+  .plate svg{display:block;width:100%;height:auto}
+
+  /* pit board: conversion by day */
+  .board{
+    margin-top:22px;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    padding:14px 16px 16px;
+    box-shadow:inset 0 0 0 2px rgba(243,236,219,.18);
+  }
+  .board h2{color:#e8dfc8}
+  .board .cells{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px;
+  }
+  .cell{
+    text-align:center;padding:7px 2px 6px;
+    border:1px solid rgba(243,236,219,.28);
+  }
+  .cell .d{
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:#b3a88e;
+  }
+  .cell .c{
+    font-size:17px;margin-top:3px;color:var(--paper);
+    font-variant-numeric:tabular-nums;
+  }
+  .cell.best{border-color:var(--brass-bright)}
+  .cell.best .c{color:var(--brass-bright)}
+  .chip--board{
+    display:inline-block;width:9px;height:9px;vertical-align:0;
+    background:
+      conic-gradient(var(--paper) 0 25%, var(--ink) 0 50%,
+                     var(--paper) 0 75%, var(--ink) 0);
+    border:1px solid var(--paper);
+    margin-left:5px;
+  }
+  @media (max-width:480px){.cell .c{font-size:14px}}
+
+  /* sources */
+  section.sources{margin-top:30px;padding:16px 16px 18px}
+  .tablewrap{overflow-x:auto}
+  table{
+    width:100%;min-width:600px;border-collapse:collapse;margin-top:12px;
+    font-variant-numeric:tabular-nums;
+  }
+  th{
+    font-size:11px;font-weight:normal;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-soft);
+    text-align:right;padding:6px 10px;
+    border-bottom:1px solid var(--ink);
+  }
+  th:first-child,th.left{text-align:left}
+  td{
+    padding:11px 10px;border-bottom:1px solid var(--rule);
+    text-align:right;font-size:16px;
+  }
+  td:first-child{text-align:left}
+  tr.total td{
+    border-top:1px solid var(--ink);
+    border-bottom:1px solid var(--ink);
+    background:#f0e8d2;
+  }
+  .src{font-size:16px}
+  .latin{font-size:12px;font-style:italic;color:var(--ink-soft)}
+  .track-cell{width:34%}
+  .trackwrap{display:flex;align-items:center;gap:8px}
+  .track{ /* ticks every 10% of visits share */
+    position:relative;flex:1;height:14px;
+    background:
+      repeating-linear-gradient(90deg,
+        transparent 0, transparent calc(10% - 1px),
+        rgba(39,33,26,.22) calc(10% - 1px), rgba(39,33,26,.22) 10%),
+      #f0e8d2;
+    border:1px solid var(--rule);
+  }
+  .share{
+    font-size:12px;color:var(--ink-soft);
+    min-width:46px;text-align:right;white-space:nowrap;
+  }
+  .bar{
+    position:absolute;inset:2px auto 2px 2px;
+    background:linear-gradient(180deg,#265a42,var(--green-deep));
+  }
+  .bar::after{ /* racing stripe */
+    content:"";position:absolute;inset:4px 0;
+    border-top:1px solid rgba(243,236,219,.55);
+  }
+  .conv{color:var(--brass-deep)}
+</style>
+</head>
+<body>
+
+<div class="case">
+  <div class="checker"></div>
+  <div class="inner">
+
+    <header>
+      <div class="roundel">01</div>
+      <div>
+        <div class="over">Site performance</div>
+        <h1>Week 01</h1>
+      </div>
+      <div class="tag">Synthetic data</div>
+    </header>
+
+    <div class="plaques">
+      <div class="plaque">
+        <div class="k">Visits</div>
+        <div class="v">12,480</div>
+      </div>
+      <div class="plaque">
+        <div class="k">Signups</div>
+        <div class="v">624</div>
+      </div>
+      <div class="plaque">
+        <div class="k">Conversion</div>
+        <div class="v">5.0%</div>
+      </div>
+      <div class="plaque">
+        <div class="k"><span class="chip"></span>Best day</div>
+        <div class="v">Sun</div>
+        <div class="s">2,100 visits &middot; 127 signups</div>
+      </div>
+    </div>
+
+    <div class="plates">
+      <div class="plate">
+        <h2>Daily visits</h2>
+        <div class="plate-no">Plate I</div>
+        <svg viewBox="0 0 352 236" role="img" aria-label="Bar chart of daily visits: Mon 1420, Tue 1600, Wed 1780, Thu 1640, Fri 1920, Sat 2020, Sun 2100">
+          <line x1="8" y1="200.5" x2="344" y2="200.5" stroke="#27211a" stroke-width="1"/>
+          <!-- bars -->
+          <g fill="#1c4633">
+            <rect x="19"  y="85"  width="26" height="115"/>
+            <rect x="67"  y="70"  width="26" height="130"/>
+            <rect x="115" y="56"  width="26" height="144"/>
+            <rect x="163" y="67"  width="26" height="133"/>
+            <rect x="211" y="45"  width="26" height="155"/>
+            <rect x="259" y="36"  width="26" height="164"/>
+            <rect x="307" y="30"  width="26" height="170"/>
+          </g>
+          <!-- racing stripe on each bar -->
+          <g stroke="#f3ecdb" stroke-opacity=".55" stroke-width="1">
+            <line x1="30" y1="85"  x2="30" y2="200"/>
+            <line x1="78" y1="70"  x2="78" y2="200"/>
+            <line x1="126" y1="56" x2="126" y2="200"/>
+            <line x1="174" y1="67" x2="174" y2="200"/>
+            <line x1="222" y1="45" x2="222" y2="200"/>
+            <line x1="270" y1="36" x2="270" y2="200"/>
+            <line x1="318" y1="30" x2="318" y2="200"/>
+          </g>
+          <!-- values -->
+          <g font-family="Georgia, 'Times New Roman', serif" font-size="12" fill="#27211a" text-anchor="middle">
+            <text x="32"  y="79">1,420</text>
+            <text x="80"  y="64">1,600</text>
+            <text x="128" y="50">1,780</text>
+            <text x="176" y="61">1,640</text>
+            <text x="224" y="39">1,920</text>
+            <text x="272" y="30">2,020</text>
+            <text x="320" y="24">2,100</text>
+          </g>
+          <!-- day labels -->
+          <g font-family="Georgia, 'Times New Roman', serif" font-size="12" fill="#5c5344" text-anchor="middle">
+            <text x="32"  y="220">Mon</text>
+            <text x="80"  y="220">Tue</text>
+            <text x="128" y="220">Wed</text>
+            <text x="176" y="220">Thu</text>
+            <text x="224" y="220">Fri</text>
+            <text x="272" y="220">Sat</text>
+            <text x="320" y="220">Sun</text>
+          </g>
+          <!-- checkered marker on best day -->
+          <g transform="translate(334,208)">
+            <rect x="0" y="0" width="4" height="4" fill="#27211a"/>
+            <rect x="4" y="4" width="4" height="4" fill="#27211a"/>
+            <rect x="0" y="0" width="8" height="8" fill="none" stroke="#27211a" stroke-width=".8"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="plate">
+        <h2>Daily signups</h2>
+        <div class="plate-no">Plate II</div>
+        <svg viewBox="0 0 352 236" role="img" aria-label="Pinned specimen chart of daily signups: Mon 57, Tue 72, Wed 89, Thu 74, Fri 96, Sat 109, Sun 127">
+          <line x1="8" y1="200.5" x2="344" y2="200.5" stroke="#27211a" stroke-width="1"/>
+          <!-- pin stems -->
+          <g stroke="#7c5a1f" stroke-width="1.6">
+            <line x1="32"  y1="200" x2="32"  y2="121"/>
+            <line x1="80"  y1="200" x2="80"  y2="102"/>
+            <line x1="128" y1="200" x2="128" y2="81"/>
+            <line x1="176" y1="200" x2="176" y2="100"/>
+            <line x1="224" y1="200" x2="224" y2="72"/>
+            <line x1="272" y1="200" x2="272" y2="56"/>
+            <line x1="320" y1="200" x2="320" y2="33"/>
+          </g>
+          <!-- mounted specimens: uniform beetle bodies, pinned through -->
+          <g fill="#27211a">
+            <ellipse cx="32"  cy="128" rx="4" ry="5.5"/>
+            <ellipse cx="80"  cy="109" rx="4" ry="5.5"/>
+            <ellipse cx="128" cy="88"  rx="4" ry="5.5"/>
+            <ellipse cx="176" cy="107" rx="4" ry="5.5"/>
+            <ellipse cx="224" cy="79"  rx="4" ry="5.5"/>
+            <ellipse cx="272" cy="63"  rx="4" ry="5.5"/>
+            <ellipse cx="320" cy="40"  rx="4" ry="5.5"/>
+          </g>
+          <!-- elytra split -->
+          <g stroke="#f3ecdb" stroke-width=".8">
+            <line x1="32"  y1="122.5" x2="32"  y2="133.5"/>
+            <line x1="80"  y1="103.5" x2="80"  y2="114.5"/>
+            <line x1="128" y1="82.5"  x2="128" y2="93.5"/>
+            <line x1="176" y1="101.5" x2="176" y2="112.5"/>
+            <line x1="224" y1="73.5"  x2="224" y2="84.5"/>
+            <line x1="272" y1="57.5"  x2="272" y2="68.5"/>
+            <line x1="320" y1="34.5"  x2="320" y2="45.5"/>
+          </g>
+          <!-- pin heads -->
+          <g fill="#a0762c" stroke="#7c5a1f" stroke-width="1">
+            <circle cx="32"  cy="121" r="3.5"/>
+            <circle cx="80"  cy="102" r="3.5"/>
+            <circle cx="128" cy="81"  r="3.5"/>
+            <circle cx="176" cy="100" r="3.5"/>
+            <circle cx="224" cy="72"  r="3.5"/>
+            <circle cx="272" cy="56"  r="3.5"/>
+            <circle cx="320" cy="33"  r="3.5"/>
+          </g>
+          <!-- values -->
+          <g font-family="Georgia, 'Times New Roman', serif" font-size="12" fill="#27211a" text-anchor="middle">
+            <text x="32"  y="113">57</text>
+            <text x="80"  y="94">72</text>
+            <text x="128" y="73">89</text>
+            <text x="176" y="92">74</text>
+            <text x="224" y="64">96</text>
+            <text x="272" y="48">109</text>
+            <text x="320" y="25">127</text>
+          </g>
+          <!-- day labels -->
+          <g font-family="Georgia, 'Times New Roman', serif" font-size="12" fill="#5c5344" text-anchor="middle">
+            <text x="32"  y="220">Mon</text>
+            <text x="80"  y="220">Tue</text>
+            <text x="128" y="220">Wed</text>
+            <text x="176" y="220">Thu</text>
+            <text x="224" y="220">Fri</text>
+            <text x="272" y="220">Sat</text>
+            <text x="320" y="220">Sun</text>
+          </g>
+          <g transform="translate(334,208)">
+            <rect x="0" y="0" width="4" height="4" fill="#27211a"/>
+            <rect x="4" y="4" width="4" height="4" fill="#27211a"/>
+            <rect x="0" y="0" width="8" height="8" fill="none" stroke="#27211a" stroke-width=".8"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="board">
+      <h2>Conversion by day</h2>
+      <div class="cells">
+        <div class="cell"><div class="d">Mon</div><div class="c">4.0%</div></div>
+        <div class="cell"><div class="d">Tue</div><div class="c">4.5%</div></div>
+        <div class="cell"><div class="d">Wed</div><div class="c">5.0%</div></div>
+        <div class="cell"><div class="d">Thu</div><div class="c">4.5%</div></div>
+        <div class="cell"><div class="d">Fri</div><div class="c">5.0%</div></div>
+        <div class="cell"><div class="d">Sat</div><div class="c">5.4%</div></div>
+        <div class="cell best"><div class="d">Sun<span class="chip--board"></span></div><div class="c">6.0%</div></div>
+      </div>
+    </div>
+
+    <section class="sources plate">
+      <h2>Sources</h2>
+      <div class="plate-no">Plate III</div>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th class="left">Share of visits</th>
+              <th>Visits</th>
+              <th>Signups</th>
+              <th>Conversion</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="src">Direct</div>
+                <div class="latin">Adventus directus</div>
+              </td>
+              <td class="track-cell">
+                <div class="trackwrap">
+                  <div class="track"><div class="bar" style="width:42%"></div></div>
+                  <span class="share">42.0%</span>
+                </div>
+              </td>
+              <td>5,240</td>
+              <td>314</td>
+              <td class="conv">6.0%</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="src">Search</div>
+                <div class="latin">Quaero vulgaris</div>
+              </td>
+              <td class="track-cell">
+                <div class="trackwrap">
+                  <div class="track"><div class="bar" style="width:35.9%"></div></div>
+                  <span class="share">35.9%</span>
+                </div>
+              </td>
+              <td>4,480</td>
+              <td>224</td>
+              <td class="conv">5.0%</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="src">Social</div>
+                <div class="latin">Societas gregaria</div>
+              </td>
+              <td class="track-cell">
+                <div class="trackwrap">
+                  <div class="track"><div class="bar" style="width:22.1%"></div></div>
+                  <span class="share">22.1%</span>
+                </div>
+              </td>
+              <td>2,760</td>
+              <td>86</td>
+              <td class="conv">3.1%</td>
+            </tr>
+            <tr class="total">
+              <td><div class="src">All sources</div></td>
+              <td class="track-cell">
+                <div class="trackwrap">
+                  <div class="track"><div class="bar" style="width:100%"></div></div>
+                  <span class="share">100%</span>
+                </div>
+              </td>
+              <td>12,480</td>
+              <td>624</td>
+              <td class="conv">5.0%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+  <div class="checker"></div>
+</div>
+
+</body>
+</html>

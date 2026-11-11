@@ -1,0 +1,47 @@
+CRITIQUE OF 5-1-3.html
+
+Originality — the ingredients still stop short of the lettering.
+- Three passes in, every disco signal remains non-typographic: a color pair,
+  a ball, some glints. Disco's most recognizable print signature — echoed,
+  offset display type trailing behind the headline — is absent. The H1 is
+  still a gradient-clip, the single most common neon-page trick, exactly as
+  it was in version one.
+- The composition is the stock single-column stack. Assessed deliberately:
+  totals → days → sources is the correct reading order for a weekly report,
+  and a more exotic composition would trade comprehension for novelty, which
+  the brief forbids. Kept — but it caps how original the page can claim to
+  be, and that cap is acknowledged rather than disguised.
+- The depth story is asymmetric. The page darkens downward and the lower
+  card sits deeper, yet the mirror-light flecks sparkle at full strength at
+  every depth. Light that should fade with depth doesn't.
+- The Sunday emphasis stops at the bars: the day row still renders "Sun" in
+  the same dim grey as a Tuesday nobody cares about. The emphasized column
+  isn't yet a column.
+
+Clarity — no new defects introduced by v3; residuals named.
+- The nested pink source bar reads correctly under both plausible
+  interpretations: as signups on the shared absolute scale, and — relative
+  to its own cyan bar — as the conversion fraction. The two coincide by
+  construction (s/v), so there is no wrong reading to fall into.
+- Residual and accepted: chart labels bottom out at 10.5px on narrow
+  phones; "Conv" is terse but matches the KPI's "Visit → signup"; lanes are
+  max-scaled with the absolute numbers adjacent.
+- Considered and rejected on clarity grounds: glossy-floor bar reflections
+  (the mirror-floor disco trope). A faded mirrored bar below a baseline
+  invites a negative-value misread; declined.
+
+Kept — unchanged and still right.
+- The aligned day panels with direct labels; peak-day glow; KPI trio;
+  nested-signups source lanes in a semantic table; flecks, faceted ball,
+  dance-floor baselines; synthetic badge; sr-only daily table; all figures.
+
+Changes applied in 5-1-4.html — three small, each closing a named gap.
+1. Disco echo type: the title now trails two offset echoes behind it, pink
+   then cyan — the era's display-type signature, done with aria-hidden
+   copies so assistive tech still reads "Week 01" once.
+2. The peak column completes: "Sun" in the day row brightens to match its
+   emphasized bars.
+3. Light fades with depth: the two flecks lowest on the page blink dimmer
+   than those near the surface.
+Data, figures, purpose and all other structure unchanged; the page remains
+fully self-contained.

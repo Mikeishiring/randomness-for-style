@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Week 01 Performance</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ece4d2;
+    --panel: #faf6ec;
+    --header-bg: #172232;
+    --header-text: #f3edde;
+    --text: #232a35;
+    --muted: #6d6350;
+    --pillar: #223146;
+    --gold: #c3a155;
+    --gold-deep: #8a681f;
+    --hairline: #ddd2b8;
+    --frame: #1a2433;
+    --track: #f1ead9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d1219;
+      --panel: #151c27;
+      --header-bg: #10161f;
+      --header-text: #ece5d3;
+      --text: #e6dfcd;
+      --muted: #a79c83;
+      --pillar: #a9b8cc;
+      --gold: #c3a155;
+      --gold-deep: #cfa95c;
+      --hairline: #394251;
+      --frame: #394251;
+      --track: #1b2432;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1219;
+    --panel: #151c27;
+    --header-bg: #10161f;
+    --header-text: #ece5d3;
+    --text: #e6dfcd;
+    --muted: #a79c83;
+    --pillar: #a9b8cc;
+    --gold: #c3a155;
+    --gold-deep: #cfa95c;
+    --hairline: #394251;
+    --frame: #394251;
+    --track: #1b2432;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+
+  body {
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(1100px 500px at 15% 0%, rgba(195,161,85,.05), transparent 60%),
+      radial-gradient(900px 600px at 90% 100%, rgba(23,34,50,.06), transparent 60%);
+    color: var(--text);
+    font-family: Optima, Candara, "Gill Sans", "Segoe UI", sans-serif;
+    padding: 24px 16px 40px;
+  }
+
+  .serif { font-family: Didot, "Bodoni MT", Cochin, Georgia, "Times New Roman", serif; }
+
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    background: var(--panel);
+    border: 1px solid var(--frame);
+    box-shadow: 0 0 0 4px var(--bg), 0 0 0 5px var(--gold);
+  }
+
+  .caps {
+    text-transform: uppercase;
+    letter-spacing: .16em;
+    font-size: 11px;
+  }
+
+  /* Header */
+  header { background: var(--header-bg); color: var(--header-text); }
+  .meander {
+    height: 24px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cpath d='M4 18H18V4H8v10h6V8' fill='none' stroke='%23c3a155' stroke-width='2'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-position: center;
+    border-top: 1px solid rgba(195,161,85,.45);
+    border-bottom: 1px solid rgba(195,161,85,.45);
+  }
+  .masthead { text-align: center; padding: 42px 20px 36px; }
+  .masthead .over { color: var(--gold); margin-bottom: 14px; }
+  h1 {
+    font-family: Didot, "Bodoni MT", Cochin, Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: clamp(40px, 8vw, 56px);
+    letter-spacing: .03em;
+  }
+  .laurel { display: block; margin: 14px auto 16px; }
+  .laurel .stem { fill: none; stroke: var(--gold); stroke-width: 1.3; }
+  .laurel .leaf, .laurel .berry { fill: var(--gold); }
+  .tag {
+    display: inline-block;
+    border: 1px solid rgba(195,161,85,.6);
+    color: var(--gold);
+    padding: 5px 14px 4px;
+    font-size: 10px;
+  }
+
+  /* Stat band */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--hairline); }
+  .stat { text-align: center; padding: 26px 8px 24px; }
+  .stat + .stat { border-left: 1px solid var(--hairline); }
+  .stat .label { display: block; color: var(--gold-deep); margin-bottom: 8px; }
+  .stat .num { font-size: clamp(26px, 5vw, 38px); }
+
+  /* Sections */
+  section { padding: 30px clamp(16px, 4vw, 40px) 36px; }
+  section + section { border-top: 1px solid var(--hairline); }
+  h2 {
+    display: flex; align-items: center; gap: 12px;
+    color: var(--gold-deep);
+    font-weight: 600;
+    margin-bottom: 26px;
+  }
+  h2::before {
+    content: "";
+    width: 13px; height: 13px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cpath d='M4 18H18V4H8v10h6V8' fill='none' stroke='%23c3a155' stroke-width='2'/%3E%3C/svg%3E");
+    background-size: 13px 13px;
+    background-repeat: no-repeat;
+  }
+  h2::after { content: ""; flex: 1; height: 1px; background: var(--hairline); margin-left: 4px; }
+
+  /* Daily chart */
+  .chart { display: grid; grid-template-columns: max-content repeat(7, 1fr); }
+  .rlabel {
+    align-self: end;
+    padding: 0 12px 8px 0;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+  .rlabel.mid { padding-bottom: 16px; }
+  .vnum { text-align: center; font-size: 14px; padding-bottom: 6px; align-self: end; }
+  .vnum.peak { color: var(--gold-deep); }
+  .sprig { width: 11px; height: 15px; margin: 0 3px; vertical-align: -3px; }
+  .sprig .s { fill: none; stroke: var(--gold-deep); stroke-width: 1.1; }
+  .sprig .l { fill: var(--gold-deep); }
+  .sprig.flip { transform: scaleX(-1); }
+  .vtrack {
+    height: 180px;
+    display: flex; align-items: flex-end; justify-content: center;
+    border-bottom: 1px solid var(--gold);
+    background: linear-gradient(to top, var(--track), transparent 55%);
+  }
+  .rlabel.axis { border-bottom: 1px solid var(--gold); }
+  .pillar {
+    width: 56%; max-width: 44px;
+    background-color: var(--pillar);
+    background-image: repeating-linear-gradient(90deg, transparent 0 4px, rgba(255,255,255,.14) 4px 6px);
+    position: relative;
+    margin: 0 2px;
+  }
+  .pillar::before, .pillar::after {
+    content: ""; position: absolute; left: -4px; right: -4px; height: 5px;
+    background: var(--pillar);
+  }
+  .pillar::before { top: 0; }
+  .pillar::after { bottom: 0; }
+  .pillar.peak::before { background: var(--gold); }
+  .dname { text-align: center; padding: 10px 0 14px; color: var(--muted); }
+  .snum { text-align: center; font-size: 14px; padding: 2px 0 16px; }
+  .ctrack {
+    height: 64px;
+    display: flex; align-items: flex-end; justify-content: center;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .rlabel.axis2 { border-bottom: 1px solid var(--hairline); }
+  .cbar { width: 26%; max-width: 20px; background: var(--gold); }
+  .cnum { text-align: center; font-size: 12.5px; color: var(--gold-deep); padding-top: 8px; }
+
+  /* Sources table */
+  table { width: 100%; border-collapse: collapse; }
+  th { font-weight: 600; }
+  thead th {
+    text-transform: uppercase; letter-spacing: .14em; font-size: 10px;
+    color: var(--muted);
+    text-align: left;
+    padding: 0 14px 10px 0;
+    border-bottom: 1px solid var(--gold);
+  }
+  thead th.r, td.r { text-align: right; }
+  tbody th, tbody td { padding: 16px 14px 16px 0; border-bottom: 1px solid var(--hairline); vertical-align: middle; }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: none; }
+  tbody th { text-align: left; font-size: 15px; letter-spacing: .04em; }
+  tbody th.peakrow { color: var(--gold-deep); }
+  td:last-child, thead th:last-child { padding-right: 0; }
+  .cell-bar { display: flex; align-items: center; gap: 12px; }
+  .bar { flex: 1; height: 10px; background: var(--track); }
+  .bar span { display: block; height: 100%; background-color: var(--pillar); background-image: repeating-linear-gradient(90deg, transparent 0 4px, rgba(255,255,255,.14) 4px 6px); }
+  .bar.gold span { background: var(--gold); }
+  .cell-bar .n { min-width: 3.4em; text-align: right; font-size: 15px; }
+  td.num { font-size: 15px; }
+  col.c-source { width: 15%; }
+  col.c-visits { width: 44%; }
+  col.c-signups { width: 13%; }
+  col.c-conv { width: 28%; }
+
+  footer .meander { border-bottom: none; }
+  footer { background: var(--header-bg); }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  @media (max-width: 560px) {
+    .vnum { font-size: 10.5px; }
+    .sprig { display: none; }
+    .snum { font-size: 11px; }
+    .cnum { font-size: 10px; }
+    .dname { font-size: 10px; letter-spacing: .08em; }
+    .rlabel { font-size: 8.5px; padding-right: 8px; }
+    tbody th { font-size: 13px; }
+    .cell-bar .n, td.num { font-size: 13px; }
+    .cell-bar { gap: 8px; }
+    col.c-source { width: 20%; }
+    col.c-visits { width: 38%; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="meander" aria-hidden="true"></div>
+    <div class="masthead">
+      <p class="over caps">Website Performance</p>
+      <h1>Week 01</h1>
+      <svg class="laurel" width="150" height="24" viewBox="0 0 150 24" aria-hidden="true">
+        <path class="stem" d="M16 19 Q44 17 68 8"/>
+        <path class="stem" d="M134 19 Q106 17 82 8"/>
+        <ellipse class="leaf" cx="28" cy="15.5" rx="5.5" ry="2" transform="rotate(-20 28 15.5)"/>
+        <ellipse class="leaf" cx="42" cy="13" rx="5.5" ry="2" transform="rotate(-24 42 13)"/>
+        <ellipse class="leaf" cx="55" cy="10.5" rx="5.5" ry="2" transform="rotate(-28 55 10.5)"/>
+        <ellipse class="leaf" cx="65" cy="8.5" rx="5" ry="1.8" transform="rotate(-34 65 8.5)"/>
+        <ellipse class="leaf" cx="122" cy="15.5" rx="5.5" ry="2" transform="rotate(20 122 15.5)"/>
+        <ellipse class="leaf" cx="108" cy="13" rx="5.5" ry="2" transform="rotate(24 108 13)"/>
+        <ellipse class="leaf" cx="95" cy="10.5" rx="5.5" ry="2" transform="rotate(28 95 10.5)"/>
+        <ellipse class="leaf" cx="85" cy="8.5" rx="5" ry="1.8" transform="rotate(34 85 8.5)"/>
+        <circle class="berry" cx="75" cy="6.5" r="2.2"/>
+      </svg>
+      <p class="tag caps">Synthetic data</p>
+    </div>
+    <div class="meander" aria-hidden="true"></div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><span class="label caps">Visits</span><span class="num serif">12,480</span></div>
+    <div class="stat"><span class="label caps">Signups</span><span class="num serif">624</span></div>
+    <div class="stat"><span class="label caps">Conversion</span><span class="num serif">5.0%</span></div>
+  </div>
+
+  <section>
+    <h2 class="caps">Daily</h2>
+
+    <table class="sr-only">
+      <caption>Daily visits, signups and conversion. Sunday was the week's best day.</caption>
+      <thead><tr><th>Day</th><th>Visits</th><th>Signups</th><th>Conversion</th></tr></thead>
+      <tbody>
+        <tr><th>Mon</th><td>1,420</td><td>57</td><td>4.0%</td></tr>
+        <tr><th>Tue</th><td>1,600</td><td>72</td><td>4.5%</td></tr>
+        <tr><th>Wed</th><td>1,780</td><td>89</td><td>5.0%</td></tr>
+        <tr><th>Thu</th><td>1,640</td><td>74</td><td>4.5%</td></tr>
+        <tr><th>Fri</th><td>1,920</td><td>96</td><td>5.0%</td></tr>
+        <tr><th>Sat</th><td>2,020</td><td>109</td><td>5.4%</td></tr>
+        <tr><th>Sun</th><td>2,100</td><td>127</td><td>6.0%</td></tr>
+      </tbody>
+    </table>
+
+    <div class="chart" aria-hidden="true">
+      <div class="rlabel"></div>
+      <div class="vnum serif">1,420</div>
+      <div class="vnum serif">1,600</div>
+      <div class="vnum serif">1,780</div>
+      <div class="vnum serif">1,640</div>
+      <div class="vnum serif">1,920</div>
+      <div class="vnum serif">2,020</div>
+      <div class="vnum serif peak"><svg class="sprig" aria-hidden="true" viewBox="0 0 12 16"><path class="s" d="M9.5 15 Q5.5 10 6.5 2.5"/><ellipse class="l" cx="8" cy="11.5" rx="3" ry="1.2" transform="rotate(-55 8 11.5)"/><ellipse class="l" cx="7" cy="7.5" rx="3" ry="1.2" transform="rotate(-65 7 7.5)"/><ellipse class="l" cx="6.8" cy="3.8" rx="2.6" ry="1.1" transform="rotate(-75 6.8 3.8)"/></svg>2,100<svg class="sprig flip" aria-hidden="true" viewBox="0 0 12 16"><path class="s" d="M9.5 15 Q5.5 10 6.5 2.5"/><ellipse class="l" cx="8" cy="11.5" rx="3" ry="1.2" transform="rotate(-55 8 11.5)"/><ellipse class="l" cx="7" cy="7.5" rx="3" ry="1.2" transform="rotate(-65 7 7.5)"/><ellipse class="l" cx="6.8" cy="3.8" rx="2.6" ry="1.1" transform="rotate(-75 6.8 3.8)"/></svg></div>
+
+      <div class="rlabel axis">Visits</div>
+      <div class="vtrack"><div class="pillar" style="height:67.6%"></div></div>
+      <div class="vtrack"><div class="pillar" style="height:76.2%"></div></div>
+      <div class="vtrack"><div class="pillar" style="height:84.8%"></div></div>
+      <div class="vtrack"><div class="pillar" style="height:78.1%"></div></div>
+      <div class="vtrack"><div class="pillar" style="height:91.4%"></div></div>
+      <div class="vtrack"><div class="pillar" style="height:96.2%"></div></div>
+      <div class="vtrack"><div class="pillar peak" style="height:100%"></div></div>
+
+      <div class="rlabel"></div>
+      <div class="dname caps">Mon</div>
+      <div class="dname caps">Tue</div>
+      <div class="dname caps">Wed</div>
+      <div class="dname caps">Thu</div>
+      <div class="dname caps">Fri</div>
+      <div class="dname caps">Sat</div>
+      <div class="dname caps">Sun</div>
+
+      <div class="rlabel mid">Signups</div>
+      <div class="snum serif">57</div>
+      <div class="snum serif">72</div>
+      <div class="snum serif">89</div>
+      <div class="snum serif">74</div>
+      <div class="snum serif">96</div>
+      <div class="snum serif">109</div>
+      <div class="snum serif">127</div>
+
+      <div class="rlabel axis2">Conversion</div>
+      <div class="ctrack"><div class="cbar" style="height:66.4%"></div></div>
+      <div class="ctrack"><div class="cbar" style="height:74.4%"></div></div>
+      <div class="ctrack"><div class="cbar" style="height:82.7%"></div></div>
+      <div class="ctrack"><div class="cbar" style="height:74.6%"></div></div>
+      <div class="ctrack"><div class="cbar" style="height:82.7%"></div></div>
+      <div class="ctrack"><div class="cbar" style="height:89.2%"></div></div>
+      <div class="ctrack"><div class="cbar" style="height:100%"></div></div>
+
+      <div class="rlabel"></div>
+      <div class="cnum">4.0%</div>
+      <div class="cnum">4.5%</div>
+      <div class="cnum">5.0%</div>
+      <div class="cnum">4.5%</div>
+      <div class="cnum">5.0%</div>
+      <div class="cnum">5.4%</div>
+      <div class="cnum">6.0%</div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="caps">Sources</h2>
+    <table>
+      <caption class="sr-only">Visits, signups and conversion by source. Direct was the week's best source.</caption>
+      <colgroup>
+        <col class="c-source"><col class="c-visits"><col class="c-signups"><col class="c-conv">
+      </colgroup>
+      <thead>
+        <tr>
+          <th scope="col">Source</th>
+          <th scope="col">Visits</th>
+          <th scope="col" class="r">Signups</th>
+          <th scope="col">Conversion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row" class="serif peakrow"><svg class="sprig" aria-hidden="true" viewBox="0 0 12 16"><path class="s" d="M9.5 15 Q5.5 10 6.5 2.5"/><ellipse class="l" cx="8" cy="11.5" rx="3" ry="1.2" transform="rotate(-55 8 11.5)"/><ellipse class="l" cx="7" cy="7.5" rx="3" ry="1.2" transform="rotate(-65 7 7.5)"/><ellipse class="l" cx="6.8" cy="3.8" rx="2.6" ry="1.1" transform="rotate(-75 6.8 3.8)"/></svg>Direct<svg class="sprig flip" aria-hidden="true" viewBox="0 0 12 16"><path class="s" d="M9.5 15 Q5.5 10 6.5 2.5"/><ellipse class="l" cx="8" cy="11.5" rx="3" ry="1.2" transform="rotate(-55 8 11.5)"/><ellipse class="l" cx="7" cy="7.5" rx="3" ry="1.2" transform="rotate(-65 7 7.5)"/><ellipse class="l" cx="6.8" cy="3.8" rx="2.6" ry="1.1" transform="rotate(-75 6.8 3.8)"/></svg></th>
+          <td><div class="cell-bar"><div class="bar"><span style="width:100%"></span></div><span class="n serif">5,240</span></div></td>
+          <td class="num serif r">314</td>
+          <td><div class="cell-bar"><div class="bar gold"><span style="width:99.1%"></span></div><span class="n serif">6.0%</span></div></td>
+        </tr>
+        <tr>
+          <th scope="row" class="serif">Search</th>
+          <td><div class="cell-bar"><div class="bar"><span style="width:85.5%"></span></div><span class="n serif">4,480</span></div></td>
+          <td class="num serif r">224</td>
+          <td><div class="cell-bar"><div class="bar gold"><span style="width:82.7%"></span></div><span class="n serif">5.0%</span></div></td>
+        </tr>
+        <tr>
+          <th scope="row" class="serif">Social</th>
+          <td><div class="cell-bar"><div class="bar"><span style="width:52.7%"></span></div><span class="n serif">2,760</span></div></td>
+          <td class="num serif r">86</td>
+          <td><div class="cell-bar"><div class="bar gold"><span style="width:51.5%"></span></div><span class="n serif">3.1%</span></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    <div class="meander" aria-hidden="true"></div>
+  </footer>
+
+</div>
+</body>
+</html>

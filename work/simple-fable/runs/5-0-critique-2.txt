@@ -1,0 +1,54 @@
+Critique of 5-0-2.html (originality, then clarity), followed by the changes applied in 5-0-3.html.
+
+ORIGINALITY — harsh read
+
+1. The signature idea contradicts itself. 5-0-2 claimed "luminance carries data", then applied
+   it only to the new elements. In the daily chart the brightest objects are the visits bars
+   (full cyan gradient, glow filter); in the sources chart visits are explicitly the dark
+   body and signups the lit organ. One page, two opposite light metaphors. A reader who
+   learns "light = conversion activity" from Sources is told "light = raw traffic" one panel
+   up. That is decoration wearing the costume of a system.
+2. The page frame is still a stock dashboard: chip header, three identical KPI cards, two
+   rounded bordered cards. The ingredients live inside the charts, not in the bones of the
+   page. The speck background remains random confetti any template ships with.
+3. The conversion dot strip was the one data-driven luminous element, and it was tuned by
+   eye, not by rule — see clarity point 5.
+
+CLARITY — harsh read
+
+4. Mobile failure. The daily SVG is a 720-unit viewBox scaled to ~330px on a phone, so the
+   12px value labels render at roughly 5.5px. Every number in the chart becomes decoration
+   exactly where screens are most common. The previous "clarity" pass never checked the
+   smallest viewport.
+5. The conversion dots are dishonest. Radius was mapped linearly (2.5 to 5), so dot AREA
+   grows ~4x between Monday (4.0%) and Sunday (6.0%) — a 1.5x change in the rate shown as
+   4x of glowing ink. The brightening is mood; the sizing is exaggeration.
+6. Accessibility regression: aria-hidden on the sources header row removes the only visible
+   column labels from screen readers, while the per-value unit words are display:none on
+   desktop. Assistive tech hears "Direct, 5,240, 314, 6.0%" with no idea what the numbers are.
+7. The lit segments are 1.6–6% of the track. Comparing a 3.1% sliver to a 6.0% sliver is
+   below what length perception can do; the numeric Conv column does the real work. The
+   segment's 6px inner radius against the 7px body also leaves a misshapen nub at small sizes.
+
+WHAT HOLDS UP (kept unchanged)
+
+- Separate daily panels with declared scale ticks; every value labeled; no dual axis.
+- Lit-fraction sources bar: the absolute lit lengths (314 vs 224 vs 86 on one scale) do
+  compare honestly, and the numbers sit beside them.
+- KPI totals, synthetic-data chip, minimal copy, self-containment, dark-only scheme.
+- The stock frame and speck field stay: replacing the skeleton would trade comprehension
+  for novelty, which the brief forbids.
+
+CHANGES APPLIED IN 5-0-3.html
+
+a. One luminance rule everywhere — the scarcer the signal, the brighter it glows. Visits
+   glow dimmed (SVG filter and KPI), signups glow raised, conversion stays brightest. The
+   daily and sources charts now speak the same light grammar instead of opposite ones.
+b. Mobile legibility: the daily chart sits in a horizontal-scroll guard with a 600px floor,
+   so labels stay readable on phones instead of scaling into noise.
+c. Honest dots: radius now proportional to the square root of the rate (area tracks the
+   value); brightness still rises with the rate. Sunday reads larger and brighter, no
+   longer inflated.
+d. aria-hidden removed from the sources header row; screen readers get the column names.
+e. Lit segment radius matched to its body.
+f. Everything else — data, layout, copy, palette, structure — unchanged.

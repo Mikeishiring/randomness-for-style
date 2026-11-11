@@ -1,0 +1,58 @@
+Critique of 2-5-1.html (harsh, originality and clarity)
+
+ORIGINALITY
+1. The weather ingredient is the least original move available: a row of stock
+   weather-app glyphs (a Feather-style cloud, a generic sun) pasted under an
+   otherwise anonymous bar chart. Nothing about the chart itself is Victorian
+   or meteorological - no register ruling, no instrument framing. Any dashboard
+   could ship Plate I minus the strip.
+2. The two ingredients never actually meet. Weather lives in Plate I, insects
+   live in Plate II, and the page is two separate decorations wearing one
+   parchment. A collector's field register recorded sky conditions above the
+   day's catch; v1 instead wedges the "sky" strip BELOW the bars, between the
+   bars and their day labels, where it reads as a third data row rather than
+   weather over the week.
+3. The insects hint at an encoding they then contradict: widths were 108 / 128
+   / 96, so the Search moth is drawn widest even though Direct leads on every
+   figure. Decorative sizing that half-implies meaning and gets the order wrong
+   is worse than either honest sizing or uniform sizing.
+
+CLARITY
+4. The legend "Conditions follow visits - rain to clear" is cryptic. It neither
+   states the direction of the mapping nor rules out the reading that real
+   weather data was involved.
+5. The weather strip separates the bars from their day labels, adding reading
+   friction exactly where the eye travels; on mobile the condition words are
+   hidden, leaving unexplained glyphs mid-chart.
+6. "rate 6.0%" in the source cards is ambiguous (rate of what?), and sits one
+   line above "42% of visits", inviting the reader to confuse per-source signup
+   rate with share of all visits.
+7. Bug: the mobile stylesheet shrinks the visits band to 130px while the inline
+   bar heights run to 140px, so the tallest bars and their values overflow the
+   band on phones.
+8. Bars float against blank paper with no scale reference beyond the printed
+   values; fine lines (and the register look) are free clarity.
+
+CHANGES APPLIED (one pass)
+- Moved the conditions strip ABOVE the bars: the sky now sits over the week,
+  day labels sit directly under their bars, and the metaphor becomes literal
+  instead of a bolted-on icon row.
+- Rewrote the legend as the mapping itself: "rain -> clear = fewer -> more
+  visits".
+- Added faint ruled register lines behind the bars (one per 500 visits),
+  giving the chart a meteorological-ledger texture that doubles as a reading
+  aid; printed values kept.
+- Resized the specimens to follow the data order: Direct beetle 116, Search
+  moth 108, Social butterfly 84.
+- Disambiguated the card figures: "314 signups - 6.0% signup rate" and
+  "42% of the week's visits".
+- Fixed the mobile overflow by keeping the full-height band at all widths.
+- Retitled Plate II to plain "Sources"; the pinned specimens carry the theme,
+  the heading carries the meaning.
+
+PRESERVED (strong decisions)
+Parchment cabinet frame and double rule; museum-tag stat tiles with punched
+holes; plate numbering; the dual-scale visits/signups bands with values printed
+at the bars; exact share bars with numeric labels; the three hand-drawn pinned
+specimens; all supplied figures and derived totals (12,480 visits, 624 signups,
+5.0% rate) unchanged.

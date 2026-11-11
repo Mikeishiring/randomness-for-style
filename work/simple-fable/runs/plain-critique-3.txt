@@ -1,0 +1,47 @@
+Critique of plain-3.html
+
+ORIGINALITY — one gesture is not an identity.
+1. The ledger voice rests entirely on the double masthead rule; below it, the
+   page relaxes back into competent anonymity. Section heads are bare gray
+   small-caps floating in whitespace — they belong to any minimal template and
+   do not participate in the page's rule system. The ledger device (rules that
+   structure and recur) is stated once and never developed.
+2. The marks themselves are generic: plain bars, plain dots, plain table. The
+   one place the data invites a distinctive mark — the conversion trend — is
+   rendered as the most inert option available.
+
+CLARITY — the conversion row underperforms its own data.
+3. Conversion is an ordered time series, and its story (steady climb, Thursday
+   dip, strong weekend finish) lives in the dot-to-dot differences — which are
+   3 to 4 pixels, read across seven separated cells. Disconnected dots force
+   the reader to reconstruct the line mentally; the series earns an actual
+   connecting line, and the labels already protect against overreading it.
+4. Non-visual readers get three unlabeled sequences of seven numbers each;
+   the day names arrive only afterward, in a separate row, so "1,420" has no
+   programmatic day. Association by visual column position is no association
+   at all for a screen reader.
+5. Minor: the 10px grid gaps mean columns are not exact sevenths of the row,
+   which blocks any overlay mark (like a trend line) from aligning with the
+   columns. The gaps buy nothing — bars are already narrower than their cells.
+
+STRONG DECISIONS — preserved unchanged.
+- KPI band, double rule, serif numerals, paper/ink palette, green=visits /
+  ochre=rate coding, shape-coded keys, bar-attached labels on exact pixel
+  scales, continuous baselines, bare comparative bars in the source table,
+  tabular numerals, minimal copy, dark mode, self-containment. All figures
+  and arithmetic identical.
+
+CHANGES MADE in plain-4.html
+a. The conversion dots are now connected by a thin line (inline SVG, marked
+   decorative, non-scaling stroke) on the same zero-based scale; the dots and
+   per-day % labels stay, so no detail is lost and the trend becomes legible.
+b. Day-section grid gaps removed so every column is an exact seventh; the
+   line's vertices sit precisely on column centers. Bar widths are unchanged
+   (already capped at 42px).
+c. Section heads now extend into a hairline rule across the page — the ledger
+   rule system recurs at every level (double at masthead, ruled heads, hairline
+   baselines) instead of appearing once.
+d. Each daily value gains a visually hidden day prefix (e.g. "Mon 1,420") and
+   the visual day-axis row is marked aria-hidden, so screen readers hear each
+   number with its day exactly once.
+No content, figure, or derived value changed; purpose and data unchanged.

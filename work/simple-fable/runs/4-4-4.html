@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 01 Performance</title>
+<style>
+  :root{
+    --track:#0c1512;        /* midnight racing green */
+    --panel:#12211b;
+    --panel-edge:#24382f;
+    --rule:#203329;
+    --ivory:#ece5d8;
+    --muted:#93a097;
+    --gold:#c9a35c;
+    --gold-soft:#8c7645;
+    --visits:#3f6b58;
+    --signups:#c9a35c;
+    --trackbar:#1e3127;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--track);
+    color:var(--ivory);
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    line-height:1.4;
+    padding:0 16px 48px;
+  }
+  .wrap{max-width:960px;margin:0 auto}
+
+  /* identity band */
+  .checker{
+    height:10px;
+    margin:0 -16px;
+    background:
+      repeating-conic-gradient(rgba(201,163,92,.26) 0% 25%, transparent 0% 50%)
+      0 0 / 16px 16px;
+    border-bottom:1px solid var(--panel-edge);
+  }
+  /* finish line */
+  .fin{
+    height:7px;margin:36px 0 16px;
+    background:
+      repeating-conic-gradient(rgba(201,163,92,.32) 0% 25%, transparent 0% 50%)
+      0 0 / 14px 14px;
+  }
+
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    flex-wrap:wrap;gap:12px 24px;
+    padding:34px 0 22px;
+    border-bottom:1px solid var(--gold-soft);
+  }
+  .nameplate{display:flex;align-items:center;gap:18px}
+  .plate{
+    width:54px;height:54px;flex:none;
+    border:1px solid var(--gold);
+    box-shadow:inset 0 0 0 3px var(--track), inset 0 0 0 4px var(--gold);
+    display:grid;place-items:center;
+    font-family:"Arial Narrow","Helvetica Neue",Arial,sans-serif;
+    font-style:italic;font-weight:700;font-size:1.55rem;color:var(--gold);
+  }
+  .fn{
+    font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--gold);
+  }
+  .nameblock h1{
+    font-family:Didot,"Bodoni MT","Times New Roman",Georgia,serif;
+    font-weight:400;font-size:2.3rem;letter-spacing:.06em;
+  }
+  .badge{
+    font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted);border:1px solid var(--panel-edge);
+    border-radius:2px;padding:3px 8px;
+  }
+
+  /* KPI row */
+  .kpis{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px;background:var(--panel-edge);
+    border:1px solid var(--panel-edge);margin:28px 0;
+  }
+  .kpi{background:var(--panel);padding:18px 20px 16px;position:relative}
+  .kpi::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(var(--gold),var(--gold-soft));
+  }
+  .kpi .label{
+    font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:6px;
+  }
+  .kpi .value{
+    font-family:"Arial Narrow","Helvetica Neue",Arial,sans-serif;
+    font-style:italic;font-weight:700;font-size:2rem;
+    color:var(--gold);letter-spacing:.02em;
+  }
+  .kpi .value small{font-size:1.1rem;color:var(--ivory);font-style:italic}
+
+  /* folio sections with livery stripe */
+  section{
+    background:var(--panel);border:1px solid var(--panel-edge);
+    border-left:none;
+    padding:24px 26px 20px;margin-bottom:24px;position:relative;
+  }
+  section::before{
+    content:"";position:absolute;left:0;top:-1px;bottom:-1px;width:7px;
+    background:
+      linear-gradient(var(--gold),var(--gold-soft)) 0 0/3px 100% no-repeat,
+      linear-gradient(var(--gold-soft),var(--gold-soft)) 5px 0/1px 100% no-repeat;
+  }
+  h2{
+    font-family:Didot,"Bodoni MT","Times New Roman",Georgia,serif;
+    font-weight:400;font-size:1.15rem;letter-spacing:.14em;
+    text-transform:uppercase;margin-bottom:14px;
+    display:flex;align-items:baseline;gap:12px;
+  }
+  h2 .rule{flex:1;height:1px;background:var(--panel-edge)}
+
+  /* timing-sheet / folio ledger */
+  table{width:100%;border-collapse:collapse;table-layout:fixed}
+  thead th{
+    font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--muted);font-weight:400;text-align:left;
+    padding:0 0 9px;border-bottom:1px solid var(--gold-soft);
+  }
+  thead th.lead{width:4.4rem}
+  thead th.num{width:4.8rem;text-align:right}
+  td, tbody th{
+    padding:11px 16px 11px 0;border-bottom:1px solid var(--rule);
+    vertical-align:middle;
+  }
+  td:last-child{padding-right:0}
+  tr:last-child td, tr:last-child tbody th, tbody tr:last-child th{border-bottom:none}
+  tbody th{
+    font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;
+    font-weight:400;text-align:left;
+    color:var(--muted);white-space:nowrap;
+  }
+  td.num{
+    font-family:"Arial Narrow","Helvetica Neue",Arial,sans-serif;
+    font-style:italic;font-weight:600;font-size:1rem;text-align:right;
+  }
+  .best{color:var(--gold)}
+  tr.peak td, tr.peak th{background:#16281f}
+  tr.peak th{color:var(--ivory)}
+  .flag{
+    display:inline-block;width:9px;height:9px;margin-left:8px;
+    vertical-align:0;
+    background:repeating-conic-gradient(var(--gold) 0% 25%, transparent 0% 50%)
+      0 0/4.5px 4.5px;
+  }
+  .cell{display:flex;align-items:center;gap:10px}
+  .v{
+    font-family:"Arial Narrow","Helvetica Neue",Arial,sans-serif;
+    font-style:italic;font-weight:600;font-size:1rem;
+    min-width:3.1rem;text-align:right;flex:none;
+  }
+  .b{flex:1;height:9px;background:var(--trackbar);position:relative}
+  .b i{position:absolute;inset:0 auto 0 0;width:var(--w)}
+  .b i::after{
+    content:"";position:absolute;right:0;top:0;bottom:0;width:2px;
+    background:rgba(236,229,216,.55);
+  }
+  .b.visits i{background:var(--visits)}
+  .b.signups i{background:var(--signups)}
+
+  footer{
+    display:flex;justify-content:space-between;
+    font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  }
+
+  @media (max-width:560px){
+    section{padding:16px 14px 12px}
+    .nameblock h1{font-size:1.6rem}
+    td, tbody th{padding-right:9px}
+    .v{min-width:2.7rem;font-size:.9rem}
+    thead th.lead{width:3.1rem}
+    thead th.num{width:3.4rem}
+  }
+</style>
+</head>
+<body>
+<div class="checker"></div>
+<div class="wrap">
+
+  <header>
+    <div class="nameplate">
+      <div class="plate" aria-hidden="true">01</div>
+      <div class="nameblock">
+        <span class="fn">Week 01</span>
+        <h1>Website Performance</h1>
+      </div>
+    </div>
+    <span class="badge">Synthetic data</span>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi"><div class="label">Visits</div><div class="value">12,480</div></div>
+    <div class="kpi"><div class="label">Signups</div><div class="value">624</div></div>
+    <div class="kpi"><div class="label">Conversion</div><div class="value">5.0<small>%</small></div></div>
+    <div class="kpi"><div class="label">Peak day</div><div class="value">Sun <small>2,100</small><span class="flag" aria-hidden="true"></span></div></div>
+  </div>
+
+  <section>
+    <h2>Daily <span class="rule"></span></h2>
+    <table>
+      <thead>
+        <tr>
+          <th class="lead" scope="col">Day</th>
+          <th scope="col">Visits</th>
+          <th scope="col">Signups</th>
+          <th class="num" scope="col">Conv.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Mon</th>
+          <td><div class="cell"><span class="v">1,420</span><span class="b visits" aria-hidden="true"><i style="--w:67.6%"></i></span></div></td>
+          <td><div class="cell"><span class="v">57</span><span class="b signups" aria-hidden="true"><i style="--w:44.9%"></i></span></div></td>
+          <td class="num">4.0%</td>
+        </tr>
+        <tr>
+          <th scope="row">Tue</th>
+          <td><div class="cell"><span class="v">1,600</span><span class="b visits" aria-hidden="true"><i style="--w:76.2%"></i></span></div></td>
+          <td><div class="cell"><span class="v">72</span><span class="b signups" aria-hidden="true"><i style="--w:56.7%"></i></span></div></td>
+          <td class="num">4.5%</td>
+        </tr>
+        <tr>
+          <th scope="row">Wed</th>
+          <td><div class="cell"><span class="v">1,780</span><span class="b visits" aria-hidden="true"><i style="--w:84.8%"></i></span></div></td>
+          <td><div class="cell"><span class="v">89</span><span class="b signups" aria-hidden="true"><i style="--w:70.1%"></i></span></div></td>
+          <td class="num">5.0%</td>
+        </tr>
+        <tr>
+          <th scope="row">Thu</th>
+          <td><div class="cell"><span class="v">1,640</span><span class="b visits" aria-hidden="true"><i style="--w:78.1%"></i></span></div></td>
+          <td><div class="cell"><span class="v">74</span><span class="b signups" aria-hidden="true"><i style="--w:58.3%"></i></span></div></td>
+          <td class="num">4.5%</td>
+        </tr>
+        <tr>
+          <th scope="row">Fri</th>
+          <td><div class="cell"><span class="v">1,920</span><span class="b visits" aria-hidden="true"><i style="--w:91.4%"></i></span></div></td>
+          <td><div class="cell"><span class="v">96</span><span class="b signups" aria-hidden="true"><i style="--w:75.6%"></i></span></div></td>
+          <td class="num">5.0%</td>
+        </tr>
+        <tr>
+          <th scope="row">Sat</th>
+          <td><div class="cell"><span class="v">2,020</span><span class="b visits" aria-hidden="true"><i style="--w:96.2%"></i></span></div></td>
+          <td><div class="cell"><span class="v">109</span><span class="b signups" aria-hidden="true"><i style="--w:85.8%"></i></span></div></td>
+          <td class="num">5.4%</td>
+        </tr>
+        <tr class="peak">
+          <th scope="row">Sun<span class="flag" role="img" aria-label="peak day"></span></th>
+          <td><div class="cell"><span class="v">2,100</span><span class="b visits" aria-hidden="true"><i style="--w:100%"></i></span></div></td>
+          <td><div class="cell"><span class="v">127</span><span class="b signups" aria-hidden="true"><i style="--w:100%"></i></span></div></td>
+          <td class="num best">6.0%</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Sources <span class="rule"></span></h2>
+    <table>
+      <thead>
+        <tr>
+          <th class="lead" scope="col">Source</th>
+          <th scope="col">Visits</th>
+          <th scope="col">Signups</th>
+          <th class="num" scope="col">Conv.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Direct</th>
+          <td><div class="cell"><span class="v">5,240</span><span class="b visits" aria-hidden="true"><i style="--w:100%"></i></span></div></td>
+          <td><div class="cell"><span class="v">314</span><span class="b signups" aria-hidden="true"><i style="--w:100%"></i></span></div></td>
+          <td class="num best">6.0%</td>
+        </tr>
+        <tr>
+          <th scope="row">Search</th>
+          <td><div class="cell"><span class="v">4,480</span><span class="b visits" aria-hidden="true"><i style="--w:85.5%"></i></span></div></td>
+          <td><div class="cell"><span class="v">224</span><span class="b signups" aria-hidden="true"><i style="--w:71.3%"></i></span></div></td>
+          <td class="num">5.0%</td>
+        </tr>
+        <tr>
+          <th scope="row">Social</th>
+          <td><div class="cell"><span class="v">2,760</span><span class="b visits" aria-hidden="true"><i style="--w:52.7%"></i></span></div></td>
+          <td><div class="cell"><span class="v">86</span><span class="b signups" aria-hidden="true"><i style="--w:27.4%"></i></span></div></td>
+          <td class="num">3.1%</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="fin" aria-hidden="true"></div>
+  <footer>
+    <span>Week 01</span>
+    <span>Mon &ndash; Sun</span>
+  </footer>
+
+</div>
+</body>
+</html>
