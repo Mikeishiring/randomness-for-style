@@ -3,6 +3,8 @@
 const demo={running:false,token:0,timer:null,resolve:null,remaining:0,started:0,move:null,x:0,y:0,hovered:null};
 const demoCursor=$('#demo-cursor');
 const demoReduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+// On narrow screens the dice sit above the page, so the cursor rests below them instead of beside.
+const demoNarrow=()=>matchMedia('(max-width: 860px)').matches;
 function demoWait(ms){return new Promise(resolve=>{demo.resolve=resolve;demo.remaining=ms;if(!document.hidden)demoTick();});}
 function demoTick(){
  if(!demo.resolve||demo.timer)return;
@@ -83,14 +85,14 @@ async function runDemo(){
  roll(0,null,[0,2]);
  // 2. Both dice land and the page changes. Roll the second die, and it changes again.
  await demoWait(160);if(!live())return;
- await demoRestBeside(die,narrow?60:0,narrow?70:120);if(!live())return;
+ await demoRestBeside(die,demoNarrow()?60:0,demoNarrow()?70:120);if(!live())return;
  await demoWait(DEMO_BEATS.readFirst);if(!live())return;
  await demoMoveTo(second,DEMO_AIM.die);if(!live())return;demoHover(second);
  await demoWait(DEMO_BEATS.hover+80);if(!live())return;
  await demoPress(second);if(!live())return;demoHover(null);
  roll(1,null,[undefined,4]);
  await demoWait(160);if(!live())return;
- await demoRestBeside(second,narrow?-60:0,narrow?70:120);if(!live())return;
+ await demoRestBeside(second,demoNarrow()?-60:0,demoNarrow()?70:120);if(!live())return;
  await demoWait(DEMO_BEATS.readPair);if(!live())return;
  // 3. Refine the same pair three times with the same prompt.
  await demoMoveTo(next);if(!live())return;demoHover(next);
@@ -100,18 +102,21 @@ async function runDemo(){
   next.click();
   await demoWait(hold);if(!live())return;
  }
- // 4. Compare the third pass with the plain page, side by side, then return.
+ // 4. Compare the third pass with the plain page, side by side, then return. Phones hide Compare
+ // (the slider does that job there), so the demo skips this beat.
  demoHover(null);
- const compareButton=$('#compare');
- await demoMoveTo(compareButton,[.5,.62]);if(!live())return;demoHover(compareButton);
- await demoWait(DEMO_BEATS.hover);if(!live())return;
- await demoPress(compareButton);if(!live())return;compareButton.click();demoHover(null);
- await demoRestBeside(compareButton,narrow?0:-150,narrow?50:40);if(!live())return;
- await demoWait(DEMO_BEATS.readCompare);if(!live())return;
- await demoMoveTo(compareButton,[.5,.62]);if(!live())return;
- await demoPress(compareButton);if(!live())return;compareButton.click();
+ const compareButton=$('#compare'),comparable=!!compareButton.offsetParent;
+ if(comparable){
+  await demoMoveTo(compareButton,[.5,.62]);if(!live())return;demoHover(compareButton);
+  await demoWait(DEMO_BEATS.hover);if(!live())return;
+  await demoPress(compareButton);if(!live())return;compareButton.click();demoHover(null);
+  await demoRestBeside(compareButton,demoNarrow()?0:-150,demoNarrow()?50:40);if(!live())return;
+  await demoWait(DEMO_BEATS.readCompare);if(!live())return;
+  await demoMoveTo(compareButton,[.5,.62]);if(!live())return;
+  await demoPress(compareButton);if(!live())return;compareButton.click();
+ }
  // 5. Step aside, hand over, and point at what to try next.
- await demoRestBeside(compareButton,narrow?0:90,narrow?56:0);if(!live())return;
+ await demoRestBeside(comparable?compareButton:next,demoNarrow()?0:90,demoNarrow()?56:0);if(!live())return;
  await demoWait(DEMO_BEATS.handover);if(!live())return;
  demo.running=false;demo.token++;showDemoCursor(false);renderDemoToggle();
  if(innerWidth>860)showPointer($('#throw-0 .cube'),'Your turn.','Roll a die, or drag it to choose a face.','above');

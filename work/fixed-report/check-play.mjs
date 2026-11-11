@@ -26,6 +26,7 @@ class Element{
  after(...children){this.afterElements=children;}
  replaceChildren(...children){this.children=children;}
  setAttribute(k,v){this.attrs[k]=v;}
+ getAttribute(k){return this.attrs[k]??null;}
  removeAttribute(k){delete this.attrs[k];}
  addEventListener(k,v){this.events[k]=v;}
  querySelectorAll(selector){const descendants=this.children.flatMap(c=>[c,...c.querySelectorAll('*')]);return selector==='*'?descendants:descendants.filter(c=>c.tagName===selector);}
@@ -288,4 +289,9 @@ vm.runInContext(`{
  celebrateFirstRoll(demoRoll,[0]);celebrateFirstRoll(first,null);celebrateFirstRoll(second,null);
  assert.equal(demoRoll.celebrate,undefined);assert.equal(first.celebrate,true);assert.equal(second.celebrate,undefined);
 }`,context);
-console.log('PASS: the before/after slider is there from the first roll, always compares with the original, follows keys and taps, keeps its place through refinements, rolls and re-renders, steps aside for side-by-side comparison and goes away on a fresh start; only the first real roll is celebrated.');
+// The gallery stays folded until asked for, and folds away again.
+{const toggle=nodes.get('#atlas-toggle'),body=nodes.get('#atlas-body');
+ body.hidden=true;toggle.attrs['aria-expanded']='false';
+ toggle.click();assert.equal(toggle.attrs['aria-expanded'],'true');assert.equal(body.hidden,false);
+ toggle.click();assert.equal(toggle.attrs['aria-expanded'],'false');assert.equal(body.hidden,true);}
+console.log('PASS: the before/after slider is there from the first roll, always compares with the original, follows keys and taps, keeps its place through refinements, rolls and re-renders, steps aside for side-by-side comparison and goes away on a fresh start; the gallery folds open and closed; only the first real roll is celebrated.');

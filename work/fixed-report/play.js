@@ -146,7 +146,11 @@ function updateDieCall(){
  // The waiting die idles with an occasional hop (CSS, with long rests); the other stays still.
  document.querySelectorAll('.die').forEach((die,i)=>die.toggleAttribute?.('data-waiting',i===index));
  const box=stageBox.getBoundingClientRect(),rect=column.getBoundingClientRect(),objectBox=object.getBoundingClientRect(),size=column.querySelector('.cube')?.offsetWidth||100,own=chip.getBoundingClientRect();
- const x=Math.round(rect.left+rect.width/2-box.left-own.width/2),y=Math.round(objectBox.top+objectBox.height/2-size*.95-box.top-own.height-14);
+ // On narrow screens the chip waits beside the die, in the half the second die will take; otherwise above it.
+ const beside=matchMedia('(max-width: 860px)').matches;chip.dataset.side=beside?'right':'above';
+ const middle=objectBox.top+objectBox.height/2-size*.12;
+ const x=Math.round(beside?rect.left+rect.width/2+size*.62+14-box.left:rect.left+rect.width/2-box.left-own.width/2);
+ const y=Math.round(beside?middle-box.top-own.height/2:objectBox.top+objectBox.height/2-size*.95-box.top-own.height-14);
  chip.style.left=x+'px';chip.style.top=y+'px';
 }
 // The label arrives in the order the eye should travel: a dot lands on the target, the leader draws out
@@ -330,11 +334,11 @@ function releaseBeforeSection(){
 }
 function stopBeforeAfterTween(){if(beforeAfter.tween){cancelAnimationFrame(beforeAfter.tween);beforeAfter.tween=null;}}
 // Glide to a value; shape(t) maps progress to position for the hints.
-function tweenBeforeAfter(to,duration=360,shape=null){
+function tweenBeforeAfter(to,duration=360,shape=null,delay=0){
  stopBeforeAfterTween();
  if(typeof requestAnimationFrame!=='function'||matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden){paintBeforeAfter(shape?beforeAfter.value:to);return;}
- const from=beforeAfter.value,start=performance.now(),ease=t=>t<.5?4*t*t*t:1-(-2*t+2)**3/2;
- const step=now=>{const t=Math.min(1,(now-start)/duration);paintBeforeAfter(shape?shape(t):from+(to-from)*ease(t));beforeAfter.tween=t<1?requestAnimationFrame(step):null;};
+ const from=beforeAfter.value,start=performance.now()+delay,ease=t=>t<.5?4*t*t*t:1-(-2*t+2)**3/2;
+ const step=now=>{const t=Math.max(0,Math.min(1,(now-start)/duration));if(now>=start)paintBeforeAfter(shape?shape(t):from+(to-from)*ease(t));beforeAfter.tween=t<1?requestAnimationFrame(step):null;};
  beforeAfter.tween=requestAnimationFrame(step);
 }
 // Called around each render: the before page is released first, so the render sees only the current
@@ -346,14 +350,15 @@ function renderBeforeAfter(){
  if(introMode)paintBeforeAfter(0);else if(item)paintBeforeAfter(beforeAfter.value);else releaseBeforeSection();
  box.hidden=!item;
 }
-// After a change has printed, the knob pops out to show it slides. The first time it pulls a good slice
-// of the original across and holds it there; the next two times it only peeks. Using it ends the hints.
+// After a change has printed and had a moment to be seen, the knob pops out to show it slides. The first
+// time it pulls a good slice of the original across and holds it there; the next two times it only peeks.
+// Using it ends the hints.
 function reportHandoffSettled(container){
  if(container!==$('#report-view')||!beforeAfter.item||beforeAfter.value||beforeAfter.drag||beforeAfter.hints>=3)return;
- const first=!beforeAfter.hints++,reach=first?.3:.07,out=first?.24:.3,hold=first?.64:.5,duration=first?2200:900;
+ const first=!beforeAfter.hints++,reach=first?.3:.07,out=first?.24:.3,hold=first?.64:.5,duration=first?2200:900,settle=first?900:650;
  const knob=$('#before-after').querySelector?.('.ba-knob');
- if(knob?.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)knob.animate([{scale:'1'},{scale:first?'1.3':'1.18',offset:.16},{scale:'.96',offset:.32},{scale:'1',offset:.44},{scale:'1'}],{duration:first?1100:700,easing:'cubic-bezier(.33,1,.68,1)'});
- tweenBeforeAfter(0,duration,t=>t<out?reach*(1-(1-t/out)**3):t<hold?reach:reach*(1-((t-hold)/(1-hold))**2*(3-2*(t-hold)/(1-hold))));
+ if(knob?.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)knob.animate([{scale:'1'},{scale:first?'1.3':'1.18',offset:.16},{scale:'.96',offset:.32},{scale:'1',offset:.44},{scale:'1'}],{duration:first?1100:700,delay:settle,easing:'cubic-bezier(.33,1,.68,1)'});
+ tweenBeforeAfter(0,duration,t=>t<out?reach*(1-(1-t/out)**3):t<hold?reach:reach*(1-((t-hold)/(1-hold))**2*(3-2*(t-hold)/(1-hold))),settle);
 }
 (()=>{
  const handle=$('#ba-handle'),box=$('#before-after');
@@ -501,6 +506,12 @@ function chooseDieFace(index,value){
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  render(false);settleDieGrab(index,true);syncDice3D();
 }
+// The gallery stays folded until it is wanted; opening it settles in from just above.
+$('#atlas-toggle').addEventListener('click',()=>{
+ const toggle=$('#atlas-toggle'),body=$('#atlas-body'),open=toggle.getAttribute('aria-expanded')!=='true';
+ toggle.setAttribute('aria-expanded',String(open));body.hidden=!open;
+ if(open&&body.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)body.animate([{opacity:0,transform:'translateY(-8px)'},{opacity:1,transform:'none'}],{duration:320,easing:'cubic-bezier(.23,1,.32,1)'});
+});
 $('#atlas-ingredient').addEventListener('change',event=>selectPair(currentExperiment().runs.find(run=>run.a===Number(event.target.value)&&run.b===b)));
 function randomIndex(length){
  const values=new Uint32Array(1),limit=0x100000000-(0x100000000%length);do{crypto.getRandomValues(values)}while(values[0]>=limit);return values[0]%length;
