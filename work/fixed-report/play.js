@@ -53,7 +53,7 @@ const railResize=new ResizeObserver(()=>syncRailMarker());railResize.observe($('
 function settlePresentation(){settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
 // The page tells its story in one headline per step; every step stays reachable from the chapters.
 const storyBeats=[
- ['One prompt. One page.','“Create a one-page website that helps its owner understand this week’s website performance.”'],
+ ['You just generated a report.','One prompt, no ingredients: “Create a one-page website that helps its owner understand this week’s website performance.”'],
  ['Now add randomness.','Same prompt, plus two ingredients.'],
  ['Now refine it.','Critique harshly, then commit harder to both ingredients.'],
  ['Again.','The same prompt, run on the last result.'],
@@ -121,12 +121,12 @@ function pointerSpec(){
  const rollFirst={label:'Roll the first die',run:()=>roll(0)},rollSecond={label:'Roll the second die',run:()=>roll(1)};
  const refine={label:stage===1?'Refine it':stage===2?'Refine again':'One more pass',run:()=>nextExperimentStep()};
  if(introMode&&!halfway){
-  if(lastEvent?.kind==='reset')return {target:$('#dice-lab'),title:'Back to plain.',sub:'Same brief, no ingredients. Standard, forgettable, and roughly where everyone else ends up.',side:'right',action:rollFirst};
-  return {target:$('#dice-lab'),title:'Plain prompt, plain page.',sub:'This is what one prompt gets you: tidy, sensible, forgettable. Everyone asking for this report gets roughly this.',side:'right',action:rollFirst};
+  if(lastEvent?.kind==='reset')return {target:$('#dice-lab'),title:'Fresh start.',sub:'The same one-prompt report, no ingredients. Roll for a new pair.',side:'right',action:rollFirst};
+  return {target:$('#dice-lab'),title:'You just generated a report.',sub:'One prompt, no ingredients. Tidy, sensible, and roughly what everyone gets. Now try adding randomness.',side:'right',action:rollFirst};
  }
  if(introMode){
-  const title=lastEvent?.kind==='swap'?'Swapped for '+first+'.':lastEvent?.kind==='choose'?'You picked '+first+'.':'You added randomness: '+first+'.';
-  return {target:$('#ingredient-a'),title,sub:'The prompt behind this report now has to work '+first+' into the design. Roll the other die.',side:'below',action:rollSecond};
+  const title=lastEvent?.kind==='swap'?'Swapped for '+first+'.':lastEvent?.kind==='choose'?'You picked '+first+'.':'You added '+first+'.';
+  return {target:$('#ingredient-a'),title,sub:'One more ingredient and the page changes. Roll the second die.',side:'below',action:rollSecond};
  }
  if(lastEvent&&(lastEvent.kind==='swap'||lastEvent.kind==='choose')){
   const title=(lastEvent.kind==='swap'?'Swapped in ':'You picked ')+lastEvent.name+'.';
@@ -134,19 +134,21 @@ function pointerSpec(){
   return {target:next,title,sub,side:'right',action:stage<4?refine:null};
  }
  if(lastEvent?.kind==='pick')return {target:next,title:'You picked '+pair+'.',sub:'Same prompt, its own page. Refine it, or roll a die from here.',side:'right',action:stage<4?refine:null};
- if(stage===1)return {target:next,title:pair+'.',sub:'Same prompt, two odd ingredients, and the page is already somewhere else. Now push it.',side:'right',action:refine};
+ if(stage===1)return {target:next,title:pair+'.',sub:'Same prompt, two odd ingredients, a whole new page. Now push it.',side:'right',action:refine};
  if(selected.steps[stage-1].html===selected.steps[stage-2].html)return {target:next,title:'Nothing changed this pass.',sub:'The model looked at its own page and kept it. That happens.',side:'right',action:stage<4?refine:null};
  if(stage===2)return {target:next,title:'Refined once.',sub:'The model critiqued its own page, then leaned harder into '+first+' and '+second+'.',side:'right',action:refine};
  if(stage===3)return {target:next,title:'Twice.',sub:'Same prompt, run on its own result. Watch what it keeps and what it drops.',side:'right',action:refine};
- return {target:next,title:'Three passes in.',sub:'More distinct, or just more? Easier to judge side by side.',side:'right',action:{label:'Compare with plain',run:()=>$('#compare').click()}};
+ return {target:next,title:'Three passes in.',sub:'More distinct, or just more? Easier to judge side by side.',side:'right',action:{label:'Compare with no dice',run:()=>$('#compare').click()}};
 }
 // The die waiting to be rolled carries a floating "Click me" above it.
 function updateDieCall(){
  const chip=$('#die-call'),index=view==='dice'&&introMode&&!comparing?(halfway?1:0):-1,stageBox=document.querySelector('.workbench');
- if(index<0||!stageBox?.getBoundingClientRect){chip.hidden=true;return;}
+ if(index<0||!stageBox?.getBoundingClientRect){chip.hidden=true;document.querySelectorAll('.die').forEach(die=>die.removeAttribute?.('data-waiting'));return;}
  const column=document.querySelectorAll('.die')[index],object=column?.querySelector('.die-object');
  if(!column?.getBoundingClientRect||!object){chip.hidden=true;return;}
  chip.hidden=false;
+ // The waiting die idles with an occasional hop (CSS, with long rests); the other stays still.
+ document.querySelectorAll('.die').forEach((die,i)=>die.toggleAttribute?.('data-waiting',i===index));
  const box=stageBox.getBoundingClientRect(),rect=column.getBoundingClientRect(),objectBox=object.getBoundingClientRect(),size=column.querySelector('.cube')?.offsetWidth||100,own=chip.getBoundingClientRect();
  const x=Math.round(rect.left+rect.width/2-box.left-own.width/2),y=Math.round(objectBox.top+objectBox.height/2-size*.95-box.top-own.height-14);
  chip.style.left=x+'px';chip.style.top=y+'px';
@@ -199,13 +201,16 @@ window.addEventListener('resize',()=>updatePointer());
 function setDieCall(index){const label=$('#ingredient-'+(index?'b':'a'));label.textContent='';label.dataset.face='call';}
 function setIngredientLabel(index,name){const label=$('#ingredient-'+(index?'b':'a'));label.textContent=name;label.dataset.face=name.toLowerCase().replace(/[^a-z]+/g,'-');}
 function showBrief(){if(introMode&&!halfway)return;settlePresentation();cancelDiceRoll();introMode=true;halfway=false;lastEvent={kind:'reset'};stage=1;comparing=false;render();}
+// A visitor's first roll of the visit is celebrated once; the demo's authored rolls never count.
+let firstRollCelebrated=false;
+function celebrateFirstRoll(impact,forced){if(forced!=null||firstRollCelebrated)return;firstRollCelebrated=true;impact.celebrate=true;}
 // The first ingredient lands alone. Every saved page needs both, so the plain page stays until the second.
 function addFirstIngredient(forced=null){
  settlePresentation();const swapping=halfway;halfway=true;ingredientsChosen=true;
  const value=forced??randomIndex(INGREDIENTS_A.length);
  lastEvent={kind:swapping?'swap':'add',index:0,name:INGREDIENTS_A[value]};
  selected=currentExperiment().runs.find(run=>run.a===value&&run.b===selected.b);
- const impact=reportImpactFor(()=>render(false));
+ const impact=reportImpactFor(()=>render(false));celebrateFirstRoll(impact,forced);
  tumbleDice([0],[value,selected.b],()=>{syncDice3D();},DICE_THROW.enter,impact);
  landLabels([0],LABEL_LAND.enter);
 }
@@ -213,8 +218,12 @@ function showIngredients(){
  if(!ingredientsChosen){roll();return;}
  settlePresentation();introMode=false;stage=1;render();
 }
+// The press sinks, then the button springs up past its rest and settles: the next pass is on its way.
 function fireNextButton(){
  const button=$('#experiment-next');button.classList.toggle('is-firing',false);void button.offsetWidth;button.classList.toggle('is-firing',true);
+ if(!button.animate||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ button.animate([{translate:'0 3px'},{translate:'0 -7px',offset:.3},{translate:'0 1.5px',offset:.6},{translate:'0 -.5px',offset:.82},{translate:'0 0'}],{duration:520,easing:'cubic-bezier(.33,1,.68,1)'});
+ if(typeof playRefineStamp==='function'&&!introMode&&stage<4)playRefineStamp();
 }
 function nextExperimentStep(){
  promptPeeks.forEach(peek=>peek.close());fireNextButton();
@@ -274,6 +283,92 @@ function showReports(container,entries){
   }
  });
 }
+// Before and after: a small handle at the top of the page wipes the previous step back in from the
+// left, as far as it is dragged. It appears once the page has changed, and nudges itself once to show how.
+const beforeAfter={value:0,item:null,section:null,tween:null,taught:false,drag:null};
+function beforeItem(){
+ if(view!=='dice'||introMode||comparing)return null;
+ const before=stage===1?currentBaseline().steps[0]:selected.steps[stage-2],now=selected.steps[stage-1];
+ return before&&before.html!==now.html?before:null;
+}
+function paintBeforeAfter(value){
+ const box=$('#before-after'),handle=$('#ba-handle'),container=$('#report-view');
+ beforeAfter.value=Math.max(0,Math.min(1,value));
+ box.style.setProperty('--ba',beforeAfter.value.toFixed(4));
+ box.toggleAttribute?.('data-active',beforeAfter.value>0);
+ const percent=Math.round(beforeAfter.value*100);
+ handle.setAttribute('aria-valuenow',String(percent));
+ handle.setAttribute('aria-valuetext',percent?percent+'% of the previous step shown':'Current step');
+ let section=beforeAfter.section;
+ if(beforeAfter.value>0&&beforeAfter.item){
+  if(!section){
+   const cache=previewCaches.get(container);section=cache?.get(beforeAfter.item.file);
+   if(!section){section=addReport(container,beforeAfter.item,'');cache?.set(beforeAfter.item.file,section);}
+   beforeAfter.section=section;section.classList.toggle('report-before',true);section.inert=true;section.setAttribute('aria-hidden','true');
+   const frame=section.querySelector('iframe');if(frame?.dataset.loaded==='true')scrollReport(frame,reportScroll.get(container)||0);
+  }
+  section.hidden=false;section.style.clipPath=`inset(0 ${((1-beforeAfter.value)*100).toFixed(3)}% 0 0)`;
+ }else if(section)releaseBeforeSection();
+}
+function releaseBeforeSection(){
+ const section=beforeAfter.section;if(!section)return;
+ beforeAfter.section=null;section.hidden=true;section.style.clipPath='';section.inert=false;section.removeAttribute('aria-hidden');section.classList.toggle('report-before',false);
+}
+function stopBeforeAfterTween(){if(beforeAfter.tween){cancelAnimationFrame(beforeAfter.tween);beforeAfter.tween=null;}}
+// Glide to a value; the shape(t) maps progress to position for the one-time nudge.
+function tweenBeforeAfter(to,duration=360,shape=null){
+ stopBeforeAfterTween();
+ if(typeof requestAnimationFrame!=='function'||matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden){paintBeforeAfter(shape?0:to);return;}
+ const from=beforeAfter.value,start=performance.now(),ease=t=>t<.5?4*t*t*t:1-(-2*t+2)**3/2;
+ const step=now=>{const t=Math.min(1,(now-start)/duration);paintBeforeAfter(shape?shape(t):from+(to-from)*ease(t));beforeAfter.tween=t<1?requestAnimationFrame(step):null;};
+ beforeAfter.tween=requestAnimationFrame(step);
+}
+// Called around each render: the before page is released first, so the render sees only the
+// current page, then shown again at the same position if the step has not changed.
+function renderBeforeAfter(){
+ const item=beforeItem(),box=$('#before-after');
+ if(item!==beforeAfter.item){stopBeforeAfterTween();beforeAfter.item=item;paintBeforeAfter(0);}
+ else paintBeforeAfter(beforeAfter.value);
+ box.hidden=!item;
+}
+// After the first change has printed, the handle peeks a sliver of the previous page and returns.
+function reportHandoffSettled(container){
+ if(container!==$('#report-view')||beforeAfter.taught||!beforeAfter.item||beforeAfter.value)return;
+ beforeAfter.taught=true;
+ tweenBeforeAfter(0,1500,t=>t<.42?.22*(1-(1-t/.42)**3):t<.58?.22:.22*(1-((t-.58)/.42)**2*(3-2*(t-.58)/.42)));
+}
+(()=>{
+ const handle=$('#ba-handle'),box=$('#before-after');
+ const valueAt=x=>{const rect=$('#report-view').getBoundingClientRect?.();return rect?.width?(x-rect.left)/rect.width:beforeAfter.value;};
+ handle.addEventListener('pointerdown',event=>{
+  if(event.button!==0)return;
+  settlePresentation();stopBeforeAfterTween();beforeAfter.taught=true;
+  beforeAfter.drag={id:event.pointerId,x:event.clientX,moved:false,from:beforeAfter.value};
+  handle.setPointerCapture?.(event.pointerId);box.toggleAttribute?.('data-dragging',true);
+ });
+ handle.addEventListener('pointermove',event=>{
+  const drag=beforeAfter.drag;if(!drag||event.pointerId!==drag.id)return;
+  if(!drag.moved&&Math.abs(event.clientX-drag.x)<4)return;
+  drag.moved=true;event.preventDefault?.();paintBeforeAfter(valueAt(event.clientX));
+ });
+ const end=event=>{
+  const drag=beforeAfter.drag;if(!drag||event.pointerId!==drag.id)return;
+  beforeAfter.drag=null;box.toggleAttribute?.('data-dragging',false);
+  // A tap without a drag opens the comparison halfway, or closes it.
+  if(!drag.moved)tweenBeforeAfter(drag.from>0?0:.5);
+ };
+ handle.addEventListener('pointerup',end);handle.addEventListener('pointercancel',end);
+ handle.addEventListener('keydown',event=>{
+  const steps={ArrowRight:.05,ArrowUp:.05,ArrowLeft:-.05,ArrowDown:-.05,PageUp:.25,PageDown:-.25};
+  let next=null;
+  if(event.key in steps)next=beforeAfter.value+steps[event.key];
+  else if(event.key==='Home'||event.key==='Escape')next=0;else if(event.key==='End')next=1;
+  else if(event.key==='Enter'||event.key===' ')next=beforeAfter.value>0?0:.5;
+  if(next===null)return;
+  event.preventDefault();settlePresentation();beforeAfter.taught=true;
+  if(event.key==='Enter'||event.key===' ')tweenBeforeAfter(next);else{stopBeforeAfterTween();paintBeforeAfter(next);}
+ });
+})();
 function attemptName(value){return value===1?'One-shot':'Refinement '+(value-1);}
 function renderStepper(prefix,value,total){
  $('#'+prefix+'attempt-label').textContent=attemptName(value);
@@ -298,6 +393,7 @@ function renderRail(){
  showStory();syncRailMarker(animate);paintedStep=value;
 }
 function renderResult(){
+ stopBeforeAfterTween();releaseBeforeSection();
  const container=$('#report-view');container.classList.toggle('comparing',comparing);
  const current=introMode?currentBaseline().steps[0]:selected.steps[stage-1];
  // "Other" is each track's one alternative: the earlier model's two prompts compare with each
@@ -306,16 +402,17 @@ function renderResult(){
  const currentLabel=method==='newer'?'Newer model':method==='stronger'?'Stronger prompt':'Original prompt';
  const otherLabel=method==='newer'?'Earlier model':method==='stronger'?'Original prompt':'Stronger prompt';
  let entries=[{item:current,label:''}];
- if(comparing&&comparison==='plain')entries=[{item:currentBaseline().steps[stage-1],label:'Brief only'},{item:current,label:'+ Two ingredients'}];
+ if(comparing&&comparison==='plain')entries=[{item:currentBaseline().steps[stage-1],label:'No ingredients'},{item:current,label:'+ Two ingredients'}];
  if(comparing&&comparison==='other')entries=stage===1&&method!=='newer'?[{item:current,label:'Shared one-shot'}]:method==='original'?[{item:current,label:currentLabel},{item:other,label:otherLabel}]:[{item:other,label:otherLabel},{item:current,label:currentLabel}];
  if(introMode)entries=[{item:current,label:''}];
  container.classList.toggle('comparing',entries.length>1);document.documentElement.dataset.comparing=String(entries.length>1);
  container.dataset.passes=String(!introMode&&entries.length===1?stage-1:0);
  showReports(container,entries);
- $('#pair-title').textContent=introMode?'Brief only':selected.label;
+ renderBeforeAfter();
+ $('#pair-title').textContent=introMode?'No ingredients':selected.label;
  $('#compare').disabled=introMode;
  $('#compare').setAttribute('aria-pressed',String(comparing));
- $('#compare').setAttribute('aria-label',comparing&&comparison==='other'?(method==='newer'?'Compare model generations':'Compare refinement prompts'):'Compare with brief only');
+ $('#compare').setAttribute('aria-label',comparing&&comparison==='other'?(method==='newer'?'Compare model generations':'Compare refinement prompts'):'Compare with no ingredients');
  $('#compare-target').hidden=introMode||!comparing;$('#compare-target').value=comparison;$('#compare-other').textContent=otherLabel;
  $('#view-plain').disabled=false;$('#view-plain').textContent='Refine brief alone →';
  $('#method-original').setAttribute('aria-pressed',String(method==='original'));$('#method-stronger').setAttribute('aria-pressed',String(method==='stronger'));$('#method-newer').setAttribute('aria-pressed',String(method==='newer'));
@@ -324,7 +421,7 @@ function renderResult(){
  $('#method-note').textContent=method==='newer'?'Same prompts, a newer model, its own one-shot.':'Both prompts start from this one-shot.';
  renderRail();
  showPrompt($('#current-prompt'),current.prompt,!introMode&&stage===1?`Combine ${INGREDIENTS_A[a]} and ${INGREDIENTS_B[b]} into a distinct visual identity.`:'');
- $('#prompt-title').textContent=introMode?'Brief only':stage===1?'One-shot prompt':'Refinement prompt';
+ $('#prompt-title').textContent=introMode?'Prompt, no ingredients':stage===1?'One-shot prompt':'Refinement prompt';
  $('#copy-prompt').textContent=stage===1?'Copy with data':'Copy prompt';
  $('#current-critique').textContent=current.critique||'';$('#critique').hidden=!current.critique;
  $('#copy-status').textContent='';$('#share-status').textContent='';
@@ -372,7 +469,7 @@ function render(sync=true){
   // The first die waits on the plain page; the second enters when the first has landed, and leaves on reset.
   if(from===0&&to>0)moveDice(true,[1]);else if(to===0&&from>0)moveDice(false,[1]);
  }
- $('#status').textContent=introMode?(halfway?'First ingredient: '+INGREDIENTS_A[a]+'. Add a second to make the page.':'Brief only. Roll the dice to add two ingredients.'):selected.label+'. '+attemptName(stage)+'.';
+ $('#status').textContent=introMode?(halfway?'First ingredient: '+INGREDIENTS_A[a]+'. Add a second to make the page.':'The report with no ingredients. Roll the dice to add two.'):selected.label+'. '+attemptName(stage)+'.';
 }
 function selectPair(run){settlePresentation();introMode=false;halfway=false;lastEvent={kind:'pick'};ingredientsChosen=true;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();}
 function chooseDieFace(index,value){
@@ -416,7 +513,7 @@ function roll(index,gesture=null,forced=null){
  else if(announce){const i=indices[0];lastEvent={kind:'swap',index:i,name:i?INGREDIENTS_B[values[1]]:INGREDIENTS_A[values[0]]};}
  else lastEvent={kind:'pair'};
  // Selection is immediate; only the old page's cover waits for the die to reach the page.
- const impact=reportImpactFor(()=>render(false));
+ const impact=reportImpactFor(()=>render(false));celebrateFirstRoll(impact,forced);
  tumbleDice(indices,values,()=>{syncDice3D();},gesture||(introduce?DICE_THROW.enter:null),impact);
  landLabels(indices,introduce?LABEL_LAND.enter:LABEL_LAND.roll);
 }

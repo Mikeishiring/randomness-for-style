@@ -6,7 +6,7 @@ const nodes=new Map(),animations=[],soundCalls=[],motion={matches:false};
 for(const i of [0,1]){
  nodes.set('#ingredient-'+(i?'b':'a'),{textContent:''});
  nodes.set('#throw-'+i,{attrs:{},setAttribute(k,v){this.attrs[k]=v}});
- for(const kind of ['cube','die-flight','die-shadow'])nodes.set(`#throw-${i} .${kind}`,{style:{},animate(frames,options){const a={frames,options,currentTime:0,cancelled:false,cancel(){this.cancelled=true}};animations.push(a);return a;}});
+ for(const kind of ['cube','die-flight','die-shadow','die-ground'])nodes.set(`#throw-${i} .${kind}`,{style:{},animate(frames,options){const a={frames,options,currentTime:0,cancelled:false,cancel(){this.cancelled=true}};animations.push(a);return a;}});
 }
 const context=vm.createContext({assert,console,clearTimeout,setTimeout,nodes,animations,soundCalls,motion,performance:{now:()=>100},matchMedia:()=>motion,document:{hidden:false},$:s=>nodes.get(s),resetDieInteraction(){},primeDiceAudio(){},cancelDieSound:i=>soundCalls.push(['cancel',i]),playDiceClatter:(i,plan)=>soundCalls.push(['play',i,plan.contacts]),initDiceSound(){}});
 vm.runInContext(read('dice-math.js')+'\n'+read('dice.js')+`
@@ -67,6 +67,17 @@ for(let n=0;n<300;n++){
  const end=sampleDiePlan(plan,1);near(end.x,plan.endX);assert.ok(Math.abs(end.x)<=5,'it comes back to rest near home');
  quatRotate(end.q,DIE_NORMALS[n%6]).forEach((v,i)=>near(v,[0,-1,0][i]));
 }
+// The tray gives under each landing, less every bounce, with keyframe offsets always in order.
+for(let n=0;n<120;n++){
+ const plan=makeDiePlan({q:dieLanding(n%6),x:0,y:0},n%6,random,116,18,null,n%2?{edge:120}:null);
+ const before=animations.length;animateDiePlan(0,plan,n%6);
+ const ground=animations.slice(before).find(a=>a.frames.some(f=>'scale' in f));assert.ok(ground,'the tray reacts');
+ const offsets=ground.frames.map(f=>f.offset);offsets.forEach((o,k)=>assert.ok(o>=0&&o<=1&&(k===0||o>=offsets[k-1]),'tray keyframes stay in order'));
+ const depth=plan.contacts.map(c=>{const frame=ground.frames.find(f=>f.offset>c&&f.scale!=='1');return 1-Number(frame.scale.split(' ')[0]);});
+ assert.ok(depth[0]>depth[1]&&depth[1]>depth[2],'each landing presses the tray less');
+ stopDieMotion(0);
+}
+animations.length=0;
 // Thrown away from the page, or with the page out of reach, there is no strike.
 assert.equal(makeDiePlan({q:dieLanding(0),x:0,y:0},0,random,116,18,{direction:-1,strength:.5},{edge:80}).knock,null);
 assert.equal(makeDiePlan({q:dieLanding(0),x:0,y:0},0,random,116,18,null,null).knock,null);
@@ -83,7 +94,7 @@ for(let value=0;value<6;value++){
  assert.equal(reached.size,6);
 }
 syncDice3D();let completed=0;
-tumbleDice([0,1],[2,3],()=>completed++);assert.equal(animations.length,6);
+tumbleDice([0,1],[2,3],()=>completed++);assert.equal(animations.length,8,'cube, flight, shadow and tray for each die');
 const old=dieStates.map(s=>s.running);
 old.forEach(r=>{r.animations[0].currentTime=r.plan.duration*.42});
 const inFlight=old.map(r=>sampleDiePlan(r.plan,.42));
@@ -99,7 +110,7 @@ motion.matches=false;document.hidden=true;tumbleDice([0,1],[1,2],()=>completed++
 document.hidden=false;tumbleDice([0,1],[0,4],()=>completed++);[0,1].forEach(i=>stopDieMotion(i));assert.equal(completed,4);assert.equal(activeDiceRoll,null);
 // A click on one die must preserve the other, including an ongoing throw.
 syncDice3D();const still=JSON.stringify(dieStates[1].pose),startCount=animations.length;
-tumbleDice([0],[2,b],()=>completed++);assert.equal(animations.length,startCount+3);assert.equal(JSON.stringify(dieStates[1].pose),still);
+tumbleDice([0],[2,b],()=>completed++);assert.equal(animations.length,startCount+4);assert.equal(JSON.stringify(dieStates[1].pose),still);
 const leftRun=dieStates[0].running;leftRun.animations[0].currentTime=123;
 tumbleDice([1],[2,3],()=>completed++);assert.equal(dieStates[0].running,leftRun);assert.equal(leftRun.animations[0].currentTime,123);assert.ok(!leftRun.animations[0].cancelled);
 const rightRun=dieStates[1].running;rightRun.animations[0].currentTime=150;
@@ -120,5 +131,5 @@ const invitation={kind:'invitation',from:{q:dieLanding(a),x:0,y:0},size:104,dura
 assert.ok(Math.abs(sampleDiePlan(invitation,.25).y)>0);near(sampleDiePlan(invitation,1).y,0);
 motion.matches=true;const beforeReduced={...dieStates[0].pose};moveDieGrab(0,beforeReduced,104);assert.notEqual(dieTopFace(dieStates[0].pose.q),dieTopFace(beforeReduced.q));settleDieGrab(0);assert.equal(dieStates[0].running,null);
 assert.ok(soundCalls.length>0&&soundCalls.every(call=>call[0]==='play'),'every throw schedules its contact sounds');
-console.log('PASS: 96 exact face-up orientations/CSS matrices; 500 varied rigid tumbles; stable face markup; landing/rebound contacts; 300 page strikes in mid-air that never pass the edge and land back home; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion.');
+console.log('PASS: 96 exact face-up orientations/CSS matrices; 500 varied rigid tumbles; stable face markup; landing/rebound contacts; a tray that gives less with each bounce; 300 page strikes in mid-air that never pass the edge and land back home; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion.');
 `,context);

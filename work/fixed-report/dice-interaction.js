@@ -13,7 +13,13 @@ function bindDieInteraction(button,index){
   if(wasHeld&&settle){suppressPointerClick=true;settleDieGrab(index);}
  };
  dieInteractions.set(index,reset);
- button.addEventListener('pointerenter',event=>{if(diceFinePointer.matches&&event.pointerType!=='touch')button.dataset.hover='true';});
+ button.addEventListener('pointerenter',event=>{
+  if(!diceFinePointer.matches||event.pointerType==='touch')return;
+  button.dataset.hover='true';
+  // A small anticipatory wobble, as if the die were picked up and weighed. `rotate` composes with the tilt.
+  const grip=button.querySelector('.die-grip');
+  if(grip?.animate&&!diceMotion.matches&&!dieStates[index].running&&!pointer)grip.animate([{rotate:'0deg'},{rotate:'-4deg',offset:.3},{rotate:'2.5deg',offset:.62},{rotate:'0deg'}],{duration:380,easing:'cubic-bezier(.33,1,.68,1)'});
+ });
  button.addEventListener('pointerleave',()=>{if(!pointer)reset();});
  button.addEventListener('pointerdown',event=>{
   if(!event.isPrimary||event.button!==0||pointer)return;

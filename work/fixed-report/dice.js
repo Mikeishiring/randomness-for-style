@@ -170,6 +170,17 @@ function animateDiePlan(i,plan,value){
  const animations=[$('#throw-'+i+' .cube').animate(rotation,options),$('#throw-'+i+' .die-flight').animate(flight,options),$('#throw-'+i+' .die-shadow').animate(shadow,options)];
  const shade=dieShading[i];
  if(shade){const light=times.map(t=>dieBrightness(i,sampleDiePlan(plan,t).q));shade.pieces.forEach((piece,n)=>animations.push(piece.animate(times.map((t,m)=>({offset:t,filter:`brightness(${light[m][n]})`})),options)));}
+ // The tray gives under each landing, less with every bounce. `scale` composes with its slant.
+ const ground=$('#throw-'+i+' .die-ground');
+ if(ground?.animate&&plan.contacts?.length){
+  const frames=[{offset:0,scale:'1'}];
+  plan.contacts.forEach((contact,n)=>{
+   const depth=[.045,.026,.012][n]||0,next=plan.contacts[n+1]??1,dip=Math.min(contact+.014,next),back=Math.min(contact+.085,next);
+   frames.push({offset:contact,scale:'1'},{offset:dip,scale:`${1-depth} ${1-depth*1.7}`},{offset:back,scale:'1'});
+  });
+  frames.push({offset:1,scale:'1'});
+  animations.push(ground.animate(frames,options));
+ }
  state.running={plan,animations,value};
  animations[0].onfinish=()=>{if(state.running?.animations===animations)finishDie(i);};
 }
@@ -201,4 +212,27 @@ function tumbleDice(indices,values,complete,gesture=null,impact=null){
   $('#throw-'+i).setAttribute('aria-label',`Roll ${i?'second':'first'} die again. ${name}`);
  });
  if(impact&&typeof aimReportImpact==='function')aimReportImpact(impact,sides);
+ // A visitor's first roll of a visit lands with a small burst of confetti around the die.
+ if(impact?.celebrate){const i=indices[0],landing=dieStates[i].running?.plan;if(landing)setTimeout(()=>celebrateDie(i),landing.contacts[0]*landing.duration);}
+}
+function celebrateDie(i){
+ const button=$('#throw-'+i);
+ if(!button?.append||!button.animate||document.hidden||diceMotion.matches)return;
+ const burst=document.createElement('span');burst.className='die-burst';burst.setAttribute('aria-hidden','true');
+ const colours=['#c2432a','#1d261e','#f2b733','#ff6a3d','#2f8a5b','#3d6fd6'],count=36,pieces=[];
+ for(let n=0;n<count;n++){
+  const piece=document.createElement('i');piece.className='burst-'+['dot','streak','chip'][n%3];piece.style.background=colours[n%colours.length];
+  burst.append(piece);pieces.push(piece);
+ }
+ button.append(burst);
+ pieces.forEach((piece,n)=>{
+  const angle=n/count*Math.PI*2+Math.random()*.35,distance=90+Math.random()*100,x=Math.cos(angle)*distance,y=Math.sin(angle)*distance*.75-18,spin=(Math.random()-.5)*6;
+  piece.animate([
+   {transform:`translate(-50%,-50%) rotate(${angle}rad) scale(.3)`,opacity:1},
+   {transform:`translate(calc(-50% + ${x*.78}px),calc(-50% + ${y*.78}px)) rotate(${angle+spin*.5}rad) scale(1)`,opacity:1,offset:.42},
+   {transform:`translate(calc(-50% + ${x}px),calc(-50% + ${y+42}px)) rotate(${angle+spin}rad) scale(.6)`,opacity:0}
+  ],{duration:760+Math.random()*460,delay:(n%4)*14,easing:'cubic-bezier(.16,1,.3,1)',fill:'both'});
+ });
+ setTimeout(()=>burst.remove(),1500);
+ if(typeof playCelebration==='function')playCelebration(i);
 }

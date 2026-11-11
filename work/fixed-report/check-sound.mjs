@@ -21,6 +21,7 @@ class AudioContext{
  createGain(){return new AudioNode('gain')}
  createOscillator(){return new AudioNode('tone')}
  createStereoPanner(){return new AudioNode('pan')}
+ createConvolver(){return new AudioNode('room')}
 }
 const context=vm.createContext({assert,window:{AudioContext},navigator:{vibrate:pattern=>{buzzes.push(pattern);return true}},document:{hidden:false,querySelector:()=>button},localStorage:{getItem:key=>storage.get(key)??null,setItem:(key,value)=>storage.set(key,value)},performance:{now:()=>100},setTimeout:(fn,delay)=>{const id=++nextTimer;timers.set(id,{fn,delay});return id},clearTimeout:id=>timers.delete(id),button,contexts,nodes});
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
@@ -75,8 +76,16 @@ const swishStart=nodes.length;vm.runInContext('playReportSwish("left",640)',cont
 const swish=nodes.slice(swishStart),pan=swish.find(n=>n.kind==='pan'),sweep=swish.find(n=>n.kind==='filter');
 assert.ok(pan.pan.events[0].value<0&&pan.pan.events.at(-1).value>0,'the swish moves from the left edge across');
 assert.ok(sweep.frequency.events.at(-1).value>sweep.frequency.events[0].value,'the swish rises');
+// The first roll's chime rises; a refinement's print is a short descending pass with a light press.
+const chimeStart=nodes.length;vm.runInContext('playCelebration(0)',context);await settle();
+const notes=nodes.slice(chimeStart).filter(n=>n.kind==='tone'&&n.type==='sine'&&n.frequency.events[0].value>1000&&n.frequency.events[0].value<2200).map(n=>[n.started,n.frequency.events[0].value]);
+assert.equal(notes.length,4);notes.forEach((note,k)=>{if(k){assert.ok(note[0]>notes[k-1][0]&&note[1]>notes[k-1][1],'the chime rises note by note');}});
+const stampStart=nodes.length;vm.runInContext('playRefineStamp()',context);await settle();
+const pass=nodes.slice(stampStart).find(n=>n.kind==='filter');assert.ok(pass.frequency.events.at(-1).value<pass.frequency.events[0].value,'the print pass descends');
+assert.ok(nodes.slice(stampStart).some(n=>n.kind==='tone'&&n.frequency.events[0].value<=130),'the print lands with a press');
+assert.ok(nodes.some(n=>n.kind==='room'),'hits share a small room');
 cancelDieSoundSafe();
 function cancelDieSoundSafe(){vm.runInContext('[0,1,2].forEach(cancelDieSound)',context);}
 
 const muted=vm.createContext({window:{AudioContext},document:{querySelector:()=>button},localStorage:{getItem:()=> 'off'}});vm.runInContext(source+'\ninitDiceSound();',muted);assert.equal(button.attrs['aria-pressed'],'false');
-console.log('PASS: no autoplay; per-die materials; landings on their contacts, fading, first with weight; varied rattles; page knock at the strike; drag ticks; travelling paper swish; contact vibrations; mute and cancellation stop sound and vibration; hidden-page guard; stored mute. Audio graph doubles, not a listening test.');
+console.log('PASS: no autoplay; per-die materials; landings on their contacts, fading, first with weight; varied rattles; page knock at the strike; drag ticks; travelling paper swish; rising first-roll chime; descending refine print; shared room; contact vibrations; mute and cancellation stop sound and vibration; hidden-page guard; stored mute. Audio graph doubles, not a listening test.');

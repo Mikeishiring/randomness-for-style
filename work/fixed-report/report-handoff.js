@@ -29,26 +29,27 @@ function hitReport(impact,hit){
  if(hit.knock)knockReport(hit);
  landReportImpact(impact);
 }
-// The struck page takes a small shove away from the die and springs back; a ring in the die's
-// colour marks the point of contact.
+// The struck page gives first: its struck edge compresses for a frame or two, then the whole page
+// takes a small shove away from the die and springs back. A ring in the die's colour marks the contact.
 function knockReport(hit){
  const view=document.querySelector?.('#report-view');
  if(!view?.animate||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
  const rect=view.getBoundingClientRect(),away=hit.side==='left'?1:-1,force=.65+.55*Math.max(0,Math.min(1,hit.strength||0));
  const lever=Math.max(-1,Math.min(1,(hit.y-rect.height/2)/(rect.height/2||1))),turn=-lever*away*.3*force;
- const spring='cubic-bezier(.33,1,.68,1)';
+ const spring='cubic-bezier(.33,1,.68,1)',origin=`${away>0?'100%':'0%'} ${Math.round(hit.y)}px`;
  view.animate([
-  {transform:'none',easing:spring},
-  {transform:`translateX(${7*force*away}px) rotate(${turn}deg)`,offset:.13,easing:spring},
-  {transform:`translateX(${-2.6*force*away}px) rotate(${-turn*.4}deg)`,offset:.34,easing:spring},
-  {transform:`translateX(${1*force*away}px)`,offset:.56,easing:spring},
-  {transform:`translateX(${-.35*force*away}px)`,offset:.78,easing:spring},
-  {transform:'none'}
- ],{duration:620});
+  {transform:'none',transformOrigin:origin,easing:'cubic-bezier(.2,0,.4,1)'},
+  {transform:`translateX(${2*force*away}px) scaleX(${1-.007*force})`,transformOrigin:origin,offset:.07,easing:spring},
+  {transform:`translateX(${7*force*away}px) rotate(${turn}deg)`,transformOrigin:origin,offset:.2,easing:spring},
+  {transform:`translateX(${-2.4*force*away}px) rotate(${-turn*.4}deg)`,transformOrigin:origin,offset:.4,easing:spring},
+  {transform:`translateX(${.9*force*away}px)`,transformOrigin:origin,offset:.6,easing:spring},
+  {transform:`translateX(${-.3*force*away}px)`,transformOrigin:origin,offset:.8,easing:spring},
+  {transform:'none',transformOrigin:origin}
+ ],{duration:680});
  const mark=document.createElement('span');mark.className='report-knock';mark.dataset.die=String(hit.die);
  mark.style.left=hit.side==='left'?'0':'100%';mark.style.top=Math.max(12,Math.min(rect.height-12,hit.y))+'px';
  view.append(mark);
- mark.animate([{transform:'translate(-50%,-50%) scale(.35)',opacity:.7},{transform:'translate(-50%,-50%) scale(1.6)',opacity:0}],{duration:520,easing:'cubic-bezier(.16,1,.3,1)'}).onfinish=()=>mark.remove();
+ mark.animate([{transform:'translate(-50%,-50%) scale(.3)',opacity:.9},{transform:'translate(-50%,-50%) scale(1.15)',opacity:.55,offset:.35},{transform:'translate(-50%,-50%) scale(1.9)',opacity:0}],{duration:560,easing:'cubic-bezier(.16,1,.3,1)'}).onfinish=()=>mark.remove();
 }
 function releaseReportHandoff(container,keepCover=false){
  const active=reportHandoffs.get(container);if(!active)return;
@@ -93,7 +94,7 @@ function handoffReport(container,previous,incoming){
   active.animation=previous.animate([{clipPath:'inset(0 0 0 0)'},{clipPath:REPORT_WIPES[origin]||REPORT_WIPES.top}],timing);
   active.sweeps=reportSweeps(container,origin,previous);
   if(origin!=='top'&&typeof playReportSwish==='function')playReportSwish(origin,timing.duration);
-  active.animation.onfinish=()=>{if(reportHandoffs.get(container)===active)settleReportHandoff(container);};
+  active.animation.onfinish=()=>{if(reportHandoffs.get(container)===active){settleReportHandoff(container);if(typeof reportHandoffSettled==='function')reportHandoffSettled(container);}};
  };
  active.reveal=()=>{
   if(reportHandoffs.get(container)!==active||active.animation)return;

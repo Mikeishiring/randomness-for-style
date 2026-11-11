@@ -161,7 +161,7 @@ for(let next=2;next<=4;next++){
 }
 assert.equal(nodes.get('#next-label').textContent,'Roll a new pair');assert.equal(nodes.get('#next-cue').textContent,'→');
 const finishedPair=selected;nodes.get('#experiment-next').click();assert.equal(stage,1);assert.notEqual(selected,finishedPair);
-const resetPair=selected;nodes.get('#reset').click();assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#story-title').textContent,'One prompt. One page.');assert.equal(document.activeElement,nodes.get('#experiment-next'));
+const resetPair=selected;nodes.get('#reset').click();assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#story-title').textContent,'You just generated a report.');assert.equal(document.activeElement,nodes.get('#experiment-next'));
 assert.equal(nodes.get('#next-label').textContent,'Add randomness');
 nodes.get('#experiment-next').click();assert.equal(introMode,true);assert.equal(halfway,true);assert.equal(nodes.get('#next-label').textContent,'Add another');assert.equal(document.documentElement.dataset.journey,'half');
 const halfPair=selected;nodes.get('#experiment-next').click();assert.equal(introMode,false);assert.equal(halfway,false);assert.equal(stage,1);assert.equal(selected.a,halfPair.a);
@@ -205,7 +205,7 @@ const guideTasks=new Map();let guideID=0;
 const home=vm.createContext({...context,document:homeDocument,nodes:homeNodes,location:{search:'',pathname:'/',href:'https://randomness-for-style.vercel.app/'},history:{replaceState(_a,_b,url){this.url=url}},setTimeout(fn,delay){const id=++guideID;guideTasks.set(id,{fn,delay});return id},clearTimeout(id){guideTasks.delete(id)}});
 vm.runInContext(read('report-handoff.js')+'\n'+read('play.js'),home);
 vm.runInContext(`
-assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#stage-2').disabled,true);assert.equal(nodes.get('#story-title').textContent,'One prompt. One page.');assert.equal(nodes.get('#reset').hidden,true);
+assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#stage-2').disabled,true);assert.equal(nodes.get('#story-title').textContent,'You just generated a report.');assert.equal(nodes.get('#reset').hidden,true);
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,STRONGER_BASELINE.steps[0].html);
 assert.equal(nodes.get('#current-prompt').textContent,STRONGER_BASELINE.steps[0].prompt);
 assert.ok(history.url.includes('start=original'));assert.ok([...matrixButtons.values()].every(button=>button.attrs['aria-pressed']==='false'));
@@ -252,13 +252,44 @@ comparing=false;renderResult();
 console.log('PASS: reports keep the reading position across steps and scroll together in comparison.');
 vm.runInContext(`{
 pointer.custom=null;comparing=false;view='dice';introMode=true;halfway=false;stage=1;render();
-assert.equal(pointerSpec().title,'Plain prompt, plain page.');assert.equal(pointerSpec().action.label,'Roll the first die');
-roll(0,null,[3]);assert.equal(halfway,true);assert.equal(pointerSpec().title,'You added randomness: Bureaucracy.');assert.equal(pointerSpec().action.label,'Roll the second die');
+assert.equal(pointerSpec().title,'You just generated a report.');assert.equal(pointerSpec().action.label,'Roll the first die');
+roll(0,null,[3]);assert.equal(halfway,true);assert.equal(pointerSpec().title,'You added Bureaucracy.');assert.equal(pointerSpec().action.label,'Roll the second die');
 roll(0,null,[2]);assert.equal(pointerSpec().title,'Swapped for Weather.');
 roll(1,null,[undefined,0]);assert.equal(introMode,false);assert.equal(pointerSpec().title,'Weather × Tech.');assert.equal(pointerSpec().action.label,'Refine it');
 roll(1,null,[undefined,1]);assert.equal(pointerSpec().title,'Swapped in Disco.');
 setAttempt(2);assert.equal(pointerSpec().title,'Refined once.');
-setAttempt(4);assert.equal(pointerSpec().action.label,'Compare with plain');
-showBrief();assert.equal(pointerSpec().title,'Back to plain.');
+setAttempt(4);assert.equal(pointerSpec().action.label,'Compare with no dice');
+showBrief();assert.equal(pointerSpec().title,'Fresh start.');
 }`,context);
 console.log('PASS: the narration says back each roll, swap and pass, and the last card carries Compare.');
+vm.runInContext(`{
+ const box=nodes.get('#before-after'),handle=nodes.get('#ba-handle'),key=k=>handle.events.keydown({key:k,preventDefault(){}});
+ const before=()=>nodes.get('#report-view').children.filter(c=>c.tagName==='section'&&!c.hidden&&c.className==='report-before');
+ pointer.custom=null;view='dice';comparing=false;introMode=false;halfway=false;method='stronger';selected=currentExperiment().runs[2];stage=1;render();
+ assert.equal(box.hidden,false,'the slider appears once the page has changed');assert.equal(beforeAfter.item,currentBaseline().steps[0],'the first change compares with the report with no ingredients');
+ assert.equal(before().length,0,'at rest only the current page shows');
+ key('End');assert.equal(handle.attrs['aria-valuenow'],'100');assert.equal(before().length,1);
+ assert.equal(before()[0].querySelector('iframe').srcdoc,currentBaseline().steps[0].html);assert.equal(before()[0].style.clipPath,'inset(0 0.000% 0 0)');
+ key('ArrowLeft');assert.equal(handle.attrs['aria-valuenow'],'95');assert.equal(before()[0].style.clipPath,'inset(0 5.000% 0 0)');
+ key('Home');assert.equal(before().length,0);assert.equal(handle.attrs['aria-valuetext'],'Current step');
+ // A refinement compares with the step before it, and the handle starts at rest again.
+ key('Enter');assert.equal(handle.attrs['aria-valuenow'],'50');
+ setAttempt(2);assert.equal(handle.attrs['aria-valuenow'],'0');assert.equal(before().length,0);
+ if(selected.steps[1].html!==selected.steps[0].html){
+  assert.equal(beforeAfter.item,selected.steps[0]);
+  key('Enter');assert.equal(before()[0].querySelector('iframe').srcdoc,selected.steps[0].html);
+  // Re-rendering the same step keeps the comparison where it was.
+  render();assert.equal(handle.attrs['aria-valuenow'],'50');assert.equal(before().length,1);
+  assert.equal(visibleFrames(nodes.get('#report-view')).filter(frame=>frame.srcdoc===selected.steps[1].html).length,1,'the current page stays shown under the comparison');
+ }
+ comparing=true;renderResult();assert.equal(box.hidden,true,'side-by-side comparison replaces the slider');assert.equal(before().length,0);comparing=false;renderResult();
+ showBrief();assert.equal(box.hidden,true,'nothing to compare before the dice');
+ // An unchanged pass has nothing to compare.
+ const repeated=currentExperiment().runs.find(run=>run.steps.some((step,i)=>i>0&&step.html===run.steps[i-1].html));
+ if(repeated){selectPair(repeated);setAttempt(repeated.steps.findIndex((step,i)=>i>0&&step.html===repeated.steps[i-1].html)+1);assert.equal(box.hidden,true);}
+ // Only a visitor's first roll is celebrated; the demo's authored rolls never are.
+ firstRollCelebrated=false;const demoRoll={},first={},second={};
+ celebrateFirstRoll(demoRoll,[0]);celebrateFirstRoll(first,null);celebrateFirstRoll(second,null);
+ assert.equal(demoRoll.celebrate,undefined);assert.equal(first.celebrate,true);assert.equal(second.celebrate,undefined);
+}`,context);
+console.log('PASS: the before/after handle appears once the page changes, compares each step with the one before, follows keys and taps, keeps its place across re-renders, steps aside for side-by-side comparison and unchanged passes; only the first real roll is celebrated.');

@@ -33,16 +33,16 @@
     <span id="dice-gesture-help" class="sr-only">Click or press Enter to roll. Drag slowly to choose the upper face; release quickly to throw. Arrow keys turn the die. Escape cancels a drag.</span>
    </section>
    <section id="dice-lab" class="result" aria-labelledby="pair-title"><h2 id="pair-title" class="sr-only" tabindex="-1"></h2>
-    <div id="report-view" data-passes="0"><span class="version-stack" aria-hidden="true"><i></i><i></i><i></i></span><span class="report-sweep" aria-hidden="true"></span></div>
+    <div id="report-view" data-passes="0"><span class="version-stack" aria-hidden="true"><i></i><i></i><i></i></span><span class="report-sweep" aria-hidden="true"></span><div id="before-after" class="before-after" hidden><span class="ba-line" aria-hidden="true"></span><button type="button" id="ba-handle" class="ba-handle" role="slider" aria-label="Show the previous step" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Current step"><span class="ba-grip" aria-hidden="true"><i></i><i></i></span><span>Before</span></button></div></div>
    </section>
    <div id="stage-bar" class="stage-bar">
-    <button type="button" id="reset" class="reset" aria-label="Reset to the plain page"><span aria-hidden="true">↺</span> Reset</button>
+    <button type="button" id="reset" class="reset" aria-label="Start over with no ingredients"><span aria-hidden="true">↺</span> Reset</button>
     <button type="button" id="experiment-next" class="experiment-next" data-action="roll"><span id="next-label">Add randomness</span><span id="next-cue" class="next-cue" aria-hidden="true">→</span><span class="next-pips" aria-hidden="true"><i></i><i></i><i></i></span></button>
-    <button type="button" id="compare" title="Compare with brief only" aria-pressed="false" aria-label="Compare with brief only" aria-controls="report-view compare-target">Compare</button>
+    <button type="button" id="compare" title="Compare with no ingredients" aria-pressed="false" aria-label="Compare with no ingredients" aria-controls="report-view compare-target">Compare</button>
    </div>
    <nav id="refinement-rail" class="chapters" aria-label="Experiment steps">
     <div id="rail-stops" class="rail-stops">
-     <button type="button" id="stage-0" aria-pressed="true" aria-label="Plain page, brief only">Plain</button>
+     <button type="button" id="stage-0" aria-pressed="true" aria-label="The report with no ingredients">No dice</button>
      <button type="button" id="stage-1" aria-pressed="false" aria-label="Dice added, one-shot">Dice</button>
      <button type="button" id="stage-2" aria-pressed="false" aria-label="Refinement 1">+1</button>
      <button type="button" id="stage-3" aria-pressed="false" aria-label="Refinement 2">+2</button>
@@ -60,7 +60,7 @@
   </div>
   <section id="atlas" class="atlas" aria-labelledby="atlas-title"><header><h2 id="atlas-title">36 combinations</h2><select id="atlas-ingredient" aria-label="Browse pairings for the first ingredient"></select></header><div id="matrix" class="matrix" role="group" aria-label="Choose one of 36 ingredient combinations"></div></section>
   <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>What we call AI slop is often recognition of familiar design patterns. This experiment explores how randomness can help break them: the same brief and data, two unexpected ingredients, then three refinements with the same prompt.</p><p>These are saved examples, not live generations. The stronger sequence restarts from the same one-shot in a fresh context. The newer model rerun repeats the whole experiment with identical prompts, one model generation later. More refinement does not guarantee a better result.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Recorded run"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button><button type="button" id="method-newer" aria-pressed="false">Newer model</button></div>
-    <p id="method-note" class="method-note">Both start from this one-shot.</p></div><select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">Brief only</option><option value="other" id="compare-other">Original prompt</option></select><div class="export-actions"><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Refine brief alone →</button><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
+    <p id="method-note" class="method-note">Both start from this one-shot.</p></div><select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">No ingredients</option><option value="other" id="compare-other">Original prompt</option></select><div class="export-actions"><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Refine brief alone →</button><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
  </main>
  <div class="page-footer">
   <div id="experiment-tools" class="experiment-tools">

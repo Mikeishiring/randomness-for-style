@@ -34,10 +34,20 @@ function diceNoiseBuffer(context){
  if(!diceNoise){diceNoise=context.createBuffer(1,Math.ceil(context.sampleRate*.6),context.sampleRate);const samples=diceNoise.getChannelData(0);for(let i=0;i<samples.length;i++)samples[i]=Math.random()*2-1;}
  return diceNoise;
 }
+// A small room: a short, soft tail shared by every voice, so hits sound like they happen on a table
+// in a space rather than inside the speaker.
+let diceRoom=null;
+function diceRoomInput(context){
+ if(diceRoom?.context===context)return diceRoom.input;
+ const convolver=context.createConvolver(),wet=context.createGain(),length=Math.ceil(context.sampleRate*.3),impulse=context.createBuffer(2,length,context.sampleRate);
+ for(let channel=0;channel<2;channel++){const samples=impulse.getChannelData(channel);for(let i=0;i<length;i++)samples[i]=(Math.random()*2-1)*(1-i/length)**3.4;}
+ convolver.buffer=impulse;wet.gain.value=.13;convolver.connect(wet);wet.connect(context.destination);
+ diceRoom={context,input:convolver};return convolver;
+}
 // One voice: a set of sources into a shared panner, released together.
 function diceVoice(context,index,pan){
  const panner=context.createStereoPanner(),voice={sources:[],nodes:[panner],out:panner,end:0};
- panner.pan.value=Math.max(-1,Math.min(1,pan));panner.connect(context.destination);
+ panner.pan.value=Math.max(-1,Math.min(1,pan));panner.connect(context.destination);panner.connect(diceRoomInput(context));
  diceVoices[index].add(voice);return voice;
 }
 function finishVoice(voice,index){
@@ -67,10 +77,10 @@ function toneBurst(context,voice,time,{wave='sine',from,to=from,peak,decay}){
 // A die landing on its tray. strength falls with each bounce; the first landing carries weight.
 function diceImpact(context,index,time,strength,character,first=false){
  const material=DIE_MATERIALS[index],tone=character.tone,voice=diceVoice(context,index,character.pan);
- noiseBurst(context,voice,time,{type:'highpass',frequency:material.click*character.bright,q:.7,peak:.2*strength,decay:.012,rate:soundBetween(.9,1.15),offset:Math.random()*.4});
- noiseBurst(context,voice,time,{type:'bandpass',frequency:material.body*tone,q:material.bodyQ,peak:.24*strength,decay:soundBetween(.035,.05),rate:soundBetween(.85,1.1),offset:Math.random()*.4});
- toneBurst(context,voice,time,{wave:material.ringWave,from:material.ring*tone*soundBetween(.97,1.03),to:material.ring*tone*.94,peak:.045*strength,decay:.028});
- if(first)toneBurst(context,voice,time,{from:material.thump*tone,to:material.thump*.6,peak:.2*strength,decay:.07});
+ noiseBurst(context,voice,time,{type:'highpass',frequency:material.click*character.bright,q:.7,peak:.15*strength,decay:.011,rate:soundBetween(.9,1.15),offset:Math.random()*.4});
+ noiseBurst(context,voice,time,{type:'bandpass',frequency:material.body*tone,q:material.bodyQ,peak:.27*strength,decay:soundBetween(.038,.055),rate:soundBetween(.85,1.1),offset:Math.random()*.4});
+ toneBurst(context,voice,time,{wave:material.ringWave,from:material.ring*tone*soundBetween(.97,1.03),to:material.ring*tone*.94,peak:.04*strength,decay:.03});
+ if(first)toneBurst(context,voice,time,{from:material.thump*tone,to:material.thump*.55,peak:.25*strength,decay:.09});
  finishVoice(voice,index);
  return voice;
 }
@@ -116,11 +126,11 @@ function playDieTick(index,kind='face'){
  primeDiceAudio().then(context=>{
   if(!context||!diceSoundEnabled||document.hidden||diceSoundVersions[index]!==version)return;
   const material=DIE_MATERIALS[index],time=context.currentTime;
-  if(kind==='set')diceImpact(context,index,time,.5,{tone:1,bright:1,pan:(index?1:-1)*.3});
+  if(kind==='set')diceImpact(context,index,time,.75,{tone:1,bright:1,pan:(index?1:-1)*.3});
   else{
    const voice=diceVoice(context,index,(index?1:-1)*.3);
-   noiseBurst(context,voice,time,{type:'highpass',frequency:material.click*1.2,q:.8,peak:kind==='lift'?.05:.11,decay:.008,offset:Math.random()*.4});
-   toneBurst(context,voice,time,{wave:material.ringWave,from:material.ring*1.25*soundBetween(.98,1.02),peak:kind==='lift'?.012:.026,decay:.016});
+   noiseBurst(context,voice,time,{type:'highpass',frequency:material.click*1.2,q:.8,peak:kind==='lift'?.1:.22,decay:.009,offset:Math.random()*.4});
+   toneBurst(context,voice,time,{wave:material.ringWave,from:material.ring*1.25*soundBetween(.98,1.02),peak:kind==='lift'?.025:.055,decay:.02});
    finishVoice(voice,index);
   }
  }).catch(()=>{});
@@ -139,5 +149,37 @@ function playReportSwish(origin,duration){
   source.connect(filter);filter.connect(gain);gain.connect(voice.out);
   voice.sources.push(source);voice.nodes.push(source,filter,gain);
   source.start(time);source.stop(time+length+.01);finishVoice(voice,2);
+ }).catch(()=>{});
+}
+// The first roll of a visit: a small pop and a quick rising chime, like a party popper.
+function playCelebration(index){
+ const version=diceSoundVersions[index];
+ diceBuzz(index,0,[8,40,8,40,14]);
+ primeDiceAudio().then(context=>{
+  if(!context||!diceSoundEnabled||document.hidden||diceSoundVersions[index]!==version)return;
+  const voice=diceVoice(context,index,(index?1:-1)*.25),time=context.currentTime,lift=soundBetween(.98,1.03);
+  noiseBurst(context,voice,time,{type:'lowpass',frequency:1800,q:.6,peak:.16,decay:.05,offset:Math.random()*.4});
+  [1046.5,1318.5,1568,2093].forEach((note,n)=>{
+   const at=time+.03+n*.058;
+   toneBurst(context,voice,at,{from:note*lift,peak:.05-n*.006,decay:.24});
+   toneBurst(context,voice,at,{wave:'triangle',from:note*2*lift,peak:.012,decay:.12});
+  });
+  finishVoice(voice,index);
+ }).catch(()=>{});
+}
+// A refinement prints over the page from the top: a soft roller pass and a light press.
+function playRefineStamp(){
+ const version=diceSoundVersions[2];
+ diceBuzz(2,0,9);
+ primeDiceAudio().then(context=>{
+  if(!context||!diceSoundEnabled||document.hidden||diceSoundVersions[2]!==version)return;
+  const voice=diceVoice(context,2,0),time=context.currentTime,source=context.createBufferSource(),filter=context.createBiquadFilter(),gain=context.createGain(),length=.26;
+  source.buffer=diceNoiseBuffer(context);filter.type='bandpass';filter.Q.value=.8;
+  filter.frequency.setValueAtTime(1700,time);filter.frequency.exponentialRampToValueAtTime(620,time+length);
+  gain.gain.setValueAtTime(.0001,time);gain.gain.linearRampToValueAtTime(.05,time+.03);gain.gain.exponentialRampToValueAtTime(.0001,time+length);
+  source.connect(filter);filter.connect(gain);gain.connect(voice.out);
+  voice.sources.push(source);voice.nodes.push(source,filter,gain);source.start(time);source.stop(time+length+.01);
+  toneBurst(context,voice,time+.012,{from:120,to:72,peak:.13,decay:.09});
+  finishVoice(voice,2);
  }).catch(()=>{});
 }
