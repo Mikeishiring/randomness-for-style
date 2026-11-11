@@ -1,11 +1,11 @@
 // Keep the previous saved page visible while its replacement paints in the same frame,
 // then wipe it away so the new design reads as printed over the old one.
 // This is presentation only: selection, controls and the new document update immediately.
-// A refinement prints over from the top. A die throw waits for the die to reach the page and
-// wipes away from the edge it struck, so the change visibly starts where the die hit.
+// Every change starts where it came from: a die throw waits for the die to reach the page and wipes
+// away from the edge it struck; the refine button touches the edge nearest it and prints from there.
 const REPORT_REVEAL={duration:560,easing:'cubic-bezier(.65,0,.35,1)'};
 const REPORT_KNOCK_REVEAL={duration:640,easing:'cubic-bezier(.16,1,.3,1)'};
-const REPORT_WIPES={top:'inset(100% 0 0 0)',left:'inset(0 0 0 100%)',right:'inset(0 100% 0 0)',both:'inset(0 50% 0 50%)'};
+const REPORT_WIPES={top:'inset(100% 0 0 0)',bottom:'inset(0 0 100% 0)',left:'inset(0 0 0 100%)',right:'inset(0 100% 0 0)',both:'inset(0 50% 0 50%)'};
 const reportHandoffs=new WeakMap();
 // The page change a throw causes. The rendered change claims it; it lands when a die reaches the
 // page, or at once when that throw is interrupted, so a page never waits on a die that will not arrive.
@@ -29,25 +29,29 @@ function hitReport(impact,hit){
  if(hit.knock)knockReport(hit);
  landReportImpact(impact);
 }
-// The struck page gives first: its struck edge compresses for a frame or two, then the whole page
-// takes a small shove away from the die and springs back. A ring in the die's colour marks the contact.
+// The struck page gives first: its struck edge compresses for an instant, then the whole page takes a
+// small shove away from the hit and springs back. A ring in the striker's colour marks the contact.
+// Dice strike the left or right edge at a height (hit.y); the refine button the top or bottom edge at hit.x.
 function knockReport(hit){
  const view=document.querySelector?.('#report-view');
  if(!view?.animate||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
- const rect=view.getBoundingClientRect(),away=hit.side==='left'?1:-1,force=.65+.55*Math.max(0,Math.min(1,hit.strength||0));
- const lever=Math.max(-1,Math.min(1,(hit.y-rect.height/2)/(rect.height/2||1))),turn=-lever*away*.3*force;
- const spring='cubic-bezier(.33,1,.68,1)',origin=`${away>0?'100%':'0%'} ${Math.round(hit.y)}px`;
+ const rect=view.getBoundingClientRect(),force=.65+.55*Math.max(0,Math.min(1,hit.strength||0)),spring='cubic-bezier(.33,1,.68,1)';
+ const lateral=hit.side==='left'||hit.side==='right',away=hit.side==='left'||hit.side==='top'?1:-1;
+ const lever=lateral?Math.max(-1,Math.min(1,(hit.y-rect.height/2)/(rect.height/2||1))):Math.max(-1,Math.min(1,(hit.x-rect.width/2)/(rect.width/2||1)));
+ const turn=(lateral?-lever:lever)*away*.3*force,axis=lateral?'X':'Y',move=distance=>`translate${axis}(${distance*force*away}px)`;
+ const origin=lateral?`${away>0?'100%':'0%'} ${Math.round(hit.y)}px`:`${Math.round(hit.x)}px ${away>0?'100%':'0%'}`;
  view.animate([
   {transform:'none',transformOrigin:origin,easing:'cubic-bezier(.2,0,.4,1)'},
-  {transform:`translateX(${2*force*away}px) scaleX(${1-.007*force})`,transformOrigin:origin,offset:.07,easing:spring},
-  {transform:`translateX(${7*force*away}px) rotate(${turn}deg)`,transformOrigin:origin,offset:.2,easing:spring},
-  {transform:`translateX(${-2.4*force*away}px) rotate(${-turn*.4}deg)`,transformOrigin:origin,offset:.4,easing:spring},
-  {transform:`translateX(${.9*force*away}px)`,transformOrigin:origin,offset:.6,easing:spring},
-  {transform:`translateX(${-.3*force*away}px)`,transformOrigin:origin,offset:.8,easing:spring},
+  {transform:`${move(2)} scale${axis}(${1-.007*force})`,transformOrigin:origin,offset:.07,easing:spring},
+  {transform:`${move(7)} rotate(${turn}deg)`,transformOrigin:origin,offset:.2,easing:spring},
+  {transform:`${move(-2.4)} rotate(${-turn*.4}deg)`,transformOrigin:origin,offset:.4,easing:spring},
+  {transform:move(.9),transformOrigin:origin,offset:.6,easing:spring},
+  {transform:move(-.3),transformOrigin:origin,offset:.8,easing:spring},
   {transform:'none',transformOrigin:origin}
  ],{duration:680});
  const mark=document.createElement('span');mark.className='report-knock';mark.dataset.die=String(hit.die);
- mark.style.left=hit.side==='left'?'0':'100%';mark.style.top=Math.max(12,Math.min(rect.height-12,hit.y))+'px';
+ if(lateral){mark.style.left=hit.side==='left'?'0':'100%';mark.style.top=Math.max(12,Math.min(rect.height-12,hit.y))+'px';}
+ else{mark.style.left=Math.max(12,Math.min(rect.width-12,hit.x))+'px';mark.style.top=hit.side==='top'?'0':'100%';}
  view.append(mark);
  mark.animate([{transform:'translate(-50%,-50%) scale(.3)',opacity:.9},{transform:'translate(-50%,-50%) scale(1.15)',opacity:.55,offset:.35},{transform:'translate(-50%,-50%) scale(1.9)',opacity:0}],{duration:560,easing:'cubic-bezier(.16,1,.3,1)'}).onfinish=()=>mark.remove();
 }
@@ -70,7 +74,10 @@ function settleReportHandoff(container){
 function reportSweeps(container,origin,previous){
  const box=previous.getBoundingClientRect?.();if(!box?.height||!container.querySelector)return [];
  const timing=origin==='top'?REPORT_REVEAL:REPORT_KNOCK_REVEAL;
- if(origin==='top'){const sweep=container.querySelector('.report-sweep');return sweep?.animate?[sweep.animate([{transform:'translateY(0)',opacity:0},{opacity:1,offset:.1},{opacity:1,offset:.88},{transform:`translateY(${box.height}px)`,opacity:0}],timing)]:[];}
+ if(origin==='top'||origin==='bottom'){
+  const sweep=container.querySelector('.report-sweep'),[from,to]=origin==='top'?[0,box.height]:[box.height,0];
+  return sweep?.animate?[sweep.animate([{transform:`translateY(${from}px)`,opacity:0},{opacity:1,offset:.1},{opacity:1,offset:.88},{transform:`translateY(${to}px)`,opacity:0}],timing)]:[];
+ }
  const edges=origin==='both'?[['left',box.width/2],['right',box.width/2]]:[[origin,box.width]];
  return edges.map(([from,distance],n)=>{
   let sweep=container.querySelectorAll?.('.report-sweep-x')[n];
@@ -93,7 +100,7 @@ function handoffReport(container,previous,incoming){
   const timing=origin==='top'?REPORT_REVEAL:REPORT_KNOCK_REVEAL;
   active.animation=previous.animate([{clipPath:'inset(0 0 0 0)'},{clipPath:REPORT_WIPES[origin]||REPORT_WIPES.top}],timing);
   active.sweeps=reportSweeps(container,origin,previous);
-  if(origin!=='top'&&typeof playReportSwish==='function')playReportSwish(origin,timing.duration);
+  if(origin!=='top'&&origin!=='bottom'&&typeof playReportSwish==='function')playReportSwish(origin,timing.duration);
   active.animation.onfinish=()=>{if(reportHandoffs.get(container)===active){settleReportHandoff(container);if(typeof reportHandoffSettled==='function')reportHandoffSettled(container);}};
  };
  active.reveal=()=>{

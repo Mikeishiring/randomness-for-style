@@ -24,7 +24,10 @@ function section(html,loaded=true){
  assert.equal(from.animations.length,1);slow.querySelector().events.get('load')();assert.equal(from.animations.at(-1).frames[1].clipPath,'inset(0 0 0 100%)');context.stop(holder);
  // Moving on while the die is in the air shows the new page at once; the late landing changes nothing.
  const waiting=context.expect(()=>context.start(holder,from,section('skipped')));context.stop(holder);assert.equal(from.hidden,true);const count=from.animations.length;context.land(waiting);assert.equal(from.animations.length,count);
- // A refinement after a throw still prints over from the top.
+ // The refine button below the page touches its bottom edge: the new pass prints from the bottom up.
+ const pressed=context.expect(()=>context.start(holder,from,section('refined from below')));context.aim(pressed,['bottom']);assert.equal(from.animations.length,count,'the page holds until the button touches it');context.land(pressed);
+ assert.equal(from.animations.at(-1).frames[1].clipPath,'inset(0 0 100% 0)');context.stop(holder);
+ // A change with no impact prints over from the top.
  context.start(holder,from,section('refined'));assert.equal(from.animations.at(-1).frames[1].clipPath,'inset(100% 0 0 0)');context.stop(holder);
 }
 const holder={},first=section('plain'),second=section('ingredients');
@@ -37,4 +40,4 @@ const slower=section('slow pairing',false);context.start(holder,third,slower);co
 const a=section('unloaded A',false),b=section('unloaded B',false);context.start(holder,first,a);const staleLoad=a.querySelector().events.get('load');const cover=context.take(holder);assert.equal(cover,first);assert.equal(first.hidden,false);context.start(holder,cover,b);staleLoad();assert.equal(first.hidden,false);assert.equal(b.querySelector().dataset.loaded,'false');b.querySelector().events.get('load')();assert.equal(context.take(holder),b);assert.equal(first.hidden,true);
 reduced=true;context.start(holder,first,second);assert.equal(first.hidden,true);reduced=false;context.document.hidden=true;context.start(holder,first,second);assert.equal(first.hidden,true);context.document.hidden=false;
 context.start(holder,first,section('plain'));assert.equal(first.hidden,true);
-console.log('PASS: a thrown die holds the old page until it arrives, then wipes from the struck edge (or both edges); no stand-in timer; skipping ahead shows the new page at once; refinements still print from the top; real load readiness without forced timeout, last-painted cover across rapid replacement, inert outgoing content, stale callbacks, unchanged output, hidden and reduced-motion states.');
+console.log('PASS: a thrown die holds the old page until it arrives, then wipes from the struck edge (or both edges); no stand-in timer; skipping ahead shows the new page at once; a refine touch prints from the bottom up; unaimed changes print from the top; real load readiness without forced timeout, last-painted cover across rapid replacement, inert outgoing content, stale callbacks, unchanged output, hidden and reduced-motion states.');

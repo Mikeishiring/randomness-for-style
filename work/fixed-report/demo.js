@@ -80,15 +80,15 @@ async function runDemo(){
  await demoMoveTo(die,DEMO_AIM.die);if(!live())return;demoHover(die);
  await demoWait(DEMO_BEATS.hover+80);if(!live())return;
  await demoPress(die);if(!live())return;demoHover(null);
- roll(0,null,[0]);
- // 2. One ingredient lands; the second die arrives. Click it, and the page changes.
+ roll(0,null,[0,2]);
+ // 2. Both dice land and the page changes. Roll the second die, and it changes again.
  await demoWait(160);if(!live())return;
  await demoRestBeside(die,narrow?60:0,narrow?70:120);if(!live())return;
  await demoWait(DEMO_BEATS.readFirst);if(!live())return;
  await demoMoveTo(second,DEMO_AIM.die);if(!live())return;demoHover(second);
  await demoWait(DEMO_BEATS.hover+80);if(!live())return;
  await demoPress(second);if(!live())return;demoHover(null);
- roll(1,null,[undefined,2]);
+ roll(1,null,[undefined,4]);
  await demoWait(160);if(!live())return;
  await demoRestBeside(second,narrow?-60:0,narrow?70:120);if(!live())return;
  await demoWait(DEMO_BEATS.readPair);if(!live())return;

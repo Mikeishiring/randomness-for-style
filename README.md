@@ -37,13 +37,13 @@ The recorded reports here use no personal design skills or supplied visual refer
 ## Explore
 
 - A first visit plays the story once with a demo cursor on the real controls. Any click, tap, key or scroll takes over from exactly where it is; **Watch demo** replays it.
-- The page opens on the plain one-shot: the report everyone gets from one prompt. The first die waits beside it saying **Click me**. Roll it, and the second die arrives; roll that, and the page changes, because every saved result needs both ingredients. **Refine it** then appears.
+- The page opens on the plain one-shot: the report everyone gets from one prompt. The first die waits beside it saying **Click me**. Roll it and both dice are thrown, because every saved result needs both ingredients: the page changes at once, and **Refine it** appears. After that, rolling either die changes the page again.
 - Click a die to roll it, drag slowly to choose its upper face, or flick to throw. Arrow keys turn it; Escape cancels a drag.
 - On wide screens a thrown die strikes the edge of the page beside it: the page takes a small shove, a ring marks the contact, and the new design wipes in from the struck edge (from both edges when both dice roll). On phones the change waits for the die to land, then prints over from the top. Refinements keep their top-down print.
 - Every throw is synthesized and varies: each die has its own material, landings rattle differently each time, the strike on the page knocks, the page change swishes, and dragging a die clicks as each face comes up. On phones that support it, contacts also vibrate. Nothing sounds before your first click; **Sound** turns it all off.
-- **Refine it** runs the same refinement prompt up to three times, one pass per click; nothing advances on a timer. **Reset** returns to the plain page.
+- **Refine it** runs the same refinement prompt up to three times, one pass per click; nothing advances on a timer. The button reaches up and touches the page, and the pass prints from the bottom up. **Reset** returns to the plain page.
 - The step track under the action (No dice, Dice, +1, +2, +3) jumps to any step without losing your pair.
-- Once the page has changed, a small **Before** handle sits on its top edge. Drag it, tap it, or use the arrow keys to wipe the previous step back in from the left and compare. It shows itself once with a short nudge.
+- From the first roll, the original report with no ingredients sits under the page. Drag the round knob in the middle of the page (or the small **Before** tag on its top edge), tap it, or use the arrow keys to wipe it back in from the left. It keeps its place through rolls and refinements, which only reprint the after side, and pops out once to show how.
 - Your first roll of a visit lands with a small burst of confetti and a chime.
 - **Compare** sits beside the action and shows both pages side by side at full width. Prompt, Share, Watch demo and Sound are in the bar at the bottom of the page.
 - Compare with the brief-only result, inspect the exact prompt and critique, browse all 36 combinations, or share a selected state.

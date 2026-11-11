@@ -23,8 +23,7 @@ const previewCaches=new WeakMap();
 const matrixButtons=new Map();
 const matrixCells=new Map();
 const promptPeeks=[$('#prompt'),$('#plain-prompt-details')].map(bindPromptPeek);
-// halfway: the first die has landed; the page waits for the second ingredient.
-let ingredientsChosen=!introMode,paintedStep=null,halfway=false;
+let ingredientsChosen=!introMode,paintedStep=null;
 // The last thing the visitor did to the dice or grid. The narration says it back, so breaking the
 // story's order still explains where you are. Moving through the passes clears it.
 let lastEvent=null;
@@ -118,15 +117,12 @@ function pointerSpec(){
  if(pointer.custom)return pointer.custom;
  if(view!=='dice'||comparing)return null;
  const next=$('#experiment-next'),first=INGREDIENTS_A[a],second=INGREDIENTS_B[b],pair=first+' × '+second;
- const rollFirst={label:'Roll the first die',run:()=>roll(0)},rollSecond={label:'Roll the second die',run:()=>roll(1)};
+ const rollDice={label:'Roll the dice',run:()=>roll(0)};
  const refine={label:stage===1?'Refine it':stage===2?'Refine again':'One more pass',run:()=>nextExperimentStep()};
- if(introMode&&!halfway){
-  if(lastEvent?.kind==='reset')return {target:$('#dice-lab'),title:'Fresh start.',sub:'The same one-prompt report, no ingredients. Roll for a new pair.',side:'right',action:rollFirst};
-  return {target:$('#dice-lab'),title:'You just generated a report.',sub:'One prompt, no ingredients. Tidy, sensible, and roughly what everyone gets. Now try adding randomness.',side:'right',action:rollFirst};
- }
+ // Every saved page needs both ingredients, so the first roll throws both dice and the page changes at once.
  if(introMode){
-  const title=lastEvent?.kind==='swap'?'Swapped for '+first+'.':lastEvent?.kind==='choose'?'You picked '+first+'.':'You added '+first+'.';
-  return {target:$('#ingredient-a'),title,sub:'One more ingredient and the page changes. Roll the second die.',side:'below',action:rollSecond};
+  if(lastEvent?.kind==='reset')return {target:$('#dice-lab'),title:'Fresh start.',sub:'The same one-prompt report, no ingredients. Roll for a new pair.',side:'right',action:rollDice};
+  return {target:$('#dice-lab'),title:'You just generated a report.',sub:'One prompt, no ingredients. Tidy, sensible, and roughly what everyone gets. Now try adding randomness.',side:'right',action:rollDice};
  }
  if(lastEvent&&(lastEvent.kind==='swap'||lastEvent.kind==='choose')){
   const title=(lastEvent.kind==='swap'?'Swapped in ':'You picked ')+lastEvent.name+'.';
@@ -142,7 +138,7 @@ function pointerSpec(){
 }
 // The die waiting to be rolled carries a floating "Click me" above it.
 function updateDieCall(){
- const chip=$('#die-call'),index=view==='dice'&&introMode&&!comparing?(halfway?1:0):-1,stageBox=document.querySelector('.workbench');
+ const chip=$('#die-call'),index=view==='dice'&&introMode&&!comparing?0:-1,stageBox=document.querySelector('.workbench');
  if(index<0||!stageBox?.getBoundingClientRect){chip.hidden=true;document.querySelectorAll('.die').forEach(die=>die.removeAttribute?.('data-waiting'));return;}
  const column=document.querySelectorAll('.die')[index],object=column?.querySelector('.die-object');
  if(!column?.getBoundingClientRect||!object){chip.hidden=true;return;}
@@ -200,36 +196,54 @@ window.addEventListener('resize',()=>updatePointer());
 // An ingredient's name carries a face slug, so it can be set in the type that ingredient brings.
 function setDieCall(index){const label=$('#ingredient-'+(index?'b':'a'));label.textContent='';label.dataset.face='call';}
 function setIngredientLabel(index,name){const label=$('#ingredient-'+(index?'b':'a'));label.textContent=name;label.dataset.face=name.toLowerCase().replace(/[^a-z]+/g,'-');}
-function showBrief(){if(introMode&&!halfway)return;settlePresentation();cancelDiceRoll();introMode=true;halfway=false;lastEvent={kind:'reset'};stage=1;comparing=false;render();}
+function showBrief(){if(introMode)return;settlePresentation();cancelDiceRoll();introMode=true;lastEvent={kind:'reset'};stage=1;comparing=false;render();}
 // A visitor's first roll of the visit is celebrated once; the demo's authored rolls never count.
 let firstRollCelebrated=false;
 function celebrateFirstRoll(impact,forced){if(forced!=null||firstRollCelebrated)return;firstRollCelebrated=true;impact.celebrate=true;}
-// The first ingredient lands alone. Every saved page needs both, so the plain page stays until the second.
-function addFirstIngredient(forced=null){
- settlePresentation();const swapping=halfway;halfway=true;ingredientsChosen=true;
- const value=forced??randomIndex(INGREDIENTS_A.length);
- lastEvent={kind:swapping?'swap':'add',index:0,name:INGREDIENTS_A[value]};
- selected=currentExperiment().runs.find(run=>run.a===value&&run.b===selected.b);
- const impact=reportImpactFor(()=>render(false));celebrateFirstRoll(impact,forced);
- tumbleDice([0],[value,selected.b],()=>{syncDice3D();},DICE_THROW.enter,impact);
- landLabels([0],LABEL_LAND.enter);
-}
 function showIngredients(){
  if(!ingredientsChosen){roll();return;}
  settlePresentation();introMode=false;stage=1;render();
 }
-// The press sinks, then the button springs up past its rest and settles: the next pass is on its way.
+// Which edge of the page a control sits beyond: a change it causes starts from that edge.
+function pageSideOf(control){
+ const page=$('#report-view').getBoundingClientRect?.(),box=control?.getBoundingClientRect?.();
+ if(!page?.width||!box?.width)return 'top';
+ const x=box.left+box.width/2,y=box.top+box.height/2;
+ return y>=page.bottom?'bottom':y<=page.top?'top':x<page.left+page.width/2?'left':'right';
+}
+// A change made from a control (a step on the rail, Reset) reprints the page from that control's side.
+function changeFrom(control,run){
+ const impact=reportImpactFor(run);aimReportImpact(impact,[pageSideOf(control)]);landReportImpact(impact);
+}
+function sheenNextButton(){const button=$('#experiment-next');button.classList.toggle('is-firing',false);void button.offsetWidth;button.classList.toggle('is-firing',true);}
+// Rolling from the button: it sinks, springs up past its rest and settles; the dice do the rest.
 function fireNextButton(){
- const button=$('#experiment-next');button.classList.toggle('is-firing',false);void button.offsetWidth;button.classList.toggle('is-firing',true);
+ const button=$('#experiment-next');sheenNextButton();
  if(!button.animate||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
  button.animate([{translate:'0 3px'},{translate:'0 -7px',offset:.3},{translate:'0 1.5px',offset:.6},{translate:'0 -.5px',offset:.82},{translate:'0 0'}],{duration:520,easing:'cubic-bezier(.33,1,.68,1)'});
- if(typeof playRefineStamp==='function'&&!introMode&&stage<4)playRefineStamp();
+}
+// Refining from the button: it sinks, then reaches across the gap and touches the page's nearest edge.
+// The touch is the moment the refinement lands: the page gives, and the new pass prints from that edge.
+function pressRefine(impact){
+ const button=$('#experiment-next'),page=$('#report-view'),side=pageSideOf(button);
+ sheenNextButton();aimReportImpact(impact,[side]);
+ const land=(touch,x)=>{hitReport(impact,{side,knock:touch,x,y:0,strength:.5,die:1});if(typeof playRefineStamp==='function')playRefineStamp();};
+ if(!button.animate||!page.getBoundingClientRect||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches){land(false,0);return;}
+ const box=button.getBoundingClientRect(),rect=page.getBoundingClientRect(),toward=side==='bottom'?-1:1;
+ const gap=side==='bottom'?box.top-rect.bottom:rect.top-box.bottom,touch=gap>=0&&gap<=64,travel=touch?gap:8;
+ const x=Math.max(16,Math.min(rect.width-16,box.left+box.width/2-rect.left));
+ const reach=button.animate([{translate:'0 0'},{translate:`0 ${-toward*3}px`,offset:.35},{translate:`0 ${toward*travel}px`}],{duration:200,easing:'cubic-bezier(.55,0,.8,.2)',fill:'forwards'});
+ reach.onfinish=()=>{
+  land(touch,x);
+  button.animate([{translate:`0 ${toward*travel}px`},{translate:`0 ${-toward*Math.min(9,travel*.35)}px`,offset:.42},{translate:`0 ${toward*1.5}px`,offset:.72},{translate:'0 0'}],{duration:480,easing:'cubic-bezier(.33,1,.68,1)'});
+  reach.cancel();
+ };
 }
 function nextExperimentStep(){
- promptPeeks.forEach(peek=>peek.close());fireNextButton();
- if(introMode){if(halfway)roll();else addFirstIngredient();}
- else if(stage<4){setAttempt(stage+1);}
- else{stage=1;comparing=false;roll();}
+ promptPeeks.forEach(peek=>peek.close());
+ if(introMode){fireNextButton();roll();}
+ else if(stage<4){const impact=reportImpactFor(()=>setAttempt(stage+1));pressRefine(impact);}
+ else{fireNextButton();stage=1;comparing=false;roll();}
 }
 function updateURL(){
  const query=new URLSearchParams({view,pair:selected.id,stage:String(stage),plainStage:String(plainStage)});
@@ -283,13 +297,13 @@ function showReports(container,entries){
   }
  });
 }
-// Before and after: a small handle at the top of the page wipes the previous step back in from the
-// left, as far as it is dragged. It appears once the page has changed, and nudges itself once to show how.
-const beforeAfter={value:0,item:null,section:null,tween:null,taught:false,drag:null};
+// Before and after: the original report, with no ingredients, sits under the current page. A knob in the
+// middle of the page, or the small handle on its top edge, wipes it back in from the left as far as it is
+// dragged. The position holds across rolls and refinements: only the after side changes.
+const beforeAfter={value:0,item:null,section:null,tween:null,hints:0,drag:null};
 function beforeItem(){
  if(view!=='dice'||introMode||comparing)return null;
- const before=stage===1?currentBaseline().steps[0]:selected.steps[stage-2],now=selected.steps[stage-1];
- return before&&before.html!==now.html?before:null;
+ return currentBaseline().steps[0];
 }
 function paintBeforeAfter(value){
  const box=$('#before-after'),handle=$('#ba-handle'),container=$('#report-view');
@@ -298,7 +312,7 @@ function paintBeforeAfter(value){
  box.toggleAttribute?.('data-active',beforeAfter.value>0);
  const percent=Math.round(beforeAfter.value*100);
  handle.setAttribute('aria-valuenow',String(percent));
- handle.setAttribute('aria-valuetext',percent?percent+'% of the previous step shown':'Current step');
+ handle.setAttribute('aria-valuetext',percent?percent+'% of the original shown':'Current page');
  let section=beforeAfter.section;
  if(beforeAfter.value>0&&beforeAfter.item){
   if(!section){
@@ -315,49 +329,57 @@ function releaseBeforeSection(){
  beforeAfter.section=null;section.hidden=true;section.style.clipPath='';section.inert=false;section.removeAttribute('aria-hidden');section.classList.toggle('report-before',false);
 }
 function stopBeforeAfterTween(){if(beforeAfter.tween){cancelAnimationFrame(beforeAfter.tween);beforeAfter.tween=null;}}
-// Glide to a value; the shape(t) maps progress to position for the one-time nudge.
+// Glide to a value; shape(t) maps progress to position for the hints.
 function tweenBeforeAfter(to,duration=360,shape=null){
  stopBeforeAfterTween();
- if(typeof requestAnimationFrame!=='function'||matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden){paintBeforeAfter(shape?0:to);return;}
+ if(typeof requestAnimationFrame!=='function'||matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden){paintBeforeAfter(shape?beforeAfter.value:to);return;}
  const from=beforeAfter.value,start=performance.now(),ease=t=>t<.5?4*t*t*t:1-(-2*t+2)**3/2;
  const step=now=>{const t=Math.min(1,(now-start)/duration);paintBeforeAfter(shape?shape(t):from+(to-from)*ease(t));beforeAfter.tween=t<1?requestAnimationFrame(step):null;};
  beforeAfter.tween=requestAnimationFrame(step);
 }
-// Called around each render: the before page is released first, so the render sees only the
-// current page, then shown again at the same position if the step has not changed.
+// Called around each render: the before page is released first, so the render sees only the current
+// page, then shown again at the same position. The original stays the same, so the position holds.
 function renderBeforeAfter(){
  const item=beforeItem(),box=$('#before-after');
- if(item!==beforeAfter.item){stopBeforeAfterTween();beforeAfter.item=item;paintBeforeAfter(0);}
- else paintBeforeAfter(beforeAfter.value);
+ if(item!==beforeAfter.item){stopBeforeAfterTween();beforeAfter.item=item;}
+ // A fresh start puts the slider away; side-by-side comparison only hides it, keeping its place.
+ if(introMode)paintBeforeAfter(0);else if(item)paintBeforeAfter(beforeAfter.value);else releaseBeforeSection();
  box.hidden=!item;
 }
-// After the first change has printed, the handle peeks a sliver of the previous page and returns.
+// After a change has printed, the knob pops out to show it slides. The first time it pulls a good slice
+// of the original across and holds it there; the next two times it only peeks. Using it ends the hints.
 function reportHandoffSettled(container){
- if(container!==$('#report-view')||beforeAfter.taught||!beforeAfter.item||beforeAfter.value)return;
- beforeAfter.taught=true;
- tweenBeforeAfter(0,1500,t=>t<.42?.22*(1-(1-t/.42)**3):t<.58?.22:.22*(1-((t-.58)/.42)**2*(3-2*(t-.58)/.42)));
+ if(container!==$('#report-view')||!beforeAfter.item||beforeAfter.value||beforeAfter.drag||beforeAfter.hints>=3)return;
+ const first=!beforeAfter.hints++,reach=first?.3:.07,out=first?.24:.3,hold=first?.64:.5,duration=first?2200:900;
+ const knob=$('#before-after').querySelector?.('.ba-knob');
+ if(knob?.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)knob.animate([{scale:'1'},{scale:first?'1.3':'1.18',offset:.16},{scale:'.96',offset:.32},{scale:'1',offset:.44},{scale:'1'}],{duration:first?1100:700,easing:'cubic-bezier(.33,1,.68,1)'});
+ tweenBeforeAfter(0,duration,t=>t<out?reach*(1-(1-t/out)**3):t<hold?reach:reach*(1-((t-hold)/(1-hold))**2*(3-2*(t-hold)/(1-hold))));
 }
 (()=>{
  const handle=$('#ba-handle'),box=$('#before-after');
+ // The knob, the line and the top handle all grab the same divider.
+ const grips=[handle,box.querySelector?.('.ba-knob'),box.querySelector?.('.ba-line')].filter(Boolean);
  const valueAt=x=>{const rect=$('#report-view').getBoundingClientRect?.();return rect?.width?(x-rect.left)/rect.width:beforeAfter.value;};
- handle.addEventListener('pointerdown',event=>{
-  if(event.button!==0)return;
-  settlePresentation();stopBeforeAfterTween();beforeAfter.taught=true;
-  beforeAfter.drag={id:event.pointerId,x:event.clientX,moved:false,from:beforeAfter.value};
-  handle.setPointerCapture?.(event.pointerId);box.toggleAttribute?.('data-dragging',true);
- });
- handle.addEventListener('pointermove',event=>{
-  const drag=beforeAfter.drag;if(!drag||event.pointerId!==drag.id)return;
-  if(!drag.moved&&Math.abs(event.clientX-drag.x)<4)return;
-  drag.moved=true;event.preventDefault?.();paintBeforeAfter(valueAt(event.clientX));
- });
  const end=event=>{
   const drag=beforeAfter.drag;if(!drag||event.pointerId!==drag.id)return;
   beforeAfter.drag=null;box.toggleAttribute?.('data-dragging',false);
   // A tap without a drag opens the comparison halfway, or closes it.
   if(!drag.moved)tweenBeforeAfter(drag.from>0?0:.5);
  };
- handle.addEventListener('pointerup',end);handle.addEventListener('pointercancel',end);
+ grips.forEach(grip=>{
+  grip.addEventListener('pointerdown',event=>{
+   if(event.button!==0)return;
+   settlePresentation();stopBeforeAfterTween();beforeAfter.hints=3;
+   beforeAfter.drag={id:event.pointerId,x:event.clientX,moved:false,from:beforeAfter.value};
+   grip.setPointerCapture?.(event.pointerId);box.toggleAttribute?.('data-dragging',true);
+  });
+  grip.addEventListener('pointermove',event=>{
+   const drag=beforeAfter.drag;if(!drag||event.pointerId!==drag.id)return;
+   if(!drag.moved&&Math.abs(event.clientX-drag.x)<4)return;
+   drag.moved=true;event.preventDefault?.();paintBeforeAfter(valueAt(event.clientX));
+  });
+  grip.addEventListener('pointerup',end);grip.addEventListener('pointercancel',end);
+ });
  handle.addEventListener('keydown',event=>{
   const steps={ArrowRight:.05,ArrowUp:.05,ArrowLeft:-.05,ArrowDown:-.05,PageUp:.25,PageDown:-.25};
   let next=null;
@@ -365,7 +387,7 @@ function reportHandoffSettled(container){
   else if(event.key==='Home'||event.key==='Escape')next=0;else if(event.key==='End')next=1;
   else if(event.key==='Enter'||event.key===' ')next=beforeAfter.value>0?0:.5;
   if(next===null)return;
-  event.preventDefault();settlePresentation();beforeAfter.taught=true;
+  event.preventDefault();settlePresentation();beforeAfter.hints=3;
   if(event.key==='Enter'||event.key===' ')tweenBeforeAfter(next);else{stopBeforeAfterTween();paintBeforeAfter(next);}
  });
 })();
@@ -384,7 +406,7 @@ function renderRail(){
   button.disabled=introMode&&n>1;
  }
  const refining=!introMode&&stage<4;
- const label=introMode?(halfway?'Add another':'Add randomness'):stage===1?'Refine it':stage===2?'Refine again':stage===3?'One more pass':'Roll a new pair';
+ const label=introMode?'Add randomness':stage===1?'Refine it':stage===2?'Refine again':stage===3?'One more pass':'Roll a new pair';
  $('#experiment-next').dataset.passes=String(introMode?0:stage-1);
  const cue=refining?'+'+stage:'→';
  $('#experiment-next').dataset.action=refining?'refine':'roll';
@@ -445,11 +467,11 @@ function buildMatrix(){
 }
 function render(sync=true){
  a=selected.a;b=selected.b;stage=Math.min(stage,selected.steps.length);
- const journey=introMode?(halfway?'half':'original'):'ingredients',previousJourney=document.documentElement.dataset.journey;
+ const journey=introMode?'original':'ingredients',previousJourney=document.documentElement.dataset.journey;
  document.documentElement.dataset.journey=journey;$('#reset').hidden=journey==='original';
  // In the plain step the dice are away; they keep their last names so an exit never shows placeholder labels.
  // A die that is waiting to be rolled says so; a rolled die shows its ingredient in that ingredient's type.
- if(!introMode||halfway)setIngredientLabel(0,INGREDIENTS_A[a]);else setDieCall(0);
+ if(!introMode)setIngredientLabel(0,INGREDIENTS_A[a]);else setDieCall(0);
  if(!introMode)setIngredientLabel(1,INGREDIENTS_B[b]);else setDieCall(1);
  matrixButtons.forEach((button,id)=>{button.setAttribute('aria-pressed',String(!introMode&&id===selected.id));const run=currentExperiment().runs.find(item=>item.id===id);button.setAttribute('aria-label',run.label+' — '+attemptName(stage));});
  matrixCells.forEach((cell,id)=>{
@@ -463,19 +485,15 @@ function render(sync=true){
  // Beat order: the press, then the page or dice, then the timeline, then the next label.
  updatePointer(entering?900:paintedStep===null?500:760);
  if(previousJourney&&previousJourney!==journey&&view==='dice'){
-  const order=['original','half','ingredients'],from=order.indexOf(previousJourney),to=order.indexOf(journey);
-  if(from===1&&to===2){/* the second die is already on the table */}
-  // Dice enter one at a time as the story adds them, and leave together on reset.
-  // The first die waits on the plain page; the second enters when the first has landed, and leaves on reset.
-  if(from===0&&to>0)moveDice(true,[1]);else if(to===0&&from>0)moveDice(false,[1]);
+  // The first die waits on the plain page; the second is thrown in beside it by the first roll, and leaves on reset.
+  if(journey==='ingredients')moveDice(true,[1]);else moveDice(false,[1]);
  }
- $('#status').textContent=introMode?(halfway?'First ingredient: '+INGREDIENTS_A[a]+'. Add a second to make the page.':'The report with no ingredients. Roll the dice to add two.'):selected.label+'. '+attemptName(stage)+'.';
+ $('#status').textContent=introMode?'The report with no ingredients. Roll the dice to add two.':selected.label+'. '+attemptName(stage)+'.';
 }
-function selectPair(run){settlePresentation();introMode=false;halfway=false;lastEvent={kind:'pick'};ingredientsChosen=true;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();}
+function selectPair(run){settlePresentation();introMode=false;lastEvent={kind:'pick'};ingredientsChosen=true;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();}
 function chooseDieFace(index,value){
  settlePresentation();pointer.dieHintUsed=true;
- if(introMode&&halfway&&index===0){selected=currentExperiment().runs.find(run=>run.a===value&&run.b===selected.b);lastEvent={kind:'choose',index:0,name:INGREDIENTS_A[value]};render(false);settleDieGrab(index,true);syncDice3D();return;}
- const introducing=introMode;introMode=false;halfway=false;ingredientsChosen=true;
+ const introducing=introMode;introMode=false;ingredientsChosen=true;
  if(introducing){stage=1;comparing=false;}
  const values=[selected.a,selected.b];values[index]=value;
  lastEvent={kind:'choose',index,name:index?INGREDIENTS_B[value]:INGREDIENTS_A[value]};
@@ -496,21 +514,18 @@ function nextIngredient(index,current){
  return bag.splice(position,1)[0];
 }
 function roll(index,gesture=null,forced=null){
- // On the plain page the first die is the action: it lands alone, then the second die joins.
- if(introMode&&!halfway&&index===0){addFirstIngredient(forced?.[0]);return;}
- if(introMode&&!halfway&&index===1)return;
- if(introMode&&halfway&&index===0){addFirstIngredient(forced?.[0]??nextIngredient(0,selected.a));return;}
+ // On the plain page the first die is the action: rolling it throws both, the second thrown in beside it.
+ if(introMode&&index===1)return;
  settlePresentation();
- const introduce=introMode,completing=introduce&&halfway;introMode=false;halfway=false;ingredientsChosen=true;
+ const introduce=introMode;introMode=false;ingredientsChosen=true;
  if(introduce){stage=1;comparing=false;}
  if(index===0||index===1)pointer.dieHintUsed=true;
- const before=selected,indices=completing?[1]:introduce?[0,1]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
- const announce=completing||index===0||index===1;
+ const before=selected,indices=introduce?[0,1]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
+ const announce=!introduce&&(index===0||index===1);
  // The demo passes authored faces; every visitor roll stays random.
  indices.forEach(i=>{values[i]=forced?.[i]??(introduce?randomIndex(i?INGREDIENTS_B.length:INGREDIENTS_A.length):nextIngredient(i,values[i]));});
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
- if(completing)lastEvent={kind:'pair'};
- else if(announce){const i=indices[0];lastEvent={kind:'swap',index:i,name:i?INGREDIENTS_B[values[1]]:INGREDIENTS_A[values[0]]};}
+ if(announce){const i=indices[0];lastEvent={kind:'swap',index:i,name:i?INGREDIENTS_B[values[1]]:INGREDIENTS_A[values[0]]};}
  else lastEvent={kind:'pair'};
  // Selection is immediate; only the old page's cover waits for the die to reach the page.
  const impact=reportImpactFor(()=>render(false));celebrateFirstRoll(impact,forced);
@@ -529,14 +544,14 @@ $('#method-newer').addEventListener('click',()=>changeMethod('newer'));
 $('#model-toggle').addEventListener('click',()=>changeMethod(method==='newer'?promptTrack:'newer'));
 $('#plain-method').addEventListener('change',event=>changeMethod(event.target.value==='newer'?'newer':event.target.value==='original'?'original':'stronger'));
 function setAttempt(value){if(introMode)return;settlePresentation();lastEvent=null;const next=Math.round(Number(value));if(selected.steps[next-1]){stage=next;render(false);}}
-$('#stage-0').addEventListener('click',showBrief);
+$('#stage-0').addEventListener('click',()=>changeFrom($('#stage-0'),showBrief));
 for(let value=1;value<=4;value++)$('#stage-'+value).addEventListener('click',()=>{
  if(introMode){if(value===1)showIngredients();}
- else setAttempt(value);
+ else changeFrom($('#stage-'+value),()=>setAttempt(value));
 });
 $('#experiment-next').addEventListener('click',nextExperimentStep);
 $('#experiment-next').addEventListener('animationend',()=>$('#experiment-next').classList.toggle('is-firing',false));
-$('#reset').addEventListener('click',()=>{showBrief();$('#experiment-next').focus({preventScroll:true});});
+$('#reset').addEventListener('click',()=>{changeFrom($('#reset'),showBrief);$('#experiment-next').focus({preventScroll:true});});
 function settleControlMotion(){actionAnimations.forEach(animation=>animation.cancel());actionAnimations.clear();syncRailMarker();}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){settlePresentation();settleControlMotion();}});
 matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',()=>{settlePresentation();settleControlMotion();});

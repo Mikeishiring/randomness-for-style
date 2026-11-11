@@ -207,11 +207,13 @@ function tumbleDice(indices,values,complete,gesture=null,impact=null){
   const hit={side,knock,die:i,strength:dieClamp(thrown?.strength||0),y:knock?wall.y+sampleDiePlan(plan,plan.knock).y:0};
   const run=()=>{if(typeof hitReport==='function')hitReport(impact,hit);},land=()=>{if(typeof landReportImpact==='function')landReportImpact(impact);};
   dieImpacts[i]={run,land,timer:setTimeout(()=>{dieImpacts[i]=null;run();},(knock?plan.knock:plan.contacts[0])*plan.duration)};
-  sides.push(side);
+  sides.push({side,knock});
   const name=i?modes[active].options[values[i]].name:worlds[values[i]].name;
   $('#throw-'+i).setAttribute('aria-label',`Roll ${i?'second':'first'} die again. ${name}`);
  });
- if(impact&&typeof aimReportImpact==='function')aimReportImpact(impact,sides);
+ // The page changes from the edges that were struck; with no strike, from where the dice landed.
+ const struck=sides.filter(hit=>hit.knock).map(hit=>hit.side);
+ if(impact&&typeof aimReportImpact==='function')aimReportImpact(impact,struck.length?struck:sides.map(hit=>hit.side));
  // A visitor's first roll of a visit lands with a small burst of confetti around the die.
  if(impact?.celebrate){const i=indices[0],landing=dieStates[i].running?.plan;if(landing)setTimeout(()=>celebrateDie(i),landing.contacts[0]*landing.duration);}
 }
