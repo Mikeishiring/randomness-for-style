@@ -46,7 +46,7 @@ assert.ok(flickRight.drift>=flickStart.x);assert.ok(flickLeft.drift<flickStart.x
 // A throw toward the page beside it strikes the edge in mid-air, rebounds and lands back home.
 // Lateral travel reverses only at the strike, and the die never passes the page edge.
 for(let n=0;n<300;n++){
- const edge=(n%2?-1:1)*(70+(n%5)*20),home={q:dieLanding(n%6),x:(n%3-1)*4,y:0},gesture=n%4===3?{direction:Math.sign(edge),strength:(n%7)/6}:null;
+ const edge=(n%2?-1:1)*(70+(n%5)*20),home={q:dieLanding(n%6),x:(n%3-1)*4,y:0},gesture=n%4===3?{direction:Math.sign(edge),strength:(n%7)/6,flick:n%8===7}:null;
  const plan=makeDiePlan(home,n%6,random,116,18,gesture,{edge});
  dieKnockWall(n%2,plan);
  const direction=Math.sign(edge),[hit]=plan.contacts;
@@ -67,6 +67,17 @@ for(let n=0;n<300;n++){
  const end=sampleDiePlan(plan,1);near(end.x,plan.endX);assert.ok(Math.abs(end.x)<=5,'it comes back to rest near home');
  quatRotate(end.q,DIE_NORMALS[n%6]).forEach((v,i)=>near(v,[0,-1,0][i]));
 }
+// A flick from the hand keeps tapping: more hops than a click, each shorter than the last, every one still a
+// visible lift off the tray, and it still lands flat on the chosen face.
+for(let n=0;n<200;n++){
+ const strength=(n%11)/10,plan=makeDiePlan({q:dieLanding(n%6),x:0,y:0},n%6,random,116,18,{direction:n%2?1:-1,strength,flick:true});
+ assert.equal(plan.contacts.length,4+Math.round(strength*2));
+ plan.contacts.forEach((t,j)=>{near(sampleDiePlan(plan,t).air,0);if(j>1)assert.ok(t-plan.contacts[j-1]<plan.contacts[j-1]-plan.contacts[j-2]);});
+ const [a,b]=plan.contacts.slice(-2);assert.ok(sampleDiePlan(plan,(a+b)/2).air>1,'the last tap still lifts');
+ quatRotate(sampleDiePlan(plan,1).q,DIE_NORMALS[n%6]).forEach((v,i)=>near(v,[0,-1,0][i]));
+}
+{const click=makeDiePlan({q:dieLanding(0),x:0,y:0},0,()=>.5,116,18,{direction:1,strength:.5}),flick=makeDiePlan({q:dieLanding(0),x:0,y:0},0,()=>.5,116,18,{direction:1,strength:.5,flick:true});
+ assert.equal(click.contacts.length,3);assert.ok(flick.contacts.length>click.contacts.length&&flick.duration>click.duration);}
 // The tray gives under each landing, less every bounce, with keyframe offsets always in order.
 for(let n=0;n<120;n++){
  const plan=makeDiePlan({q:dieLanding(n%6),x:0,y:0},n%6,random,116,18,null,n%2?{edge:120}:null);
@@ -131,5 +142,5 @@ const invitation={kind:'invitation',from:{q:dieLanding(a),x:0,y:0},size:104,dura
 assert.ok(Math.abs(sampleDiePlan(invitation,.25).y)>0);near(sampleDiePlan(invitation,1).y,0);
 motion.matches=true;const beforeReduced={...dieStates[0].pose};moveDieGrab(0,beforeReduced,104);assert.notEqual(dieTopFace(dieStates[0].pose.q),dieTopFace(beforeReduced.q));settleDieGrab(0);assert.equal(dieStates[0].running,null);
 assert.ok(soundCalls.length>0&&soundCalls.every(call=>call[0]==='play'),'every throw schedules its contact sounds');
-console.log('PASS: 96 exact face-up orientations/CSS matrices; 500 varied rigid tumbles; stable face markup; landing/rebound contacts; a tray that gives less with each bounce; 300 page strikes in mid-air that never pass the edge and land back home; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion.');
+console.log('PASS: 96 exact face-up orientations/CSS matrices; 500 varied rigid tumbles; stable face markup; landing/rebound contacts; flicks that tap more times before landing; a tray that gives less with each bounce; 300 page strikes in mid-air that never pass the edge and land back home; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion.');
 `,context);

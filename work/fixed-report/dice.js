@@ -175,7 +175,7 @@ function animateDiePlan(i,plan,value){
  if(ground?.animate&&plan.contacts?.length){
   const frames=[{offset:0,scale:'1'}];
   plan.contacts.forEach((contact,n)=>{
-   const depth=[.045,.026,.012][n]||0,next=plan.contacts[n+1]??1,dip=Math.min(contact+.014,next),back=Math.min(contact+.085,next);
+   const depth=.045*.58**n,next=plan.contacts[n+1]??1,dip=Math.min(contact+.014,next),back=Math.min(contact+.085,next);
    frames.push({offset:contact,scale:'1'},{offset:dip,scale:`${1-depth} ${1-depth*1.7}`},{offset:back,scale:'1'});
   });
   frames.push({offset:1,scale:'1'});

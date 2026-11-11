@@ -8,14 +8,14 @@ const context=vm.createContext({beginDieGrab(){return {x:0,y:0,q:[0,0,0,1]}},mov
 vm.runInContext(readFileSync(new URL('dice-interaction.js',import.meta.url),'utf8')+'\nbindDieInteraction(button,0);',context);
 const event=(values={})=>({isPrimary:true,button:0,pointerId:1,pointerType:'mouse',clientX:80,clientY:100,detail:1,preventDefault(){this.prevented=true;},...values});
 const send=(type,values,elapsed=0)=>{now+=elapsed;const e=event(values);button.events[type](e);return e;};
-send('pointerenter');send('pointermove',{clientX:120,clientY:70});assert.equal(button.dataset.hover,'true');assert.notEqual(button.style.values['--touch-z'],'0deg');assert.equal(calls.length,0);
+send('pointerenter');send('pointermove',{clientX:120,clientY:70});assert.equal(button.dataset.hover,'true');assert.notEqual(button.style.values['--touch-z'],'0deg');assert.ok(parseFloat(button.style.values['--touch-y'])>4&&parseFloat(button.style.values['--touch-x'])>3,'the die turns toward the pointer');assert.notEqual(button.style.values['--lean-x'],undefined);assert.equal(calls.length,0);
 send('pointerdown');assert.ok(button.captured.has(1));send('pointerup');send('click');assert.equal(calls.length,1);assert.equal(button.captured.size,0);
 // A slow two-axis turn chooses the upper face, once, without a random roll.
 send('pointerdown');send('pointermove',{clientX:140,clientY:150},400);send('pointerup',{clientX:140,clientY:150},150);send('click');
 assert.equal(calls.length,1);assert.deepEqual(choices,[[0,3]]);assert.deepEqual(moves.at(-1).slice(2),[60,50]);
 // Equal distances produce different outcomes based on release speed.
 send('pointerdown');const movement=send('pointermove',{clientX:140},30);assert.equal(movement.prevented,true);send('pointerup',{clientX:140},5);send('click');
-assert.equal(calls.length,2);assert.equal(calls[1][0],0);assert.equal(calls[1][1].direction,1);assert.ok(calls[1][1].strength>0);
+assert.equal(calls.length,2);assert.equal(calls[1][0],0);assert.equal(calls[1][1].direction,1);assert.equal(calls[1][1].flick,true,'a throw from the hand is a flick');assert.ok(calls[1][1].strength>0);
 const softer=calls[1][1].strength;
 send('pointerdown');send('pointermove',{clientX:140},10);send('pointerup',{clientX:140},5);send('click');assert.ok(calls[2][1].strength>softer);
 // Fast vertical touch throws use the vertical rotation axis.

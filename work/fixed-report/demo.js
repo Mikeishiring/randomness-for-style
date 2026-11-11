@@ -137,5 +137,4 @@ document.addEventListener('visibilitychange',()=>{if(!demo.running)return;if(doc
 let demoWidth=innerWidth;
 addEventListener('resize',()=>{if(demo.running&&innerWidth!==demoWidth)stopDemo();demoWidth=innerWidth;});
 renderDemoToggle();
-// A fresh visit opens on the plain page and plays the story once.
-if(introMode&&view==='dice'&&!params.has('start')&&!demoReduced())runDemo();
+// A fresh visit opens on the plain page and waits for the visitor's own first roll; Watch demo plays the story.

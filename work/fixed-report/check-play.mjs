@@ -283,6 +283,21 @@ vm.runInContext(`{
  assert.equal(before()[0].querySelector('iframe').srcdoc,original().html);
  render();assert.equal(handle.attrs['aria-valuenow'],'50');assert.equal(before().length,1);
  comparing=true;renderResult();assert.equal(box.hidden,true,'side-by-side comparison replaces the slider');assert.equal(before().length,0);comparing=false;renderResult();assert.equal(before().length,1);
+ // The knob shows itself once, only after a change has landed and had time to be seen; a change cancels it
+ // on the spot, so nothing slides while the page changes, and it tries again once the next page lands.
+ {key('Home');beforeAfter.hinted=false;let clock=0;const frames=[];
+  globalThis.performance={now:()=>clock};globalThis.requestAnimationFrame=fn=>frames.push(fn);globalThis.cancelAnimationFrame=id=>{frames[id-1]=null;};
+  const tick=at=>{clock=at;const queued=frames.splice(0);queued.forEach(fn=>fn?.(at));};
+  const view=nodes.get('#report-view');
+  reportHandoffSettled(view);assert.equal(beforeAfter.hinting,true);
+  tick(BEFORE_AFTER_HINT_WAIT-50);assert.equal(handle.attrs['aria-valuenow'],'0','the new page is left alone first');
+  setAttempt(3);assert.equal(beforeAfter.hinting,false);assert.equal(frames.filter(Boolean).length,0,'a change cancels a waiting hint');assert.equal(beforeAfter.hinted,false,'unseen, it waits for the next page');
+  clock=10000;reportHandoffSettled(view);tick(10000+BEFORE_AFTER_HINT_WAIT+600);assert.ok(Number(handle.attrs['aria-valuenow'])>0,'then the knob pulls the original across');
+  setAttempt(2);assert.equal(handle.attrs['aria-valuenow'],'0','a change puts a moving hint away at once');assert.equal(frames.filter(Boolean).length,0,'and nothing is left to slide');
+  assert.equal(beforeAfter.hinted,true,'seen once is enough');reportHandoffSettled(view);assert.equal(beforeAfter.hinting,false,'it never hints again');
+  beforeAfter.hinted=false;clock=20000;reportHandoffSettled(view);tick(20000+BEFORE_AFTER_HINT_WAIT+600);tick(20000+BEFORE_AFTER_HINT_WAIT+5000);
+  assert.equal(beforeAfter.hinted,true);assert.equal(handle.attrs['aria-valuenow'],'0','a hint left to finish returns home');
+  delete globalThis.requestAnimationFrame;delete globalThis.cancelAnimationFrame;delete globalThis.performance;}
  changeFrom(nodes.get('#reset'),showBrief);assert.equal(box.hidden,true,'nothing to compare before the dice');assert.equal(handle.attrs['aria-valuenow'],'0','a fresh start puts the slider away');
  // Only a visitor's first roll is celebrated; the demo's authored rolls never are.
  firstRollCelebrated=false;const demoRoll={},first={},second={};
@@ -294,4 +309,4 @@ vm.runInContext(`{
  body.hidden=true;toggle.attrs['aria-expanded']='false';
  toggle.click();assert.equal(toggle.attrs['aria-expanded'],'true');assert.equal(body.hidden,false);
  toggle.click();assert.equal(toggle.attrs['aria-expanded'],'false');assert.equal(body.hidden,true);}
-console.log('PASS: the before/after slider is there from the first roll, always compares with the original, follows keys and taps, keeps its place through refinements, rolls and re-renders, steps aside for side-by-side comparison and goes away on a fresh start; the gallery folds open and closed; only the first real roll is celebrated.');
+console.log('PASS: the before/after slider is there from the first roll, always compares with the original, follows keys and taps, keeps its place through refinements, rolls and re-renders, hints once only after a change has landed and never while one is under way, steps aside for side-by-side comparison and goes away on a fresh start; the gallery folds open and closed; only the first real roll is celebrated.');

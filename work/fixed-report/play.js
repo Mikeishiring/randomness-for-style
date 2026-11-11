@@ -49,7 +49,7 @@ function syncRailMarker(animate=false){
  marker.style.width=Math.max(0,target.left+target.width/2-start)+'px';marker.style.transform='translateX('+(start-track.left)+'px)';
 }
 const railResize=new ResizeObserver(()=>syncRailMarker());railResize.observe($('#rail-stops'));
-function settlePresentation(){settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
+function settlePresentation(){quietBeforeAfterHint();settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
 // The page tells its story in one headline per step; every step stays reachable from the chapters.
 const storyBeats=[
  ['You just generated a report.','One prompt, no ingredients: “Create a one-page website that helps its owner understand this week’s website performance.”'],
@@ -301,10 +301,10 @@ function showReports(container,entries){
   }
  });
 }
-// Before and after: the original report, with no ingredients, sits under the current page. A knob in the
-// middle of the page, or the small handle on its top edge, wipes it back in from the left as far as it is
-// dragged. The position holds across rolls and refinements: only the after side changes.
-const beforeAfter={value:0,item:null,section:null,tween:null,hints:0,drag:null};
+// Before and after: the original report, with no ingredients, sits under the current page. The knob in the
+// middle of the page wipes it back in from the left as far as it is dragged, and a "Before" tag shows only
+// on what it reveals. The position holds across rolls and refinements: only the after side changes.
+const beforeAfter={value:0,item:null,section:null,tween:null,hinted:false,hinting:false,drag:null};
 function beforeItem(){
  if(view!=='dice'||introMode||comparing)return null;
  return currentBaseline().steps[0];
@@ -333,10 +333,21 @@ function releaseBeforeSection(){
  beforeAfter.section=null;section.hidden=true;section.style.clipPath='';section.inert=false;section.removeAttribute('aria-hidden');section.classList.toggle('report-before',false);
 }
 function stopBeforeAfterTween(){if(beforeAfter.tween){cancelAnimationFrame(beforeAfter.tween);beforeAfter.tween=null;}}
+// The hint is never the visitor's position. A change cancels it on the spot and puts the slider back, so
+// nothing on the page slides while the page itself is changing. A hint that had begun to move has been
+// seen; one still waiting tries again once the next page has landed.
+function quietBeforeAfterHint(){
+ if(!beforeAfter.hinting)return;
+ beforeAfter.hinting=false;if(beforeAfter.value>0)beforeAfter.hinted=true;
+ stopBeforeAfterTween();paintBeforeAfter(0);
+ $('#before-after').querySelector?.('.ba-knob')?.getAnimations?.().forEach(animation=>animation.cancel());
+}
+// Taking hold of the slider keeps it where the hint had it and ends the hints for good.
+function takeBeforeAfter(){beforeAfter.hinting=false;beforeAfter.hinted=true;stopBeforeAfterTween();}
 // Glide to a value; shape(t) maps progress to position for the hints.
 function tweenBeforeAfter(to,duration=360,shape=null,delay=0){
  stopBeforeAfterTween();
- if(typeof requestAnimationFrame!=='function'||matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden){paintBeforeAfter(shape?beforeAfter.value:to);return;}
+ if(typeof requestAnimationFrame!=='function'||matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden){shape?.(1);paintBeforeAfter(shape?beforeAfter.value:to);return;}
  const from=beforeAfter.value,start=performance.now()+delay,ease=t=>t<.5?4*t*t*t:1-(-2*t+2)**3/2;
  const step=now=>{const t=Math.max(0,Math.min(1,(now-start)/duration));if(now>=start)paintBeforeAfter(shape?shape(t):from+(to-from)*ease(t));beforeAfter.tween=t<1?requestAnimationFrame(step):null;};
  beforeAfter.tween=requestAnimationFrame(step);
@@ -350,20 +361,21 @@ function renderBeforeAfter(){
  if(introMode)paintBeforeAfter(0);else if(item)paintBeforeAfter(beforeAfter.value);else releaseBeforeSection();
  box.hidden=!item;
 }
-// After a change has printed and had a moment to be seen, the knob pops out to show it slides. The first
-// time it pulls a good slice of the original across and holds it there; the next two times it only peeks.
-// Using it ends the hints.
+// Once, after the first change has printed and the new page has had a while to be seen on its own, the
+// knob pops out and pulls a slice of the original across, holds it, and slides home. Later changes never
+// hint: the knob stays put while pages change.
+const BEFORE_AFTER_HINT_WAIT=1600;
 function reportHandoffSettled(container){
- if(container!==$('#report-view')||!beforeAfter.item||beforeAfter.value||beforeAfter.drag||beforeAfter.hints>=3)return;
- const first=!beforeAfter.hints++,reach=first?.3:.07,out=first?.24:.3,hold=first?.64:.5,duration=first?2200:900,settle=first?900:650;
- const knob=$('#before-after').querySelector?.('.ba-knob');
- if(knob?.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)knob.animate([{scale:'1'},{scale:first?'1.3':'1.18',offset:.16},{scale:'.96',offset:.32},{scale:'1',offset:.44},{scale:'1'}],{duration:first?1100:700,delay:settle,easing:'cubic-bezier(.33,1,.68,1)'});
- tweenBeforeAfter(0,duration,t=>t<out?reach*(1-(1-t/out)**3):t<hold?reach:reach*(1-((t-hold)/(1-hold))**2*(3-2*(t-hold)/(1-hold))),settle);
+ if(container!==$('#report-view')||!beforeAfter.item||beforeAfter.value||beforeAfter.drag||beforeAfter.hinted||beforeAfter.hinting)return;
+ const reach=.3,out=.24,hold=.64,duration=2200,knob=$('#before-after').querySelector?.('.ba-knob');
+ beforeAfter.hinting=true;
+ if(knob?.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)knob.animate([{scale:'1'},{scale:'1.3',offset:.16},{scale:'.96',offset:.32},{scale:'1',offset:.44},{scale:'1'}],{duration:1100,delay:BEFORE_AFTER_HINT_WAIT,easing:'cubic-bezier(.33,1,.68,1)'});
+ tweenBeforeAfter(0,duration,t=>{if(t>=1){beforeAfter.hinting=false;beforeAfter.hinted=true;}return t<out?reach*(1-(1-t/out)**3):t<hold?reach:reach*(1-((t-hold)/(1-hold))**2*(3-2*(t-hold)/(1-hold)));},BEFORE_AFTER_HINT_WAIT);
 }
 (()=>{
  const handle=$('#ba-handle'),box=$('#before-after');
- // The knob, the line and the top handle all grab the same divider.
- const grips=[handle,box.querySelector?.('.ba-knob'),box.querySelector?.('.ba-line')].filter(Boolean);
+ // The knob and the line both grab the same divider.
+ const grips=[handle,box.querySelector?.('.ba-line')].filter(Boolean);
  const valueAt=x=>{const rect=$('#report-view').getBoundingClientRect?.();return rect?.width?(x-rect.left)/rect.width:beforeAfter.value;};
  const end=event=>{
   const drag=beforeAfter.drag;if(!drag||event.pointerId!==drag.id)return;
@@ -374,7 +386,7 @@ function reportHandoffSettled(container){
  grips.forEach(grip=>{
   grip.addEventListener('pointerdown',event=>{
    if(event.button!==0)return;
-   settlePresentation();stopBeforeAfterTween();beforeAfter.hints=3;
+   takeBeforeAfter();settlePresentation();
    beforeAfter.drag={id:event.pointerId,x:event.clientX,moved:false,from:beforeAfter.value};
    grip.setPointerCapture?.(event.pointerId);box.toggleAttribute?.('data-dragging',true);
   });
@@ -392,7 +404,7 @@ function reportHandoffSettled(container){
   else if(event.key==='Home'||event.key==='Escape')next=0;else if(event.key==='End')next=1;
   else if(event.key==='Enter'||event.key===' ')next=beforeAfter.value>0?0:.5;
   if(next===null)return;
-  event.preventDefault();settlePresentation();beforeAfter.hints=3;
+  event.preventDefault();takeBeforeAfter();settlePresentation();
   if(event.key==='Enter'||event.key===' ')tweenBeforeAfter(next);else{stopBeforeAfterTween();paintBeforeAfter(next);}
  });
 })();
@@ -420,7 +432,7 @@ function renderRail(){
  showStory();syncRailMarker(animate);paintedStep=value;
 }
 function renderResult(){
- stopBeforeAfterTween();releaseBeforeSection();
+ quietBeforeAfterHint();stopBeforeAfterTween();releaseBeforeSection();
  const container=$('#report-view');container.classList.toggle('comparing',comparing);
  const current=introMode?currentBaseline().steps[0]:selected.steps[stage-1];
  // "Other" is each track's one alternative: the earlier model's two prompts compare with each

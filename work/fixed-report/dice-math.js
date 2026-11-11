@@ -49,11 +49,18 @@ function makeDiePlan(from,value,random=Math.random,size=116,travelLimit=18,gestu
  const between=(min,max)=>min+(max-min)*random(),sign=()=>random()<.5?-1:1;
  const yaw=Math.floor(random()*4)*Math.PI/2+between(-.16,.16);
  const strength=dieClamp(gesture?.strength||0),direction=gesture?.direction||(wall?Math.sign(wall.edge):sign());
- const flight=between(230,285)+strength*65,bounce=flight*between(.46,.55),last=bounce*between(.40,.50),settle=between(85,115),duration=flight+bounce+last+settle;
+ const flight=between(230,285)+strength*65;
+ // A click lands with a bounce and a last small hop. A flick from the hand is livelier: it keeps tapping,
+ // three to five hops that each lose less height, more the harder it was thrown.
+ const hops=[];
+ if(gesture?.flick){let hop=flight;for(let n=3+Math.round(strength*2);n>0;n--){hop*=between(.64,.70);hops.push(hop);}}
+ else{const bounce=flight*between(.46,.55);hops.push(bounce,bounce*between(.40,.50));}
+ const settle=between(85,115),duration=flight+hops.reduce((sum,hop)=>sum+hop,0)+settle;
+ const contacts=[flight/duration];hops.forEach(hop=>contacts.push(contacts[contacts.length-1]+hop/duration));
  let drift=direction*between(travelLimit*(.45+strength*.25),travelLimit);
  if(gesture?.direction)drift=direction>0?Math.max(from.x,drift):Math.min(from.x,drift);
  const axis=gesture?.axis||[sign()*between(.55,1),between(-.35,.35),-direction*between(.55,1)];
- const plan={from,target:dieLanding(value,yaw),size,duration,axis,turns:1+Math.round(strength*2),drift,lift:between(26,31)+strength*10,rock:sign()*between(.025,.045),contacts:[flight/duration,(flight+bounce)/duration,(flight+bounce+last)/duration],knock:null};
+ const plan={from,target:dieLanding(value,yaw),size,duration,axis,turns:1+Math.round(strength*2),drift,lift:between(26,31)+strength*10,rock:sign()*between(.025,.045),contacts,hopPower:gesture?.flick?1.5:2,knock:null};
  if(wall&&Math.sign(wall.edge)===direction){
   // Strike late in the first flight, while still airborne. The edge is met by the die's own
   // extent; callers that know the camera refine plan.wall with dieKnockWall.
@@ -66,15 +73,24 @@ function makeDiePlan(from,value,random=Math.random,size=116,travelLimit=18,gestu
 }
 // Position along the throw for a knocking plan: straight to the edge, reverse at the strike,
 // then lose lateral speed at each landing until the die rests near home, never past the strike.
+const dieKnockPace=j=>j===0?1:j===1?.6:.3*.5**(j-2);
 function dieKnockX(plan,t){
- const [hit,bounce,last]=plan.contacts,k=plan.knock,from=plan.from.x,wall=plan.wall,direction=Math.sign(plan.edge);
+ const contacts=plan.contacts,k=plan.knock,from=plan.from.x,wall=plan.wall,direction=Math.sign(plan.edge);
  if((plan.endX-wall)*direction>0)plan.endX=wall;
  if(t<=k)return from+(wall-from)*(t/k);
- const span=(hit-k)+.6*(bounce-hit)+.3*(last-bounce)+.05*(1-last),v=(plan.endX-wall)/span;
- let x=wall+v*(Math.min(t,hit)-k);if(t<=hit)return x;
- x+=.6*v*(Math.min(t,bounce)-hit);if(t<=bounce)return x;
- x+=.3*v*(Math.min(t,last)-bounce);if(t<=last)return x;
- const s=(t-last)/(1-last);return x+.1*v*(1-last)*(s-s*s/2);
+ const marks=[k,...contacts],last=marks[marks.length-1],tail=Math.min(.1,dieKnockPace(contacts.length));
+ const span=contacts.reduce((sum,_,j)=>sum+dieKnockPace(j)*(marks[j+1]-marks[j]),tail*.5*(1-last)),v=(plan.endX-wall)/span;
+ let x=wall;
+ for(let j=0;j<contacts.length;j++){x+=dieKnockPace(j)*v*(Math.min(t,marks[j+1])-marks[j]);if(t<=marks[j+1])return x;}
+ const s=(t-last)/(1-last);return x+tail*v*(1-last)*(s-s*s/2);
+}
+// Progress through a throw that is `first` done at the first landing and `end` done at the last. The rest
+// is shared across the hops by their length, slowing at each landing.
+function dieHopProgress(contacts,t,first,end){
+ const hit=contacts[0];if(t<=hit)return t/hit*first;
+ let total=0,done=0;
+ for(let j=1;j<contacts.length;j++){const weight=.55**(j-1);total+=(contacts[j]-contacts[j-1])*weight;done+=Math.max(0,Math.min(t,contacts[j])-contacts[j-1])*weight;}
+ return total?first+(end-first)*done/total:end;
 }
 function sampleDiePlan(plan,t){
  t=dieClamp(t);
@@ -87,18 +103,20 @@ function sampleDiePlan(plan,t){
   const q=quatMultiply(quatAxis([0,0,1],rock*.13),plan.from.q);
   return {q,x:plan.from.x,y:-dieSupportLift(q,plan.size),air:0};
  }
- const [hit,bounce,last]=plan.contacts;
+ const contacts=plan.contacts,hit=contacts[0],last=contacts[contacts.length-1];
  // Rotation loses speed at impact; lateral travel never reverses in mid-air.
- const phase=t<=hit?t/hit*.68:t<=bounce?.68+(t-hit)/(bounce-hit)*.24:t<=last?.92+(t-bounce)/(last-bounce)*.08:1;
+ const phase=t<=last?dieHopProgress(contacts,t,.68,1):1;
  let q=quatMultiply(quatAxis(plan.axis,Math.PI*2*plan.turns*phase),quatSlerp(plan.from.q,plan.target,phase));
  if(t>last){const settle=(t-last)/(1-last);q=quatMultiply(quatAxis([0,0,1],Math.sin(settle*Math.PI)*plan.rock*(1-settle)),plan.target);}
- const travel=t<=hit?t/hit*.67:t<=bounce?.67+(t-hit)/(bounce-hit)*.23:t<=last?.90+(t-bounce)/(last-bounce)*.08:.98+.02*(1-(1-(t-last)/(1-last))**2);
+ const travel=t<=last?dieHopProgress(contacts,t,.67,.98):.98+.02*(1-(1-(t-last)/(1-last))**2);
  const x=plan.knock!=null?dieKnockX(plan,t):plan.from.x+(plan.drift-plan.from.x)*travel;
- let air;
+ let air=0;
  if(t<=hit){const p=t/hit,fromAir=Math.max(0,-plan.from.y-dieSupportLift(plan.from.q,plan.size));air=fromAir*(1-p)+4*plan.lift*p*(1-p);}
- else if(t<=bounce){const p=(t-hit)/(bounce-hit),lift=plan.lift*((bounce-hit)/hit)**2;air=4*lift*p*(1-p);}
- else if(t<=last){const p=(t-bounce)/(last-bounce),lift=plan.lift*((last-bounce)/hit)**2;air=4*lift*p*(1-p);}
- else air=0;
+ else if(t<=last){
+  // Each hop rises by its own length; a flick's hops keep a little more height so every tap shows.
+  const j=contacts.findIndex(contact=>t<=contact),from=contacts[j-1],to=contacts[j],p=(t-from)/(to-from);
+  air=4*plan.lift*((to-from)/hit)**(plan.hopPower||2)*p*(1-p);
+ }
  q=t===1?plan.target:q;
  return {q,x,y:-air-dieSupportLift(q,plan.size),air};
 }

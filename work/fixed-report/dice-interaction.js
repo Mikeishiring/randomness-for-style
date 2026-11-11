@@ -9,7 +9,7 @@ function bindDieInteraction(button,index){
   const id=pointer?.id,wasHeld=!!pointer;pointer=null;dragging=false;
   if(id!==undefined&&button.hasPointerCapture(id))button.releasePointerCapture(id);
   button.removeAttribute('data-pressed');button.removeAttribute('data-dragging');button.removeAttribute('data-hover');
-  style('--touch-x','0deg');style('--touch-z','0deg');
+  ['--touch-x','--touch-y','--touch-z'].forEach(key=>style(key,'0deg'));style('--lean-x','0');style('--lean-y','0');
   if(wasHeld&&settle){suppressPointerClick=true;settleDieGrab(index);}
  };
  dieInteractions.set(index,reset);
@@ -43,8 +43,11 @@ function bindDieInteraction(button,index){
   }
   if(!diceFinePointer.matches||event.pointerType==='touch'||diceMotion.matches||dieStates[index].running)return;
   button.dataset.hover='true';
-  const rect=button.getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width*2-1,y=(event.clientY-rect.top)/rect.height*2-1;
-  style('--touch-x',Math.max(-4,Math.min(4,-y*4))+'deg');style('--touch-z',Math.max(-4,Math.min(4,x*4))+'deg');
+  // Measured around the cube itself, so the lean is strongest right beside it.
+  const cube=button.querySelector('.cube')?.getBoundingClientRect?.()||button.getBoundingClientRect(),reach=(cube.width||1)*1.1;
+  const clamp=n=>Math.max(-1,Math.min(1,n)),x=clamp((event.clientX-cube.left-cube.width/2)/reach),y=clamp((event.clientY-cube.top-cube.height/2)/reach);
+  style('--lean-x',x.toFixed(3));style('--lean-y',y.toFixed(3));
+  style('--touch-x',(-y*18).toFixed(2)+'deg');style('--touch-y',(x*24).toFixed(2)+'deg');style('--touch-z',(x*8).toFixed(2)+'deg');
  });
  button.addEventListener('pointerup',event=>{
   if(!pointer||event.pointerId!==pointer.id)return;
@@ -57,7 +60,7 @@ function bindDieInteraction(button,index){
   reset(!wasDragging&&!inside);
   if(wasDragging){
    suppressPointerClick=true;
-   if(speed>.6)roll(index,{direction:Math.sign(vx)||1,strength:Math.min(1,(speed-.6)/1.8),axis:[-vy/speed,0,vx/speed]});
+   if(speed>.6)roll(index,{direction:Math.sign(vx)||1,strength:Math.min(1,(speed-.6)/1.8),axis:[-vy/speed,0,vx/speed],flick:true});
    else{dieTick(index,'set');chooseDieFace(index,dieTopFace(dieStates[index].pose.q));}
   }else if(!inside)suppressPointerClick=true;
  });

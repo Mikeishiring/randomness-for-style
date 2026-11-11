@@ -55,13 +55,13 @@ body{font-family:var(--sans);overflow-x:clip}
 .die{min-width:0;text-align:center}
 .die:first-child{grid-area:left}.die:nth-child(2){grid-area:right}
 .die-top{height:0;overflow:hidden}
-.die-object{--size:139px;height:300px;border-radius:12px;user-select:none;touch-action:none;cursor:grab;--touch-x:0deg;--touch-z:0deg}
+.die-object{--size:139px;height:300px;border-radius:12px;user-select:none;touch-action:none;cursor:grab;--touch-x:0deg;--touch-y:0deg;--touch-z:0deg;--lean-x:0;--lean-y:0}
 .die-object:focus-visible{outline-offset:0}.die-object:active .cube-face{border-color:currentColor}
 .die>strong{--face-scale:1.2;display:block;font:500 20px/1.25 var(--sans);letter-spacing:-.3px;min-height:2.5em;padding:0 4px;text-wrap:balance;overflow-wrap:anywhere}
 [data-journey=original] .die:nth-child(2):not(.leaving){visibility:hidden}
 #dice-lab{grid-area:report;min-width:0}
 .result{min-width:0}
-.report-frame{height:clamp(400px,calc(100dvh - 272px),860px);background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px #25301c0d,0 12px 32px -18px #25301c33}
+.report-frame{height:clamp(320px,calc(100dvh - 272px),860px);background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px #25301c0d,0 12px 32px -18px #25301c33}
 #report-view,#plain-report{position:relative;isolation:isolate}
 #report-view{margin-top:28px}
 /* Each refinement pass leaves a sheet behind the report, so the passes accumulate visibly. */
@@ -277,10 +277,9 @@ body{font-family:var(--sans);overflow-x:clip}
 footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px;color:var(--muted)}
 
 /* Contact feedback stays inside a fixed hit target. */
-.die-grip{display:block;position:relative;width:var(--size);height:var(--size);transform-style:preserve-3d;transform:translateY(0) rotateX(0deg) rotateZ(0deg) scale(1);transition:transform 170ms var(--ease-out)}
+.die-grip{display:block;position:relative;width:var(--size);height:var(--size);transform-style:preserve-3d;transform:translate(0,0) rotateX(0deg) rotateY(0deg) rotateZ(0deg);transition:transform 170ms var(--ease-out)}
 .die-camera{transition:none}
 .die-object:hover .die-camera{transform:rotateX(var(--view-x)) rotateY(var(--view-y)) rotateZ(var(--view-z))}
-.die-object[data-hover] .die-grip,.die-object:focus-visible .die-grip{transform:translateY(-3px) rotateX(var(--touch-x)) rotateZ(var(--touch-z))}
 .die-object[data-pressed] .die-grip{transform:translateY(2px);transition-duration:65ms}
 .die-object[data-dragging] .die-grip{transform:none;transition-duration:65ms}
 .die-object[data-dragging]{cursor:grabbing}
@@ -340,34 +339,36 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 @media(max-width:400px){.atlas>header{display:block}#atlas-ingredient{display:block;width:100%;max-width:none;margin-top:12px}.topbar-link{display:none}}
 @media(prefers-reduced-motion:reduce){.die-call{animation:none}.pointer-card,.next-pips i{transition:none}.experiment-next:after{display:none}.reset span,.experiment-next .next-cue{transition:none}.version-stack i{transition:none}html{scroll-behavior:auto}.die-grip{transform:none!important;transition:none!important}.matrix-cell,.rail-stops button,.rail-marker,.experiment-next,.reset,.experiment-tools>button,.report-frame,.demo-arrow,.demo-touch,.demo-glyph{transition:none!important}}
 
-/* Before and after: a small handle above the page; dragging it wipes the previous step back in from the left. */
-.before-after{position:absolute;left:0;right:0;top:-30px;bottom:0;z-index:5;pointer-events:none;--ba:0}
+/* Before and after: a round knob on the page's left edge; dragging it wipes the original back in from the left. */
+.before-after{position:absolute;inset:0;z-index:5;pointer-events:none;--ba:0}
 .before-after[hidden]{display:none}
-.ba-line{position:absolute;top:30px;bottom:0;left:calc(var(--ba)*100%);width:2px;margin-left:-1px;border-radius:2px;background:var(--ink);box-shadow:0 0 0 1px #fffdf8b3,0 0 18px -2px #1d261e66;opacity:0;transition:opacity 160ms ease-out}
+.ba-line{position:absolute;top:0;bottom:0;left:calc(var(--ba)*100%);width:2px;margin-left:-1px;border-radius:2px;background:var(--ink);box-shadow:0 0 0 1px #fffdf8b3,0 0 18px -2px #1d261e66;opacity:0;transition:opacity 160ms ease-out}
 .before-after[data-active] .ba-line{opacity:.9;pointer-events:auto;cursor:ew-resize;touch-action:none}
 .ba-line:before{content:'';position:absolute;top:0;bottom:0;left:-11px;right:-11px}
 /* The knob rides the divider in the middle of the page; at rest it waits half-tucked on the left edge. */
-.ba-knob{position:absolute;top:calc(30px + (100% - 30px)/2);left:calc(var(--ba)*100%);width:40px;height:40px;margin:-20px 0 0 -20px;display:grid;place-items:center;border-radius:50%;background:#fffdf8;border:1.5px solid var(--ink);color:var(--ink);box-shadow:0 2px 0 #1d261e24,0 12px 22px -12px #1d261e99;pointer-events:auto;cursor:ew-resize;touch-action:none;user-select:none;transition:scale 160ms var(--ease-out),box-shadow 160ms ease-out}
+.ba-knob{position:absolute;top:50%;left:calc(var(--ba)*100%);width:40px;height:40px;margin:-20px 0 0 -20px;padding:0;display:grid;place-items:center;border-radius:50%;background:#fffdf8;border:1.5px solid var(--ink);color:var(--ink);font:inherit;box-shadow:0 2px 0 #1d261e24,0 12px 22px -12px #1d261e99;pointer-events:auto;cursor:ew-resize;touch-action:none;user-select:none;transition:scale 160ms var(--ease-out),box-shadow 160ms ease-out}
+.ba-knob:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .ba-knob svg{width:22px;height:12px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
 .ba-knob path{transition:translate 160ms var(--ease-out)}
 .before-after[data-dragging] .ba-knob{scale:1.12;box-shadow:0 2px 0 #1d261e24,0 16px 26px -12px #1d261eb3}
-.ba-handle{position:absolute;top:2px;left:calc(var(--ba)*100%);transform:translateX(calc(var(--ba)*-100%));display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 11px 0 8px;border:1px solid #d6d4c6;border-radius:999px;background:#fffdf8;color:var(--muted);font:600 11.5px/1 var(--sans);letter-spacing:.02em;box-shadow:0 1px 2px #1d261e14;pointer-events:auto;cursor:ew-resize;touch-action:none;user-select:none;transition:color 120ms ease-out,border-color 120ms ease-out,box-shadow 160ms ease-out,background 120ms ease-out}
-.ba-handle:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.before-after[data-active] .ba-handle,.before-after[data-dragging] .ba-handle{color:var(--ink);border-color:var(--ink);box-shadow:0 4px 12px -6px #1d261e80}
-.ba-grip{display:inline-flex;gap:2px}.ba-grip i{width:2px;height:10px;border-radius:1px;background:currentColor;opacity:.75;transition:transform 160ms var(--ease-out)}
+/* "Before" belongs to the revealed original: it is wiped in with it and only exists while it shows. */
+.ba-tag{position:absolute;inset:0;clip-path:inset(0 calc((1 - var(--ba))*100%) 0 0);pointer-events:none;opacity:0;transition:opacity 160ms ease-out}
+.before-after[data-active] .ba-tag{opacity:1}
+.ba-tag b{position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:var(--ink);color:#fffdf8;font:600 11.5px/1 var(--sans);letter-spacing:.02em;box-shadow:0 4px 12px -6px #1d261e80}
 /* The original sits above a change in progress, so a roll or a refinement only reprints the after side. */
 .frame-section.report-before{position:absolute;inset:0;z-index:4;pointer-events:none}
 @media(hover:hover) and (pointer:fine){
- .ba-handle:hover{color:var(--ink);border-color:#a9a99a;background:#fff}
- .ba-handle:hover .ba-grip i:first-child{transform:translateX(-1.5px)}.ba-handle:hover .ba-grip i:last-child{transform:translateX(1.5px)}
  .ba-knob:hover{scale:1.1}
+ .ba-knob:hover path:first-child{translate:-1.5px 0}.ba-knob:hover path:last-child{translate:1.5px 0}
 }
 
 /* Dice: a lift and a softer, smaller shadow under the pointer; the waiting die hops now and then. */
 .die-ground{transition:scale 160ms var(--ease-out)}
-.die-shadow{transition:scale 200ms var(--ease-out)}
-.die-object[data-hover] .die-grip,.die-object:focus-visible .die-grip{transform:translateY(-7px) rotateX(var(--touch-x)) rotateZ(var(--touch-z))}
-.die-object[data-hover] .die-shadow{scale:.86}
+.die-shadow{transition:scale 200ms var(--ease-out),translate 260ms var(--ease-out)}
+/* Under the mouse the die leans toward it and turns to look, so moving across it rolls it about a little.
+   --lean-* run from -1 to 1 across the die; the springy curve lets it trail the pointer and settle. */
+.die-object[data-hover]:not([data-pressed]):not([data-dragging]) .die-grip,.die-object:focus-visible:not([data-pressed]):not([data-dragging]) .die-grip{transform:translate(calc(var(--lean-x)*var(--size)*.08),calc(var(--lean-y)*var(--size)*.05 - 8px)) rotateX(var(--touch-x)) rotateY(var(--touch-y)) rotateZ(var(--touch-z));transition:transform 240ms cubic-bezier(.3,1.35,.5,1)}
+.die-object[data-hover] .die-shadow{scale:.84;translate:calc(var(--lean-x)*var(--size)*.06) 0}
 .die[data-waiting] .die-object:not([data-hover]):not([data-pressed]):not([data-dragging]) .die-grip{animation:die-idle-hop 6.5s cubic-bezier(.45,0,.55,1) 2.4s infinite}
 .die[data-waiting] .die-object:not([data-hover]):not([data-pressed]):not([data-dragging]) .die-shadow{animation:die-idle-shadow 6.5s cubic-bezier(.45,0,.55,1) 2.4s infinite}
 @keyframes die-idle-hop{0%,84%,100%{translate:0 0;rotate:0deg}88%{translate:0 -11px;rotate:-5deg}92%{translate:0 0;rotate:2deg}95%{translate:0 -3px;rotate:-1deg}97.5%{translate:0 0;rotate:0deg}}
@@ -399,7 +400,7 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 @media(prefers-reduced-motion:reduce){
  .die[data-waiting] .die-object .die-grip,.die[data-waiting] .die-object .die-shadow,.die-call,.experiment-next .next-pips i:after{animation:none!important}
  .die-object[data-hover] .die-grip{transform:none}
- .matrix-cell,.matrix-preview iframe,.ba-line,.ba-handle,.ba-knob,.die-ground,.die-shadow{transition:none!important}
+ .matrix-cell,.matrix-preview iframe,.ba-line,.ba-tag,.ba-knob,.die-ground,.die-shadow{transition:none!important}
  .matrix-cell:hover,.matrix-cell:hover .matrix-preview iframe{translate:none}
 }
 
@@ -421,7 +422,7 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 /* Phones: one screen. The dice on top, the page filling the middle, the action and the steps within thumb
    reach underneath. The page scrolls inside its own frame; nothing else needs to. */
 @media(max-width:860px){
- [data-view=dice] .workbench{grid-template-areas:"left right" "hint hint" "report report" "bar bar" "steps steps";grid-template-rows:auto auto minmax(300px,1fr) auto auto;height:max(100dvh,720px);padding:8px 0 6px;row-gap:10px}
+ [data-view=dice] .workbench{grid-template-areas:"left right" "hint hint" "report report" "bar bar" "steps steps";grid-template-rows:auto auto minmax(260px,1fr) auto auto;height:max(100dvh,600px);padding:8px 0 6px;row-gap:10px}
  [data-view=dice][data-comparing=true] .workbench{height:auto}
  #dice-lab{display:flex;flex-direction:column;min-height:0;align-self:stretch;border-top:0;padding-top:0}
  #report-view{flex:1;min-height:0;margin-top:26px}
@@ -447,8 +448,9 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  .experiment-tools>button,.experiment-tools .prompt-trigger{min-height:36px;padding:0 9px;font-size:12.5px}
  .demo-toggle{padding:0 10px 0 9px}
 }
-/* Short phones keep the whole flow on one screen: smaller dice, a shorter page. */
-@media(max-width:860px) and (max-height:700px){
+/* Shorter screens, which include most phones once the browser's own bars are showing, keep the whole flow on
+   one screen with smaller dice and a shorter page. */
+@media(max-width:860px) and (max-height:780px){
  [data-view=dice] .workbench{grid-template-rows:auto auto minmax(240px,1fr) auto auto;height:max(100dvh,600px);row-gap:8px}
  .die-object{--size:70px;height:122px}
  #report-view{margin-top:22px}
@@ -478,7 +480,7 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
     <span id="dice-gesture-help" class="sr-only">Click or press Enter to roll. Drag slowly to choose the upper face; release quickly to throw. Arrow keys turn the die. Escape cancels a drag.</span>
    </section>
    <section id="dice-lab" class="result" aria-labelledby="pair-title"><h2 id="pair-title" class="sr-only" tabindex="-1"></h2>
-    <div id="report-view" data-passes="0"><span class="version-stack" aria-hidden="true"><i></i><i></i><i></i></span><span class="report-sweep" aria-hidden="true"></span><div id="before-after" class="before-after" hidden><span class="ba-line" aria-hidden="true"></span><span class="ba-knob" aria-hidden="true"><svg viewBox="0 0 22 12"><path d="M6.5 1.5 2 6l4.5 4.5M15.5 1.5 20 6l-4.5 4.5"/></svg></span><button type="button" id="ba-handle" class="ba-handle" role="slider" aria-label="Show the original report" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Current step"><span class="ba-grip" aria-hidden="true"><i></i><i></i></span><span>Before</span></button></div></div>
+    <div id="report-view" data-passes="0"><span class="version-stack" aria-hidden="true"><i></i><i></i><i></i></span><span class="report-sweep" aria-hidden="true"></span><div id="before-after" class="before-after" hidden><span class="ba-tag" aria-hidden="true"><b>Before</b></span><span class="ba-line" aria-hidden="true"></span><button type="button" id="ba-handle" class="ba-knob" role="slider" aria-label="Show the original report" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Current page"><svg viewBox="0 0 22 12" aria-hidden="true"><path d="M6.5 1.5 2 6l4.5 4.5"/><path d="M15.5 1.5 20 6l-4.5 4.5"/></svg></button></div></div>
    </section>
    <div id="stage-bar" class="stage-bar">
     <button type="button" id="reset" class="reset" aria-label="Start over with no ingredients"><span aria-hidden="true">↺</span> Reset</button>
@@ -580,11 +582,18 @@ function makeDiePlan(from,value,random=Math.random,size=116,travelLimit=18,gestu
  const between=(min,max)=>min+(max-min)*random(),sign=()=>random()<.5?-1:1;
  const yaw=Math.floor(random()*4)*Math.PI/2+between(-.16,.16);
  const strength=dieClamp(gesture?.strength||0),direction=gesture?.direction||(wall?Math.sign(wall.edge):sign());
- const flight=between(230,285)+strength*65,bounce=flight*between(.46,.55),last=bounce*between(.40,.50),settle=between(85,115),duration=flight+bounce+last+settle;
+ const flight=between(230,285)+strength*65;
+ // A click lands with a bounce and a last small hop. A flick from the hand is livelier: it keeps tapping,
+ // three to five hops that each lose less height, more the harder it was thrown.
+ const hops=[];
+ if(gesture?.flick){let hop=flight;for(let n=3+Math.round(strength*2);n>0;n--){hop*=between(.64,.70);hops.push(hop);}}
+ else{const bounce=flight*between(.46,.55);hops.push(bounce,bounce*between(.40,.50));}
+ const settle=between(85,115),duration=flight+hops.reduce((sum,hop)=>sum+hop,0)+settle;
+ const contacts=[flight/duration];hops.forEach(hop=>contacts.push(contacts[contacts.length-1]+hop/duration));
  let drift=direction*between(travelLimit*(.45+strength*.25),travelLimit);
  if(gesture?.direction)drift=direction>0?Math.max(from.x,drift):Math.min(from.x,drift);
  const axis=gesture?.axis||[sign()*between(.55,1),between(-.35,.35),-direction*between(.55,1)];
- const plan={from,target:dieLanding(value,yaw),size,duration,axis,turns:1+Math.round(strength*2),drift,lift:between(26,31)+strength*10,rock:sign()*between(.025,.045),contacts:[flight/duration,(flight+bounce)/duration,(flight+bounce+last)/duration],knock:null};
+ const plan={from,target:dieLanding(value,yaw),size,duration,axis,turns:1+Math.round(strength*2),drift,lift:between(26,31)+strength*10,rock:sign()*between(.025,.045),contacts,hopPower:gesture?.flick?1.5:2,knock:null};
  if(wall&&Math.sign(wall.edge)===direction){
   // Strike late in the first flight, while still airborne. The edge is met by the die's own
   // extent; callers that know the camera refine plan.wall with dieKnockWall.
@@ -597,15 +606,24 @@ function makeDiePlan(from,value,random=Math.random,size=116,travelLimit=18,gestu
 }
 // Position along the throw for a knocking plan: straight to the edge, reverse at the strike,
 // then lose lateral speed at each landing until the die rests near home, never past the strike.
+const dieKnockPace=j=>j===0?1:j===1?.6:.3*.5**(j-2);
 function dieKnockX(plan,t){
- const [hit,bounce,last]=plan.contacts,k=plan.knock,from=plan.from.x,wall=plan.wall,direction=Math.sign(plan.edge);
+ const contacts=plan.contacts,k=plan.knock,from=plan.from.x,wall=plan.wall,direction=Math.sign(plan.edge);
  if((plan.endX-wall)*direction>0)plan.endX=wall;
  if(t<=k)return from+(wall-from)*(t/k);
- const span=(hit-k)+.6*(bounce-hit)+.3*(last-bounce)+.05*(1-last),v=(plan.endX-wall)/span;
- let x=wall+v*(Math.min(t,hit)-k);if(t<=hit)return x;
- x+=.6*v*(Math.min(t,bounce)-hit);if(t<=bounce)return x;
- x+=.3*v*(Math.min(t,last)-bounce);if(t<=last)return x;
- const s=(t-last)/(1-last);return x+.1*v*(1-last)*(s-s*s/2);
+ const marks=[k,...contacts],last=marks[marks.length-1],tail=Math.min(.1,dieKnockPace(contacts.length));
+ const span=contacts.reduce((sum,_,j)=>sum+dieKnockPace(j)*(marks[j+1]-marks[j]),tail*.5*(1-last)),v=(plan.endX-wall)/span;
+ let x=wall;
+ for(let j=0;j<contacts.length;j++){x+=dieKnockPace(j)*v*(Math.min(t,marks[j+1])-marks[j]);if(t<=marks[j+1])return x;}
+ const s=(t-last)/(1-last);return x+tail*v*(1-last)*(s-s*s/2);
+}
+// Progress through a throw that is `first` done at the first landing and `end` done at the last. The rest
+// is shared across the hops by their length, slowing at each landing.
+function dieHopProgress(contacts,t,first,end){
+ const hit=contacts[0];if(t<=hit)return t/hit*first;
+ let total=0,done=0;
+ for(let j=1;j<contacts.length;j++){const weight=.55**(j-1);total+=(contacts[j]-contacts[j-1])*weight;done+=Math.max(0,Math.min(t,contacts[j])-contacts[j-1])*weight;}
+ return total?first+(end-first)*done/total:end;
 }
 function sampleDiePlan(plan,t){
  t=dieClamp(t);
@@ -618,18 +636,20 @@ function sampleDiePlan(plan,t){
   const q=quatMultiply(quatAxis([0,0,1],rock*.13),plan.from.q);
   return {q,x:plan.from.x,y:-dieSupportLift(q,plan.size),air:0};
  }
- const [hit,bounce,last]=plan.contacts;
+ const contacts=plan.contacts,hit=contacts[0],last=contacts[contacts.length-1];
  // Rotation loses speed at impact; lateral travel never reverses in mid-air.
- const phase=t<=hit?t/hit*.68:t<=bounce?.68+(t-hit)/(bounce-hit)*.24:t<=last?.92+(t-bounce)/(last-bounce)*.08:1;
+ const phase=t<=last?dieHopProgress(contacts,t,.68,1):1;
  let q=quatMultiply(quatAxis(plan.axis,Math.PI*2*plan.turns*phase),quatSlerp(plan.from.q,plan.target,phase));
  if(t>last){const settle=(t-last)/(1-last);q=quatMultiply(quatAxis([0,0,1],Math.sin(settle*Math.PI)*plan.rock*(1-settle)),plan.target);}
- const travel=t<=hit?t/hit*.67:t<=bounce?.67+(t-hit)/(bounce-hit)*.23:t<=last?.90+(t-bounce)/(last-bounce)*.08:.98+.02*(1-(1-(t-last)/(1-last))**2);
+ const travel=t<=last?dieHopProgress(contacts,t,.67,.98):.98+.02*(1-(1-(t-last)/(1-last))**2);
  const x=plan.knock!=null?dieKnockX(plan,t):plan.from.x+(plan.drift-plan.from.x)*travel;
- let air;
+ let air=0;
  if(t<=hit){const p=t/hit,fromAir=Math.max(0,-plan.from.y-dieSupportLift(plan.from.q,plan.size));air=fromAir*(1-p)+4*plan.lift*p*(1-p);}
- else if(t<=bounce){const p=(t-hit)/(bounce-hit),lift=plan.lift*((bounce-hit)/hit)**2;air=4*lift*p*(1-p);}
- else if(t<=last){const p=(t-bounce)/(last-bounce),lift=plan.lift*((last-bounce)/hit)**2;air=4*lift*p*(1-p);}
- else air=0;
+ else if(t<=last){
+  // Each hop rises by its own length; a flick's hops keep a little more height so every tap shows.
+  const j=contacts.findIndex(contact=>t<=contact),from=contacts[j-1],to=contacts[j],p=(t-from)/(to-from);
+  air=4*plan.lift*((to-from)/hit)**(plan.hopPower||2)*p*(1-p);
+ }
  q=t===1?plan.target:q;
  return {q,x,y:-air-dieSupportLift(q,plan.size),air};
 }
@@ -811,7 +831,7 @@ function animateDiePlan(i,plan,value){
  if(ground?.animate&&plan.contacts?.length){
   const frames=[{offset:0,scale:'1'}];
   plan.contacts.forEach((contact,n)=>{
-   const depth=[.045,.026,.012][n]||0,next=plan.contacts[n+1]??1,dip=Math.min(contact+.014,next),back=Math.min(contact+.085,next);
+   const depth=.045*.58**n,next=plan.contacts[n+1]??1,dip=Math.min(contact+.014,next),back=Math.min(contact+.085,next);
    frames.push({offset:contact,scale:'1'},{offset:dip,scale:`${1-depth} ${1-depth*1.7}`},{offset:back,scale:'1'});
   });
   frames.push({offset:1,scale:'1'});
@@ -886,7 +906,7 @@ function bindDieInteraction(button,index){
   const id=pointer?.id,wasHeld=!!pointer;pointer=null;dragging=false;
   if(id!==undefined&&button.hasPointerCapture(id))button.releasePointerCapture(id);
   button.removeAttribute('data-pressed');button.removeAttribute('data-dragging');button.removeAttribute('data-hover');
-  style('--touch-x','0deg');style('--touch-z','0deg');
+  ['--touch-x','--touch-y','--touch-z'].forEach(key=>style(key,'0deg'));style('--lean-x','0');style('--lean-y','0');
   if(wasHeld&&settle){suppressPointerClick=true;settleDieGrab(index);}
  };
  dieInteractions.set(index,reset);
@@ -920,8 +940,11 @@ function bindDieInteraction(button,index){
   }
   if(!diceFinePointer.matches||event.pointerType==='touch'||diceMotion.matches||dieStates[index].running)return;
   button.dataset.hover='true';
-  const rect=button.getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width*2-1,y=(event.clientY-rect.top)/rect.height*2-1;
-  style('--touch-x',Math.max(-4,Math.min(4,-y*4))+'deg');style('--touch-z',Math.max(-4,Math.min(4,x*4))+'deg');
+  // Measured around the cube itself, so the lean is strongest right beside it.
+  const cube=button.querySelector('.cube')?.getBoundingClientRect?.()||button.getBoundingClientRect(),reach=(cube.width||1)*1.1;
+  const clamp=n=>Math.max(-1,Math.min(1,n)),x=clamp((event.clientX-cube.left-cube.width/2)/reach),y=clamp((event.clientY-cube.top-cube.height/2)/reach);
+  style('--lean-x',x.toFixed(3));style('--lean-y',y.toFixed(3));
+  style('--touch-x',(-y*18).toFixed(2)+'deg');style('--touch-y',(x*24).toFixed(2)+'deg');style('--touch-z',(x*8).toFixed(2)+'deg');
  });
  button.addEventListener('pointerup',event=>{
   if(!pointer||event.pointerId!==pointer.id)return;
@@ -934,7 +957,7 @@ function bindDieInteraction(button,index){
   reset(!wasDragging&&!inside);
   if(wasDragging){
    suppressPointerClick=true;
-   if(speed>.6)roll(index,{direction:Math.sign(vx)||1,strength:Math.min(1,(speed-.6)/1.8),axis:[-vy/speed,0,vx/speed]});
+   if(speed>.6)roll(index,{direction:Math.sign(vx)||1,strength:Math.min(1,(speed-.6)/1.8),axis:[-vy/speed,0,vx/speed],flick:true});
    else{dieTick(index,'set');chooseDieFace(index,dieTopFace(dieStates[index].pose.q));}
   }else if(!inside)suppressPointerClick=true;
  });
@@ -1061,14 +1084,14 @@ function playDiceClatter(index,plan,startedAt){
  // Each throw has its own character: harder throws are brighter, and no two share a pitch.
  const strength=.85+.3*Math.max(0,Math.min(1,(plan.turns-1)/2)),character={tone:soundBetween(.93,1.07),bright:soundBetween(.88,1.18),pan:(index?1:-1)*soundBetween(.22,.4)};
  const elapsedAt=()=>(performance.now()-startedAt)/1000;
- plan.contacts.forEach((contact,n)=>diceBuzz(index,contact*plan.duration-(performance.now()-startedAt),[12,7,4][n]));
+ plan.contacts.forEach((contact,n)=>diceBuzz(index,contact*plan.duration-(performance.now()-startedAt),Math.max(2,Math.round(12*.6**n))));
  if(plan.knock!=null)diceBuzz(index,plan.knock*plan.duration-(performance.now()-startedAt),22);
  primeDiceAudio().then(context=>{
   if(!context||!diceSoundEnabled||document.hidden||diceSoundVersions[index]!==version)return;
   const elapsed=elapsedAt();
   plan.contacts.forEach((contact,n)=>{
    const delay=contact*plan.duration/1000-elapsed;if(delay<0)return;
-   const level=[1,.58,.3][n]*strength;
+   const level=.58**n*strength;
    diceImpact(context,index,context.currentTime+delay,level,character,n===0);
    // An edge catching as the die tips: sometimes one rattle, sometimes two, quieter each bounce.
    if(n<2&&Math.random()<.75)diceImpact(context,index,context.currentTime+delay+soundBetween(.014,.034),level*.26,character);
@@ -1346,7 +1369,7 @@ function syncRailMarker(animate=false){
  marker.style.width=Math.max(0,target.left+target.width/2-start)+'px';marker.style.transform='translateX('+(start-track.left)+'px)';
 }
 const railResize=new ResizeObserver(()=>syncRailMarker());railResize.observe($('#rail-stops'));
-function settlePresentation(){settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
+function settlePresentation(){quietBeforeAfterHint();settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
 // The page tells its story in one headline per step; every step stays reachable from the chapters.
 const storyBeats=[
  ['You just generated a report.','One prompt, no ingredients: “Create a one-page website that helps its owner understand this week’s website performance.”'],
@@ -1598,10 +1621,10 @@ function showReports(container,entries){
   }
  });
 }
-// Before and after: the original report, with no ingredients, sits under the current page. A knob in the
-// middle of the page, or the small handle on its top edge, wipes it back in from the left as far as it is
-// dragged. The position holds across rolls and refinements: only the after side changes.
-const beforeAfter={value:0,item:null,section:null,tween:null,hints:0,drag:null};
+// Before and after: the original report, with no ingredients, sits under the current page. The knob in the
+// middle of the page wipes it back in from the left as far as it is dragged, and a "Before" tag shows only
+// on what it reveals. The position holds across rolls and refinements: only the after side changes.
+const beforeAfter={value:0,item:null,section:null,tween:null,hinted:false,hinting:false,drag:null};
 function beforeItem(){
  if(view!=='dice'||introMode||comparing)return null;
  return currentBaseline().steps[0];
@@ -1630,10 +1653,21 @@ function releaseBeforeSection(){
  beforeAfter.section=null;section.hidden=true;section.style.clipPath='';section.inert=false;section.removeAttribute('aria-hidden');section.classList.toggle('report-before',false);
 }
 function stopBeforeAfterTween(){if(beforeAfter.tween){cancelAnimationFrame(beforeAfter.tween);beforeAfter.tween=null;}}
+// The hint is never the visitor's position. A change cancels it on the spot and puts the slider back, so
+// nothing on the page slides while the page itself is changing. A hint that had begun to move has been
+// seen; one still waiting tries again once the next page has landed.
+function quietBeforeAfterHint(){
+ if(!beforeAfter.hinting)return;
+ beforeAfter.hinting=false;if(beforeAfter.value>0)beforeAfter.hinted=true;
+ stopBeforeAfterTween();paintBeforeAfter(0);
+ $('#before-after').querySelector?.('.ba-knob')?.getAnimations?.().forEach(animation=>animation.cancel());
+}
+// Taking hold of the slider keeps it where the hint had it and ends the hints for good.
+function takeBeforeAfter(){beforeAfter.hinting=false;beforeAfter.hinted=true;stopBeforeAfterTween();}
 // Glide to a value; shape(t) maps progress to position for the hints.
 function tweenBeforeAfter(to,duration=360,shape=null,delay=0){
  stopBeforeAfterTween();
- if(typeof requestAnimationFrame!=='function'||matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden){paintBeforeAfter(shape?beforeAfter.value:to);return;}
+ if(typeof requestAnimationFrame!=='function'||matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden){shape?.(1);paintBeforeAfter(shape?beforeAfter.value:to);return;}
  const from=beforeAfter.value,start=performance.now()+delay,ease=t=>t<.5?4*t*t*t:1-(-2*t+2)**3/2;
  const step=now=>{const t=Math.max(0,Math.min(1,(now-start)/duration));if(now>=start)paintBeforeAfter(shape?shape(t):from+(to-from)*ease(t));beforeAfter.tween=t<1?requestAnimationFrame(step):null;};
  beforeAfter.tween=requestAnimationFrame(step);
@@ -1647,20 +1681,21 @@ function renderBeforeAfter(){
  if(introMode)paintBeforeAfter(0);else if(item)paintBeforeAfter(beforeAfter.value);else releaseBeforeSection();
  box.hidden=!item;
 }
-// After a change has printed and had a moment to be seen, the knob pops out to show it slides. The first
-// time it pulls a good slice of the original across and holds it there; the next two times it only peeks.
-// Using it ends the hints.
+// Once, after the first change has printed and the new page has had a while to be seen on its own, the
+// knob pops out and pulls a slice of the original across, holds it, and slides home. Later changes never
+// hint: the knob stays put while pages change.
+const BEFORE_AFTER_HINT_WAIT=1600;
 function reportHandoffSettled(container){
- if(container!==$('#report-view')||!beforeAfter.item||beforeAfter.value||beforeAfter.drag||beforeAfter.hints>=3)return;
- const first=!beforeAfter.hints++,reach=first?.3:.07,out=first?.24:.3,hold=first?.64:.5,duration=first?2200:900,settle=first?900:650;
- const knob=$('#before-after').querySelector?.('.ba-knob');
- if(knob?.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)knob.animate([{scale:'1'},{scale:first?'1.3':'1.18',offset:.16},{scale:'.96',offset:.32},{scale:'1',offset:.44},{scale:'1'}],{duration:first?1100:700,delay:settle,easing:'cubic-bezier(.33,1,.68,1)'});
- tweenBeforeAfter(0,duration,t=>t<out?reach*(1-(1-t/out)**3):t<hold?reach:reach*(1-((t-hold)/(1-hold))**2*(3-2*(t-hold)/(1-hold))),settle);
+ if(container!==$('#report-view')||!beforeAfter.item||beforeAfter.value||beforeAfter.drag||beforeAfter.hinted||beforeAfter.hinting)return;
+ const reach=.3,out=.24,hold=.64,duration=2200,knob=$('#before-after').querySelector?.('.ba-knob');
+ beforeAfter.hinting=true;
+ if(knob?.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)knob.animate([{scale:'1'},{scale:'1.3',offset:.16},{scale:'.96',offset:.32},{scale:'1',offset:.44},{scale:'1'}],{duration:1100,delay:BEFORE_AFTER_HINT_WAIT,easing:'cubic-bezier(.33,1,.68,1)'});
+ tweenBeforeAfter(0,duration,t=>{if(t>=1){beforeAfter.hinting=false;beforeAfter.hinted=true;}return t<out?reach*(1-(1-t/out)**3):t<hold?reach:reach*(1-((t-hold)/(1-hold))**2*(3-2*(t-hold)/(1-hold)));},BEFORE_AFTER_HINT_WAIT);
 }
 (()=>{
  const handle=$('#ba-handle'),box=$('#before-after');
- // The knob, the line and the top handle all grab the same divider.
- const grips=[handle,box.querySelector?.('.ba-knob'),box.querySelector?.('.ba-line')].filter(Boolean);
+ // The knob and the line both grab the same divider.
+ const grips=[handle,box.querySelector?.('.ba-line')].filter(Boolean);
  const valueAt=x=>{const rect=$('#report-view').getBoundingClientRect?.();return rect?.width?(x-rect.left)/rect.width:beforeAfter.value;};
  const end=event=>{
   const drag=beforeAfter.drag;if(!drag||event.pointerId!==drag.id)return;
@@ -1671,7 +1706,7 @@ function reportHandoffSettled(container){
  grips.forEach(grip=>{
   grip.addEventListener('pointerdown',event=>{
    if(event.button!==0)return;
-   settlePresentation();stopBeforeAfterTween();beforeAfter.hints=3;
+   takeBeforeAfter();settlePresentation();
    beforeAfter.drag={id:event.pointerId,x:event.clientX,moved:false,from:beforeAfter.value};
    grip.setPointerCapture?.(event.pointerId);box.toggleAttribute?.('data-dragging',true);
   });
@@ -1689,7 +1724,7 @@ function reportHandoffSettled(container){
   else if(event.key==='Home'||event.key==='Escape')next=0;else if(event.key==='End')next=1;
   else if(event.key==='Enter'||event.key===' ')next=beforeAfter.value>0?0:.5;
   if(next===null)return;
-  event.preventDefault();settlePresentation();beforeAfter.hints=3;
+  event.preventDefault();takeBeforeAfter();settlePresentation();
   if(event.key==='Enter'||event.key===' ')tweenBeforeAfter(next);else{stopBeforeAfterTween();paintBeforeAfter(next);}
  });
 })();
@@ -1717,7 +1752,7 @@ function renderRail(){
  showStory();syncRailMarker(animate);paintedStep=value;
 }
 function renderResult(){
- stopBeforeAfterTween();releaseBeforeSection();
+ quietBeforeAfterHint();stopBeforeAfterTween();releaseBeforeSection();
  const container=$('#report-view');container.classList.toggle('comparing',comparing);
  const current=introMode?currentBaseline().steps[0]:selected.steps[stage-1];
  // "Other" is each track's one alternative: the earlier model's two prompts compare with each
@@ -2035,7 +2070,6 @@ document.addEventListener('visibilitychange',()=>{if(!demo.running)return;if(doc
 let demoWidth=innerWidth;
 addEventListener('resize',()=>{if(demo.running&&innerWidth!==demoWidth)stopDemo();demoWidth=innerWidth;});
 renderDemoToggle();
-// A fresh visit opens on the plain page and plays the story once.
-if(introMode&&view==='dice'&&!params.has('start')&&!demoReduced())runDemo();
+// A fresh visit opens on the plain page and waits for the visitor's own first roll; Watch demo plays the story.
 </script>
 </body></html>
