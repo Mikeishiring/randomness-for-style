@@ -81,7 +81,13 @@ function initDice3D(){
  const settle=()=>[0,1].forEach(i=>stopDieMotion(i));
  diceMotion.addEventListener('change',()=>{if(diceMotion.matches)settle();});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)settle();});
- const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{const i=Number(entry.target.id.slice(-1));if(!entry.isIntersecting)stopDieMotion(i);else prepareThrows(i);}));
+ // A die scrolled out of view stops where it is. One sliding on or off the table is only off-screen on its
+ // way: it keeps its tumble, so a die thrown in arrives still rolling.
+ const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
+  const i=Number(entry.target.id.slice(-1));
+  if(entry.isIntersecting)prepareThrows(i);
+  else if(!entry.target.getAnimations?.().some(animation=>animation.playState==='running'))stopDieMotion(i);
+ }));
  [0,1].forEach(i=>observer.observe(document.querySelector('#throw-'+i)));
 }
 // The contact shadow on the floor: tight and dark on the tray, wider and fainter as the die rises.
@@ -195,6 +201,9 @@ function animateDiePlan(i,plan,value){
 // The next click's throws are worked out while the page is idle, one face at a time, so a click only has to
 // start the animation. A plan is used only if nothing it depends on has changed since.
 const preparedThrows=[new Map(),new Map()],preparing=[null,null];
+// The scripted hop is for a click that cannot wait. Idle time can: a face whose search ran out of time is
+// tried again on later idle slices, and the hop is kept only when the simulation keeps missing.
+const THROW_RETRIES=4,throwMisses=[{key:'',counts:new Map()},{key:'',counts:new Map()}];
 function throwKey(from,wall,size,travel,gesture){return JSON.stringify([from.q.map(c=>+c.toFixed(5)),+from.x.toFixed(2),+from.y.toFixed(2),wall,size,travel,gesture?{d:gesture.direction,s:gesture.strength}:null]);}
 function throwSetup(i,gesture){
  const wall=dieWall(i,gesture),cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8));
@@ -206,12 +215,21 @@ function prepareThrows(i){
   preparing[i]=null;const state=dieStates[i];
   if(state.running||document.hidden||view!=='dice')return;
   const gesture=typeof introMode!=='undefined'&&introMode&&typeof DICE_THROW!=='undefined'?DICE_THROW.enter[i]:null;
-  const {wall,width,travel}=throwSetup(i,gesture),edge=wall?.edge??null,key=throwKey(state.pose,edge,width,travel,gesture);
+  // The second die waits off the table on the plain page and is thrown in while it slides on, out of reach
+  // of the page: its throw is prepared that way, so the first roll can use it.
+  const entering=!!gesture&&i===1;
+  const {wall,width,travel}=throwSetup(i,gesture),edge=entering?null:wall?.edge??null,key=throwKey(state.pose,edge,width,travel,gesture);
   for(const [value,ready] of preparedThrows[i])if(ready.key!==key)preparedThrows[i].delete(value);
+  const misses=throwMisses[i];if(misses.key!==key){misses.key=key;misses.counts.clear();}
   for(const value of DIE_FACE_VALUES){
    if(preparedThrows[i].has(value))continue;
    if(deadline.timeRemaining()<6){preparing[i]=requestIdleCallback(step,{timeout:2000});return;}
-   preparedThrows[i].set(value,{key,plan:makeDiePlan(state.pose,value,Math.random,width,travel,gesture,edge!=null?wall:null,dieShading[i]?.camera||null)});
+   const plan=makeDiePlan(state.pose,value,Math.random,width,travel,gesture,edge!=null?wall:null,dieShading[i]?.camera||null);
+   if(plan.kind!=='physics'){
+    const missed=(misses.counts.get(value)||0)+1;misses.counts.set(value,missed);
+    if(missed<THROW_RETRIES){preparing[i]=requestIdleCallback(step,{timeout:2000});return;}
+   }
+   preparedThrows[i].set(value,{key,plan});
   }
  };
  preparing[i]=requestIdleCallback(step,{timeout:2000});

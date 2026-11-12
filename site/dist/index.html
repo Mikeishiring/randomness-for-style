@@ -937,7 +937,13 @@ function initDice3D(){
  const settle=()=>[0,1].forEach(i=>stopDieMotion(i));
  diceMotion.addEventListener('change',()=>{if(diceMotion.matches)settle();});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)settle();});
- const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{const i=Number(entry.target.id.slice(-1));if(!entry.isIntersecting)stopDieMotion(i);else prepareThrows(i);}));
+ // A die scrolled out of view stops where it is. One sliding on or off the table is only off-screen on its
+ // way: it keeps its tumble, so a die thrown in arrives still rolling.
+ const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
+  const i=Number(entry.target.id.slice(-1));
+  if(entry.isIntersecting)prepareThrows(i);
+  else if(!entry.target.getAnimations?.().some(animation=>animation.playState==='running'))stopDieMotion(i);
+ }));
  [0,1].forEach(i=>observer.observe(document.querySelector('#throw-'+i)));
 }
 // The contact shadow on the floor: tight and dark on the tray, wider and fainter as the die rises.
@@ -1051,6 +1057,9 @@ function animateDiePlan(i,plan,value){
 // The next click's throws are worked out while the page is idle, one face at a time, so a click only has to
 // start the animation. A plan is used only if nothing it depends on has changed since.
 const preparedThrows=[new Map(),new Map()],preparing=[null,null];
+// The scripted hop is for a click that cannot wait. Idle time can: a face whose search ran out of time is
+// tried again on later idle slices, and the hop is kept only when the simulation keeps missing.
+const THROW_RETRIES=4,throwMisses=[{key:'',counts:new Map()},{key:'',counts:new Map()}];
 function throwKey(from,wall,size,travel,gesture){return JSON.stringify([from.q.map(c=>+c.toFixed(5)),+from.x.toFixed(2),+from.y.toFixed(2),wall,size,travel,gesture?{d:gesture.direction,s:gesture.strength}:null]);}
 function throwSetup(i,gesture){
  const wall=dieWall(i,gesture),cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8));
@@ -1062,12 +1071,21 @@ function prepareThrows(i){
   preparing[i]=null;const state=dieStates[i];
   if(state.running||document.hidden||view!=='dice')return;
   const gesture=typeof introMode!=='undefined'&&introMode&&typeof DICE_THROW!=='undefined'?DICE_THROW.enter[i]:null;
-  const {wall,width,travel}=throwSetup(i,gesture),edge=wall?.edge??null,key=throwKey(state.pose,edge,width,travel,gesture);
+  // The second die waits off the table on the plain page and is thrown in while it slides on, out of reach
+  // of the page: its throw is prepared that way, so the first roll can use it.
+  const entering=!!gesture&&i===1;
+  const {wall,width,travel}=throwSetup(i,gesture),edge=entering?null:wall?.edge??null,key=throwKey(state.pose,edge,width,travel,gesture);
   for(const [value,ready] of preparedThrows[i])if(ready.key!==key)preparedThrows[i].delete(value);
+  const misses=throwMisses[i];if(misses.key!==key){misses.key=key;misses.counts.clear();}
   for(const value of DIE_FACE_VALUES){
    if(preparedThrows[i].has(value))continue;
    if(deadline.timeRemaining()<6){preparing[i]=requestIdleCallback(step,{timeout:2000});return;}
-   preparedThrows[i].set(value,{key,plan:makeDiePlan(state.pose,value,Math.random,width,travel,gesture,edge!=null?wall:null,dieShading[i]?.camera||null)});
+   const plan=makeDiePlan(state.pose,value,Math.random,width,travel,gesture,edge!=null?wall:null,dieShading[i]?.camera||null);
+   if(plan.kind!=='physics'){
+    const missed=(misses.counts.get(value)||0)+1;misses.counts.set(value,missed);
+    if(missed<THROW_RETRIES){preparing[i]=requestIdleCallback(step,{timeout:2000});return;}
+   }
+   preparedThrows[i].set(value,{key,plan});
   }
  };
  preparing[i]=requestIdleCallback(step,{timeout:2000});
@@ -1139,11 +1157,12 @@ function bindDieInteraction(button,index){
  let pointer=null,dragging=false,suppressPointerClick=false;
  const style=(key,value)=>button.style.setProperty(key,value);
  const reset=(settle=true)=>{
-  const id=pointer?.id,wasHeld=!!pointer;pointer=null;dragging=false;
+  // Only a die that was actually picked up has to be put back; a press alone never took hold of it.
+  const id=pointer?.id,wasHeld=!!pointer,grabbed=!!pointer?.from;pointer=null;dragging=false;
   if(id!==undefined&&button.hasPointerCapture(id))button.releasePointerCapture(id);
   button.removeAttribute('data-pressed');button.removeAttribute('data-dragging');button.removeAttribute('data-hover');
   ['--touch-x','--touch-y','--touch-z'].forEach(key=>style(key,'0deg'));style('--lean-x','0');style('--lean-y','0');
-  if(wasHeld&&settle){suppressPointerClick=true;settleDieGrab(index);}
+  if(wasHeld&&settle){suppressPointerClick=true;if(grabbed)settleDieGrab(index);}
  };
  dieInteractions.set(index,reset);
  button.addEventListener('pointerenter',event=>{
@@ -1159,7 +1178,9 @@ function bindDieInteraction(button,index){
   const now=performance.now();
   // Wake the sound on the press, so its one-time setup is done before the release throws the die.
   if(typeof primeDiceAudio==='function')primeDiceAudio();
-  suppressPointerClick=false;pointer={id:event.pointerId,x:event.clientX,y:event.clientY,from:beginDieGrab(index),samples:[{x:event.clientX,y:event.clientY,t:now}]};
+  // A press does not take hold of the die: one still in the air keeps moving until the click re-throws it
+  // from where it is, or a drag picks it up.
+  suppressPointerClick=false;pointer={id:event.pointerId,x:event.clientX,y:event.clientY,from:null,samples:[{x:event.clientX,y:event.clientY,t:now}]};
   button.setPointerCapture(event.pointerId);button.dataset.pressed='true';
  });
  button.addEventListener('pointermove',event=>{
@@ -1168,7 +1189,7 @@ function bindDieInteraction(button,index){
    const dx=event.clientX-pointer.x,dy=event.clientY-pointer.y,now=performance.now();
    pointer.samples.push({x:event.clientX,y:event.clientY,t:now});
    pointer.samples=pointer.samples.filter(sample=>now-sample.t<=120);
-   if(!dragging&&Math.hypot(dx,dy)>7){dragging=true;button.dataset.dragging='true';pointer.face=dieTopFace(pointer.from.q);dieTick(index,'lift');}
+   if(!dragging&&Math.hypot(dx,dy)>7){dragging=true;button.dataset.dragging='true';pointer.from=beginDieGrab(index);pointer.face=dieTopFace(pointer.from.q);dieTick(index,'lift');}
    if(dragging){
     event.preventDefault();const face=moveDieGrab(index,pointer.from,dx,dy);
     // Each new face that comes up clicks into place under the finger.
@@ -1191,6 +1212,7 @@ function bindDieInteraction(button,index){
   // Only recent motion counts. Dragging far and holding still chooses a face.
   const recent=pointer.samples.filter(sample=>now-sample.t<=100),first=recent[0];
   const dt=first?Math.max(16,now-first.t):1,vx=first?(event.clientX-first.x)/dt:0,vy=first?(event.clientY-first.y)/dt:0,speed=Math.hypot(vx,vy);
+  const travel=Math.hypot(event.clientX-pointer.x,event.clientY-pointer.y);
   if(wasDragging)moveDieGrab(index,pointer.from,event.clientX-pointer.x,event.clientY-pointer.y);
   reset(!wasDragging&&!inside);
   if(wasDragging){
@@ -1199,7 +1221,16 @@ function bindDieInteraction(button,index){
    // it shows on top. Either way it is guided to the page beside it.
    const release={velocity:[vx*1000,vy*1000],guided:true};
    if(speed>.6)roll(index,{direction:Math.sign(vx)||1,strength:Math.min(1,(speed-.6)/1.8),axis:[-vy/speed,0,vx/speed],flick:true,...release});
-   else{dieTick(index,'set');const face=dieTopFace(dieStates[index].pose.q);if(typeof dropDie==='function')dropDie(index,face,release);else chooseDieFace(index,face);}
+   else{
+    const face=dieTopFace(dieStates[index].pose.q);
+    // Let go without turning a new face up, nothing was chosen, so it is still a roll: a click that slipped
+    // rolls like a click, and a swipe too gentle to be a flick is thrown from the hand at its own speed.
+    if(typeof dieShowsFace==='function'&&dieShowsFace(index,face)){
+     if(travel<18&&speed<.2)roll(index);
+     else roll(index,{direction:Math.sign(vx)||1,strength:0,axis:speed>.05?[-vy/speed,0,vx/speed]:undefined,...release});
+    }
+    else{dieTick(index,'set');if(typeof dropDie==='function')dropDie(index,face,release);else chooseDieFace(index,face);}
+   }
   }else if(!inside)suppressPointerClick=true;
  });
  const cancel=event=>{if(pointer&&event.pointerId===pointer.id){suppressPointerClick=true;reset();}};
@@ -2185,6 +2216,8 @@ function chooseDieFace(index,value){
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  render(false);settleDieGrab(index,true);syncDice3D();
 }
+// Whether a face is the ingredient this die already has: letting go of a die with that face up chose nothing.
+function dieShowsFace(index,value){return value===(index?selected.b:selected.a);}
 // A carried die let go of: the face it shows on top is the choice, and the page changes when the dropped
 // die reaches it.
 function dropDie(index,value,release={}){
@@ -2295,7 +2328,8 @@ function roll(index,gesture=null,forced=null){
  else lastEvent={kind:'pair'};
  // Selection is immediate; only the old page's cover waits for the die to reach the page.
  const impact=reportImpactFor(()=>render(false));celebrateFirstRoll(impact,forced);
- tumbleDice(indices,values,()=>{syncDice3D();},gesture||(introduce?DICE_THROW.enter:null),impact);
+ // On the first roll the visitor's own throw moves the die they threw; the second is always thrown in beside it.
+ tumbleDice(indices,values,()=>{syncDice3D();},introduce?[gesture||DICE_THROW.enter[0],DICE_THROW.enter[1]]:gesture,impact);
  landLabels(indices,introduce?LABEL_LAND.enter:LABEL_LAND.roll);
  quietRefine();
 }

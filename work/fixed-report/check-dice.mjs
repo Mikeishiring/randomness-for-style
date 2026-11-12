@@ -139,5 +139,17 @@ const invitation={kind:'invitation',from:{q:dieLanding(a),x:0,y:0},size:104,dura
 assert.ok(Math.abs(sampleDiePlan(invitation,.25).y)>0);near(sampleDiePlan(invitation,1).y,0);
 motion.matches=true;const beforeReduced={...dieStates[0].pose};moveDieGrab(0,beforeReduced,104);assert.notEqual(dieTopFace(dieStates[0].pose.q),dieTopFace(beforeReduced.q));settleDieGrab(0);assert.equal(dieStates[0].running,null);
 assert.ok(soundCalls.length>0&&soundCalls.every(call=>call[0]==='play'),'every throw schedules its contact sounds');
-console.log('PASS: 96 exact face-up orientations/CSS matrices; 300 simulated throws that bounce on the tray, never sink into it and land flat on the chosen face near home; stable face markup; flicks livelier than clicks; a tray that gives with each impact; 200 page strikes in mid-air that never pass the edge; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion.');
+// Idle preparation does not settle for the scripted hop: a search that ran out of time is tried again on a
+// later idle slice. A die that cannot be simulated keeps the hop after a few tries instead of searching forever.
+var view='dice';const prepIdle=[],prepSlice={timeRemaining:()=>50},prepReal=makeDiePlan;let prepCount=0,prepGuard=0;
+globalThis.requestIdleCallback=fn=>{prepIdle.push(fn);return prepIdle.length;};
+motion.matches=false;dieStates[0].running=null;preparedThrows[0].clear();
+makeDiePlan=(...args)=>++prepCount<=2?dieArcPlan(...args.slice(0,5)):prepReal(...args);
+prepareThrows(0);while(prepIdle.length&&prepGuard++<60)prepIdle.shift()(prepSlice);
+assert.equal(preparedThrows[0].size,6);assert.ok([...preparedThrows[0].values()].every(ready=>ready.plan.kind==='physics'),'a missed search is retried, not kept');
+preparedThrows[0].clear();throwMisses[0].key='';prepCount=0;prepGuard=0;makeDiePlan=(...args)=>{prepCount++;return dieArcPlan(...args.slice(0,5));};
+prepareThrows(0);while(prepIdle.length&&prepGuard++<60)prepIdle.shift()(prepSlice);
+assert.equal(preparedThrows[0].size,6);assert.equal(prepCount,6*THROW_RETRIES,'the hop is kept once the retries are spent');
+makeDiePlan=prepReal;delete globalThis.requestIdleCallback;
+console.log('PASS: 96 exact face-up orientations/CSS matrices; 300 simulated throws that bounce on the tray, never sink into it and land flat on the chosen face near home; stable face markup; flicks livelier than clicks; a tray that gives with each impact; 200 page strikes in mid-air that never pass the edge; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion; idle preparation that retries a missed search before keeping the scripted hop.');
 `,context);

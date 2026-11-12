@@ -624,6 +624,8 @@ function chooseDieFace(index,value){
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  render(false);settleDieGrab(index,true);syncDice3D();
 }
+// Whether a face is the ingredient this die already has: letting go of a die with that face up chose nothing.
+function dieShowsFace(index,value){return value===(index?selected.b:selected.a);}
 // A carried die let go of: the face it shows on top is the choice, and the page changes when the dropped
 // die reaches it.
 function dropDie(index,value,release={}){
@@ -734,7 +736,8 @@ function roll(index,gesture=null,forced=null){
  else lastEvent={kind:'pair'};
  // Selection is immediate; only the old page's cover waits for the die to reach the page.
  const impact=reportImpactFor(()=>render(false));celebrateFirstRoll(impact,forced);
- tumbleDice(indices,values,()=>{syncDice3D();},gesture||(introduce?DICE_THROW.enter:null),impact);
+ // On the first roll the visitor's own throw moves the die they threw; the second is always thrown in beside it.
+ tumbleDice(indices,values,()=>{syncDice3D();},introduce?[gesture||DICE_THROW.enter[0],DICE_THROW.enter[1]]:gesture,impact);
  landLabels(indices,introduce?LABEL_LAND.enter:LABEL_LAND.roll);
  quietRefine();
 }
