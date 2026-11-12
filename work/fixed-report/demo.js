@@ -128,7 +128,7 @@ async function runDemo(){
 $('#demo-toggle').addEventListener('click',()=>demo.running?stopDemo():runDemo());
 // Real input from the visitor ends the demo immediately; synthetic clicks from the demo do not.
 const demoTakeover=event=>{
- if(!event.isTrusted||event.target?.closest?.('#demo-toggle'))return;
+ if(!event.isTrusted||event.target?.closest?.('#demo-toggle,#pointer-demo'))return;
  if(demo.running)stopDemo();else{demo.token++;if(pointer.custom)clearPointer();}
 };
 ['pointerdown','keydown','wheel','touchstart'].forEach(type=>addEventListener(type,demoTakeover,{capture:true,passive:true}));

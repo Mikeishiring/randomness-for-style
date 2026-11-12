@@ -24,15 +24,15 @@
   <div id="story" class="story" aria-live="polite" aria-atomic="true"><h2 id="story-title"></h2><p id="story-text"></p></div>
   <div class="workbench">
    <span id="die-call" class="die-call" aria-hidden="true" hidden>Click me</span>
-   <p id="pointer-note" class="pointer-note" data-side="above" hidden><span class="pointer-card"><strong id="pointer-text"></strong><span id="pointer-sub"></span><button type="button" id="pointer-action" class="pointer-action" hidden></button></span><i class="pointer-leader"></i><i class="pointer-dot"></i></p>
+   <p id="pointer-note" class="pointer-note" data-side="above" hidden><span class="pointer-card"><strong id="pointer-text"></strong><span id="pointer-sub"></span><span id="pointer-actions" class="pointer-actions" hidden><button type="button" id="pointer-action" class="pointer-action" hidden></button><button type="button" id="pointer-demo" class="pointer-action pointer-demo" hidden><span class="demo-glyph" aria-hidden="true"></span>Watch demo</button></span></span><i class="pointer-leader"></i><i class="pointer-dot"></i></p>
    <section id="dice-deck" class="dice-deck" aria-label="Ingredients">
     <div class="dice">
-     <div class="die"><div class="die-top"><span>Ingredient 1</span></div><strong id="ingredient-a"></strong></div>
-     <div class="die"><div class="die-top"><span>Ingredient 2</span></div><strong id="ingredient-b"></strong></div>
+     <div class="die"><div class="die-top"><span>Ingredient 1</span></div><strong id="ingredient-a"></strong><span class="die-hint" aria-hidden="true">Click to roll · drag to choose</span></div>
+     <div class="die"><div class="die-top"><span>Ingredient 2</span></div><strong id="ingredient-b"></strong><span class="die-hint" aria-hidden="true">Click to roll · drag to choose</span></div>
     </div>
     <span id="dice-gesture-help" class="sr-only">Click or press Enter to roll. Drag slowly to choose the upper face; release quickly to throw. Arrow keys turn the die. Escape cancels a drag.</span>
    </section>
-   <section id="dice-lab" class="result" aria-labelledby="pair-title"><h2 id="pair-title" class="sr-only" tabindex="-1"></h2><p id="prompt-row" class="prompt-row" data-empty="true"><button type="button" id="prompt-line" class="prompt-line" aria-expanded="false" aria-controls="prompt-full"></button><span id="prompt-full" class="prompt-full" role="region" aria-label="The whole prompt" hidden></span></p>
+   <section id="dice-lab" class="result" aria-labelledby="pair-title"><h2 id="pair-title" class="sr-only" tabindex="-1"></h2><p id="prompt-row" class="prompt-row" data-empty="true"><span class="slot-name" aria-hidden="true">Randomness for Style</span><button type="button" id="prompt-line" class="prompt-line" aria-expanded="false" aria-controls="prompt-full"></button><span id="prompt-full" class="prompt-full" role="region" aria-label="The whole prompt" hidden></span></p>
     <div id="report-view" data-passes="0"><span class="version-stack" aria-hidden="true"><i></i><i></i><i></i></span><span class="report-sweep" aria-hidden="true"></span><div id="before-after" class="before-after" hidden><span class="ba-tag" aria-hidden="true"><b>Before</b></span><span class="ba-same same-data" aria-hidden="true">Same data</span><span class="ba-line" aria-hidden="true"></span><button type="button" id="ba-handle" class="ba-knob" role="slider" aria-label="Show the original report" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Current page"><svg viewBox="0 0 22 12" aria-hidden="true"><path d="M6.5 1.5 2 6l4.5 4.5"/><path d="M15.5 1.5 20 6l-4.5 4.5"/></svg></button></div></div>
    </section>
    <div id="dock" class="dock">
