@@ -157,10 +157,13 @@ body{font-family:var(--sans);overflow-x:clip}
 .dice .die:first-child .die-object{--glyph-accent:#f06b48}.dice .die:nth-child(2) .die-object{--glyph-accent:#1d261e}
 .cube-face .ga{fill:var(--glyph-accent)}.cube-face .ga-s{stroke:var(--glyph-accent)}
 .dice .cube-face small{bottom:9%;font:500 9px/1 var(--mono);letter-spacing:.14em;opacity:.62}
-.dice .die-shadow{top:calc(50% + var(--size)*.5);background:radial-gradient(closest-side,#1d261e66,#1d261e00);filter:none}
-/* Ground: a slanted plane in the die's own perspective, so the landing has somewhere to happen. */
-.die-ground{position:absolute;left:50%;top:calc(50% + var(--size)*.5);width:calc(var(--size)*1.62);height:calc(var(--size)*1.62);z-index:-2;border-radius:22%;background:radial-gradient(closest-side,#ebe8dd 0%,#e6e3d6 70%,#e0ddcf 100%);border:1px solid #d6d3c5;box-shadow:inset 0 1px 0 #f7f5ee;transform:translate(-50%,-50%) rotateX(70deg) rotateZ(-14deg);pointer-events:none}
-.dice .die:nth-child(2) .die-ground{transform:translate(-50%,-50%) rotateX(70deg) rotateZ(14deg)}
+/* Ground: a small felt coaster in the dice's own 3D space. The floor shares the die's camera and lies exactly where
+   the die's lowest face rests, so a landing really meets it; the contact shadow lies on it, under the die. */
+.die-object{--view-x:-58deg;--view-y:-20deg;--view-z:-8deg}
+.dice .die:nth-child(2) .die-object{--view-x:-61deg;--view-y:22deg;--view-z:9deg}
+.die-floor{position:absolute;left:50%;top:50%;width:var(--size);height:var(--size);margin:calc(var(--size)*-.5) 0 0 calc(var(--size)*-.5);z-index:-1;pointer-events:none;transform:rotateX(var(--view-x)) rotateY(var(--view-y)) rotateZ(var(--view-z)) translateY(calc(var(--size)*.5)) rotateX(90deg)}
+.die-floor .die-ground{--mat:1.5;position:absolute;left:50%;top:50%;width:calc(var(--size)*var(--mat));height:calc(var(--size)*var(--mat));margin:calc(var(--size)*var(--mat)*-.5) 0 0 calc(var(--size)*var(--mat)*-.5);z-index:auto;border:0;border-radius:26%;background:radial-gradient(closest-side,#d9d4c3,#e2ddce 60%,#e7e3d6);box-shadow:inset 0 0 0 1px #cfc9b8,inset 0 0 0 5px #ece8dccc,0 0 0 1px #f8f6ef;transform:none}
+.die-floor .die-shadow{position:absolute;left:50%;top:50%;bottom:auto;width:calc(var(--size)*1.2);height:calc(var(--size)*1.2);margin:calc(var(--size)*-.6) 0 0 calc(var(--size)*-.6);z-index:auto;border-radius:34%;background:radial-gradient(closest-side,#1d261eb3,#1d261e59 48%,#1d261e00);filter:none}
 .die-object.is-demo-press .die-grip{transform:translateY(2px);transition-duration:65ms}
 
 /* Pointing label: a paper card at the end of a vermilion leader, with a dot on the object it names. */
@@ -283,7 +286,6 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 .die-object[data-pressed] .die-grip{transform:translateY(2px);transition-duration:65ms}
 .die-object[data-dragging] .die-grip{transform:none;transition-duration:65ms}
 .die-object[data-dragging]{cursor:grabbing}
-.die-shadow{top:calc(50% + var(--size)*.48);height:calc(var(--size)*.21);filter:blur(5px);background:#2e3b2b38}
 
 @media(hover:hover) and (pointer:fine){
  .die-object:hover .cube-face{border-color:currentColor}
@@ -430,6 +432,7 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  #report-view:not(.comparing) .report-frame{height:100%}
  #report-view.comparing .report-frame{height:440px}
  .die-object{height:148px}
+ .die-floor .die-ground{--mat:1.32}
  .die>strong{min-height:2.4em;line-height:1.15}
  /* The story shrinks to a one-line caption; its full instruction stays only before the first roll. */
  .pointer-card{background:none;border:0;box-shadow:none;border-radius:0;padding:0 6px;gap:3px}
@@ -562,7 +565,7 @@ function dieTopFace(q){
 // Level the chosen face without discarding the yaw the visitor gave it.
 function dieSnap(q,value=dieTopFace(q)){
  const normal=quatRotate(q,DIE_NORMALS[value]),dot=Math.max(-1,Math.min(1,-normal[1]));
- const align=dot>.999999?[0,0,0,1]:dot<-.999999?quatAxis([1,0,0],Math.PI):quatAxis([normal[2],0,-normal[0]],Math.acos(dot));
+ const align=dot>=1||Math.hypot(normal[0],normal[2])<1e-12?[0,0,0,1]:dot<-.999999?quatAxis([1,0,0],Math.PI):quatAxis([normal[2],0,-normal[0]],Math.acos(dot));
  return quatUnit(quatMultiply(align,q));
 }
 function dieGrabPose(from,dx,dy,size=94){
@@ -572,13 +575,139 @@ function dieGrabPose(from,dx,dy,size=94){
  const air=Math.max(0,-from.y-dieSupportLift(from.q,size));
  return {q,x:Math.max(-16,Math.min(16,from.x+10*Math.tanh(dx/90))),y:-air-dieSupportLift(q,size),air};
 }
-function dieSupportLift(q,size=116){
- const axes=[[1,0,0],[0,1,0],[0,0,1]],halfExtent=axes.reduce((sum,axis)=>sum+Math.abs(quatRotate(q,axis)[1]),0);
- return Math.max(0,(halfExtent-1)*size*.5*.54);
+// The bevelled cube's outline for contact: the 24 corners of its six inset faces, in units of its size.
+const DIE_HULL=(()=>{const out=[];for(let axis=0;axis<3;axis++)for(const s of [-1,1])for(const u of [-1,1])for(const v of [-1,1]){const p=[0,0,0];p[axis]=s*.5;p[(axis+1)%3]=u*.425;p[(axis+2)%3]=v*.425;out.push(p);}return out;})();
+function quatMatrix(q){const [x,y,z,w]=q;return [1-2*(y*y+z*z),2*(x*y-w*z),2*(x*z+w*y),2*(x*y+w*z),1-2*(x*x+z*z),2*(y*z-w*x),2*(x*z-w*y),2*(y*z+w*x),1-2*(x*x+y*y)];}
+// How far the die's centre must rise for its lowest point to rest on the tray.
+// Held in the hand: lifted off the tray as the drag begins, carried with the pointer and turned as it
+// goes. Dragging up lifts it higher. It never reaches into the page beside it (wall: the page edge's
+// distance from home on screen; camera: the die's view, to convert screen to world).
+function dieHoldPose(from,dx,dy,size=94,{wall=null,camera=null}={}){
+ const turned=dieGrabPose(from,dx,dy,size),rise=Math.min(1,Math.hypot(dx,dy)/40),eased=rise*rise*(3-2*rise);
+ const before=Math.max(0,-from.y-dieSupportLift(from.q,size));
+ const height=Math.max(before*(1-eased),eased*Math.max(size*.2,Math.min(size*1.1,size*.55-dy*1.4)));
+ const across=camera?Math.max(.5,Math.abs(camera[0][0])):1;
+ let x=Math.max(-size*1.2,Math.min(size*1.2,from.x+dx/across));
+ if(wall!=null){const side=Math.sign(wall),limit=(Math.abs(wall)-size*.9)/across;if(side*x>limit)x=side*Math.max(0,limit);}
+ return {q:turned.q,x,y:-height-dieSupportLift(turned.q,size),air:height};
 }
-// wall: the page edge beside the die, as {edge} = signed distance from the die's rest centre.
-// A throw toward it strikes the edge in mid-air, rebounds, and lands back on the die's own tray.
-function makeDiePlan(from,value,random=Math.random,size=116,travelLimit=18,gesture=null,wall=null){
+function dieSupportLift(q,size=116){
+ const M=quatMatrix(q);let low=-Infinity;
+ for(const c of DIE_HULL){const y=M[3]*c[0]+M[4]*c[1]+M[5]*c[2];if(y>low)low=y;}
+ return Math.max(0,(low-.5)*size);
+}
+// A rigid bevelled cube thrown onto a flat tray: gravity, corner impacts with restitution and friction,
+// a gentle pull back toward the die's home, and, if given, the page edge as a wall across the screen's
+// x axis. px and seconds; y points down; the tray is the plane size/2 below the die's resting centre.
+function simulateDieThrow({from,size,velocity,spin,wall=null,limit=2.6,friction=.55}){
+ const s=size,g=30*s,dt=1/240,Iinv=6/(s*s),home=90,e=.42,mu=friction,slow=.18*Math.sqrt(g*s),mark=.07*Math.sqrt(g*s);
+ let px=from.x,py=from.y,vx=velocity[0],vy=velocity[1],vz=0,wx=spin[0],wy=spin[1],wz=spin[2],q=[...from.q];
+ const frames=[{t:0,q:[...q],x:px,y:py}],contacts=[],list=[];let knock=null,still=0,t=0;
+ for(let step=1;step<=Math.round(limit/dt);step++){
+  t=step*dt;vy+=g*dt;px+=vx*dt;py+=vy*dt;
+  {const [x,y,z,w]=q,h=.5*dt;q=[x+h*(wx*w+wy*z-wz*y),y+h*(wy*w+wz*x-wx*z),z+h*(wz*w+wx*y-wy*x),w-h*(wx*x+wy*y+wz*z)];const l=Math.hypot(...q);q=q.map(c=>c/l);}
+  list.length=0;let deep=0,wallDeep=0,touching=false;
+  // Clear of the tray and the page by more than the die's half-diagonal, no corner can touch either.
+  const clear=py+s*.87<s/2&&(!wall||wall.dir*(wall.axis[0]*px+wall.axis[1]*py-wall.edge)<-s*.87);
+  const M=clear?null:quatMatrix(q);
+  if(!clear)for(const c of DIE_HULL){
+   const rx=(M[0]*c[0]+M[1]*c[1]+M[2]*c[2])*s,ry=(M[3]*c[0]+M[4]*c[1]+M[5]*c[2])*s,rz=(M[6]*c[0]+M[7]*c[1]+M[8]*c[2])*s,X=px+rx,Y=py+ry;
+   const pen=Y-s/2;
+   // Leaving the hand, a spinning corner would brush the tray: the die is lifted clear of it, and the
+   // throw only meets the tray on the way down.
+   if(pen>0){if(pen>deep)deep=pen;if(!(t<.05&&vy<0)){touching=true;list.push([rx,ry,rz,0,-1,0,e,mu,0]);}}
+   if(wall){const over=wall.dir*(wall.axis[0]*X+wall.axis[1]*Y+wall.axis[2]*rz-wall.edge);if(over>0){list.push([rx,ry,rz,-wall.dir*wall.axis[0],-wall.dir*wall.axis[1],-wall.dir*wall.axis[2],.8,.2,1]);if(over>wallDeep)wallDeep=over;}}
+  }
+  // Several passes over every touching corner share the impulse between them, so a die resting on a
+  // face sits still instead of chattering; only the first pass bounces.
+  let impulse=0;
+  for(let pass=0;pass<6&&list.length;pass++)for(const k of list){
+   const [rx,ry,rz,nx,ny,nz,rest,fr,isWall]=k;
+   const ux=vx+wy*rz-wz*ry,uy=vy+wz*rx-wx*rz,uz=vz+wx*ry-wy*rx,vn=ux*nx+uy*ny+uz*nz;if(vn>=0)continue;
+   const cx=ry*nz-rz*ny,cy=rz*nx-rx*nz,cz=rx*ny-ry*nx,kn=1+Iinv*(cx*cx+cy*cy+cz*cz),bounce=pass===0&&-vn>slow?rest:0,jn=-(1+bounce)*vn/kn;
+   vx+=nx*jn;vy+=ny*jn;vz+=nz*jn;wx+=Iinv*cx*jn;wy+=Iinv*cy*jn;wz+=Iinv*cz*jn;
+   if(isWall){if(knock===null)knock=t;}else if(pass===0)impulse+=jn;
+   const ax=vx+wy*rz-wz*ry,ay=vy+wz*rx-wx*rz,az=vz+wx*ry-wy*rx,an=ax*nx+ay*ny+az*nz,tx=ax-an*nx,ty=ay-an*ny,tz=az-an*nz,speed=Math.hypot(tx,ty,tz);
+   if(speed>1e-6){const dx=tx/speed,dy=ty/speed,dz=tz/speed,ex=ry*dz-rz*dy,ey=rz*dx-rx*dz,ez=rx*dy-ry*dx,kt=1+Iinv*(ex*ex+ey*ey+ez*ez),jt=Math.min(speed/kt,fr*jn);vx-=dx*jt;vy-=dy*jt;vz-=dz*jt;wx-=Iinv*ex*jt;wy-=Iinv*ey*jt;wz-=Iinv*ez*jt;}
+   vz=0;
+  }
+  if(deep)py-=deep;
+  if(wallDeep){px-=wall.dir*wall.axis[0]*wallDeep*.8;py-=wall.dir*wall.axis[1]*wallDeep*.8;}
+  let landed=false;
+  if(impulse>mark){const last=contacts[contacts.length-1];if(last&&t-last.t<.035)last.impulse=Math.max(last.impulse,impulse);else{contacts.push({t,impulse});landed=true;}}
+  // The pull home waits until a die headed for the page has met it.
+  if(touching){const k=1-1.6*dt;wx*=k;wy*=k;wz*=k;vx*=1-.9*dt;if(!wall||knock!==null)vx-=px*home*dt;}
+  // Frames at 120 a second, plus the exact moment of each landing.
+  if(step%2===0||landed)frames.push({t,q:[...q],x:px,y:py});
+  still=touching&&Math.hypot(vx,vy)<.08*s&&Math.hypot(wx,wy,wz)<1.2?still+dt:0;if(still>.08)break;
+ }
+ return {frames,contacts,knock,duration:t,q,x:px,y:py};
+}
+// The throw a visitor sees: real bounces, re-thrown until one comes to rest flat on the chosen face, near
+// home, and, toward the page, striking its edge in mid-air before the first landing. camera maps the
+// die's world to the screen, so the page edge is met where it is drawn. Falls back to a scripted arc.
+function makeDiePlan(from,value,random=Math.random,size=116,travelLimit=18,gesture=null,wall=null,camera=null){
+ const between=(min,max)=>min+(max-min)*random(),sign=()=>random()<.5?-1:1;
+ const strength=dieClamp(gesture?.strength||0),direction=gesture?.direction||(wall?Math.sign(wall.edge):sign());
+ const axisX=camera?camera[0]:[1,0,0],axisY=camera?camera[1]:[0,1,0],g=30*size,reach=Math.max(travelLimit,size*(gesture?.velocity?.45:.3));
+ const screen=(row,x,y)=>row[0]*x+row[1]*y;
+ // A die let go from the hand is guided to the page beside it: it may tap the tray first, then meets the edge.
+ const guided=!!gesture?.guided&&!!wall;
+ const strike=wall&&(guided||Math.sign(wall.edge)===direction)?{dir:Math.sign(wall.edge),axis:axisX,edge:wall.edge}:null;
+ // A die already against the page cannot be thrown at it; the scripted hop handles that.
+ if(strike){
+  const M=quatMatrix(from.q);let far=-Infinity;
+  for(const c of DIE_HULL){const P=[from.x+(M[0]*c[0]+M[1]*c[1]+M[2]*c[2])*size,from.y+(M[3]*c[0]+M[4]*c[1]+M[5]*c[2])*size,(M[6]*c[0]+M[7]*c[1]+M[8]*c[2])*size];far=Math.max(far,direction*(axisX[0]*P[0]+axisX[1]*P[1]+axisX[2]*P[2]));}
+  if(strike.dir*wall.edge-far<size*.12)return dieArcPlan(from,value,random,size,travelLimit,gesture,wall);
+ }
+ // Re-throw until one fits, within a small time budget so a slow device never stalls on a hard case.
+ const clock=typeof performance!=='undefined'?()=>performance.now():()=>0,started=clock();
+ for(let attempt=0;attempt<90&&(attempt<8||clock()-started<(gesture?.velocity?22:14));attempt++){
+  const height=size*(between(.36,.5)+strength*.22+(gesture?.flick?.08:0)),air=Math.max(0,-from.y-dieSupportLift(from.q,size));
+  const vy=-Math.sqrt(2*g*Math.max(size*.12,height-air)),landing=(-vy+Math.sqrt(vy*vy+2*g*air))/g;
+  let vx=direction*between(5,35)*(1+strength);
+  // The hand's own speed carries into the throw; a drop just lets go.
+  const hand=gesture?.velocity,across=Math.max(.5,Math.abs(axisX[0])),fast=2.4*Math.sqrt(g*size);
+  // With no page beside it to stop the die, a hard sideways flick is reined in so it still lands on its tray.
+  if(hand){const cap=strike?fast:size*1.6;vx=Math.max(-cap,Math.min(cap,hand[0]/across));}
+  const dropping=!!gesture?.drop;
+  let vyStart=dropping?between(-.1,.05)*Math.sqrt(g*size):vy;
+  // An upward flick throws higher, but never more than about a die and a half above the tray.
+  if(hand&&!dropping)vyStart=Math.max(-Math.sqrt(2*g*size*1.5),Math.min(fast*.6,Math.min(vy,hand[1]/.55)));
+  if(strike){
+   const gap=strike.dir*wall.edge-size*.62-strike.dir*screen(axisX,from.x,from.y);
+   // Straight from a click, the die meets the edge in mid-air; from the hand, after a tap or two.
+   const meet=guided?landing+between(.12,.4):between(.5,.72)*landing;
+   vx=strike.dir*Math.max(40,Math.abs(strike.dir===Math.sign(vx)?vx*across:0),gap/meet)/across;
+  }
+  const turn=dropping?between(2,6):between(11,19)+strength*10+(gesture?.flick?4:0);
+  const facing=quatRotate(from.q,DIE_NORMALS[value]),sideways=Math.hypot(facing[2],facing[0]),toward=sideways>.2?[-facing[2]/sideways,0,facing[0]/sideways]:[sign(),0,between(-.5,.5)];
+  // Tumble about an axis that has the chosen face coming up as the die settles (it turns about three
+  // quarters of a turn on the way), so that face is on its way round;
+  // a flick keeps the turn the hand gave it. Either way, a little of the roll follows the throw.
+  let axis=gesture?.axis?gesture.axis.map((c,k)=>c+toward[k]*.45+between(-.25,.25)):toward.map((c,k)=>c+between(-.3,.3)+(k===2?direction*between(0,.3):0));
+  const length=Math.hypot(...axis)||1;axis=axis.map(c=>c/length*turn);
+  // A drop is let go tilted: a small turn rights the face it showed on top as it falls.
+  if(dropping){const tilt=Math.acos(Math.max(-1,Math.min(1,-facing[1])));axis=sideways>.05?[facing[2]/sideways*tilt/between(.22,.32)+between(-.6,.6),between(-.4,.4),-facing[0]/sideways*tilt/between(.22,.32)+between(-.6,.6)]:[between(-1.5,1.5),between(-1,1),between(-1.5,1.5)];}
+  // Let go flat, a die skids across the felt to the edge rather than tumbling there.
+  const run=simulateDieThrow({from,size,velocity:[vx,vyStart],spin:axis,wall:strike,friction:dropping&&strike?.22:.55});
+  if(dieTopFace(run.q)!==value||Math.abs(run.x)>reach||run.duration<.45||run.duration>2.5)continue;
+  const flat=dieSnap(run.q,value);if(Math.abs(flat.reduce((sum,c,i)=>sum+c*run.q[i],0))<Math.cos(4*Math.PI/180))continue;
+  const first=run.contacts[0]?.t??run.duration;
+  if(strike&&(run.knock===null||(guided?run.knock>(run.contacts[2]?.t??run.duration)||run.knock>1.4:run.knock>=first)))continue;
+  // Settle the last few degrees onto the face over a short beat.
+  const end=run.duration+.06,last=run.frames[run.frames.length-1];
+  run.frames.push({t:end,q:flat,x:last.x,y:-dieSupportLift(flat,size)});
+  const top=Math.max(...run.contacts.map(c=>c.impulse),1e-9);
+  const plan={kind:'physics',from,target:flat,size,duration:end*1000,frames:run.frames.map(f=>({...f,t:f.t/end})),contacts:run.contacts.map(c=>c.t/end),levels:run.contacts.map(c=>Math.min(1,c.impulse/top)),turns:1+Math.round(strength*2),knock:null};
+  if(strike){plan.knock=run.knock/end;plan.edge=wall.edge;const at=sampleDiePlan(plan,plan.knock);if(!guided&&at.air<=2)continue;plan.strikeY=screen(axisY,at.x,at.y);}
+  return plan;
+ }
+ return dieArcPlan(from,value,random,size,travelLimit,gesture,wall);
+}
+// The scripted fallback. wall: the page edge beside the die, as {edge} = signed distance from the die's
+// rest centre. A throw toward it strikes the edge in mid-air, rebounds, and lands back on its own tray.
+function dieArcPlan(from,value,random=Math.random,size=116,travelLimit=18,gesture=null,wall=null){
  const between=(min,max)=>min+(max-min)*random(),sign=()=>random()<.5?-1:1;
  const yaw=Math.floor(random()*4)*Math.PI/2+between(-.16,.16);
  const strength=dieClamp(gesture?.strength||0),direction=gesture?.direction||(wall?Math.sign(wall.edge):sign());
@@ -627,6 +756,13 @@ function dieHopProgress(contacts,t,first,end){
 }
 function sampleDiePlan(plan,t){
  t=dieClamp(t);
+ if(plan.kind==='physics'){
+  const frames=plan.frames;let lo=0,hi=frames.length-1;
+  while(hi-lo>1){const mid=(lo+hi)>>1;if(frames[mid].t<=t)lo=mid;else hi=mid;}
+  const a=frames[lo],b=frames[hi],k=b.t>a.t?dieClamp((t-a.t)/(b.t-a.t)):0;
+  const q=t>=1?plan.target:quatSlerp(a.q,b.q,k),x=a.x+(b.x-a.x)*k,y=a.y+(b.y-a.y)*k;
+  return {q,x,y,air:Math.max(0,-y-dieSupportLift(q,plan.size))};
+ }
  if(plan.kind==='settle'){
   const ease=1-(1-t)**3,q=quatSlerp(plan.from.q,plan.target,ease),air=Math.max(0,-plan.from.y-dieSupportLift(plan.from.q,plan.size))*(1-ease);
   return {q,x:plan.from.x,y:-air-dieSupportLift(q,plan.size),air};
@@ -654,16 +790,18 @@ function sampleDiePlan(plan,t){
  return {q,x,y:-air-dieSupportLift(q,plan.size),air};
 }
 
-// Die glyphs: bold strokes in the face ink, one accent detail each (eyes, bolt, lure, chip core...).
+// Die glyphs: one recognisable silhouette per ingredient in the face ink, with one or two identifying
+// details and one accent: Cthulhu's eyes, the helmet plume, the sun, the stamp mark, the flag tip, the lure;
+// the chip core, the glinting tiles, the patty, the masks' features, the ding, the specimen pin.
 const dieGlyphs=[
- '<path fill="currentColor" stroke="none" d="M19 36c0-12 7.5-21 17-21s17 9 17 21v3H19Z"/><circle class="ga" stroke="none" cx="29.5" cy="30" r="3.2"/><circle class="ga" stroke="none" cx="42.5" cy="30" r="3.2"/><path d="M23 39c-1 9-9 9-9 17M31 39c0 8-4 12-2 19M41 39c0 8 4 12 2 19M49 39c1 9 9 9 9 17"/>',
- '<path d="M13 17h46"/><path d="M19 17c-6 0-6.5 8-.5 8 3.5 0 4-4.5 1-4.5M53 17c6 0 6.5 8 .5 8-3.5 0-4-4.5-1-4.5"/><path d="M22 25h28M26 25v28M33 25v28M39 25v28M46 25v28"/><path class="ga-s" d="M20 53h32"/><path d="M15 60h42"/>',
- '<path d="M21 44a10 10 0 0 1 1.5-19.8A14 14 0 0 1 49 25a9.5 9.5 0 0 1 1 19Z"/><path class="ga" stroke="none" d="M38 41 29 55h7.5l-4 12L45 50h-7.5l5-9Z"/>',
- '<circle cx="36" cy="14" r="7"/><path d="M32.5 21 30 33h12l-2.5-12"/><rect fill="currentColor" stroke="none" x="14" y="33" width="44" height="10" rx="2.5"/><path class="ga-s" d="M15 53h42"/><path d="M21 61h30" opacity=".55"/>',
- '<path d="M17 63V9"/><path d="M17 11h38v27H17"/><path fill="currentColor" stroke="none" d="M17 11h9.5v9H17ZM36 11h9.5v9H36ZM26.5 20H36v9h-9.5ZM45.5 20H55v9h-9.5ZM17 29h9.5v9H17ZM36 29h9.5v9H36Z"/>',
- '<path d="M13 43c7-14 27-17 38-6l9-7v22l-9-7c-11 11-31 8-38-2Z"/><path d="M13 43l4 3 3.5-3 3.5 3"/><circle fill="currentColor" stroke="none" cx="25" cy="38" r="2.6"/><path d="M27 32c-2-11 6-17 15-15"/><circle class="ga" stroke="none" cx="44" cy="17" r="4.2"/><circle class="ga-s" cx="44" cy="17" r="8.5" opacity=".45" stroke-width="2"/>'
+ "<path stroke-width=\"3\" d=\"M25 27C21 21.5 16 16 10.5 13c.3 4.8 0 9-.8 13 3.8-.8 7 2 7.8 5.8 3-1 6 .5 8 3M47 27c4-5.5 9-11 14.5-14-.3 4.8 0 9 .8 13-3.8-.8-7 2-7.8 5.8-3-1-6 .5-8 3\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M25.5 41C22 31 24 13 36 13s14 18 10.5 28Z\"/><path class=\"ga\" stroke=\"none\" d=\"M27.5 28.5l6.5 2.5-1.5 3.5c-3 0-4.5-2.5-5-6ZM44.5 28.5l-6.5 2.5 1.5 3.5c3 0 4.5-2.5 5-6Z\"/><path d=\"M27.5 40c-2 7-9 8-9.5 14-.3 4 4.5 5 5.5 1.5M33 41c0 6-4 10-3 16 .5 3 3.5 3.5 4 1M39 41c0 6 4 10 3 16-.5 3-3.5 3.5-4 1M44.5 40c2 7 9 8 9.5 14 .3 4-4.5 5-5.5 1.5\"/>",
+ "<path class=\"ga\" stroke=\"none\" d=\"M50 22C47.5 13 39.5 8.5 30 9 20.5 9.5 13 16.5 12 26.5c-.4 4 .3 8 2 11.5 1-7.5 5-14 11-16.5 8.5-3.5 17-2 25 .5Z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M31.5 26.5l2-6.5h8.5l2 6.5ZM16 59.5c3.5-4 4.5-8.5 4-13.5C19 33 27 25 37 25s17 6 18.5 14l-11 3.5 12 3.5-1.5 9-5 7c-4-6.5-9-11.5-14.5-11-5.5.5-8.5 4-10 9-3-.5-6.5-.5-9.5-.5Z\"/>",
+ "<path class=\"ga\" stroke=\"none\" d=\"M37.8 21.8A9 9 0 1 1 49.3 32.5A16.1 16.1 0 0 0 37.8 21.8Z\"/><path class=\"ga-s\" stroke-width=\"3\" d=\"M51.3 12.4L52.5 9.6M58.1 19.2L60.9 18M58.1 28.8L60.9 30M34.9 19.2L32.1 18M41.7 12.4L40.5 9.6\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M22.5 52A8 8 0 0 1 21.6 36.1A12.5 12.5 0 0 1 46.4 36.2A8 8 0 0 1 48 52Z\"/><path d=\"M23 56.5l-2.5 5M33.5 56.5l-2.5 5M44 56.5l-2.5 5\"/>",
+ "<path d=\"M12 20.5a3 3 0 0 1 3-3h16l9 9V59a3 3 0 0 1-3 3H15a3 3 0 0 1-3-3Z\"/><path stroke-width=\"2.6\" d=\"M31 17.5v9h9M18 30h8M18 37h11.5\"/><g transform=\"rotate(-9 25 49)\"><rect class=\"ga-s\" stroke-width=\"2.6\" x=\"17.5\" y=\"44\" width=\"15\" height=\"10\" rx=\"2\"/><path class=\"ga-s\" stroke-width=\"2.4\" d=\"M21.5 49h7\"/></g><g transform=\"translate(46 42) rotate(16)\"><circle cx=\"0\" cy=\"-27\" r=\"5\"/><path d=\"M-4.5-13-3-22h6l1.5 9\"/><rect fill=\"currentColor\" stroke=\"none\" x=\"-12.5\" y=\"-14\" width=\"25\" height=\"14\" rx=\"2.5\"/></g>",
+ "<path d=\"M18 62V13\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M18 14Q23.1 15.1 28.3 16L28.3 24.7Q23.1 23.8 18 22.7ZM38.5 15.7Q43.6 14.2 48.8 11.9L48.8 20.6Q43.6 22.9 38.5 24.3ZM28.3 24.7Q33.4 25.6 38.5 24.3L38.5 33Q33.4 34.2 28.3 33.4ZM48.8 20.6Q53.9 18.4 59 18.7L59 27.3Q53.9 27 48.8 29.3ZM18 31.3Q23.1 32.4 28.3 33.4L28.3 42Q23.1 41.1 18 40ZM38.5 33Q43.6 31.5 48.8 29.3L48.8 37.9Q43.6 40.2 38.5 41.7Z\"/><path stroke-width=\"3\" d=\"M18 14Q23.1 15.1 28.3 16Q33.4 16.9 38.5 15.7Q43.6 14.2 48.8 11.9Q53.9 9.7 59 10L59 36Q53.9 35.7 48.8 37.9Q43.6 40.2 38.5 41.7Q33.4 42.9 28.3 42Q23.1 41.1 18 40\"/><circle class=\"ga\" stroke=\"none\" cx=\"18\" cy=\"11.6\" r=\"3.4\"/>",
+ "<path d=\"M16 33C21 27 30 24 39 25c9 1 15 7 16.5 14L62 33c-1.5 6.5-1.5 12.5 0 18.5L55.5 46C53 54.5 44 59 33 59c-10 0-17.5-3.5-22-8.5L29 43.5Z\"/><path stroke-width=\"2.2\" d=\"M18.1 34.7L17.3 39.4L21.7 37.6M22.3 38.1L21.4 42.8L25.8 41M12.5 49.9L13.1 45.2L16.7 48.3M17.5 48L18.1 43.2L21.8 46.3\"/><circle fill=\"currentColor\" stroke=\"none\" cx=\"34\" cy=\"33\" r=\"2.6\"/><path stroke-width=\"2.6\" d=\"M41 45c3 1.5 5 4 5.5 7.5\"/><path stroke-width=\"2.6\" d=\"M31 25.5C30 16.5 26 11.5 21.5 11.5c-3 0-5 2-5.5 5\"/><circle class=\"ga\" stroke=\"none\" cx=\"16\" cy=\"20\" r=\"4\"/><circle class=\"ga-s\" cx=\"16\" cy=\"20\" r=\"7\" opacity=\".45\" stroke-width=\"2\"/>"
 ];
-const formatGlyphs={tech:'<rect x="19" y="19" width="34" height="34" rx="5"/><rect class="ga" stroke="none" x="28" y="28" width="16" height="16" rx="2.5"/><path d="M28 10v9M36 10v9M44 10v9M28 53v9M36 53v9M44 53v9M10 28h9M10 36h9M10 44h9M53 28h9M53 36h9M53 44h9"/>',disco:'<path d="M36 5v12"/><circle cx="36" cy="39" r="21"/><ellipse cx="36" cy="39" rx="9.5" ry="21"/><path d="M15 39h42M18 29h36M18 49h36"/><path class="ga-s" d="M60 9v10M55 14h10"/>',diner:'<path d="M15 33c0-10.5 9.5-17 21-17s21 6.5 21 17Z"/><path class="ga-s" d="M13 39c4 3.5 7.5-3.5 11.5 0s7.5 3.5 11.5 0 7.5-3.5 11.5 0 7.5 3.5 11.5 0"/><rect fill="currentColor" stroke="none" x="14" y="44" width="44" height="7" rx="3.5"/><path d="M15 56h42v1.5a6.5 6.5 0 0 1-6.5 6.5h-29A6.5 6.5 0 0 1 15 57.5Z"/>',opera:'<path d="M9 11h54"/><path d="M12 11c0 19 3.5 34 12 50M60 11c0 19-3.5 34-12 50M12 11c4 7 9 9 15 9M60 11c-4 7-9 9-15 9"/><path class="ga-s" d="M39 28v19M39 28l7 3"/><ellipse class="ga" stroke="none" cx="34.5" cy="48" rx="5" ry="4" transform="rotate(-20 34.5 48)"/>',hotel:'<path d="M36 25v-6M30.5 19h11"/><path d="M17 50a19 19 0 0 1 38 0"/><path d="M12 50h48M9 57h54"/><path class="ga-s" d="M25 43a12.5 12.5 0 0 1 6.5-9"/>',insects:'<ellipse cx="36" cy="43" rx="12" ry="15"/><path d="M36 28v30"/><circle cx="36" cy="23.5" r="5"/><path d="M33 19.5l-5-7.5M39 19.5l5-7.5M24 37l-9-4M24 45l-10 2M26 53l-8 7M48 37l9-4M48 45l10 2M46 53l8 7"/><path class="ga-s" d="M36 4v14"/><circle class="ga" stroke="none" cx="36" cy="4.5" r="3"/>'};
+const formatGlyphs={tech:"<rect x=\"23\" y=\"23\" width=\"26\" height=\"26\" rx=\"3.5\"/><rect class=\"ga\" stroke=\"none\" x=\"30\" y=\"30\" width=\"12\" height=\"12\" rx=\"2\"/><path d=\"M29.5 17v6M42.5 17v6M29.5 49v6M42.5 49v6M17 29.5h6M17 42.5h6M49 29.5h6M49 42.5h6\"/><path stroke-width=\"3\" d=\"M36 23v-9M36 49v9M23 36h-9M49 36h9\"/><circle fill=\"currentColor\" stroke=\"none\" cx=\"36\" cy=\"11.5\" r=\"3.4\"/><circle fill=\"currentColor\" stroke=\"none\" cx=\"36\" cy=\"60.5\" r=\"3.4\"/><circle fill=\"currentColor\" stroke=\"none\" cx=\"11.5\" cy=\"36\" r=\"3.4\"/><circle fill=\"currentColor\" stroke=\"none\" cx=\"60.5\" cy=\"36\" r=\"3.4\"/>",disco:"<path d=\"M36 10v10\"/><circle fill=\"currentColor\" stroke=\"none\" cx=\"36\" cy=\"40\" r=\"20\"/><path class=\"ga\" stroke=\"none\" d=\"M36 26.5L36 28.8L36 31L36 33.3L45.4 33.3L44.9 31L44.3 28.8L43.4 26.5ZM45.4 33.3L45.7 35.5L45.9 37.8L46 40L53.3 40L53.2 37.8L52.9 35.5L52.3 33.3ZM26 40L26.1 42.3L26.3 44.5L26.6 46.8L36 46.8L36 44.5L36 42.3L36 40ZM36 46.8L36 49L36 51.3L36 53.5L43.4 53.5L44.3 51.3L44.9 49L45.4 46.8ZM19.7 33.3L19.1 35.5L18.8 37.8L18.7 40L26 40L26.1 37.8L26.3 35.5L26.6 33.3ZM53.3 40L53.2 42.3L52.9 44.5L52.3 46.8L54.8 46.8L55.5 44.5L55.9 42.3L56 40ZM17.2 46.8L18.1 49L19.5 51.3L21.2 53.5L23.2 53.5L21.7 51.3L20.5 49L19.7 46.8ZM48.8 26.5L50.3 28.8L51.5 31L52.3 33.3L54.8 33.3L53.9 31L52.5 28.8L50.8 26.5ZM36 20L31.5 22.2L29.8 24.3L28.6 26.5L36 26.5L36 24.3L36 22.2L36 20ZM43.4 53.5L42.2 55.7L40.5 57.8L36 60L36 60L43.8 57.8L46.8 55.7L48.8 53.5Z\"/><path class=\"ga-s\" stroke-width=\"2\" stroke-linecap=\"butt\" d=\"M22.4 26.5H49.6M17.8 33.3H54.2M16.2 40H55.8M17.8 46.8H54.2M22.4 53.5H49.6M36 20.6A17.3 19.4 0 0 0 36 59.4M36 20.6A10 19.4 0 0 0 36 59.4M36 20.6V59.4M36 20.6A10 19.4 0 0 1 36 59.4M36 20.6A17.3 19.4 0 0 1 36 59.4\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M57.5 12Q58.6 16.9 63.5 18Q58.6 19.1 57.5 24Q56.4 19.1 51.5 18Q56.4 16.9 57.5 12ZM13.5 21.5Q14.3 25.2 18 26Q14.3 26.8 13.5 30.5Q12.7 26.8 9 26Q12.7 25.2 13.5 21.5ZM59.5 51.4Q60.1 54.4 63.1 55Q60.1 55.6 59.5 58.6Q58.9 55.6 55.9 55Q58.9 54.4 59.5 51.4Z\"/>",diner:"<path d=\"M14 32c0-11 9.5-18 22-18s22 7 22 18Z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M27 21.5l2.5-1.5.5 2-2.5 1ZM36 19l2.5.5-.5 2-2.5-.5ZM44 23l2.2 1.6-1.4 1.4-2-1.6ZM31.5 27l2.5-.8.4 2-2.6.6Z\"/><path stroke-width=\"3\" d=\"M12 37.5c2.5-2.5 5 2.5 7.5 0s5 2.5 7.5 0 5 2.5 7.5 0 5 2.5 7.5 0 5 2.5 7.5 0 5 2.5 7.5 0\"/><rect class=\"ga\" stroke=\"none\" x=\"13\" y=\"42\" width=\"46\" height=\"9\" rx=\"4.5\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M18 41h36l-6 4.5-4-3-5 6-4.5-6-7 5.5-3-5.5-4 3Z\"/><path d=\"M15 55h42v1a6 6 0 0 1-6 6H21a6 6 0 0 1-6-6Z\"/>",opera:"<g transform=\"translate(24 37.5) rotate(-13) scale(1.04 1.16)\"><path fill=\"currentColor\" stroke=\"none\" d=\"M-11.5-12.5C-5-15.5 5-15.5 11.5-12.5 13-1.5 9 9 0 14.5-9 9-13-1.5-11.5-12.5Z\"/><path class=\"ga\" stroke=\"none\" d=\"M-8 -4.5c1.5-3 5-3 6.5 0-1.8-1-4.7-1-6.5 0ZM1.5 -4.5c1.5-3 5-3 6.5 0-1.8-1-4.7-1-6.5 0ZM-6.5 2.5c3.5 5.5 9.5 5.5 13 0-4 1.5-9 1.5-13 0Z\"/></g><g transform=\"translate(48 37.5) rotate(13) scale(1.04 1.16)\"><path fill=\"currentColor\" stroke=\"none\" d=\"M-11.5-12.5C-5-15.5 5-15.5 11.5-12.5 13-1.5 9 9 0 14.5-9 9-13-1.5-11.5-12.5Z\"/><path class=\"ga\" stroke=\"none\" d=\"M-8 -6c2.5 1 5 2.5 6.5 4.5-2.5.5-5.5-1-6.5-4.5ZM8 -6c-2.5 1-5 2.5-6.5 4.5 2.5.5 5.5-1 6.5-4.5ZM-6 8.5c3.5-5 8.5-5 12 0-4-2-8-2-12 0Z\"/></g>",hotel:"<path class=\"ga-s\" stroke-width=\"3\" d=\"M17.5 21l-4-4M54.5 21l4-4M15 29.5H10M57 29.5h5\"/><path d=\"M36 30v-6\"/><rect fill=\"currentColor\" stroke=\"none\" x=\"30\" y=\"19\" width=\"12\" height=\"4.5\" rx=\"2\"/><path d=\"M17 47.5a19 19 0 0 1 38 0Z\"/><path stroke-width=\"2.6\" d=\"M24.5 41a12 12 0 0 1 6-7.5\"/><rect fill=\"currentColor\" stroke=\"none\" x=\"11\" y=\"51.5\" width=\"50\" height=\"9.5\" rx=\"2.5\"/>",insects:"<rect stroke-width=\"3\" x=\"11\" y=\"10\" width=\"50\" height=\"52\" rx=\"3\"/><g stroke-width=\"4\" transform=\"translate(36 28.5) scale(.8) translate(-36 -29)\"><path d=\"M34 25c-4-6-11-10.5-20-11 .5 7 2.5 13.5 7 16.5 3.5 2 8.5 2 13 .5M38 25c4-6 11-10.5 20-11-.5 7-2.5 13.5-7 16.5-3.5 2-8.5 2-13 .5M34 33.5c-5 0-11 2-12.5 6.5-1 3.5 2 6 5.5 5 3.5-1 6-5 7-8.5M38 33.5c5 0 11 2 12.5 6.5 1 3.5-2 6-5.5 5-3.5-1-6-5-7-8.5\"/><rect fill=\"currentColor\" stroke=\"none\" x=\"33\" y=\"19\" width=\"6\" height=\"25\" rx=\"3\"/><path stroke-width=\"3.2\" d=\"M34.5 19.5c-1-3.5-3-6-5.5-7.5M37.5 19.5c1-3.5 3-6 5.5-7.5\"/><circle class=\"ga\" stroke=\"none\" cx=\"36\" cy=\"25.5\" r=\"3.2\"/></g><rect stroke-width=\"2.6\" x=\"27.5\" y=\"49.5\" width=\"17\" height=\"6.5\" rx=\"1\"/>"};
 const diceMotion=matchMedia('(prefers-reduced-motion: reduce)');
 const dieStates=[0,1].map(()=>({value:null,pose:{q:[0,0,0,1],x:0,y:0},running:null}));
 let activeDiceRoll=null;
@@ -726,8 +864,8 @@ function initDice3D(){
  document.querySelectorAll('.die').forEach((die,i)=>{
   const button=document.createElement('button');button.className='die-object';button.type='button';button.id='throw-'+i;
   button.setAttribute('aria-describedby','dice-gesture-help');
-  // A ground plane gives the die a surface to land on; a flat core fills the rounded corners so the cube reads solid.
-  button.innerHTML='<span class="die-ground" aria-hidden="true"></span><span class="die-shadow" aria-hidden="true"></span><span class="die-grip" aria-hidden="true"><span class="die-flight"><span class="die-camera"><span class="cube">'+dieSolidMarkup()+dieFaceMarkup(i)+'</span></span></span></span>';
+  // The floor shares the die's camera, so the die lands on it; the die moves in the same space above it.
+  button.innerHTML='<span class="die-floor" aria-hidden="true"><span class="die-ground"></span><span class="die-shadow"></span></span><span class="die-grip" aria-hidden="true"><span class="die-camera"><span class="die-flight"><span class="cube">'+dieSolidMarkup()+dieFaceMarkup(i)+'</span></span></span></span>';
   die.querySelector('.die-top').after(button);bindDieInteraction(button,i);
   const faces=[...button.querySelectorAll('.cube-face')],pieces=[...button.querySelectorAll('.cube-bevel,.cube-corner'),...faces];
   dieShading[i]={pieces,normals:[...DIE_SOLIDS.map(solid=>solid.normal),...faces.map((_,n)=>DIE_FACE_NORMALS[n])],camera:dieCameraMatrix(button.querySelector('.die-camera'))};
@@ -735,14 +873,16 @@ function initDice3D(){
  const settle=()=>[0,1].forEach(i=>stopDieMotion(i));
  diceMotion.addEventListener('change',()=>{if(diceMotion.matches)settle();});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)settle();});
- const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(!entry.isIntersecting)stopDieMotion(Number(entry.target.id.slice(-1)));}));
+ const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{const i=Number(entry.target.id.slice(-1));if(!entry.isIntersecting)stopDieMotion(i);else prepareThrows(i);}));
  [0,1].forEach(i=>observer.observe(document.querySelector('#throw-'+i)));
 }
+// The contact shadow on the floor: tight and dark on the tray, wider and fainter as the die rises.
+function dieShadowFrame(pose,size){const height=Math.min(1,(pose.air??Math.max(0,-pose.y))/(size*.6));return {transform:`translateX(${pose.x}px) scale(${1+height*.25})`,opacity:1-height*.72};}
 function paintDiePose(i,pose){
- $('#throw-'+i+' .cube').style.transform=quatCSS(pose.q);shadeDie(i,pose.q);
+ const cube=$('#throw-'+i+' .cube');cube.style.transform=quatCSS(pose.q);shadeDie(i,pose.q);
  $('#throw-'+i+' .die-flight').style.transform=`translate3d(${pose.x}px,${pose.y}px,0)`;
- const shadow=$('#throw-'+i+' .die-shadow'),height=Math.min(1,(pose.air??Math.max(0,-pose.y))/40);
- shadow.style.transform=`translateX(${pose.x}px) scale(${1-height*.32},${1-height*.44})`;shadow.style.opacity=String(1-height*.65);
+ const shadow=$('#throw-'+i+' .die-shadow'),frame=dieShadowFrame(pose,cube.clientWidth||116);
+ shadow.style.transform=frame.transform;shadow.style.opacity=String(frame.opacity);
 }
 function syncDice3D(){
  [a,b].forEach((value,i)=>{
@@ -767,12 +907,12 @@ function dieWall(i,gesture){
  const moving=button.getAnimations?.().some(animation=>animation.playState==='running');
  if(side==='top'||moving||document.documentElement?.dataset.comparing==='true'||middle<rect.top+24||middle>rect.bottom-24)return wall;
  const edge=side==='left'?rect.left-centre:rect.right-centre;
- if(Math.abs(edge)>220||(gesture?.direction&&Math.sign(gesture.direction)!==Math.sign(edge)))return wall;
+ if(Math.abs(edge)>220||(gesture?.direction&&!gesture.guided&&Math.sign(gesture.direction)!==Math.sign(edge)))return wall;
  wall.edge=edge;return wall;
 }
 // Meet the page edge with the cube's projected width at the moment of the strike.
 function dieKnockWall(i,plan){
- if(plan.knock==null)return;
+ if(plan.knock==null||plan.kind==='physics')return;
  const camera=dieShading[i]?.camera,q=sampleDiePlan(plan,plan.knock).q,direction=Math.sign(plan.edge);
  const extent=[[1,0,0],[0,1,0],[0,0,1]].reduce((sum,axis)=>{const v=quatRotate(q,axis);return sum+Math.abs(camera?camera[0][0]*v[0]+camera[0][1]*v[1]+camera[0][2]*v[2]:v[0]);},0)*plan.size*.5*1.03;
  plan.wall=plan.edge-direction*extent;
@@ -796,13 +936,15 @@ function finishDie(i){
  state.pose=sampleDiePlan(running.plan,1);state.value=running.value;state.running=null;
  paintDiePose(i,state.pose);running.animations.forEach(animation=>animation.cancel());
  if(activeDiceRoll){activeDiceRoll.remaining.delete(i);if(!activeDiceRoll.remaining.size){const complete=activeDiceRoll.complete;activeDiceRoll=null;complete();}}
+ prepareThrows(i);
 }
 function stopDieMotion(i){clearDieInvitation(i);resetDieInteraction(i);flushDieImpact(i);finishDie(i);}
 function cancelDiceRoll(){activeDiceRoll=null;[0,1].forEach(i=>{clearDieInvitation(i);resetDieInteraction(i);releaseDieAnimation(i);dieStates[i].value=null;});}
-function beginDieGrab(i){clearDieInvitation(i);activeDiceRoll=null;return releaseDieAnimation(i);}
+// Picking a die up: where the page sits is read once, so carrying it never reads layout per move.
+function beginDieGrab(i){clearDieInvitation(i);activeDiceRoll=null;const pose=releaseDieAnimation(i);dieStates[i].hold={wall:dieWall(i,null)?.edge??null};return pose;}
 function moveDieGrab(i,from,dx,dy=0){
  const size=$('#throw-'+i+' .cube').clientWidth||104;
- dieStates[i].pose=dieGrabPose(from,dx,dy,size);
+ dieStates[i].pose=dieHoldPose(from,dx,dy,size,{wall:dieStates[i].hold?.wall??null,camera:dieShading[i]?.camera||null});
  paintDiePose(i,dieStates[i].pose);
  const value=dieTopFace(dieStates[i].pose.q);
  const name=i?modes[active].options[value].name:worlds[value].name;
@@ -818,20 +960,22 @@ function settleDieGrab(i,keepYaw=false){
 }
 function animateDiePlan(i,plan,value){
  const state=dieStates[i];
- // Exact contact times keep the short impacts visible between regular samples.
- const times=[...new Set([...Array.from({length:67},(_,n)=>n/66),...plan.contacts])].sort((x,y)=>x-y);
- const rotation=[],flight=[],shadow=[];
- for(const t of times){const pose=sampleDiePlan(plan,t),height=Math.min(1,pose.air/40);rotation.push({offset:t,transform:quatCSS(pose.q)});flight.push({offset:t,transform:`translate3d(${pose.x}px,${pose.y}px,0)`});shadow.push({offset:t,transform:`translateX(${pose.x}px) scale(${1-height*.32},${1-height*.44})`,opacity:1-height*.65});}
+ // A simulated throw is sampled at 120 frames a second; exact contact times keep each impact sharp.
+ const regular=plan.kind==='physics'?plan.frames.map(frame=>frame.t):Array.from({length:67},(_,n)=>n/66);
+ const times=[...new Set([...regular,...plan.contacts])].sort((x,y)=>x-y);
+ const rotation=[],flight=[],shadow=[],poses=times.map(t=>sampleDiePlan(plan,t)),size=plan.size||116;
+ poses.forEach((pose,n)=>{const offset=times[n];rotation.push({offset,transform:quatCSS(pose.q)});flight.push({offset,transform:`translate3d(${pose.x}px,${pose.y}px,0)`});shadow.push({offset,...dieShadowFrame(pose,size)});});
  const options={duration:plan.duration,easing:'linear',fill:'forwards'};
  const animations=[$('#throw-'+i+' .cube').animate(rotation,options),$('#throw-'+i+' .die-flight').animate(flight,options),$('#throw-'+i+' .die-shadow').animate(shadow,options)];
+ // Light changes slowly next to the motion, so 30 samples a second carry it; every piece keeps its own.
  const shade=dieShading[i];
- if(shade){const light=times.map(t=>dieBrightness(i,sampleDiePlan(plan,t).q));shade.pieces.forEach((piece,n)=>animations.push(piece.animate(times.map((t,m)=>({offset:t,filter:`brightness(${light[m][n]})`})),options)));}
+ if(shade){const lit=times.filter((t,n)=>n===0||t===1||n%4===0),light=lit.map(t=>dieBrightness(i,sampleDiePlan(plan,t).q));shade.pieces.forEach((piece,n)=>animations.push(piece.animate(lit.map((t,m)=>({offset:t,filter:`brightness(${light[m][n]})`})),options)));}
  // The tray gives under each landing, less with every bounce. `scale` composes with its slant.
  const ground=$('#throw-'+i+' .die-ground');
  if(ground?.animate&&plan.contacts?.length){
   const frames=[{offset:0,scale:'1'}];
   plan.contacts.forEach((contact,n)=>{
-   const depth=.045*.58**n,next=plan.contacts[n+1]??1,dip=Math.min(contact+.014,next),back=Math.min(contact+.085,next);
+   const depth=.045*(plan.levels?.[n]??.58**n),next=plan.contacts[n+1]??1,dip=Math.min(contact+.014,next),back=Math.min(contact+.085,next);
    frames.push({offset:contact,scale:'1'},{offset:dip,scale:`${1-depth} ${1-depth*1.7}`},{offset:back,scale:'1'});
   });
   frames.push({offset:1,scale:'1'});
@@ -839,6 +983,30 @@ function animateDiePlan(i,plan,value){
  }
  state.running={plan,animations,value};
  animations[0].onfinish=()=>{if(state.running?.animations===animations)finishDie(i);};
+}
+// The next click's throws are worked out while the page is idle, one face at a time, so a click only has to
+// start the animation. A plan is used only if nothing it depends on has changed since.
+const preparedThrows=[new Map(),new Map()],preparing=[null,null];
+function throwKey(from,wall,size,travel,gesture){return JSON.stringify([from.q.map(c=>+c.toFixed(5)),+from.x.toFixed(2),+from.y.toFixed(2),wall,size,travel,gesture?{d:gesture.direction,s:gesture.strength}:null]);}
+function throwSetup(i,gesture){
+ const wall=dieWall(i,gesture),cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8));
+ return {wall,width,travel:Number.isFinite(travel)?travel:18};
+}
+function prepareThrows(i){
+ if(typeof requestIdleCallback!=='function'||preparing[i]||diceMotion.matches)return;
+ const step=deadline=>{
+  preparing[i]=null;const state=dieStates[i];
+  if(state.running||document.hidden||view!=='dice')return;
+  const gesture=typeof introMode!=='undefined'&&introMode&&typeof DICE_THROW!=='undefined'?DICE_THROW.enter[i]:null;
+  const {wall,width,travel}=throwSetup(i,gesture),edge=wall?.edge??null,key=throwKey(state.pose,edge,width,travel,gesture);
+  for(const [value,ready] of preparedThrows[i])if(ready.key!==key)preparedThrows[i].delete(value);
+  for(const value of DIE_FACE_VALUES){
+   if(preparedThrows[i].has(value))continue;
+   if(deadline.timeRemaining()<6){preparing[i]=requestIdleCallback(step,{timeout:2000});return;}
+   preparedThrows[i].set(value,{key,plan:makeDiePlan(state.pose,value,Math.random,width,travel,gesture,edge!=null?wall:null,dieShading[i]?.camera||null)});
+  }
+ };
+ preparing[i]=requestIdleCallback(step,{timeout:2000});
 }
 // impact: the page change this throw causes (from reportImpactFor); it lands when the die reaches the page.
 function tumbleDice(indices,values,complete,gesture=null,impact=null){
@@ -851,16 +1019,20 @@ function tumbleDice(indices,values,complete,gesture=null,impact=null){
   activeDiceRoll=null;complete();return;
  }
  const sides=[];
+ // Read every die's place against the page before any of them starts moving.
+ const setups=new Map(indices.map(i=>[i,throwSetup(i,Array.isArray(gesture)?gesture[i]:gesture)]));
  indices.forEach(i=>{
   clearDieInvitation(i);
-  const thrown=Array.isArray(gesture)?gesture[i]:gesture,wall=dieWall(i,thrown);
-  const cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8)),plan=makeDiePlan(from[i],values[i],Math.random,width,Number.isFinite(travel)?travel:18,thrown,wall?.edge!=null?wall:null);
+  const thrown=Array.isArray(gesture)?gesture[i]:gesture,{wall,width,travel}=setups.get(i),edge=wall?.edge??null;
+  const ready=!thrown?.velocity?preparedThrows[i].get(values[i]):null;
+  const plan=ready&&ready.key===throwKey(from[i],edge,width,travel,thrown)?ready.plan:makeDiePlan(from[i],values[i],Math.random,width,travel,thrown,edge!=null?wall:null,dieShading[i]?.camera||null);
+  preparedThrows[i].clear();
   dieKnockWall(i,plan);
   animateDiePlan(i,plan,values[i]);
   if(typeof playDiceClatter==='function')playDiceClatter(i,plan,performance.now());
   // The page reacts when the die strikes its edge, or, out of reach, when the die first lands.
   const side=wall?.side||(i?'right':'left'),knock=plan.knock!=null;
-  const hit={side,knock,die:i,strength:dieClamp(thrown?.strength||0),y:knock?wall.y+sampleDiePlan(plan,plan.knock).y:0};
+  const hit={side,knock,die:i,strength:dieClamp(thrown?.strength||0),y:knock?wall.y+(plan.strikeY??sampleDiePlan(plan,plan.knock).y):0};
   const run=()=>{if(typeof hitReport==='function')hitReport(impact,hit);},land=()=>{if(typeof landReportImpact==='function')landReportImpact(impact);};
   dieImpacts[i]={run,land,timer:setTimeout(()=>{dieImpacts[i]=null;run();},(knock?plan.knock:plan.contacts[0])*plan.duration)};
   sides.push({side,knock});
@@ -921,6 +1093,8 @@ function bindDieInteraction(button,index){
  button.addEventListener('pointerdown',event=>{
   if(!event.isPrimary||event.button!==0||pointer)return;
   const now=performance.now();
+  // Wake the sound on the press, so its one-time setup is done before the release throws the die.
+  if(typeof primeDiceAudio==='function')primeDiceAudio();
   suppressPointerClick=false;pointer={id:event.pointerId,x:event.clientX,y:event.clientY,from:beginDieGrab(index),samples:[{x:event.clientX,y:event.clientY,t:now}]};
   button.setPointerCapture(event.pointerId);button.dataset.pressed='true';
  });
@@ -957,8 +1131,11 @@ function bindDieInteraction(button,index){
   reset(!wasDragging&&!inside);
   if(wasDragging){
    suppressPointerClick=true;
-   if(speed>.6)roll(index,{direction:Math.sign(vx)||1,strength:Math.min(1,(speed-.6)/1.8),axis:[-vy/speed,0,vx/speed],flick:true});
-   else{dieTick(index,'set');chooseDieFace(index,dieTopFace(dieStates[index].pose.q));}
+   // Let go of a carried die: a flick throws it with the hand's speed, a still hand drops it with the face
+   // it shows on top. Either way it is guided to the page beside it.
+   const release={velocity:[vx*1000,vy*1000],guided:true};
+   if(speed>.6)roll(index,{direction:Math.sign(vx)||1,strength:Math.min(1,(speed-.6)/1.8),axis:[-vy/speed,0,vx/speed],flick:true,...release});
+   else{dieTick(index,'set');const face=dieTopFace(dieStates[index].pose.q);if(typeof dropDie==='function')dropDie(index,face,release);else chooseDieFace(index,face);}
   }else if(!inside)suppressPointerClick=true;
  });
  const cancel=event=>{if(pointer&&event.pointerId===pointer.id){suppressPointerClick=true;reset();}};
@@ -1001,7 +1178,7 @@ function initDiceSound(){
 }
 async function primeDiceAudio(){
  if(!diceSoundEnabled)return null;
- try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return null;diceAudioContext??=new Audio();if(diceAudioContext.state==='suspended')await diceAudioContext.resume();return diceAudioContext.state==='running'?diceAudioContext:null;}catch{return null;}
+ try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return null;if(!diceAudioContext){diceAudioContext=new Audio();diceRoomInput(diceAudioContext);}if(diceAudioContext.state==='suspended')await diceAudioContext.resume();return diceAudioContext.state==='running'?diceAudioContext:null;}catch{return null;}
 }
 // Channel 0 and 1 are the dice; channel 2 is the page.
 function cancelDieSound(index){
@@ -1084,14 +1261,14 @@ function playDiceClatter(index,plan,startedAt){
  // Each throw has its own character: harder throws are brighter, and no two share a pitch.
  const strength=.85+.3*Math.max(0,Math.min(1,(plan.turns-1)/2)),character={tone:soundBetween(.93,1.07),bright:soundBetween(.88,1.18),pan:(index?1:-1)*soundBetween(.22,.4)};
  const elapsedAt=()=>(performance.now()-startedAt)/1000;
- plan.contacts.forEach((contact,n)=>diceBuzz(index,contact*plan.duration-(performance.now()-startedAt),Math.max(2,Math.round(12*.6**n))));
+ plan.contacts.forEach((contact,n)=>diceBuzz(index,contact*plan.duration-(performance.now()-startedAt),Math.max(2,Math.round(12*(plan.levels?.[n]??.6**n)))));
  if(plan.knock!=null)diceBuzz(index,plan.knock*plan.duration-(performance.now()-startedAt),22);
  primeDiceAudio().then(context=>{
   if(!context||!diceSoundEnabled||document.hidden||diceSoundVersions[index]!==version)return;
   const elapsed=elapsedAt();
   plan.contacts.forEach((contact,n)=>{
    const delay=contact*plan.duration/1000-elapsed;if(delay<0)return;
-   const level=.58**n*strength;
+   const level=(plan.levels?.[n]??.58**n)*strength;
    diceImpact(context,index,context.currentTime+delay,level,character,n===0);
    // An edge catching as the die tips: sometimes one rattle, sometimes two, quieter each bounce.
    if(n<2&&Math.random()<.75)diceImpact(context,index,context.currentTime+delay+soundBetween(.014,.034),level*.26,character);
@@ -1602,6 +1779,17 @@ function addReport(container,item,label){
  section.append(frame);container.append(section);
  return section;
 }
+// Every report is a whole document. Only a few stay loaded: the ones on screen, the original the slider
+// compares with, and the most recent others; older ones are let go and load again if they come back.
+const REPORT_CACHE_LIMIT=6;
+function trimReportCache(container,cache){
+ const original=typeof beforeAfter==='object'?beforeAfter.item?.file:null;
+ for(const [file,section] of [...cache]){
+  if(cache.size<=REPORT_CACHE_LIMIT)return;
+  if(!section.hidden||file===original||section.classList?.contains?.('report-outgoing')||section.classList?.contains?.('report-before'))continue;
+  section.remove?.();cache.delete(file);
+ }
+}
 function showReports(container,entries){
  const heldCover=takeReportCover(container);
  let cache=previewCaches.get(container);if(!cache){cache=new Map();previewCaches.set(container,cache);}
@@ -1609,8 +1797,11 @@ function showReports(container,entries){
  for(const section of cache.values())section.hidden=true;
  entries.forEach(({item,label},order)=>{
   let section=cache.get(item.file);
-  if(!section){section=addReport(container,item,label||'Report');cache.set(item.file,section);}
-  const heading=section.querySelector('h3');heading.textContent=label||'';heading.hidden=!label;
+  if(!section)section=addReport(container,item,label||'Report');
+  cache.delete(item.file);cache.set(item.file,section);
+  // Pages loaded ahead of time, or for the slider, carry no heading until one is needed.
+  let heading=section.querySelector('h3');if(!heading&&label){heading=document.createElement('h3');section.prepend(heading);}
+  if(heading){heading.textContent=label||'';heading.hidden=!label;}
   section.querySelector('iframe').title=label||(/^(stronger-|newer-)?plain-/.test(item.file)?'Plain weekly report':selected.label);
   section.style.order=String(order);section.hidden=false;
   const frame=section.querySelector('iframe');if(frame.dataset.loaded==='true')scrollReport(frame,reportScroll.get(container)||0);
@@ -1620,6 +1811,7 @@ function showReports(container,entries){
    if(section.animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)section.animate([{transform:'translateY(-12px) scale(.985)'},{transform:'none'}],{duration:560,easing:'cubic-bezier(.23,1,.32,1)'});
   }
  });
+ trimReportCache(container,cache);
 }
 // Before and after: the original report, with no ingredients, sits under the current page. The knob in the
 // middle of the page wipes it back in from the left as far as it is dragged, and a "Before" tag shows only
@@ -1686,6 +1878,7 @@ function renderBeforeAfter(){
 // hint: the knob stays put while pages change.
 const BEFORE_AFTER_HINT_WAIT=1600;
 function reportHandoffSettled(container){
+ if(container===$('#report-view'))warmReports();
  if(container!==$('#report-view')||!beforeAfter.item||beforeAfter.value||beforeAfter.drag||beforeAfter.hinted||beforeAfter.hinting)return;
  const reach=.3,out=.24,hold=.64,duration=2200,knob=$('#before-after').querySelector?.('.ba-knob');
  beforeAfter.hinting=true;
@@ -1838,6 +2031,19 @@ function chooseDieFace(index,value){
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  render(false);settleDieGrab(index,true);syncDice3D();
 }
+// A carried die let go of: the face it shows on top is the choice, and the page changes when the dropped
+// die reaches it.
+function dropDie(index,value,release={}){
+ settlePresentation();pointer.dieHintUsed=true;
+ const introducing=introMode;introMode=false;ingredientsChosen=true;
+ if(introducing){stage=1;comparing=false;}
+ const values=[selected.a,selected.b];values[index]=value;
+ lastEvent={kind:'choose',index,name:index?INGREDIENTS_B[value]:INGREDIENTS_A[value]};
+ selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
+ const impact=reportImpactFor(()=>render(false));celebrateFirstRoll(impact,null);
+ tumbleDice([index],values,()=>{syncDice3D();},{...release,drop:true,guided:true},impact);
+ landLabels([index],LABEL_LAND.roll);
+}
 // The gallery stays folded until it is wanted; opening it settles in from just above.
 $('#atlas-toggle').addEventListener('click',()=>{
  const toggle=$('#atlas-toggle'),body=$('#atlas-body'),open=toggle.getAttribute('aria-expanded')!=='true';
@@ -1845,6 +2051,35 @@ $('#atlas-toggle').addEventListener('click',()=>{
  if(open&&body.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)body.animate([{opacity:0,transform:'translateY(-8px)'},{opacity:1,transform:'none'}],{duration:320,easing:'cubic-bezier(.23,1,.32,1)'});
 });
 $('#atlas-ingredient').addEventListener('change',event=>selectPair(currentExperiment().runs.find(run=>run.a===Number(event.target.value)&&run.b===b)));
+// Loading a report is most of what a page change costs. While the page is idle, the pages a visitor is
+// likely to see next are loaded out of sight: this pair's next refinement, and the pair each die will roll
+// to (drawn now, used by the next roll), so changing to any of them is instant.
+const upcoming={faces:[null,null],intro:null};
+function warmReports(){
+ if(typeof requestIdleCallback!=='function'||view!=='dice'||comparing)return;
+ requestIdleCallback(()=>{
+  const container=$('#report-view'),cache=previewCaches.get(container);
+  if(!cache||view!=='dice'||comparing)return;
+  const runs=currentExperiment().runs,find=(a,b)=>runs.find(run=>run.a===a&&run.b===b),items=[];
+  if(introMode){
+   upcoming.intro??=[randomIndex(INGREDIENTS_A.length),randomIndex(INGREDIENTS_B.length)];
+   items.push(find(...upcoming.intro)?.steps[0]);
+  }else{
+   if(stage<4)items.push(selected.steps[stage]);
+   [0,1].forEach(i=>{
+    const current=i?selected.b:selected.a;
+    if(upcoming.faces[i]===null||upcoming.faces[i]===current)upcoming.faces[i]=nextIngredient(i,current);
+    const values=[selected.a,selected.b];values[i]=upcoming.faces[i];items.push(find(...values)?.steps[stage-1]);
+   });
+  }
+  for(const item of items){if(!item||cache.has(item.file))continue;const section=addReport(container,item,'');section.hidden=true;cache.set(item.file,section);}
+ },{timeout:1500});
+}
+// The face a roll lands on: the one already drawn and loaded if it still applies, otherwise a fresh draw.
+function takeUpcoming(index,current){
+ const face=upcoming.faces[index];upcoming.faces[index]=null;
+ return face!==null&&face!==current?face:nextIngredient(index,current);
+}
 function randomIndex(length){
  const values=new Uint32Array(1),limit=0x100000000-(0x100000000%length);do{crypto.getRandomValues(values)}while(values[0]>=limit);return values[0]%length;
 }
@@ -1866,7 +2101,8 @@ function roll(index,gesture=null,forced=null){
  const before=selected,indices=introduce?[0,1]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
  const announce=!introduce&&(index===0||index===1);
  // The demo passes authored faces; every visitor roll stays random.
- indices.forEach(i=>{values[i]=forced?.[i]??(introduce?randomIndex(i?INGREDIENTS_B.length:INGREDIENTS_A.length):nextIngredient(i,values[i]));});
+ const drawn=introduce?upcoming.intro:null;upcoming.intro=null;
+ indices.forEach(i=>{values[i]=forced?.[i]??(introduce?drawn?.[i]??randomIndex(i?INGREDIENTS_B.length:INGREDIENTS_A.length):takeUpcoming(i,values[i]));});
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  if(announce){const i=indices[0];lastEvent={kind:'swap',index:i,name:i?INGREDIENTS_B[values[1]]:INGREDIENTS_A[values[0]]};}
  else lastEvent={kind:'pair'};
@@ -1929,7 +2165,7 @@ function changePlainAttempt(delta){const next=plainStage+delta;if(currentBaselin
 $('#plain-attempt-prev').addEventListener('click',()=>changePlainAttempt(-1));
 $('#plain-attempt-next').addEventListener('click',()=>changePlainAttempt(1));
 $('#plain-copy').addEventListener('click',()=>copyText(currentBaseline().steps[plainStage-1].fullPrompt,$('#plain-prompt'),$('#plain-copy-status')));
-initDice3D();if(typeof initDiceSound==='function')initDiceSound();buildMatrix();render();selectView(view);
+initDice3D();if(typeof initDiceSound==='function')initDiceSound();buildMatrix();render();selectView(view);warmReports();
 
 // Authored demo: a cursor runs the story once on the real controls. Every state it reaches is the
 // real page state, so any visitor input takes over at once from exactly what is on screen.

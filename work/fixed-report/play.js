@@ -282,6 +282,17 @@ function addReport(container,item,label){
  section.append(frame);container.append(section);
  return section;
 }
+// Every report is a whole document. Only a few stay loaded: the ones on screen, the original the slider
+// compares with, and the most recent others; older ones are let go and load again if they come back.
+const REPORT_CACHE_LIMIT=6;
+function trimReportCache(container,cache){
+ const original=typeof beforeAfter==='object'?beforeAfter.item?.file:null;
+ for(const [file,section] of [...cache]){
+  if(cache.size<=REPORT_CACHE_LIMIT)return;
+  if(!section.hidden||file===original||section.classList?.contains?.('report-outgoing')||section.classList?.contains?.('report-before'))continue;
+  section.remove?.();cache.delete(file);
+ }
+}
 function showReports(container,entries){
  const heldCover=takeReportCover(container);
  let cache=previewCaches.get(container);if(!cache){cache=new Map();previewCaches.set(container,cache);}
@@ -289,8 +300,11 @@ function showReports(container,entries){
  for(const section of cache.values())section.hidden=true;
  entries.forEach(({item,label},order)=>{
   let section=cache.get(item.file);
-  if(!section){section=addReport(container,item,label||'Report');cache.set(item.file,section);}
-  const heading=section.querySelector('h3');heading.textContent=label||'';heading.hidden=!label;
+  if(!section)section=addReport(container,item,label||'Report');
+  cache.delete(item.file);cache.set(item.file,section);
+  // Pages loaded ahead of time, or for the slider, carry no heading until one is needed.
+  let heading=section.querySelector('h3');if(!heading&&label){heading=document.createElement('h3');section.prepend(heading);}
+  if(heading){heading.textContent=label||'';heading.hidden=!label;}
   section.querySelector('iframe').title=label||(/^(stronger-|newer-)?plain-/.test(item.file)?'Plain weekly report':selected.label);
   section.style.order=String(order);section.hidden=false;
   const frame=section.querySelector('iframe');if(frame.dataset.loaded==='true')scrollReport(frame,reportScroll.get(container)||0);
@@ -300,6 +314,7 @@ function showReports(container,entries){
    if(section.animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)section.animate([{transform:'translateY(-12px) scale(.985)'},{transform:'none'}],{duration:560,easing:'cubic-bezier(.23,1,.32,1)'});
   }
  });
+ trimReportCache(container,cache);
 }
 // Before and after: the original report, with no ingredients, sits under the current page. The knob in the
 // middle of the page wipes it back in from the left as far as it is dragged, and a "Before" tag shows only
@@ -366,6 +381,7 @@ function renderBeforeAfter(){
 // hint: the knob stays put while pages change.
 const BEFORE_AFTER_HINT_WAIT=1600;
 function reportHandoffSettled(container){
+ if(container===$('#report-view'))warmReports();
  if(container!==$('#report-view')||!beforeAfter.item||beforeAfter.value||beforeAfter.drag||beforeAfter.hinted||beforeAfter.hinting)return;
  const reach=.3,out=.24,hold=.64,duration=2200,knob=$('#before-after').querySelector?.('.ba-knob');
  beforeAfter.hinting=true;
@@ -518,6 +534,19 @@ function chooseDieFace(index,value){
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  render(false);settleDieGrab(index,true);syncDice3D();
 }
+// A carried die let go of: the face it shows on top is the choice, and the page changes when the dropped
+// die reaches it.
+function dropDie(index,value,release={}){
+ settlePresentation();pointer.dieHintUsed=true;
+ const introducing=introMode;introMode=false;ingredientsChosen=true;
+ if(introducing){stage=1;comparing=false;}
+ const values=[selected.a,selected.b];values[index]=value;
+ lastEvent={kind:'choose',index,name:index?INGREDIENTS_B[value]:INGREDIENTS_A[value]};
+ selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
+ const impact=reportImpactFor(()=>render(false));celebrateFirstRoll(impact,null);
+ tumbleDice([index],values,()=>{syncDice3D();},{...release,drop:true,guided:true},impact);
+ landLabels([index],LABEL_LAND.roll);
+}
 // The gallery stays folded until it is wanted; opening it settles in from just above.
 $('#atlas-toggle').addEventListener('click',()=>{
  const toggle=$('#atlas-toggle'),body=$('#atlas-body'),open=toggle.getAttribute('aria-expanded')!=='true';
@@ -525,6 +554,35 @@ $('#atlas-toggle').addEventListener('click',()=>{
  if(open&&body.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)body.animate([{opacity:0,transform:'translateY(-8px)'},{opacity:1,transform:'none'}],{duration:320,easing:'cubic-bezier(.23,1,.32,1)'});
 });
 $('#atlas-ingredient').addEventListener('change',event=>selectPair(currentExperiment().runs.find(run=>run.a===Number(event.target.value)&&run.b===b)));
+// Loading a report is most of what a page change costs. While the page is idle, the pages a visitor is
+// likely to see next are loaded out of sight: this pair's next refinement, and the pair each die will roll
+// to (drawn now, used by the next roll), so changing to any of them is instant.
+const upcoming={faces:[null,null],intro:null};
+function warmReports(){
+ if(typeof requestIdleCallback!=='function'||view!=='dice'||comparing)return;
+ requestIdleCallback(()=>{
+  const container=$('#report-view'),cache=previewCaches.get(container);
+  if(!cache||view!=='dice'||comparing)return;
+  const runs=currentExperiment().runs,find=(a,b)=>runs.find(run=>run.a===a&&run.b===b),items=[];
+  if(introMode){
+   upcoming.intro??=[randomIndex(INGREDIENTS_A.length),randomIndex(INGREDIENTS_B.length)];
+   items.push(find(...upcoming.intro)?.steps[0]);
+  }else{
+   if(stage<4)items.push(selected.steps[stage]);
+   [0,1].forEach(i=>{
+    const current=i?selected.b:selected.a;
+    if(upcoming.faces[i]===null||upcoming.faces[i]===current)upcoming.faces[i]=nextIngredient(i,current);
+    const values=[selected.a,selected.b];values[i]=upcoming.faces[i];items.push(find(...values)?.steps[stage-1]);
+   });
+  }
+  for(const item of items){if(!item||cache.has(item.file))continue;const section=addReport(container,item,'');section.hidden=true;cache.set(item.file,section);}
+ },{timeout:1500});
+}
+// The face a roll lands on: the one already drawn and loaded if it still applies, otherwise a fresh draw.
+function takeUpcoming(index,current){
+ const face=upcoming.faces[index];upcoming.faces[index]=null;
+ return face!==null&&face!==current?face:nextIngredient(index,current);
+}
 function randomIndex(length){
  const values=new Uint32Array(1),limit=0x100000000-(0x100000000%length);do{crypto.getRandomValues(values)}while(values[0]>=limit);return values[0]%length;
 }
@@ -546,7 +604,8 @@ function roll(index,gesture=null,forced=null){
  const before=selected,indices=introduce?[0,1]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
  const announce=!introduce&&(index===0||index===1);
  // The demo passes authored faces; every visitor roll stays random.
- indices.forEach(i=>{values[i]=forced?.[i]??(introduce?randomIndex(i?INGREDIENTS_B.length:INGREDIENTS_A.length):nextIngredient(i,values[i]));});
+ const drawn=introduce?upcoming.intro:null;upcoming.intro=null;
+ indices.forEach(i=>{values[i]=forced?.[i]??(introduce?drawn?.[i]??randomIndex(i?INGREDIENTS_B.length:INGREDIENTS_A.length):takeUpcoming(i,values[i]));});
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  if(announce){const i=indices[0];lastEvent={kind:'swap',index:i,name:i?INGREDIENTS_B[values[1]]:INGREDIENTS_A[values[0]]};}
  else lastEvent={kind:'pair'};
@@ -609,4 +668,4 @@ function changePlainAttempt(delta){const next=plainStage+delta;if(currentBaselin
 $('#plain-attempt-prev').addEventListener('click',()=>changePlainAttempt(-1));
 $('#plain-attempt-next').addEventListener('click',()=>changePlainAttempt(1));
 $('#plain-copy').addEventListener('click',()=>copyText(currentBaseline().steps[plainStage-1].fullPrompt,$('#plain-prompt'),$('#plain-copy-status')));
-initDice3D();if(typeof initDiceSound==='function')initDiceSound();buildMatrix();render();selectView(view);
+initDice3D();if(typeof initDiceSound==='function')initDiceSound();buildMatrix();render();selectView(view);warmReports();

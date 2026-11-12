@@ -23,69 +23,66 @@ const faceMarkup=[dieFaceMarkup(0),dieFaceMarkup(1)];
 assert.equal(DIE_FACE_VALUES.length,6);
 for(const markup of faceMarkup){assert.equal([...markup.matchAll(/data-choice=/g)].length,6);assert.ok(!/undefined|DESIGN DICE|cube-cross/.test(markup));}
 
-let pose={q:dieLanding(4),x:0,y:0};
-for(let n=0;n<500;n++){
- const value=n%DIE_FACE_VALUES.length,plan=makeDiePlan(pose,value,random);directions.add(Math.sign(plan.drift));axes.add(Math.sign(plan.axis[0])+','+Math.sign(plan.axis[2]));durations.add(Math.round(plan.duration));
- assert.ok(plan.duration>=460&&plan.duration<650);
- for(const t of [0,.125,.27,.55,.66,.77,.91,1]){
-  const sample=sampleDiePlan(plan,t);near(Math.hypot(...sample.q),1);assert.ok(Number.isFinite(sample.x+sample.y));assert.ok(sample.y<=1e-8);
+// Raw height of the lowest point above the tray (negative when it sinks in), and the die's reach across the screen.
+const clearance=(sample,size)=>-sample.y-dieSupportLift(sample.q,size);
+const screenReach=(sample,size,direction)=>{const M=quatMatrix(sample.q);let far=-Infinity;for(const c of DIE_HULL)far=Math.max(far,direction*(sample.x+(M[0]*c[0]+M[1]*c[1]+M[2]*c[2])*size));return far;};
+const flatOn=(q,value)=>quatRotate(q,DIE_NORMALS[value]).forEach((n,i)=>assert.ok(Math.abs(n-[0,-1,0][i])<1e-6,'lands flat on the chosen face'));
+let pose={q:dieLanding(4),x:0,y:0},physical=0;
+for(let n=0;n<300;n++){
+ const value=n%DIE_FACE_VALUES.length,plan=makeDiePlan(pose,value,random);
+ if(plan.kind==='physics')physical++;
+ durations.add(Math.round(plan.duration/10));directions.add(Math.sign(sampleDiePlan(plan,.2).x-pose.x));
+ assert.ok(plan.duration>=450&&plan.duration<=2700,'a throw takes about a second, not forever');
+ for(let step=0;step<=60;step++){
+  const t=step/60,sample=sampleDiePlan(plan,t);near(Math.hypot(...sample.q),1);assert.ok(Number.isFinite(sample.x+sample.y));
+  assert.ok(clearance(sample,plan.size)>-2.5,'the die never sinks into the tray');
   if(t===0){near(sample.x,pose.x);near(sample.y,pose.y);near(Math.abs(sample.q.reduce((sum,v,i)=>sum+v*pose.q[i],0)),1);}
  }
- plan.contacts.forEach(t=>{const sample=sampleDiePlan(plan,t);near(sample.air,0);near(sample.y+dieSupportLift(sample.q,plan.size),0);});
- // Gravity uses the same acceleration for diminishing hops; impact reduces lateral speed.
- const [hit,bounce,last]=plan.contacts;assert.ok(bounce-hit<hit&&last-bounce<bounce-hit);
- assert.ok(.67/hit>.23/(bounce-hit)&&.23/(bounce-hit)>.08/(last-bounce));
- let previous=pose.x;
- for(let step=1;step<=100;step++){const sample=sampleDiePlan(plan,step/100);assert.ok((sample.x-previous)*Math.sign(plan.drift-pose.x)>=-1e-8);previous=sample.x;}
- pose=sampleDiePlan(plan,1);quatRotate(pose.q,DIE_NORMALS[value]).forEach((n,i)=>near(n,[0,-1,0][i]));
+ // Every recorded impact is the die meeting the tray, and the first is the hardest or close to it.
+ plan.contacts.forEach(t=>assert.ok(clearance(sampleDiePlan(plan,t),plan.size)<3,'contacts happen on the tray'));
+ assert.ok(plan.contacts.length>=2,'it bounces before it settles');
+ pose=sampleDiePlan(plan,1);flatOn(pose.q,value);assert.equal(dieTopFace(pose.q),value);
+ assert.ok(Math.abs(pose.x)<=Math.max(18,plan.size*.3)+1e-6,'it comes to rest near home');
 }
-assert.equal(directions.size,2);assert.equal(axes.size,4);assert.ok(durations.size>90);
-const flickStart={q:dieLanding(2),x:15,y:0};
+assert.ok(physical>=290,'nearly every throw is simulated: '+physical);
+assert.equal(directions.size,2);assert.ok(durations.size>40);
+const flickStart={q:dieLanding(2),x:8,y:0};
 const flickRight=makeDiePlan(flickStart,1,()=>.5,116,20,{direction:1,strength:1}),flickLeft=makeDiePlan(flickStart,1,()=>.5,116,20,{direction:-1,strength:.2});
-assert.ok(flickRight.drift>=flickStart.x);assert.ok(flickLeft.drift<flickStart.x);assert.equal(flickRight.turns,3);assert.equal(flickLeft.turns,1);assert.ok(flickRight.lift>flickLeft.lift);assert.ok(flickRight.duration>flickLeft.duration);
-// A throw toward the page beside it strikes the edge in mid-air, rebounds and lands back home.
-// Lateral travel reverses only at the strike, and the die never passes the page edge.
-for(let n=0;n<300;n++){
- const edge=(n%2?-1:1)*(70+(n%5)*20),home={q:dieLanding(n%6),x:(n%3-1)*4,y:0},gesture=n%4===3?{direction:Math.sign(edge),strength:(n%7)/6,flick:n%8===7}:null;
+assert.equal(flickRight.turns,3);assert.equal(flickLeft.turns,1);
+// A flick from the hand is livelier than a click: on average it bounces more and runs longer.
+{let clicks=0,flicks=0,clickTime=0,flickTime=0;
+ for(let n=0;n<80;n++){
+  const click=makeDiePlan({q:dieLanding(n%6),x:0,y:0},(n+2)%6,random),flick=makeDiePlan({q:dieLanding(n%6),x:0,y:0},(n+2)%6,random,116,18,{direction:n%2?1:-1,strength:.4+(n%7)/10,axis:[0,0,n%2?1:-1],flick:true});
+  clicks+=click.contacts.length;flicks+=flick.contacts.length;clickTime+=click.duration;flickTime+=flick.duration;flatOn(sampleDiePlan(flick,1).q,(n+2)%6);
+ }
+ assert.ok(flicks>=clicks&&flickTime>clickTime,'flicks keep bouncing longer: '+flicks+' vs '+clicks);}
+// A throw toward the page beside it strikes the edge in mid-air, before its first landing, and never
+// reaches past it; it then comes back to rest near home.
+for(let n=0;n<200;n++){
+ const edge=(n%2?-1:1)*(70+(n%5)*25),home={q:dieLanding(n%6),x:(n%3-1)*4,y:0},gesture=n%4===3?{direction:Math.sign(edge),strength:(n%7)/6,flick:n%8===7}:null;
  const plan=makeDiePlan(home,n%6,random,116,18,gesture,{edge});
  dieKnockWall(n%2,plan);
  const direction=Math.sign(edge),[hit]=plan.contacts;
  assert.ok(plan.knock>0&&plan.knock<hit,'the strike comes before the first landing');
  assert.ok(sampleDiePlan(plan,plan.knock).air>1,'the die strikes the page in mid-air');
- near(sampleDiePlan(plan,plan.knock).x,plan.wall);
- assert.ok((plan.wall-home.x)*direction>=0&&(plan.edge-plan.wall)*direction>0,'the die travels toward the page and stops at its own edge');
- let previous=home.x;
- for(let step=1;step<=200;step++){
-  const t=step/200,before=(step-1)/200,sample=sampleDiePlan(plan,t);
-  assert.ok((sample.x-plan.wall)*direction<=1e-8,'never passes the page edge');
-  // A step that spans the strike is checked in its two halves: up to the edge, then back.
-  if(before<plan.knock&&t>plan.knock){assert.ok((plan.wall-previous)*direction>=-1e-8&&(sample.x-plan.wall)*direction<=1e-8,'reverses only at the strike');}
-  else{const towards=t<=plan.knock;assert.ok((sample.x-previous)*direction*(towards?1:-1)>=-1e-8,'reverses only at the strike');}
-  previous=sample.x;
+ for(let step=0;step<=200;step++){
+  const sample=sampleDiePlan(plan,step/200);
+  if(plan.kind==='physics')assert.ok(screenReach(sample,plan.size,direction)<=direction*edge+2,'never passes the page edge');
+  else assert.ok((sample.x-plan.wall)*direction<=1e-8,'never passes the page edge');
  }
- plan.contacts.forEach(t=>near(sampleDiePlan(plan,t).air,0));
- const end=sampleDiePlan(plan,1);near(end.x,plan.endX);assert.ok(Math.abs(end.x)<=5,'it comes back to rest near home');
- quatRotate(end.q,DIE_NORMALS[n%6]).forEach((v,i)=>near(v,[0,-1,0][i]));
+ plan.contacts.forEach(t=>assert.ok(clearance(sampleDiePlan(plan,t),plan.size)<3));
+ const end=sampleDiePlan(plan,1);assert.ok(Math.abs(end.x)<=Math.max(18,plan.size*.3)+1e-6,'it comes back to rest near home');
+ flatOn(end.q,n%6);
 }
-// A flick from the hand keeps tapping: more hops than a click, each shorter than the last, every one still a
-// visible lift off the tray, and it still lands flat on the chosen face.
-for(let n=0;n<200;n++){
- const strength=(n%11)/10,plan=makeDiePlan({q:dieLanding(n%6),x:0,y:0},n%6,random,116,18,{direction:n%2?1:-1,strength,flick:true});
- assert.equal(plan.contacts.length,4+Math.round(strength*2));
- plan.contacts.forEach((t,j)=>{near(sampleDiePlan(plan,t).air,0);if(j>1)assert.ok(t-plan.contacts[j-1]<plan.contacts[j-1]-plan.contacts[j-2]);});
- const [a,b]=plan.contacts.slice(-2);assert.ok(sampleDiePlan(plan,(a+b)/2).air>1,'the last tap still lifts');
- quatRotate(sampleDiePlan(plan,1).q,DIE_NORMALS[n%6]).forEach((v,i)=>near(v,[0,-1,0][i]));
-}
-{const click=makeDiePlan({q:dieLanding(0),x:0,y:0},0,()=>.5,116,18,{direction:1,strength:.5}),flick=makeDiePlan({q:dieLanding(0),x:0,y:0},0,()=>.5,116,18,{direction:1,strength:.5,flick:true});
- assert.equal(click.contacts.length,3);assert.ok(flick.contacts.length>click.contacts.length&&flick.duration>click.duration);}
-// The tray gives under each landing, less every bounce, with keyframe offsets always in order.
-for(let n=0;n<120;n++){
- const plan=makeDiePlan({q:dieLanding(n%6),x:0,y:0},n%6,random,116,18,null,n%2?{edge:120}:null);
+// The tray gives under each landing as hard as that landing was, with keyframe offsets always in order.
+for(let n=0;n<60;n++){
+ const plan=makeDiePlan({q:dieLanding(n%6),x:0,y:0},n%6,random,116,18,null,n%2?{edge:140}:null);
  const before=animations.length;animateDiePlan(0,plan,n%6);
  const ground=animations.slice(before).find(a=>a.frames.some(f=>'scale' in f));assert.ok(ground,'the tray reacts');
  const offsets=ground.frames.map(f=>f.offset);offsets.forEach((o,k)=>assert.ok(o>=0&&o<=1&&(k===0||o>=offsets[k-1]),'tray keyframes stay in order'));
  const depth=plan.contacts.map(c=>{const frame=ground.frames.find(f=>f.offset>c&&f.scale!=='1');return 1-Number(frame.scale.split(' ')[0]);});
- assert.ok(depth[0]>depth[1]&&depth[1]>depth[2],'each landing presses the tray less');
+ depth.forEach((d,k)=>assert.ok(Math.abs(d-.045*(plan.levels?.[k]??.58**k))<1e-9,'each dip follows its impact'));
+ assert.ok(Math.max(...depth)>=.045-1e-9||!plan.levels,'the hardest landing presses the tray the most');
  stopDieMotion(0);
 }
 animations.length=0;
@@ -142,5 +139,5 @@ const invitation={kind:'invitation',from:{q:dieLanding(a),x:0,y:0},size:104,dura
 assert.ok(Math.abs(sampleDiePlan(invitation,.25).y)>0);near(sampleDiePlan(invitation,1).y,0);
 motion.matches=true;const beforeReduced={...dieStates[0].pose};moveDieGrab(0,beforeReduced,104);assert.notEqual(dieTopFace(dieStates[0].pose.q),dieTopFace(beforeReduced.q));settleDieGrab(0);assert.equal(dieStates[0].running,null);
 assert.ok(soundCalls.length>0&&soundCalls.every(call=>call[0]==='play'),'every throw schedules its contact sounds');
-console.log('PASS: 96 exact face-up orientations/CSS matrices; 500 varied rigid tumbles; stable face markup; landing/rebound contacts; flicks that tap more times before landing; a tray that gives less with each bounce; 300 page strikes in mid-air that never pass the edge and land back home; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion.');
+console.log('PASS: 96 exact face-up orientations/CSS matrices; 300 simulated throws that bounce on the tray, never sink into it and land flat on the chosen face near home; stable face markup; flicks livelier than clicks; a tray that gives with each impact; 200 page strikes in mid-air that never pass the edge; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion.');
 `,context);

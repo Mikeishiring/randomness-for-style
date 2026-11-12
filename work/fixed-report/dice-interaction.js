@@ -24,6 +24,8 @@ function bindDieInteraction(button,index){
  button.addEventListener('pointerdown',event=>{
   if(!event.isPrimary||event.button!==0||pointer)return;
   const now=performance.now();
+  // Wake the sound on the press, so its one-time setup is done before the release throws the die.
+  if(typeof primeDiceAudio==='function')primeDiceAudio();
   suppressPointerClick=false;pointer={id:event.pointerId,x:event.clientX,y:event.clientY,from:beginDieGrab(index),samples:[{x:event.clientX,y:event.clientY,t:now}]};
   button.setPointerCapture(event.pointerId);button.dataset.pressed='true';
  });
@@ -60,8 +62,11 @@ function bindDieInteraction(button,index){
   reset(!wasDragging&&!inside);
   if(wasDragging){
    suppressPointerClick=true;
-   if(speed>.6)roll(index,{direction:Math.sign(vx)||1,strength:Math.min(1,(speed-.6)/1.8),axis:[-vy/speed,0,vx/speed],flick:true});
-   else{dieTick(index,'set');chooseDieFace(index,dieTopFace(dieStates[index].pose.q));}
+   // Let go of a carried die: a flick throws it with the hand's speed, a still hand drops it with the face
+   // it shows on top. Either way it is guided to the page beside it.
+   const release={velocity:[vx*1000,vy*1000],guided:true};
+   if(speed>.6)roll(index,{direction:Math.sign(vx)||1,strength:Math.min(1,(speed-.6)/1.8),axis:[-vy/speed,0,vx/speed],flick:true,...release});
+   else{dieTick(index,'set');const face=dieTopFace(dieStates[index].pose.q);if(typeof dropDie==='function')dropDie(index,face,release);else chooseDieFace(index,face);}
   }else if(!inside)suppressPointerClick=true;
  });
  const cancel=event=>{if(pointer&&event.pointerId===pointer.id){suppressPointerClick=true;reset();}};

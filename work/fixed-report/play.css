@@ -122,10 +122,13 @@ body{font-family:var(--sans);overflow-x:clip}
 .dice .die:first-child .die-object{--glyph-accent:#f06b48}.dice .die:nth-child(2) .die-object{--glyph-accent:#1d261e}
 .cube-face .ga{fill:var(--glyph-accent)}.cube-face .ga-s{stroke:var(--glyph-accent)}
 .dice .cube-face small{bottom:9%;font:500 9px/1 var(--mono);letter-spacing:.14em;opacity:.62}
-.dice .die-shadow{top:calc(50% + var(--size)*.5);background:radial-gradient(closest-side,#1d261e66,#1d261e00);filter:none}
-/* Ground: a slanted plane in the die's own perspective, so the landing has somewhere to happen. */
-.die-ground{position:absolute;left:50%;top:calc(50% + var(--size)*.5);width:calc(var(--size)*1.62);height:calc(var(--size)*1.62);z-index:-2;border-radius:22%;background:radial-gradient(closest-side,#ebe8dd 0%,#e6e3d6 70%,#e0ddcf 100%);border:1px solid #d6d3c5;box-shadow:inset 0 1px 0 #f7f5ee;transform:translate(-50%,-50%) rotateX(70deg) rotateZ(-14deg);pointer-events:none}
-.dice .die:nth-child(2) .die-ground{transform:translate(-50%,-50%) rotateX(70deg) rotateZ(14deg)}
+/* Ground: a small felt coaster in the dice's own 3D space. The floor shares the die's camera and lies exactly where
+   the die's lowest face rests, so a landing really meets it; the contact shadow lies on it, under the die. */
+.die-object{--view-x:-58deg;--view-y:-20deg;--view-z:-8deg}
+.dice .die:nth-child(2) .die-object{--view-x:-61deg;--view-y:22deg;--view-z:9deg}
+.die-floor{position:absolute;left:50%;top:50%;width:var(--size);height:var(--size);margin:calc(var(--size)*-.5) 0 0 calc(var(--size)*-.5);z-index:-1;pointer-events:none;transform:rotateX(var(--view-x)) rotateY(var(--view-y)) rotateZ(var(--view-z)) translateY(calc(var(--size)*.5)) rotateX(90deg)}
+.die-floor .die-ground{--mat:1.5;position:absolute;left:50%;top:50%;width:calc(var(--size)*var(--mat));height:calc(var(--size)*var(--mat));margin:calc(var(--size)*var(--mat)*-.5) 0 0 calc(var(--size)*var(--mat)*-.5);z-index:auto;border:0;border-radius:26%;background:radial-gradient(closest-side,#d9d4c3,#e2ddce 60%,#e7e3d6);box-shadow:inset 0 0 0 1px #cfc9b8,inset 0 0 0 5px #ece8dccc,0 0 0 1px #f8f6ef;transform:none}
+.die-floor .die-shadow{position:absolute;left:50%;top:50%;bottom:auto;width:calc(var(--size)*1.2);height:calc(var(--size)*1.2);margin:calc(var(--size)*-.6) 0 0 calc(var(--size)*-.6);z-index:auto;border-radius:34%;background:radial-gradient(closest-side,#1d261eb3,#1d261e59 48%,#1d261e00);filter:none}
 .die-object.is-demo-press .die-grip{transform:translateY(2px);transition-duration:65ms}
 
 /* Pointing label: a paper card at the end of a vermilion leader, with a dot on the object it names. */
@@ -248,7 +251,6 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 .die-object[data-pressed] .die-grip{transform:translateY(2px);transition-duration:65ms}
 .die-object[data-dragging] .die-grip{transform:none;transition-duration:65ms}
 .die-object[data-dragging]{cursor:grabbing}
-.die-shadow{top:calc(50% + var(--size)*.48);height:calc(var(--size)*.21);filter:blur(5px);background:#2e3b2b38}
 
 @media(hover:hover) and (pointer:fine){
  .die-object:hover .cube-face{border-color:currentColor}
@@ -395,6 +397,7 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  #report-view:not(.comparing) .report-frame{height:100%}
  #report-view.comparing .report-frame{height:440px}
  .die-object{height:148px}
+ .die-floor .die-ground{--mat:1.32}
  .die>strong{min-height:2.4em;line-height:1.15}
  /* The story shrinks to a one-line caption; its full instruction stays only before the first roll. */
  .pointer-card{background:none;border:0;box-shadow:none;border-radius:0;padding:0 6px;gap:3px}

@@ -20,7 +20,7 @@ function initDiceSound(){
 }
 async function primeDiceAudio(){
  if(!diceSoundEnabled)return null;
- try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return null;diceAudioContext??=new Audio();if(diceAudioContext.state==='suspended')await diceAudioContext.resume();return diceAudioContext.state==='running'?diceAudioContext:null;}catch{return null;}
+ try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return null;if(!diceAudioContext){diceAudioContext=new Audio();diceRoomInput(diceAudioContext);}if(diceAudioContext.state==='suspended')await diceAudioContext.resume();return diceAudioContext.state==='running'?diceAudioContext:null;}catch{return null;}
 }
 // Channel 0 and 1 are the dice; channel 2 is the page.
 function cancelDieSound(index){
@@ -103,14 +103,14 @@ function playDiceClatter(index,plan,startedAt){
  // Each throw has its own character: harder throws are brighter, and no two share a pitch.
  const strength=.85+.3*Math.max(0,Math.min(1,(plan.turns-1)/2)),character={tone:soundBetween(.93,1.07),bright:soundBetween(.88,1.18),pan:(index?1:-1)*soundBetween(.22,.4)};
  const elapsedAt=()=>(performance.now()-startedAt)/1000;
- plan.contacts.forEach((contact,n)=>diceBuzz(index,contact*plan.duration-(performance.now()-startedAt),Math.max(2,Math.round(12*.6**n))));
+ plan.contacts.forEach((contact,n)=>diceBuzz(index,contact*plan.duration-(performance.now()-startedAt),Math.max(2,Math.round(12*(plan.levels?.[n]??.6**n)))));
  if(plan.knock!=null)diceBuzz(index,plan.knock*plan.duration-(performance.now()-startedAt),22);
  primeDiceAudio().then(context=>{
   if(!context||!diceSoundEnabled||document.hidden||diceSoundVersions[index]!==version)return;
   const elapsed=elapsedAt();
   plan.contacts.forEach((contact,n)=>{
    const delay=contact*plan.duration/1000-elapsed;if(delay<0)return;
-   const level=.58**n*strength;
+   const level=(plan.levels?.[n]??.58**n)*strength;
    diceImpact(context,index,context.currentTime+delay,level,character,n===0);
    // An edge catching as the die tips: sometimes one rattle, sometimes two, quieter each bounce.
    if(n<2&&Math.random()<.75)diceImpact(context,index,context.currentTime+delay+soundBetween(.014,.034),level*.26,character);
