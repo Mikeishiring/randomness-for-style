@@ -52,7 +52,7 @@ const railResize=new ResizeObserver(()=>syncRailMarker());railResize.observe($('
 function settlePresentation(){quietBeforeAfterHint();settleReportHandoff($('#report-view'));settleReportHandoff($('#plain-report'));}
 // The page tells its story in one headline per step; every step stays reachable from the chapters.
 const storyBeats=[
- ['You just generated a report.','One prompt, no ingredients: “Create a one-page website that helps its owner understand this week’s website performance.”'],
+ ['This is what one prompt gets you.','One prompt, no ingredients: “Create a one-page website that helps its owner understand this week’s website performance.”'],
  ['Now add randomness.','Same prompt, plus two ingredients.'],
  ['Now refine it.','Critique harshly, then commit harder to both ingredients.'],
  ['Again.','The same prompt, run on the last result.'],
@@ -118,23 +118,13 @@ function ingredientLine(first,second){return `Combine ${first} and ${second} int
 function pointerSpec(){
  if(pointer.custom)return pointer.custom;
  if(view!=='dice'||comparing)return null;
- const next=$('#experiment-next'),first=INGREDIENTS_A[a],second=INGREDIENTS_B[b],pair=first+' × '+second;
- const rollDice={label:'Roll the dice',run:()=>roll(0)};
- const refine={label:stage===1?'Push it further':stage===2?'Push again':'One more push',run:()=>nextExperimentStep()};
+ // Past the plain page nothing floats: the line above the page says what the dice added and what each push asked.
+ if(!introMode)return null;
  // Every saved page needs both ingredients, so the first roll throws both dice and the page changes at once.
- if(introMode){
-  if(lastEvent?.kind==='reset')return {target:$('#dice-lab'),title:'Fresh start.',sub:'The same one-prompt report, no ingredients. Roll for a new pair.',side:'right',action:rollDice};
-  return {target:$('#dice-lab'),title:'You just generated a report.',sub:'One prompt, no ingredients. Tidy, sensible, and roughly what everyone gets. Now try adding randomness.',side:'right',action:rollDice};
- }
- // After a roll nothing floats: the line above the page says what the dice added, and the Refine button
- // speaks for itself. Only refinements are narrated, without repeating the button they point at.
- const rolled=lastEvent&&(lastEvent.kind==='swap'||lastEvent.kind==='choose'||lastEvent.kind==='pick');
- if(rolled||stage===1)return null;
- if(selected.steps[stage-1].html===selected.steps[stage-2].html)return {target:next,title:'Nothing changed this pass.',sub:'The model looked at its own page and kept it.',side:'right'};
- if(stage===2)return {target:next,title:'Pushed once.',sub:'It critiqued its own page and leaned harder into '+first+' and '+second+'. More distinct is not always better.',side:'right'};
- if(stage===3)return {target:next,title:'Twice.',sub:'The same push again, on its own result.',side:'right'};
- // After the third push the page asks the question itself, with every version laid out below.
- return null;
+ const rollDice={label:'Roll the dice',run:()=>roll(0)};
+ if(lastEvent?.kind==='reset')return {target:$('#dice-lab'),title:'Fresh start.',sub:'The same one-prompt report, no ingredients. Roll for a new pair.',side:'right',action:rollDice};
+ // The first card says what the visitor is looking at, and offers two ways in: roll, or watch.
+ return {target:$('#dice-lab'),title:'This is what one prompt gets you.',sub:'Tidy, sensible, and roughly what everyone gets. Now add randomness.',side:'right',action:rollDice,demo:{run:()=>$('#demo-toggle').click()}};
 }
 // The die waiting to be rolled carries a floating "Click me" above it.
 function updateDieCall(){
@@ -164,6 +154,7 @@ function updatePointer(delay=0){
  if(changed){
   pointerAnimations.forEach(animation=>animation.cancel());pointerAnimations=[];$('#pointer-text').textContent=spec.title;$('#pointer-sub').textContent=spec.sub||'';note.dataset.side=spec.side;
   const action=$('#pointer-action'),card=document.querySelector('.pointer-card');action.hidden=!spec.action;action.textContent=spec.action?(spec.action.label+' →'):'';pointer.action=spec.action?.run||null;
+  const actions=$('#pointer-actions'),demoLink=$('#pointer-demo');if(actions)actions.hidden=!spec.action;if(demoLink)demoLink.hidden=!spec.demo;pointer.demo=spec.demo?.run||null;
   if(card)card.dataset.actionable=String(!!spec.action);
  }
  note.hidden=false;
@@ -194,9 +185,13 @@ function updatePointer(delay=0){
 // Once the dice have a pair, one quiet line between the dice and the page says what they changed: the sentence
 // added to the prompt, both ingredients in it, the die that just changed underlined. Tapping it opens the
 // whole one-shot prompt with that line marked.
+// What a push asks, in the prompt's own words: the opening sentence of the refinement prompt, exactly as sent.
+function pushAsk(){return String(selected.steps[stage-1]?.prompt||'').split(/(?<=[.!?])\s+/)[0];}
+const PUSH_TIMES=['','once','twice','three times'];
 function promptLineState(){
  if(view!=='dice'||introMode)return null;
- return {a:INGREDIENTS_A[a],b:INGREDIENTS_B[b],changed:lastEvent?.kind==='swap'||lastEvent?.kind==='choose'?lastEvent.index:null};
+ const pushes=stage-1;
+ return {a:INGREDIENTS_A[a],b:INGREDIENTS_B[b],changed:lastEvent?.kind==='swap'||lastEvent?.kind==='choose'?lastEvent.index:null,pushes,same:pushes>0&&selected.steps[stage-1].html===selected.steps[stage-2].html,ask:pushes>0?pushAsk():''};
 }
 let promptLineKey='';
 function renderPromptLine(){
@@ -205,20 +200,31 @@ function renderPromptLine(){
  promptLineKey=key;togglePromptLine(false);row.dataset.empty=String(!state);
  if(!state){line.replaceChildren();return;}
  const part=(tag,content,className,changed)=>{const node=document.createElement(tag);node.textContent=content;if(className)node.className=className;if(changed)node.dataset.changed='true';return node;};
- line.replaceChildren(part('span','Added to the prompt: ','prompt-line-label'),part('span','Combine '),part('b',state.a,'',state.changed===0),part('span',' and '),part('b',state.b,'',state.changed===1),part('span',' into a distinct visual identity.'));
- line.setAttribute('aria-label','Added to the prompt: '+ingredientLine(state.a,state.b)+' Show the whole prompt.');
+ const parts=[part('span','Added to the prompt: ','prompt-line-label'),part('span','Combine '),part('b',state.a,'',state.changed===0),part('span',' and '),part('b',state.b,'',state.changed===1),part('span',' into a distinct visual identity.')];
+ // After a push, a second line says what was asked: the same sentence each time, so only the count changes.
+ if(state.pushes>0){
+  const push=part('span','','prompt-push');
+  push.append(part('span','Then asked, '+PUSH_TIMES[state.pushes]+': ','prompt-line-label'),part('span',state.ask.replace(/[.!?]$/,'')+'\u2026'));
+  if(state.same)push.append(part('em',' This pass changed nothing.'));
+  parts.push(push);
+ }
+ line.replaceChildren(...parts);
+ line.setAttribute('aria-label','Added to the prompt: '+ingredientLine(state.a,state.b)+(state.pushes>0?' Then asked, '+PUSH_TIMES[state.pushes]+': '+state.ask+(state.same?' This pass changed nothing.':''):'')+' Show the whole prompt.');
 }
 function togglePromptLine(open){
  const line=$('#prompt-line'),panel=$('#prompt-full'),show=open??panel.hidden;
  if(show&&$('#prompt-row').dataset.empty!=='true'){
   const first=selected.steps[0];panel.replaceChildren();
   const body=document.createElement('span');body.className='pointer-prompt-text';showPrompt(body,first.prompt,ingredientLine(INGREDIENTS_A[a],INGREDIENTS_B[b]));panel.append(body);
+  if(stage>1){const then=document.createElement('span');then.className='pointer-prompt-text';showPrompt(then,'\n\nThen, '+PUSH_TIMES[stage-1]+':\n'+selected.steps[stage-1].prompt);panel.append(then);}
   panel.hidden=false;line.setAttribute('aria-expanded','true');
  }else{panel.hidden=true;line.setAttribute('aria-expanded','false');}
 }
 $('#prompt-line').addEventListener('click',()=>togglePromptLine());
 const pointerCard=document.querySelector('.pointer-card');
 pointerCard?.addEventListener('click',()=>pointer.action?.());
+// The card is one big roll button; its Watch demo link is the one part that does something else.
+$('#pointer-demo')?.addEventListener('click',event=>{event?.stopPropagation?.();pointer.demo?.();});
 document.addEventListener('pointerdown',event=>{if(!$('#prompt-full').hidden&&!event.target?.closest?.('#prompt-row'))togglePromptLine(false);});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('#prompt-full').hidden){togglePromptLine(false);$('#prompt-line').focus?.();}});
 function showPointer(target,title,sub='',side='above'){pointer.custom={target,title,sub,side};updatePointer();}
@@ -227,6 +233,9 @@ window.addEventListener('resize',()=>updatePointer());
 // An ingredient's name carries a face slug, so it can be set in the type that ingredient brings.
 function setDieCall(index){const label=$('#ingredient-'+(index?'b':'a'));label.textContent='';label.dataset.face='call';}
 function setIngredientLabel(index,name){const label=$('#ingredient-'+(index?'b':'a'));label.textContent=name;label.dataset.face=name.toLowerCase().replace(/[^a-z]+/g,'-');}
+// Once, after a visitor's own first roll, each die says what it can do; whatever they do with a die next puts it away.
+let diceHintSeen=false;
+function setDiceHint(on){document.documentElement.dataset.diceHint=String(!!on);}
 function showBrief(){if(introMode)return;settlePresentation();promoteRefine(false);cancelDiceRoll();introMode=true;lastEvent={kind:'reset'};stage=1;comparing=false;render();}
 // A visitor's first roll of the visit is celebrated once; the demo's authored rolls never count.
 let firstRollCelebrated=false;
@@ -305,7 +314,7 @@ function pressRefine(impact){
 function nextExperimentStep(){
  promptPeeks.forEach(peek=>peek.close());
  if(introMode){fireNextButton();roll();}
- else if(stage<4){const impact=reportImpactFor(()=>setAttempt(stage+1));pressRefine(impact);}
+ else if(stage<4&&!pairKept()){const impact=reportImpactFor(()=>setAttempt(stage+1));pressRefine(impact);}
  else{fireNextButton();stage=1;comparing=false;roll();}
 }
 function updateURL(){
@@ -526,9 +535,9 @@ function renderRail(){
   const button=$('#stage-'+n);button.setAttribute('aria-pressed',String(n===value));button.setAttribute('data-done',String(n<value));
   button.disabled=introMode&&n>1;
  }
- const refining=!introMode&&stage<4;
+ const kept=pairKept(),refining=!introMode&&stage<4&&!kept;
  // Each pass pushes the same pair further: more distinct, not necessarily better, so the button says push.
- const label=introMode?'Add randomness':stage===1?'Push it further':stage===2?'Push again':stage===3?'One more push':'Roll a new pair';
+ const label=introMode?'Add randomness':kept?'Roll a new pair':stage===1?'Push it further':stage===2?'Push again':stage===3?'One more push':'Roll a new pair';
  $('#experiment-next').dataset.passes=String(introMode?0:stage-1);
  const cue=refining?'+'+stage:'→';
  $('#experiment-next').dataset.action=refining?'refine':'roll';
@@ -546,8 +555,8 @@ function renderResult(){
  const currentLabel=method==='newer'?'Newer model':method==='stronger'?'Stronger prompt':'Original prompt';
  const otherLabel=method==='newer'?'Earlier model':method==='stronger'?'Original prompt':'Stronger prompt';
  let entries=[{item:current,label:''}];
- const pushes=['','','one push','two pushes','three pushes'][stage]||'',pairName=INGREDIENTS_A[a]+' × '+INGREDIENTS_B[b];
- if(comparing&&comparison==='plain')entries=[{item:currentBaseline().steps[stage-1],label:stage>1?'No ingredients, after the same '+pushes:'No ingredients'},{item:current,label:stage>1?pairName+', after '+pushes:pairName}];
+ const pushed=['','','pushed once','pushed twice','pushed three times'][stage]||'',pairName=INGREDIENTS_A[a]+' × '+INGREDIENTS_B[b];
+ if(comparing&&comparison==='plain')entries=[{item:currentBaseline().steps[stage-1],label:stage>1?'No dice, '+pushed:'No dice'},{item:current,label:stage>1?pairName+', '+pushed:pairName}];
  if(comparing&&comparison==='other')entries=stage===1&&method!=='newer'?[{item:current,label:'Shared one-shot'}]:method==='original'?[{item:current,label:currentLabel},{item:other,label:otherLabel}]:[{item:other,label:otherLabel},{item:current,label:currentLabel}];
  if(introMode)entries=[{item:current,label:''}];
  container.classList.toggle('comparing',entries.length>1);document.documentElement.dataset.comparing=String(entries.length>1);
@@ -615,7 +624,7 @@ function render(sync=true){
 }
 function selectPair(run){settlePresentation();introMode=false;lastEvent={kind:'pick'};ingredientsChosen=true;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();}
 function chooseDieFace(index,value){
- settlePresentation();pointer.dieHintUsed=true;
+ settlePresentation();pointer.dieHintUsed=true;setDiceHint(false);
  const introducing=introMode;introMode=false;ingredientsChosen=true;
  if(introducing){stage=1;comparing=false;}
  const values=[selected.a,selected.b];values[index]=value;
@@ -629,7 +638,7 @@ function dieShowsFace(index,value){return value===(index?selected.b:selected.a);
 // A carried die let go of: the face it shows on top is the choice, and the page changes when the dropped
 // die reaches it.
 function dropDie(index,value,release={}){
- settlePresentation();pointer.dieHintUsed=true;if(comparing&&!introMode)comparing=false;
+ settlePresentation();pointer.dieHintUsed=true;setDiceHint(false);if(comparing&&!introMode)comparing=false;
  const introducing=introMode;introMode=false;ingredientsChosen=true;
  if(introducing){stage=1;comparing=false;}
  const values=[selected.a,selected.b];values[index]=value;
@@ -679,6 +688,11 @@ function takeUpcoming(index,current){
 // After the third push the flow ends on a choice, not an essay: every version of this pair laid out under
 // the page, from the plain one-shot to the third push. Choosing one shows it and marks it kept.
 const keep={pair:null,pick:null,built:''};
+// A version has been kept for the pair on screen: the pass is over, and the action offers the next pair.
+function pairKept(){return view==='dice'&&!introMode&&keep.pair===selected.id&&keep.pick!==null;}
+// The saved editorial pick for this pair on this track (1 = Dice … 4 = +3), with its reason.
+function editorPick(){const entry=(typeof CURATION!=='undefined'?CURATION.picks?.[method]:null)?.[selected.id];return entry&&Number.isInteger(entry.pick)?entry:null;}
+const KEEP_LABELS=['No dice','Dice','+1','+2','+3'];
 function keepVersions(){return [{stage:0,label:'No dice',item:currentBaseline().steps[0]},...selected.steps.map((item,index)=>({stage:index+1,label:['Dice','+1','+2','+3'][index],item}))];}
 function renderKeep(){
  const panel=$('#keep'),list=$('#keep-versions');
@@ -697,14 +711,16 @@ function renderKeep(){
    button.addEventListener('click',()=>chooseKept(version.stage));
   }
  }
- const showing=beforeAfter.value>=.99?0:stage;
- for(const button of list.children){const at=Number(button.dataset.stage);button.setAttribute('aria-pressed',String(keep.pick===at));button.dataset.showing=String(at===showing);button.setAttribute('aria-label',(button.textContent||'')+(keep.pick===at?', kept':''));}
+ const showing=beforeAfter.value>=.99?0:stage,picked=keep.pick!==null,ours=editorPick(),yours=KEEP_LABELS[keep.pick];
+ // The question is answered once it has been: what they kept, beside the pick saved for this pair and why.
+ $('#keep-title').textContent=!picked?'Which would you keep?':!ours?`You kept ${yours}.`:ours.pick===keep.pick?`You kept ${yours}. So did we: ${ours.reason}.`:`You kept ${yours}. Our pick is ${KEEP_LABELS[ours.pick]}: ${ours.reason}.`;
+ for(const button of list.children){const at=Number(button.dataset.stage),theirs=picked&&!!ours&&ours.pick===at&&at!==keep.pick;button.setAttribute('aria-pressed',String(keep.pick===at));button.dataset.showing=String(at===showing);button.dataset.ours=String(theirs);button.setAttribute('aria-label',(button.textContent||'')+(keep.pick===at?', kept':'')+(theirs?', our pick':''));}
 }
 function chooseKept(value){
  keep.pick=value;
  if(value===0){if(comparing){comparing=false;renderResult();}tweenBeforeAfter(1);}
  else{if(beforeAfter.value>=.99)paintBeforeAfter(0);setAttempt(value);}
- renderKeep();updateURL();
+ renderKeep();renderRail();updateURL();
 }
 function randomIndex(length){
  const values=new Uint32Array(1),limit=0x100000000-(0x100000000%length);do{crypto.getRandomValues(values)}while(values[0]>=limit);return values[0]%length;
@@ -739,6 +755,7 @@ function roll(index,gesture=null,forced=null){
  // On the first roll the visitor's own throw moves the die they threw; the second is always thrown in beside it.
  tumbleDice(indices,values,()=>{syncDice3D();},introduce?[gesture||DICE_THROW.enter[0],DICE_THROW.enter[1]]:gesture,impact);
  landLabels(indices,introduce?LABEL_LAND.enter:LABEL_LAND.roll);
+ if(forced==null){const first=introduce&&!diceHintSeen;if(first)diceHintSeen=true;setDiceHint(first);}
  quietRefine();
 }
 async function copyText(text,pre,status){

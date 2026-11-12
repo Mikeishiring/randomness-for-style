@@ -162,7 +162,7 @@ for(let next=2;next<=4;next++){
 }
 assert.equal(nodes.get('#next-label').textContent,'Roll a new pair');assert.equal(nodes.get('#next-cue').textContent,'→');
 const finishedPair=selected;nodes.get('#experiment-next').click();assert.equal(stage,1);assert.notEqual(selected,finishedPair);
-const resetPair=selected;nodes.get('#reset').click();assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#story-title').textContent,'You just generated a report.');assert.equal(document.activeElement,nodes.get('#experiment-next'));
+const resetPair=selected;nodes.get('#reset').click();assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#story-title').textContent,'This is what one prompt gets you.');assert.equal(document.activeElement,nodes.get('#experiment-next'));
 assert.equal(nodes.get('#next-label').textContent,'Add randomness');
 // The first roll throws both dice: every saved page needs both ingredients, so the page changes at once.
 nodes.get('#experiment-next').click();assert.equal(introMode,false);assert.equal(stage,1);assert.deepEqual([...rollout.indices],[0,1]);assert.equal(nodes.get('#next-label').textContent,'Push it further');assert.equal(document.documentElement.dataset.journey,'ingredients');
@@ -207,7 +207,7 @@ const guideTasks=new Map();let guideID=0;
 const home=vm.createContext({...context,document:homeDocument,nodes:homeNodes,location:{search:'',pathname:'/',href:'https://randomness-for-style.vercel.app/'},history:{replaceState(_a,_b,url){this.url=url}},setTimeout(fn,delay){const id=++guideID;guideTasks.set(id,{fn,delay});return id},clearTimeout(id){guideTasks.delete(id)}});
 vm.runInContext(read('report-handoff.js')+'\n'+read('play.js'),home);
 vm.runInContext(`
-assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#stage-2').disabled,true);assert.equal(nodes.get('#story-title').textContent,'You just generated a report.');assert.equal(nodes.get('#reset').hidden,true);
+assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#stage-2').disabled,true);assert.equal(nodes.get('#story-title').textContent,'This is what one prompt gets you.');assert.equal(nodes.get('#reset').hidden,true);
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,STRONGER_BASELINE.steps[0].html);
 assert.equal(nodes.get('#current-prompt').textContent,STRONGER_BASELINE.steps[0].prompt);
 assert.ok(history.url.includes('start=original'));assert.ok([...matrixButtons.values()].every(button=>button.attrs['aria-pressed']==='false'));
@@ -254,9 +254,9 @@ comparing=false;renderResult();
 console.log('PASS: reports keep the reading position across steps and scroll together in comparison.');
 vm.runInContext(`{
 pointer.custom=null;comparing=false;view='dice';introMode=true;stage=1;render();
-assert.equal(pointerSpec().title,'You just generated a report.');assert.equal(pointerSpec().action.label,'Roll the dice');
+assert.equal(pointerSpec().title,'This is what one prompt gets you.');assert.equal(pointerSpec().action.label,'Roll the dice');assert.equal(typeof pointerSpec().demo.run,'function','the first card also offers the demo');
 roll(0,null,[3,0]);assert.equal(introMode,false);assert.equal(pointerSpec(),null,'after a roll nothing floats beside the Refine button');
-assert.deepEqual({...promptLineState()},{a:'Bureaucracy',b:'Tech',changed:null});
+assert.deepEqual({...promptLineState()},{a:'Bureaucracy',b:'Tech',changed:null,pushes:0,same:false,ask:''});
 assert.ok(selected.steps[0].prompt.includes(ingredientLine('Bureaucracy','Tech')),'the line above the page is the exact sentence added to the prompt');
 roll(0,null,[2]);assert.equal(promptLineState().a,'Weather');assert.equal(promptLineState().changed,0,'the die that changed is marked');
 roll(1,null,[undefined,1]);assert.equal(promptLineState().b,'Disco');assert.equal(promptLineState().changed,1);
@@ -265,20 +265,24 @@ roll(1,null,[undefined,1]);assert.equal(promptLineState().b,'Disco');assert.equa
  line.click();assert.equal(panel.hidden,false,'tapping the line opens the whole prompt');assert.equal(line.attrs['aria-expanded'],'true');
  assert.equal(panel.children[0].textContent,selected.steps[0].prompt);assert.equal(panel.children[0].addition,'Combine Weather and Disco into a distinct visual identity.','with the added line marked');
  line.click();assert.equal(panel.hidden,true);}
-setAttempt(2);assert.equal(pointerSpec().action,undefined,'a refinement card does not repeat the button it points at');
-setAttempt(2);assert.equal(pointerSpec().title,'Pushed once.');assert.ok(pointerSpec().sub.includes('not always better'),'pushing is about distinct, not better');
+setAttempt(2);assert.equal(pointerSpec(),null,'a push is said in the line above the page, not in a floating note');
+{const state=promptLineState(),line=nodes.get('#prompt-line'),panel=nodes.get('#prompt-full');assert.equal(state.pushes,1);assert.equal(state.ask,selected.steps[1].prompt.split(/(?<=[.!?])\\s+/)[0],'in the opening sentence of the refinement prompt, exactly as sent');renderPromptLine();const push=line.children.at(-1);assert.equal(push.className,'prompt-push');assert.equal(push.children[0].textContent,'Then asked, once: ');assert.ok(push.children[1].textContent.endsWith('\\u2026'));line.click();assert.equal(panel.children.length,2,'and the whole prompt shows the push under the one-shot');line.click();}
 setAttempt(4);assert.equal(pointerSpec(),null,'the last step asks its question on the page');
 {const panel=nodes.get('#keep'),list=nodes.get('#keep-versions');assert.equal(panel.hidden,false,'which would you keep?');
  assert.equal(list.children.map(button=>button.children[1].textContent).join(','),'No dice,Dice,+1,+2,+3','every version is laid out');
  assert.equal(list.children[4].children[0].children[0].srcdoc,selected.steps[3].html);
+ assert.equal(nodes.get('#keep-title').textContent,'Which would you keep?');globalThis.CURATION={picks:{[method]:{[selected.id]:{pick:3,reason:'test reason'}}}};
  list.children[2].click();assert.equal(stage,2,'choosing a version shows it');assert.equal(list.children[2].attrs['aria-pressed'],'true','and marks it kept');assert.equal(panel.hidden,false,'the choice stays in view');
+ assert.equal(nodes.get('#keep-title').textContent,'You kept +1. Our pick is +2: test reason.','the question is answered with the pick saved for this pair');assert.equal(list.children[3].dataset.ours,'true');
+ assert.equal(nodes.get('#next-label').textContent,'Roll a new pair','keeping one ends the pass: the action offers the next pair');
+ list.children[3].click();assert.equal(nodes.get('#keep-title').textContent,'You kept +2. So did we: test reason.');assert.equal(list.children[3].dataset.ours,'false');delete globalThis.CURATION;
  roll(0,null,[5]);assert.equal(panel.hidden,true,'a new pair starts a new journey');}
 showBrief();assert.equal(pointerSpec().title,'Fresh start.');
 {const keep=SHOWCASE;SHOWCASE=['3-1'];guidedIn=false;const drawn=introPair();assert.equal(drawn.join('-'),'3-1','the first roll of a visit lands on a curated showcase pair');
  roll(0);assert.equal(selected.a+'-'+selected.b,'3-1');assert.equal(guidedIn,true,'after that, rolls are random');
  SHOWCASE=keep;showBrief();}assert.equal(promptLineState(),null,'a fresh start has no added line');
 }`,context);
-console.log('PASS: after a roll nothing floats beside the action: one line above the page is the exact sentence the dice added to the prompt, the changed die marked, and it opens the whole prompt with that line marked; each pass is said back without repeating the button, the first roll of a visit lands on a curated showcase pair and later ones are random, and the last card carries Compare.');
+console.log('PASS: after a roll nothing floats beside the action: one line above the page is the exact sentence the dice added to the prompt, the changed die marked, and it opens the whole prompt with that line marked; each push is said in that line in the opening words of the refinement prompt, a kept version is answered with the saved pick and ends the pass, the first roll of a visit lands on a curated showcase pair and later ones are random, and the last card carries Compare.');
 vm.runInContext(`{
  const box=nodes.get('#before-after'),handle=nodes.get('#ba-handle'),key=k=>handle.events.keydown({key:k,preventDefault(){}});
  const before=()=>nodes.get('#report-view').children.filter(c=>c.tagName==='section'&&!c.hidden&&c.className==='report-before');
@@ -312,7 +316,7 @@ vm.runInContext(`{
   clock=10000;reportHandoffSettled(view);tick(10000+BEFORE_AFTER_HINT_WAIT+50);assert.equal(comparing,true,'then before and after sit side by side');
   const labels=view.children.filter(child=>child.tagName==='section'&&!child.hidden).map(section=>section.children.find(child=>child.tagName==='h3'));
   assert.ok(labels.length===2&&labels.every(label=>label.children.some(child=>child.className==='same-data'&&child.textContent==='Same data')),'both reports say the data is the same');
-  assert.ok(labels.some(label=>label.textContent==='No ingredients, after the same two pushes'),'the baseline says it had the same pushes');
+  assert.ok(labels.some(label=>label.textContent==='No dice, pushed twice'),'the baseline says it had the same pushes');
   assert.equal(beforeAfter.hinted,true);reportHandoffSettled(view);assert.equal(beforeAfter.hinting,false,'it happens once');
   roll(0,null,[1]);assert.equal(comparing,false,'throwing a die goes back to the single page it can strike');
   delete globalThis.requestAnimationFrame;delete globalThis.cancelAnimationFrame;delete globalThis.performance;}
