@@ -273,9 +273,12 @@ setAttempt(4);assert.equal(pointerSpec(),null,'the last step asks its question o
  assert.equal(list.children[4].children[0].children[0].srcdoc,selected.steps[3].html);
  list.children[2].click();assert.equal(stage,2,'choosing a version shows it');assert.equal(list.children[2].attrs['aria-pressed'],'true','and marks it kept');assert.equal(panel.hidden,false,'the choice stays in view');
  roll(0,null,[5]);assert.equal(panel.hidden,true,'a new pair starts a new journey');}
-showBrief();assert.equal(pointerSpec().title,'Fresh start.');assert.equal(promptLineState(),null,'a fresh start has no added line');
+showBrief();assert.equal(pointerSpec().title,'Fresh start.');
+{const keep=SHOWCASE;SHOWCASE=['3-1'];guidedIn=false;const drawn=introPair();assert.equal(drawn.join('-'),'3-1','the first roll of a visit lands on a curated showcase pair');
+ roll(0);assert.equal(selected.a+'-'+selected.b,'3-1');assert.equal(guidedIn,true,'after that, rolls are random');
+ SHOWCASE=keep;showBrief();}assert.equal(promptLineState(),null,'a fresh start has no added line');
 }`,context);
-console.log('PASS: after a roll nothing floats beside the action: one line above the page is the exact sentence the dice added to the prompt, the changed die marked, and it opens the whole prompt with that line marked; each pass is said back without repeating the button, and the last card carries Compare.');
+console.log('PASS: after a roll nothing floats beside the action: one line above the page is the exact sentence the dice added to the prompt, the changed die marked, and it opens the whole prompt with that line marked; each pass is said back without repeating the button, the first roll of a visit lands on a curated showcase pair and later ones are random, and the last card carries Compare.');
 vm.runInContext(`{
  const box=nodes.get('#before-after'),handle=nodes.get('#ba-handle'),key=k=>handle.events.keydown({key:k,preventDefault(){}});
  const before=()=>nodes.get('#report-view').children.filter(c=>c.tagName==='section'&&!c.hidden&&c.className==='report-before');

@@ -230,6 +230,15 @@ function setIngredientLabel(index,name){const label=$('#ingredient-'+(index?'b':
 function showBrief(){if(introMode)return;settlePresentation();promoteRefine(false);cancelDiceRoll();introMode=true;lastEvent={kind:'reset'};stage=1;comparing=false;render();}
 // A visitor's first roll of the visit is celebrated once; the demo's authored rolls never count.
 let firstRollCelebrated=false;
+// The first roll of a visit is guided in: it lands on one of a few curated showcase pairs, where the one added
+// sentence most clearly makes a distinct, readable page. Every roll after that is random. The results
+// themselves are untouched; only the first draw is chosen.
+let SHOWCASE=(typeof CURATION!=='undefined'&&Array.isArray(CURATION.showcase)?CURATION.showcase:[]).map(entry=>String(entry.pair??entry)).filter(id=>/^\d+-\d+$/.test(id));
+let guidedIn=false;
+function introPair(){
+ if(!guidedIn&&SHOWCASE.length)return SHOWCASE[randomIndex(SHOWCASE.length)].split('-').map(Number);
+ return [randomIndex(INGREDIENTS_A.length),randomIndex(INGREDIENTS_B.length)];
+}
 function celebrateFirstRoll(impact,forced){if(forced!=null||firstRollCelebrated)return;firstRollCelebrated=true;impact.celebrate=true;}
 function showIngredients(){
  if(!ingredientsChosen){roll();return;}
@@ -647,7 +656,7 @@ function warmReports(){
   if(!cache||view!=='dice'||comparing)return;
   const runs=currentExperiment().runs,find=(a,b)=>runs.find(run=>run.a===a&&run.b===b),items=[];
   if(introMode){
-   upcoming.intro??=[randomIndex(INGREDIENTS_A.length),randomIndex(INGREDIENTS_B.length)];
+   upcoming.intro??=introPair();
    items.push(find(...upcoming.intro)?.steps[0]);
   }else{
    if(stage<4)items.push(selected.steps[stage]);
@@ -718,7 +727,7 @@ function roll(index,gesture=null,forced=null){
  const before=selected,indices=introduce?[0,1]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
  const announce=!introduce&&(index===0||index===1);
  // The demo passes authored faces; every visitor roll stays random.
- const drawn=introduce?upcoming.intro:null;upcoming.intro=null;
+ const drawn=introduce?upcoming.intro??introPair():null;upcoming.intro=null;if(introduce&&!forced)guidedIn=true;
  indices.forEach(i=>{values[i]=forced?.[i]??(introduce?drawn?.[i]??randomIndex(i?INGREDIENTS_B.length:INGREDIENTS_A.length):takeUpcoming(i,values[i]));});
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  if(announce){const i=indices[0];lastEvent={kind:'swap',index:i,name:i?INGREDIENTS_B[values[1]]:INGREDIENTS_A[values[0]]};}

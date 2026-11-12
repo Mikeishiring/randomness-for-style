@@ -1,4 +1,4 @@
-import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {ingredientsA,ingredientsB} from '../simple-astra/prompts.mjs';
 import {simpleCatalog} from '../simple-astra/catalog.mjs';
@@ -13,6 +13,10 @@ const newer=fableCatalogs();
 const publicExperiment=({runs,plain,refinementPrompt})=>({runs,plain,refinementPrompt});
 const publicBaseline=({steps,protocol})=>({steps,protocol:{refinementPrompt:protocol.refinementPrompt}});
 const constants={EXPERIMENT:publicExperiment(experiment),INGREDIENTS_A:ingredientsA,INGREDIENTS_B:ingredientsB,BASELINE:publicBaseline(plainCatalog()),STRONGER_EXPERIMENT:publicExperiment(stronger.experiment),STRONGER_BASELINE:publicBaseline(stronger.baseline),NEWER_EXPERIMENT:publicExperiment(newer.experiment),NEWER_BASELINE:publicBaseline(newer.baseline)};
+// Curated showcase pairs guide a visitor's first roll; without curation.json the first roll stays random.
+const curationFile=new URL('curation.json',import.meta.url),curation=existsSync(curationFile)?JSON.parse(read('curation.json')):{};
+const pairIds=new Set(experiment.runs.map(run=>run.id));
+constants.CURATION={showcase:(Array.isArray(curation.showcase)?curation.showcase:[]).map(entry=>({pair:String(entry.pair??entry),reason:String(entry.reason??'')})).filter(entry=>pairIds.has(entry.pair))};
 const payload=Object.entries(constants).map(([name,value])=>'const '+name+'='+JSON.stringify(value).replace(/</g,'\\u003c')+';').join('\n');
 const javascript=(payload+'\n'+read('dice-math.js')+'\n'+read('dice.js')+'\n'+read('dice-interaction.js')+'\n'+read('dice-sound.js')+'\n'+read('prompt-peek.js')+'\n'+read('report-handoff.js')+'\n'+read('play.js')+'\n'+read('demo.js')).replace(/<\/script/gi,'<\\/script');
 const html=read('play.html').replace('/* SHELL_CSS */',read('shell.css')+'\n'+read('play.css')).replace('/* APP_JS */',()=>javascript);
