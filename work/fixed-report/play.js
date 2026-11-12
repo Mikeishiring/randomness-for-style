@@ -113,6 +113,8 @@ const pointer={custom:null,dieHintUsed:false,key:''};
 // Each step names its next action beside the control that does it, so the instructions follow through.
 // The story cards: what just happened, said to the visitor, with the next move inside the card.
 // Clicking a card does that move, so the story can be followed without finding a button.
+// The sentence the dice add to the one-shot prompt, exactly as it was sent.
+function ingredientLine(first,second){return `Combine ${first} and ${second} into a distinct visual identity.`;}
 function pointerSpec(){
  if(pointer.custom)return pointer.custom;
  if(view!=='dice'||comparing)return null;
@@ -124,16 +126,13 @@ function pointerSpec(){
   if(lastEvent?.kind==='reset')return {target:$('#dice-lab'),title:'Fresh start.',sub:'The same one-prompt report, no ingredients. Roll for a new pair.',side:'right',action:rollDice};
   return {target:$('#dice-lab'),title:'You just generated a report.',sub:'One prompt, no ingredients. Tidy, sensible, and roughly what everyone gets. Now try adding randomness.',side:'right',action:rollDice};
  }
- if(lastEvent&&(lastEvent.kind==='swap'||lastEvent.kind==='choose')){
-  const title=(lastEvent.kind==='swap'?'Swapped in ':'You picked ')+lastEvent.name+'.';
-  const sub=stage===1?'Same prompt, a different mix: '+pair+'. That is a whole new page.':'Now '+pair+', pass '+(stage-1)+'. These refinements belong to this pair, not the last one.';
-  return {target:next,title,sub,side:'right',action:stage<4?refine:null};
- }
- if(lastEvent?.kind==='pick')return {target:next,title:'You picked '+pair+'.',sub:'Same prompt, its own page. Refine it, or roll a die from here.',side:'right',action:stage<4?refine:null};
- if(stage===1)return {target:next,title:pair+'.',sub:'Same prompt, two odd ingredients, a whole new page. Now push it.',side:'right',action:refine};
- if(selected.steps[stage-1].html===selected.steps[stage-2].html)return {target:next,title:'Nothing changed this pass.',sub:'The model looked at its own page and kept it. That happens.',side:'right',action:stage<4?refine:null};
- if(stage===2)return {target:next,title:'Refined once.',sub:'The model critiqued its own page, then leaned harder into '+first+' and '+second+'.',side:'right',action:refine};
- if(stage===3)return {target:next,title:'Twice.',sub:'Same prompt, run on its own result. Watch what it keeps and what it drops.',side:'right',action:refine};
+ // After a roll nothing floats: the line above the page says what the dice added, and the Refine button
+ // speaks for itself. Only refinements are narrated, without repeating the button they point at.
+ const rolled=lastEvent&&(lastEvent.kind==='swap'||lastEvent.kind==='choose'||lastEvent.kind==='pick');
+ if(rolled||stage===1)return null;
+ if(selected.steps[stage-1].html===selected.steps[stage-2].html)return {target:next,title:'Nothing changed this pass.',sub:'The model looked at its own page and kept it.',side:'right'};
+ if(stage===2)return {target:next,title:'Refined once.',sub:'It critiqued its own page, then leaned into '+first+' and '+second+'.',side:'right'};
+ if(stage===3)return {target:next,title:'Twice.',sub:'Same prompt again, on its own result.',side:'right'};
  return {target:next,title:'Three passes in.',sub:'More distinct, or just more? Easier to judge side by side.',side:'right',action:{label:'Compare with no dice',run:()=>$('#compare').click()}};
 }
 // The die waiting to be rolled carries a floating "Click me" above it.
@@ -157,14 +156,14 @@ function updateDieCall(){
 // from it, then the card settles at the end of the line. It waits for the change it follows to finish.
 let pointerAnimations=[];
 function updatePointer(delay=0){
- updateDieCall();
+ updateDieCall();renderPromptLine();
  const note=$('#pointer-note'),spec=pointerSpec(),stageBox=document.querySelector('.workbench');
  if(!spec||!spec.target?.getBoundingClientRect||!stageBox?.getBoundingClientRect){pointerAnimations.forEach(animation=>animation.cancel());note.hidden=true;pointer.key='';return;}
  const key=spec.title+spec.sub+spec.side,changed=pointer.key!==key;
  if(changed){
   pointerAnimations.forEach(animation=>animation.cancel());pointerAnimations=[];$('#pointer-text').textContent=spec.title;$('#pointer-sub').textContent=spec.sub||'';note.dataset.side=spec.side;
   const action=$('#pointer-action'),card=document.querySelector('.pointer-card');action.hidden=!spec.action;action.textContent=spec.action?(spec.action.label+' →'):'';pointer.action=spec.action?.run||null;
-  if(card){if(spec.action){card.setAttribute('role','button');card.tabIndex=0;card.setAttribute('aria-label',spec.title+' '+spec.action.label);}else{card.removeAttribute('role');card.removeAttribute('tabindex');card.removeAttribute('aria-label');}card.dataset.actionable=String(!!spec.action);}
+  if(card)card.dataset.actionable=String(!!spec.action);
  }
  note.hidden=false;
  // A die is placed from its column, which never moves sideways, so a label set during a throw or entrance
@@ -191,9 +190,36 @@ function updatePointer(delay=0){
   card.animate([{opacity:0,transform:drift},{opacity:1,transform:'none'}],{duration:300,delay:delay+260,easing:ease,fill:'backwards'})
  ];
 }
+// Once the dice have a pair, one quiet line between the dice and the page says what they changed: the sentence
+// added to the prompt, both ingredients in it, the die that just changed underlined. Tapping it opens the
+// whole one-shot prompt with that line marked.
+function promptLineState(){
+ if(view!=='dice'||introMode||comparing)return null;
+ return {a:INGREDIENTS_A[a],b:INGREDIENTS_B[b],changed:lastEvent?.kind==='swap'||lastEvent?.kind==='choose'?lastEvent.index:null};
+}
+let promptLineKey='';
+function renderPromptLine(){
+ const row=$('#prompt-row'),line=$('#prompt-line'),state=promptLineState(),key=state?JSON.stringify(state):'';
+ if(key===promptLineKey)return;
+ promptLineKey=key;togglePromptLine(false);row.dataset.empty=String(!state);
+ if(!state){line.replaceChildren();return;}
+ const part=(tag,content,className,changed)=>{const node=document.createElement(tag);node.textContent=content;if(className)node.className=className;if(changed)node.dataset.changed='true';return node;};
+ line.replaceChildren(part('span','Added to the prompt: ','prompt-line-label'),part('span','Combine '),part('b',state.a,'',state.changed===0),part('span',' and '),part('b',state.b,'',state.changed===1),part('span',' into a distinct visual identity.'));
+ line.setAttribute('aria-label','Added to the prompt: '+ingredientLine(state.a,state.b)+' Show the whole prompt.');
+}
+function togglePromptLine(open){
+ const line=$('#prompt-line'),panel=$('#prompt-full'),show=open??panel.hidden;
+ if(show&&$('#prompt-row').dataset.empty!=='true'){
+  const first=selected.steps[0];panel.replaceChildren();
+  const body=document.createElement('span');body.className='pointer-prompt-text';showPrompt(body,first.prompt,ingredientLine(INGREDIENTS_A[a],INGREDIENTS_B[b]));panel.append(body);
+  panel.hidden=false;line.setAttribute('aria-expanded','true');
+ }else{panel.hidden=true;line.setAttribute('aria-expanded','false');}
+}
+$('#prompt-line').addEventListener('click',()=>togglePromptLine());
 const pointerCard=document.querySelector('.pointer-card');
 pointerCard?.addEventListener('click',()=>pointer.action?.());
-pointerCard?.addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&pointer.action){event.preventDefault();pointer.action();}});
+document.addEventListener('pointerdown',event=>{if(!$('#prompt-full').hidden&&!event.target?.closest?.('#prompt-row'))togglePromptLine(false);});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('#prompt-full').hidden){togglePromptLine(false);$('#prompt-line').focus?.();}});
 function showPointer(target,title,sub='',side='above'){pointer.custom={target,title,sub,side};updatePointer();}
 function clearPointer(){pointer.custom=null;updatePointer();}
 window.addEventListener('resize',()=>updatePointer());

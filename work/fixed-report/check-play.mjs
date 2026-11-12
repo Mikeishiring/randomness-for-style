@@ -46,7 +46,7 @@ nodes.set('#plain-prompt-details>summary',new Element('summary'));
 const visibleFrames=node=>node.children.filter(child=>!child.hidden).flatMap(child=>[...(child.tagName==='iframe'?[child]:[]),...visibleFrames(child)]);
 document={documentElement:{dataset:{}},events:{},addEventListener(k,v){(this.events[k]||=[]).push(v)},activeElement:null,querySelector:s=>nodes.get(s),querySelectorAll:()=>[],createElement:tag=>new Element(tag)};
 const observers=[],copies=[],downloads=[],rollout={defer:false,complete:null};
-const context=vm.createContext({assert,console,reduced:false,document,window:{listeners:{},addEventListener(k,v){(this.listeners[k]||=[]).push(v)}},history:{replaceState(){}},navigator:{clipboard:{async writeText(text){copies.push(text)}}},URLSearchParams,location:{search:'?stage=4',pathname:'/index.html',href:'https://randomness-for-style.vercel.app/?pair=0-2&stage=2&prompt=stronger'},crypto:webcrypto,EXPERIMENT:experiment,BASELINE:baseline,STRONGER_EXPERIMENT:stronger.experiment,STRONGER_BASELINE:stronger.baseline,NEWER_EXPERIMENT:newer.experiment,NEWER_BASELINE:newer.baseline,INGREDIENTS_A:ingredientsA,INGREDIENTS_B:ingredientsB,IntersectionObserver:function(){this.observe=()=>{}},ResizeObserver:function(callback){this.callback=callback;this.observed=[];this.observe=e=>this.observed.push(e);this.disconnect=()=>{this.observed=[]};observers.push(this)},inviteDice(){},bindPromptPeek(){return {close(){}}},showPrompt(pre,text){pre.textContent=text},matchMedia(query){return {matches:query.includes('prefers-reduced-motion')&&context.reduced,addEventListener(){}}},initDice3D(){},syncDice3D(){},cancelDiceRoll(){rollout.complete=null;},tumbleDice(indices,values,complete,gesture){rollout.indices=indices;rollout.values=values;rollout.gesture=gesture;if(rollout.defer)rollout.complete=complete;else complete();},Blob,URL:{createObjectURL(blob){downloads.push(blob);return 'blob:html'},revokeObjectURL(){}},setTimeout(){},clearTimeout(){},nodes,visibleFrames,rollout});
+const context=vm.createContext({assert,console,reduced:false,document,window:{listeners:{},addEventListener(k,v){(this.listeners[k]||=[]).push(v)}},history:{replaceState(){}},navigator:{clipboard:{async writeText(text){copies.push(text)}}},URLSearchParams,location:{search:'?stage=4',pathname:'/index.html',href:'https://randomness-for-style.vercel.app/?pair=0-2&stage=2&prompt=stronger'},crypto:webcrypto,EXPERIMENT:experiment,BASELINE:baseline,STRONGER_EXPERIMENT:stronger.experiment,STRONGER_BASELINE:stronger.baseline,NEWER_EXPERIMENT:newer.experiment,NEWER_BASELINE:newer.baseline,INGREDIENTS_A:ingredientsA,INGREDIENTS_B:ingredientsB,IntersectionObserver:function(){this.observe=()=>{}},ResizeObserver:function(callback){this.callback=callback;this.observed=[];this.observe=e=>this.observed.push(e);this.disconnect=()=>{this.observed=[]};observers.push(this)},inviteDice(){},bindPromptPeek(){return {close(){}}},showPrompt(pre,text,addition=''){pre.textContent=text;pre.addition=addition},matchMedia(query){return {matches:query.includes('prefers-reduced-motion')&&context.reduced,addEventListener(){}}},initDice3D(){},syncDice3D(){},cancelDiceRoll(){rollout.complete=null;},tumbleDice(indices,values,complete,gesture){rollout.indices=indices;rollout.values=values;rollout.gesture=gesture;if(rollout.defer)rollout.complete=complete;else complete();},Blob,URL:{createObjectURL(blob){downloads.push(blob);return 'blob:html'},revokeObjectURL(){}},setTimeout(){},clearTimeout(){},nodes,visibleFrames,rollout});
 context.settleDieGrab=()=>{};
 vm.runInContext(read('report-handoff.js')+'\n'+read('play.js'),context);
 vm.runInContext(`
@@ -255,14 +255,22 @@ console.log('PASS: reports keep the reading position across steps and scroll tog
 vm.runInContext(`{
 pointer.custom=null;comparing=false;view='dice';introMode=true;stage=1;render();
 assert.equal(pointerSpec().title,'You just generated a report.');assert.equal(pointerSpec().action.label,'Roll the dice');
-roll(0,null,[3,0]);assert.equal(introMode,false);assert.equal(pointerSpec().title,'Bureaucracy × Tech.');assert.equal(pointerSpec().action.label,'Refine it');
-roll(0,null,[2]);assert.equal(pointerSpec().title,'Swapped in Weather.');
-roll(1,null,[undefined,1]);assert.equal(pointerSpec().title,'Swapped in Disco.');
+roll(0,null,[3,0]);assert.equal(introMode,false);assert.equal(pointerSpec(),null,'after a roll nothing floats beside the Refine button');
+assert.deepEqual({...promptLineState()},{a:'Bureaucracy',b:'Tech',changed:null});
+assert.ok(selected.steps[0].prompt.includes(ingredientLine('Bureaucracy','Tech')),'the line above the page is the exact sentence added to the prompt');
+roll(0,null,[2]);assert.equal(promptLineState().a,'Weather');assert.equal(promptLineState().changed,0,'the die that changed is marked');
+roll(1,null,[undefined,1]);assert.equal(promptLineState().b,'Disco');assert.equal(promptLineState().changed,1);
+{const row=nodes.get('#prompt-row'),line=nodes.get('#prompt-line'),panel=nodes.get('#prompt-full');renderPromptLine();assert.equal(row.dataset.empty,'false');
+ assert.equal(line.children.filter(child=>child.tagName==='b').map(child=>child.textContent).join(' + '),'Weather + Disco');
+ line.click();assert.equal(panel.hidden,false,'tapping the line opens the whole prompt');assert.equal(line.attrs['aria-expanded'],'true');
+ assert.equal(panel.children[0].textContent,selected.steps[0].prompt);assert.equal(panel.children[0].addition,'Combine Weather and Disco into a distinct visual identity.','with the added line marked');
+ line.click();assert.equal(panel.hidden,true);}
+setAttempt(2);assert.equal(pointerSpec().action,undefined,'a refinement card does not repeat the button it points at');
 setAttempt(2);assert.equal(pointerSpec().title,'Refined once.');
 setAttempt(4);assert.equal(pointerSpec().action.label,'Compare with no dice');
-showBrief();assert.equal(pointerSpec().title,'Fresh start.');
+showBrief();assert.equal(pointerSpec().title,'Fresh start.');assert.equal(promptLineState(),null,'a fresh start has no added line');
 }`,context);
-console.log('PASS: the narration says back each roll, swap and pass, and the last card carries Compare.');
+console.log('PASS: after a roll nothing floats beside the action: one line above the page is the exact sentence the dice added to the prompt, the changed die marked, and it opens the whole prompt with that line marked; each pass is said back without repeating the button, and the last card carries Compare.');
 vm.runInContext(`{
  const box=nodes.get('#before-after'),handle=nodes.get('#ba-handle'),key=k=>handle.events.keydown({key:k,preventDefault(){}});
  const before=()=>nodes.get('#report-view').children.filter(c=>c.tagName==='section'&&!c.hidden&&c.className==='report-before');

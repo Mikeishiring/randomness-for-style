@@ -26,7 +26,7 @@ body{font-family:var(--sans);overflow-x:clip}
 [data-journey=original] .die:nth-child(2):not(.leaving){visibility:hidden}
 #dice-lab{grid-area:report;min-width:0}
 .result{min-width:0}
-.report-frame{height:clamp(320px,calc(100dvh - 272px),860px);background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px #25301c0d,0 12px 32px -18px #25301c33}
+.report-frame{height:clamp(320px,calc(100dvh - 294px),860px);background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px #25301c0d,0 12px 32px -18px #25301c33}
 #report-view,#plain-report{position:relative;isolation:isolate}
 #report-view{margin-top:28px}
 /* Each refinement pass leaves a sheet behind the report, so the passes accumulate visibly. */
@@ -140,6 +140,20 @@ body{font-family:var(--sans);overflow-x:clip}
 .pointer-action{justify-self:start;margin-top:8px;padding-top:9px;border-top:1px solid #ebe7da;width:100%;color:var(--accent);font:600 clamp(15px,1.08vw,17px)/1.2 var(--sans);transition:color 180ms ease-out}
 @media(hover:hover) and (pointer:fine){.pointer-card[data-actionable=true]:hover{transform:translateY(-2px);border-color:#e6b9aa;box-shadow:0 1px 2px #1d261e12,0 20px 34px -18px #8c2a1670}.pointer-card[data-actionable=true]:hover .pointer-action{color:#a8361f}}
 .pointer-card[data-actionable=true]:active{transform:translateY(1px)}#pointer-sub:empty{display:none}
+.pointer-action{display:block;border:0;border-top:1px solid #ebe7da;border-radius:0;background:none;padding-left:0;padding-right:0;padding-bottom:0;text-align:left;cursor:pointer;pointer-events:auto}
+.pointer-action:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+/* Between the dice and the page, one quiet line says what the dice added to the prompt. It keeps its room
+   before the first roll, so the page never moves when it appears. */
+.prompt-row{position:relative;margin:0 0 2px;min-height:20px;text-align:center}
+.prompt-row[data-empty=true]{visibility:hidden}
+.prompt-line{margin:0;padding:0 4px;border:0;border-radius:4px;background:none;font:14px/1.45 var(--sans);color:var(--muted);text-wrap:balance;cursor:pointer}
+.prompt-line b{font-weight:650;color:var(--ink);white-space:nowrap}
+.prompt-line b[data-changed]{text-decoration:underline 2px var(--accent);text-underline-offset:3px}
+.prompt-line:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(hover:hover) and (pointer:fine){.prompt-line:hover{color:var(--ink)}.prompt-line:hover .prompt-line-label{text-decoration:underline dotted;text-underline-offset:3px}}
+.prompt-full{position:absolute;left:50%;top:calc(100% + 8px);translate:-50% 0;width:min(460px,calc(100vw - 32px));max-height:min(360px,60vh);overflow:auto;z-index:30;padding:14px 16px;border:1px solid #b8c1ac;border-radius:10px;background:#fcfbf6;box-shadow:0 12px 36px #25301c20,0 2px 6px #25301c0e;font:12.5px/1.65 var(--mono);color:var(--ink);text-align:left;white-space:pre-wrap}
+.prompt-full[hidden]{display:none}
+.prompt-full mark{background:#f4d2c6;color:var(--ink);border-radius:2px;padding:1px 2px;box-shadow:inset 0 -2px #c2432a}
 .pointer-leader,.pointer-dot{position:absolute;display:block}
 .pointer-leader{background:var(--accent)}
 .pointer-dot{width:11px;height:11px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--paper),0 0 0 6px #c2432a26;transform:translate(-50%,-50%)}
@@ -404,7 +418,10 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  #pointer-text{font-size:17px}
  html:not([data-journey=original]) #pointer-sub,html:not([data-journey=original]) .pointer-action{display:none}
  /* Two lines are kept for the caption, so a long pair name never moves the page when the caption changes. */
- html:not([data-journey=original]) .pointer-card{min-height:41px;align-content:center}
+ html:not([data-journey=original]) .pointer-note{display:none}
+ .prompt-row{margin:0;min-height:calc(14px*1.45*3);display:grid;align-content:center}
+ .prompt-row[data-empty=true]{display:none}
+ .prompt-full{left:0;right:0;width:auto;translate:none;max-height:50vh}
  .pointer-action{width:auto;justify-self:center;margin-top:6px;padding-top:0;border-top:0}
  /* "Click me" waits in the empty half beside the first die, pointing at it. */
  .die-call[data-side=right]:after{left:-6px;top:50%;margin:-7px 0 0;border:7px solid transparent;border-right-color:var(--accent);border-left:0}
