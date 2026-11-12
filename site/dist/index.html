@@ -50,7 +50,13 @@ body{font-family:var(--sans);overflow-x:clip}
 #story-title{font:400 clamp(34px,4vw,54px)/1.05 var(--serif);letter-spacing:-.02em;margin:0;text-wrap:balance}
 #story-text{margin:8px auto 0;max-width:620px;min-height:3em;font:15px/1.5 var(--sans);color:var(--muted);text-wrap:balance}
 
-.workbench{position:relative;display:grid;grid-template-columns:minmax(210px,1fr) minmax(0,860px) minmax(210px,1fr);grid-template-areas:"left report right" "reset bar compare" ". steps .";column-gap:24px;row-gap:20px;align-items:center}
+.workbench{position:relative;display:grid;grid-template-columns:minmax(210px,1fr) minmax(0,860px) minmax(210px,1fr);grid-template-areas:"left report right" "dock dock dock" ". keep .";column-gap:24px;row-gap:20px;align-items:center}
+/* The report is shown whole and the page scrolls through it: the dice stay beside it, and the action and the
+   steps stay docked at the bottom of the window, over a fade of the paper. */
+[data-view=dice] .workbench>.die-deck .die,[data-view=dice] .die{align-self:start;position:sticky;top:18px}
+.dock{grid-area:dock;display:grid;grid-template-columns:subgrid;grid-template-areas:"reset bar compare" ". steps .";row-gap:14px;align-items:center;position:sticky;bottom:0;z-index:15;margin:-6px 0 0;padding:22px 0 10px;background:linear-gradient(to top,var(--paper) 78%,#f5f3ec00)}
+.frame-section.report-before,.frame-section.report-outgoing{overflow:hidden}
+#report-view .report-before .report-frame{height:100%!important}
 .dice-deck,.dice{display:contents}
 .die{min-width:0;text-align:center}
 .die:first-child{grid-area:left}.die:nth-child(2){grid-area:right}
@@ -80,11 +86,17 @@ body{font-family:var(--sans);overflow-x:clip}
 .report-sweep-x{position:absolute;top:-1px;bottom:-1px;left:-1px;width:2px;border-radius:2px;background:var(--accent);box-shadow:0 0 18px -4px #c2432a99;opacity:0;z-index:3;pointer-events:none}
 .report-knock{position:absolute;width:58px;height:58px;border-radius:50%;border:2px solid #243026;background:radial-gradient(closest-side,#24302624,#24302600);opacity:0;z-index:6;pointer-events:none}
 .report-knock[data-die='1']{border-color:#c2432a;background:radial-gradient(closest-side,#c2432a26,#c2432a00)}
-#report-view.comparing{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+#report-view.comparing{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 /* Comparing gives both pages the full width, side by side; the dice step aside. */
-[data-comparing=true] #dice-lab{grid-column:1/-1}
-[data-comparing=true] .die{visibility:hidden}
-.frame-section h3{font:500 12px var(--sans);margin:0 0 8px;min-height:16px;color:var(--muted)}
+/* Side by side the two pages share the middle; the dice stay where they are. */
+#report-view.comparing .report-frame{height:clamp(300px,calc(100dvh - 318px),836px)}
+.frame-section h3{display:flex;align-items:center;justify-content:space-between;gap:10px;font:600 12.5px/1.2 var(--sans);margin:0 0 8px;min-height:20px;color:var(--ink)}
+/* Same data: the figures never change, only the design around them. */
+.same-data{display:inline-flex;align-items:center;gap:5px;flex:none;height:20px;padding:0 8px 0 7px;border-radius:999px;background:#ecebe3;color:#4c5547;font:600 11px/1 var(--sans);letter-spacing:.01em;white-space:nowrap}
+.same-data:before{content:'';width:9px;height:11px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 11'%3E%3Cpath d='M2 5V3.4a2.5 2.5 0 0 1 5 0V5h.4c.6 0 1.1.5 1.1 1.1v3.8c0 .6-.5 1.1-1.1 1.1H1.6C1 11 .5 10.5.5 9.9V6.1C.5 5.5 1 5 1.6 5zm1.2 0h2.6V3.4a1.3 1.3 0 0 0-2.6 0z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 11'%3E%3Cpath d='M2 5V3.4a2.5 2.5 0 0 1 5 0V5h.4c.6 0 1.1.5 1.1 1.1v3.8c0 .6-.5 1.1-1.1 1.1H1.6C1 11 .5 10.5.5 9.9V6.1C.5 5.5 1 5 1.6 5zm1.2 0h2.6V3.4a1.3 1.3 0 0 0-2.6 0z'/%3E%3C/svg%3E") center/contain no-repeat}
+.ba-same{position:absolute;top:12px;left:clamp(56px,calc(var(--ba)*100%),calc(100% - 56px));translate:-50% 0;z-index:2;box-shadow:0 2px 8px -3px #1d261e66;opacity:0;transition:opacity 160ms ease-out;pointer-events:none}
+.before-after[data-active] .ba-same{opacity:1}
+.before-after[data-active] .ba-tag b{top:42px}
 
 /* One action, with reset and the occasional tools at its sides. */
 /* The action stands alone under the report. Reset sits under the first die; Compare, once the pair has
@@ -123,10 +135,12 @@ body{font-family:var(--sans);overflow-x:clip}
 .experiment-next.is-demo-hover{background:#d14c31}
 /* Just after a roll the dice and the page have the stage: the action waits, quiet but usable, then steps
    forward once everything has come to rest. */
-.experiment-next[data-quiet]{background:#fffdf8;color:#5f665c;box-shadow:inset 0 0 0 1.5px #d6d0c1,0 2px 0 #e2dccd;transition:background 480ms ease-out,color 480ms ease-out,box-shadow 480ms ease-out,transform 180ms var(--ease-out)}
+.experiment-next[data-quiet]{background:#fffdf8;color:#5f665c;box-shadow:inset 0 0 0 1.5px #d6d0c1,0 2px 0 #e2dccd;transition:background 480ms ease-out,box-shadow 480ms ease-out,transform 180ms var(--ease-out)}
+/* The label carries its own colour, so leaving the quiet state never strands it in grey. */
+#next-label,#next-cue{color:#fff}.experiment-next[data-quiet] #next-label,.experiment-next[data-quiet] #next-cue{color:#5f665c}
 .experiment-next[data-quiet] .next-pips i{border-color:#c4bdad!important;background:none!important}
 .experiment-next[data-quiet] .next-pips i:after{display:none}
-@media(hover:hover) and (pointer:fine){.experiment-next[data-quiet]:hover{background:var(--accent);color:#fff;box-shadow:0 6px 0 #8c2a16,0 20px 30px -14px #8c2a16cc}.experiment-next[data-quiet]:hover .next-pips i{border-color:#fff!important}}
+@media(hover:hover) and (pointer:fine){.experiment-next[data-quiet]:hover #next-label{color:#fff}.experiment-next[data-quiet]:hover{background:var(--accent);color:#fff;box-shadow:0 6px 0 #8c2a16,0 20px 30px -14px #8c2a16cc}.experiment-next[data-quiet]:hover .next-pips i{border-color:#fff!important}}
 .page-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:8px;padding:14px 0;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
 .page-footer>a{font-size:12px;color:var(--muted);text-decoration:none}
 .experiment-tools{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:4px}
@@ -149,7 +163,7 @@ body{font-family:var(--sans);overflow-x:clip}
 .rail-stops button:before{content:'';width:18px;height:18px;border-radius:50%;box-sizing:border-box;background:var(--paper);border:2px solid #c3c5b7;transition:background 180ms ease-out,border-color 180ms ease-out,box-shadow 220ms var(--ease-out),transform 220ms var(--ease-out)}
 .rail-stops button[data-done=true]:before{background:var(--ink);border-color:var(--ink)}
 .rail-stops button[aria-pressed=true]{color:var(--ink);font-weight:600}
-.rail-stops button[aria-pressed=true]:before{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 5px #c2432a24;transform:scale(1.12)}
+.rail-stops button[aria-pressed=true]:before{background:var(--ink);border-color:var(--ink);box-shadow:0 0 0 4px #1d261e1f;transform:scale(1.12)}
 .rail-stops button:disabled{opacity:.4}
 .rail-marker{position:absolute;top:8px;left:0;height:2px;border-radius:2px;background:var(--ink);z-index:0;pointer-events:none;transition:transform 300ms var(--ease-out),width 300ms var(--ease-out)}
 
@@ -178,7 +192,7 @@ body{font-family:var(--sans);overflow-x:clip}
 #pointer-text{font:600 clamp(19px,1.45vw,23px)/1.2 var(--sans);letter-spacing:-.2px;color:var(--ink);text-wrap:balance}#pointer-sub{font:clamp(15px,1.08vw,17px)/1.42 var(--sans);color:var(--muted)}
 .pointer-card[data-actionable=true]{pointer-events:auto;cursor:pointer}
 .pointer-card:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.pointer-action{justify-self:start;margin-top:8px;padding-top:9px;border-top:1px solid #ebe7da;width:100%;color:var(--accent);font:600 clamp(15px,1.08vw,17px)/1.2 var(--sans);transition:color 180ms ease-out}
+.pointer-action{justify-self:start;margin-top:8px;padding-top:9px;border-top:1px solid #ebe7da;width:100%;color:var(--ink);font:600 clamp(15px,1.08vw,17px)/1.2 var(--sans);transition:color 180ms ease-out}
 @media(hover:hover) and (pointer:fine){.pointer-card[data-actionable=true]:hover{transform:translateY(-2px);border-color:#e6b9aa;box-shadow:0 1px 2px #1d261e12,0 20px 34px -18px #8c2a1670}.pointer-card[data-actionable=true]:hover .pointer-action{color:#a8361f}}
 .pointer-card[data-actionable=true]:active{transform:translateY(1px)}#pointer-sub:empty{display:none}
 .pointer-action{display:block;border:0;border-top:1px solid #ebe7da;border-radius:0;background:none;padding-left:0;padding-right:0;padding-bottom:0;text-align:left;cursor:pointer;pointer-events:auto}
@@ -196,8 +210,8 @@ body{font-family:var(--sans);overflow-x:clip}
 .prompt-full[hidden]{display:none}
 .prompt-full mark{background:#f4d2c6;color:var(--ink);border-radius:2px;padding:1px 2px;box-shadow:inset 0 -2px #c2432a}
 .pointer-leader,.pointer-dot{position:absolute;display:block}
-.pointer-leader{background:var(--accent)}
-.pointer-dot{width:11px;height:11px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--paper),0 0 0 6px #c2432a26;transform:translate(-50%,-50%)}
+.pointer-leader{background:#9aa094}
+.pointer-dot{width:11px;height:11px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 3px var(--paper),0 0 0 6px #1d261e1a;transform:translate(-50%,-50%)}
 .pointer-note[data-side=left] .pointer-leader{left:100%;top:50%;width:32px;height:2px;margin-top:-1px;transform-origin:100% 50%}
 .pointer-note[data-side=left] .pointer-dot{left:calc(100% + 32px);top:50%}
 .pointer-note[data-side=right] .pointer-leader{right:100%;top:31px;width:32px;height:2px;margin-top:-1px;transform-origin:0 50%}
@@ -335,7 +349,9 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  .chapters{order:3;width:100%}.rail-stops button{flex:1;padding:0 4px;min-width:0}.rail-stops button:nth-child(3){margin-left:6px}
  .demo-toggle{min-height:34px;padding:0 12px 0 10px}
  .story{padding:24px 4px 12px}#story-title{font-size:30px}#story-text{font-size:14px;margin-top:6px}
- .workbench{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"left right" "hint hint" "bar bar" "steps steps" "report report";column-gap:12px;row-gap:12px}
+ .workbench{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"left right" "hint hint" "report report" "dock dock" "keep keep";column-gap:12px;row-gap:12px}
+ .dock{grid-template-columns:minmax(0,1fr);grid-template-areas:"bar" "steps";row-gap:6px;padding:16px 0 calc(6px + env(safe-area-inset-bottom))}
+ [data-view=dice] .die{position:static}
  .pointer-note{grid-area:hint;position:static;justify-self:stretch;min-width:0;transform:none!important;margin-top:-4px}
  .pointer-leader,.pointer-dot{display:none}
  .pointer-card{width:auto;max-width:none;text-align:center}
@@ -368,7 +384,7 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 .before-after[data-active] .ba-line{opacity:.9;pointer-events:auto;cursor:ew-resize;touch-action:none}
 .ba-line:before{content:'';position:absolute;top:0;bottom:0;left:-11px;right:-11px}
 /* The knob rides the divider in the middle of the page; at rest it waits half-tucked on the left edge. */
-.ba-knob{position:absolute;top:50%;left:calc(var(--ba)*100%);width:40px;height:40px;margin:-20px 0 0 -20px;padding:0;display:grid;place-items:center;border-radius:50%;background:#fffdf8;border:1.5px solid var(--ink);color:var(--ink);font:inherit;box-shadow:0 2px 0 #1d261e24,0 12px 22px -12px #1d261e99;pointer-events:auto;cursor:ew-resize;touch-action:none;user-select:none;transition:scale 160ms var(--ease-out),box-shadow 160ms ease-out}
+.ba-knob{position:absolute;top:min(50%,calc(50vh - 80px));left:calc(var(--ba)*100%);width:40px;height:40px;margin:-20px 0 0 -20px;padding:0;display:grid;place-items:center;border-radius:50%;background:#fffdf8;border:1.5px solid var(--ink);color:var(--ink);font:inherit;box-shadow:0 2px 0 #1d261e24,0 12px 22px -12px #1d261e99;pointer-events:auto;cursor:ew-resize;touch-action:none;user-select:none;transition:scale 160ms var(--ease-out),box-shadow 160ms ease-out}
 .ba-knob:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .ba-knob svg{width:22px;height:12px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
 .ba-knob path{transition:translate 160ms var(--ease-out)}
@@ -444,14 +460,16 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 /* Phones: one screen. The dice on top, the page filling the middle, the action and the steps within thumb
    reach underneath. The page scrolls inside its own frame; nothing else needs to. */
 @media(max-width:860px){
- [data-view=dice] .workbench{grid-template-areas:"left right" "hint hint" "report report" "bar bar" "steps steps";grid-template-rows:auto auto minmax(260px,1fr) auto auto;height:max(100dvh,600px);padding:8px 0 6px;row-gap:10px}
- [data-view=dice][data-comparing=true] .workbench{height:auto}
- #dice-lab{display:flex;flex-direction:column;min-height:0;align-self:stretch;border-top:0;padding-top:0}
- #report-view{flex:1;min-height:0;margin-top:26px}
- #report-view:not(.comparing)>.frame-section{height:100%}
- #report-view:not(.comparing) .report-frame{height:100%}
+ [data-view=dice] .workbench{padding:8px 0 0;row-gap:10px}
+ #dice-lab{display:flex;flex-direction:column;align-self:stretch;border-top:0;padding-top:0}
+ #report-view{margin-top:26px}
  #report-view.comparing .report-frame{height:440px}
  .die-object{height:148px}
+ /* Big for the first throw; once rolled, each die folds into a compact chip with its name under it, so the
+    report gets the screen. A chip is still the die: tap or drag it to roll. */
+ html:not([data-journey=original]) .die-object{--size:36px;height:56px}
+ html:not([data-journey=original]) .die>strong{font-size:12.5px;--face-scale:.8;min-height:0;line-height:1.15}
+ .keep-versions{gap:6px}.keep-version{padding:3px 3px 5px;font-size:11px}
  .die-floor .die-ground{--mat:1.32}
  .die>strong{min-height:2.4em;line-height:1.15}
  /* The story shrinks to a one-line caption; its full instruction stays only before the first roll. */
@@ -477,7 +495,6 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 /* Shorter screens, which include most phones once the browser's own bars are showing, keep the whole flow on
    one screen with smaller dice and a shorter page. */
 @media(max-width:860px) and (max-height:780px){
- [data-view=dice] .workbench{grid-template-rows:auto auto minmax(240px,1fr) auto auto;height:max(100dvh,600px);row-gap:8px}
  .die-object{--size:70px;height:122px}
  #report-view{margin-top:22px}
 }
@@ -488,6 +505,26 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
  #compare{display:none}
  .stage-bar{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"reset next"}
 }
+
+/* Which would you keep? Every version of this pair under the page; the one on show is outlined, the kept one marked. */
+/* At the end the choice takes the step track's place in the dock, so it is always in view. */
+.keep{grid-area:steps;justify-self:center;width:min(100%,640px);text-align:center}
+.dock:has(.keep:not([hidden])) .chapters{display:none}
+.keep[hidden]{display:none}
+.keep-title{margin:0 0 8px;font:600 14px/1.2 var(--sans);color:var(--ink)}
+.keep-versions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.keep-version{display:grid;gap:6px;padding:5px 5px 7px;border:1px solid var(--line);border-radius:9px;background:#fffdf8;color:var(--muted);font:600 12px/1 var(--sans);cursor:pointer;transition:border-color 150ms ease-out,transform 150ms var(--ease-out),box-shadow 150ms ease-out}
+.keep-version[data-showing=true]{border-color:var(--ink);color:var(--ink)}
+.keep-version[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 2px #c2432a33;color:var(--accent)}
+.keep-version[aria-pressed=true] .keep-name:after{content:' \00b7  Kept'}
+.keep-version:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.keep-thumb{position:relative;display:block;aspect-ratio:1.45;overflow:hidden;border-radius:5px;background:#e6e7dc}
+.keep-thumb iframe{position:absolute;left:0;top:0;display:block;width:840px;height:1100px;border:0;transform-origin:top left;pointer-events:none;user-select:none}
+@media(hover:hover) and (pointer:fine){.keep-version:hover{transform:translateY(-2px);border-color:#a9a99a}}
+@media(prefers-reduced-motion:reduce){.keep-version{transition:none}}
+
+/* The step track below already shows progress, so the action carries no second set of dots. */
+.experiment-next[data-action] .next-pips{display:none}
 </style></head>
 <body>
 <noscript>Enable JavaScript to roll the dice and compare reports.</noscript>
@@ -506,8 +543,9 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
     <span id="dice-gesture-help" class="sr-only">Click or press Enter to roll. Drag slowly to choose the upper face; release quickly to throw. Arrow keys turn the die. Escape cancels a drag.</span>
    </section>
    <section id="dice-lab" class="result" aria-labelledby="pair-title"><h2 id="pair-title" class="sr-only" tabindex="-1"></h2><p id="prompt-row" class="prompt-row" data-empty="true"><button type="button" id="prompt-line" class="prompt-line" aria-expanded="false" aria-controls="prompt-full"></button><span id="prompt-full" class="prompt-full" role="region" aria-label="The whole prompt" hidden></span></p>
-    <div id="report-view" data-passes="0"><span class="version-stack" aria-hidden="true"><i></i><i></i><i></i></span><span class="report-sweep" aria-hidden="true"></span><div id="before-after" class="before-after" hidden><span class="ba-tag" aria-hidden="true"><b>Before</b></span><span class="ba-line" aria-hidden="true"></span><button type="button" id="ba-handle" class="ba-knob" role="slider" aria-label="Show the original report" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Current page"><svg viewBox="0 0 22 12" aria-hidden="true"><path d="M6.5 1.5 2 6l4.5 4.5"/><path d="M15.5 1.5 20 6l-4.5 4.5"/></svg></button></div></div>
+    <div id="report-view" data-passes="0"><span class="version-stack" aria-hidden="true"><i></i><i></i><i></i></span><span class="report-sweep" aria-hidden="true"></span><div id="before-after" class="before-after" hidden><span class="ba-tag" aria-hidden="true"><b>Before</b></span><span class="ba-same same-data" aria-hidden="true">Same data</span><span class="ba-line" aria-hidden="true"></span><button type="button" id="ba-handle" class="ba-knob" role="slider" aria-label="Show the original report" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Current page"><svg viewBox="0 0 22 12" aria-hidden="true"><path d="M6.5 1.5 2 6l4.5 4.5"/><path d="M15.5 1.5 20 6l-4.5 4.5"/></svg></button></div></div>
    </section>
+   <div id="dock" class="dock">
    <div id="stage-bar" class="stage-bar">
     <button type="button" id="reset" class="reset" aria-label="Start over with no ingredients"><span aria-hidden="true">↺</span> Reset</button>
     <button type="button" id="experiment-next" class="experiment-next" data-action="roll"><span id="next-label">Add randomness</span><span id="next-cue" class="next-cue" aria-hidden="true">→</span><span class="next-pips" aria-hidden="true"><i></i><i></i><i></i></span></button>
@@ -523,6 +561,8 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
      <span id="rail-marker" class="rail-marker" aria-hidden="true"></span>
     </div>
    </nav>
+   <section id="keep" class="keep" aria-labelledby="keep-title" hidden><h2 id="keep-title" class="keep-title">Which would you keep?</h2><div id="keep-versions" class="keep-versions" role="group" aria-labelledby="keep-title"></div></section>
+   </div>
    <section id="plain-controls" class="controls plain-controls" aria-label="Plain prompt and refinement" hidden>
     <select id="plain-method" class="comparison-target" aria-label="Plain recorded run"><option value="original">Original prompt</option><option value="stronger" selected>Stronger prompt</option><option value="newer">Newer model</option></select>
     <div class="refinement"><div class="attempt-stepper" role="group" aria-label="Refinement"><button id="plain-attempt-prev" type="button" aria-label="Previous attempt" aria-controls="plain-report" disabled>−</button><output id="plain-attempt-label" aria-live="polite">One-shot</output><button id="plain-attempt-next" type="button" aria-label="Refine more" aria-controls="plain-report">+</button></div><p id="plain-attempt-note" hidden>Kept the previous attempt. See critique.</p></div>
@@ -1640,7 +1680,7 @@ function pointerSpec(){
  if(view!=='dice'||comparing)return null;
  const next=$('#experiment-next'),first=INGREDIENTS_A[a],second=INGREDIENTS_B[b],pair=first+' × '+second;
  const rollDice={label:'Roll the dice',run:()=>roll(0)};
- const refine={label:stage===1?'Refine it':stage===2?'Refine again':'One more pass',run:()=>nextExperimentStep()};
+ const refine={label:stage===1?'Push it further':stage===2?'Push again':'One more push',run:()=>nextExperimentStep()};
  // Every saved page needs both ingredients, so the first roll throws both dice and the page changes at once.
  if(introMode){
   if(lastEvent?.kind==='reset')return {target:$('#dice-lab'),title:'Fresh start.',sub:'The same one-prompt report, no ingredients. Roll for a new pair.',side:'right',action:rollDice};
@@ -1651,9 +1691,10 @@ function pointerSpec(){
  const rolled=lastEvent&&(lastEvent.kind==='swap'||lastEvent.kind==='choose'||lastEvent.kind==='pick');
  if(rolled||stage===1)return null;
  if(selected.steps[stage-1].html===selected.steps[stage-2].html)return {target:next,title:'Nothing changed this pass.',sub:'The model looked at its own page and kept it.',side:'right'};
- if(stage===2)return {target:next,title:'Refined once.',sub:'It critiqued its own page, then leaned into '+first+' and '+second+'.',side:'right'};
- if(stage===3)return {target:next,title:'Twice.',sub:'Same prompt again, on its own result.',side:'right'};
- return {target:next,title:'Three passes in.',sub:'More distinct, or just more? Easier to judge side by side.',side:'right',action:{label:'Compare with no dice',run:()=>$('#compare').click()}};
+ if(stage===2)return {target:next,title:'Pushed once.',sub:'It critiqued its own page and leaned harder into '+first+' and '+second+'. More distinct is not always better.',side:'right'};
+ if(stage===3)return {target:next,title:'Twice.',sub:'The same push again, on its own result.',side:'right'};
+ // After the third push the page asks the question itself, with every version laid out below.
+ return null;
 }
 // The die waiting to be rolled carries a floating "Click me" above it.
 function updateDieCall(){
@@ -1714,7 +1755,7 @@ function updatePointer(delay=0){
 // added to the prompt, both ingredients in it, the die that just changed underlined. Tapping it opens the
 // whole one-shot prompt with that line marked.
 function promptLineState(){
- if(view!=='dice'||introMode||comparing)return null;
+ if(view!=='dice'||introMode)return null;
  return {a:INGREDIENTS_A[a],b:INGREDIENTS_B[b],changed:lastEvent?.kind==='swap'||lastEvent?.kind==='choose'?lastEvent.index:null};
 }
 let promptLineKey='';
@@ -1829,11 +1870,28 @@ function updateURL(){
 // Saved reports scroll inside sandboxed frames. A small bridge, appended after the saved
 // document, shares the reading position so a new step or a comparison opens at the same place.
 // A requested position is re-applied while the report's own layout settles, until the reader scrolls.
-const REPORT_SCROLL_BRIDGE='<script data-report-scroll>(()=>{let quietUntil=0,queued=false,target=null;const room=()=>Math.max(0,document.documentElement.scrollHeight-innerHeight);const apply=()=>{if(target===null)return;quietUntil=performance.now()+150;scrollTo({top:Math.round(target*room()),behavior:"instant"});};addEventListener("message",e=>{if(e.source!==parent||e.data?.type!=="report-scroll-to")return;target=e.data.ratio;apply();});addEventListener("scroll",()=>{if(performance.now()<quietUntil)return;target=null;if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;const r=room();parent.postMessage({type:"report-scroll",ratio:r?scrollY/r:0},"*");});},{passive:true});const settle=new ResizeObserver(apply);settle.observe(document.documentElement);if(document.body)settle.observe(document.body);addEventListener("load",()=>parent.postMessage({type:"report-ready"},"*"),{once:true});})();<\/script>';
+const REPORT_SCROLL_BRIDGE='<script data-report-scroll>(()=>{let quietUntil=0,queued=false,target=null;const room=()=>Math.max(0,document.documentElement.scrollHeight-innerHeight);const apply=()=>{if(target===null)return;quietUntil=performance.now()+150;scrollTo({top:Math.round(target*room()),behavior:"instant"});};addEventListener("message",e=>{if(e.source!==parent||e.data?.type!=="report-scroll-to")return;target=e.data.ratio;apply();});addEventListener("scroll",()=>{if(performance.now()<quietUntil)return;target=null;if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;const r=room();parent.postMessage({type:"report-scroll",ratio:r?scrollY/r:0},"*");});},{passive:true});let told=0;const tell=()=>{const h=Math.ceil(document.documentElement.scrollHeight);if(Math.abs(h-told)>2){told=h;parent.postMessage({type:"report-height",height:h},"*");}};const settle=new ResizeObserver(()=>{apply();tell();});settle.observe(document.documentElement);if(document.body)settle.observe(document.body);addEventListener("load",()=>{tell();parent.postMessage({type:"report-ready"},"*");},{once:true});})();<\/script>';
 const reportScroll=new Map();
 function visibleReportFrames(container){const cache=previewCaches.get(container);return cache?[...cache.values()].filter(section=>!section.hidden).map(section=>section.querySelector('iframe')):[];}
 function scrollReport(frame,ratio){frame.contentWindow?.postMessage?.({type:'report-scroll-to',ratio},'*');}
+// A report is shown whole: its frame takes the report's own height, so the page scrolls through the full
+// composition instead of a box inside it. A frame whose width changes measures again from its default.
+function fitReportFrame(frame,height){
+ if(!(height>200))return;
+ frame.style.height=Math.min(9000,Math.round(height))+'px';frame.dataset.fitWidth=String(frame.clientWidth||0);
+}
+const reportFrameWidths=typeof ResizeObserver==='function'?new ResizeObserver(entries=>entries.forEach(({target,contentRect})=>{
+ const width=Math.round(contentRect.width);if(!width||!target.dataset.fitWidth||Math.abs(width-Number(target.dataset.fitWidth))<2)return;
+ target.style.height='';delete target.dataset.fitWidth;
+})):null;
 window.addEventListener('message',event=>{
+ if(event.data?.type==='report-height'){
+  for(const container of [$('#report-view'),$('#plain-report')]){
+   const cache=previewCaches.get(container);if(!cache)continue;
+   for(const section of cache.values()){const frame=section.querySelector('iframe');if(frame?.contentWindow===event.source){fitReportFrame(frame,Number(event.data.height));return;}}
+  }
+  return;
+ }
  const type=event.data?.type;if(type!=='report-ready'&&type!=='report-scroll')return;
  for(const container of [$('#report-view'),$('#plain-report')]){
   const frames=visibleReportFrames(container),source=frames.find(frame=>frame.contentWindow===event.source);
@@ -1848,7 +1906,7 @@ function addReport(container,item,label){
  const section=document.createElement('section');section.className='frame-section';
  if(label){const title=document.createElement('h3');title.textContent=label;section.append(title);}
  const frame=document.createElement('iframe');frame.title=label||selected.label;frame.className='report-frame';frame.setAttribute('sandbox','allow-scripts');frame.addEventListener('load',()=>frame.dataset.loaded='true');frame.srcdoc=item.html+REPORT_SCROLL_BRIDGE;
- section.append(frame);container.append(section);
+ section.append(frame);container.append(section);reportFrameWidths?.observe(frame);
  return section;
 }
 // Every report is a whole document. Only a few stay loaded: the ones on screen, the original the slider
@@ -1873,7 +1931,7 @@ function showReports(container,entries){
   cache.delete(item.file);cache.set(item.file,section);
   // Pages loaded ahead of time, or for the slider, carry no heading until one is needed.
   let heading=section.querySelector('h3');if(!heading&&label){heading=document.createElement('h3');section.prepend(heading);}
-  if(heading){heading.textContent=label||'';heading.hidden=!label;}
+  if(heading){heading.textContent=label||'';heading.hidden=!label;if(label){const badge=document.createElement('span');badge.className='same-data';badge.textContent='Same data';heading.append(badge);}}
   section.querySelector('iframe').title=label||(/^(stronger-|newer-)?plain-/.test(item.file)?'Plain weekly report':selected.label);
   section.style.order=String(order);section.hidden=false;
   const frame=section.querySelector('iframe');if(frame.dataset.loaded==='true')scrollReport(frame,reportScroll.get(container)||0);
@@ -1916,7 +1974,7 @@ function releaseBeforeSection(){
  const section=beforeAfter.section;if(!section)return;
  beforeAfter.section=null;section.hidden=true;section.style.clipPath='';section.inert=false;section.removeAttribute('aria-hidden');section.classList.toggle('report-before',false);
 }
-function stopBeforeAfterTween(){if(beforeAfter.tween){cancelAnimationFrame(beforeAfter.tween);beforeAfter.tween=null;}}
+function stopBeforeAfterTween(){if(beforeAfter.tween){cancelAnimationFrame(beforeAfter.tween);beforeAfter.tween=null;}if(firstCompare){cancelAnimationFrame(firstCompare);firstCompare=null;}}
 // The hint is never the visitor's position. A change cancels it on the spot and puts the slider back, so
 // nothing on the page slides while the page itself is changing. A hint that had begun to move has been
 // seen; one still waiting tries again once the next page has landed.
@@ -1945,17 +2003,29 @@ function renderBeforeAfter(){
  if(introMode)paintBeforeAfter(0);else if(item)paintBeforeAfter(beforeAfter.value);else releaseBeforeSection();
  box.hidden=!item;
 }
-// Once, after the first change has printed and the new page has had a while to be seen on its own, the
-// knob pops out and pulls a slice of the original across, holds it, and slides home. Later changes never
-// hint: the knob stays put while pages change.
-const BEFORE_AFTER_HINT_WAIT=1600;
+// The first time a roll's page lands, before and after are put side by side straight away, so the same
+// figures in two designs teach the mechanism at a glance. Wide screens open Compare; a phone opens the slider
+// halfway and leaves it there. It waits only long enough for the new page to be seen on its own.
+const BEFORE_AFTER_HINT_WAIT=700;
+let firstCompare=null;
 function reportHandoffSettled(container){
  if(container===$('#report-view'))warmReports();
  if(container!==$('#report-view')||!beforeAfter.item||beforeAfter.value||beforeAfter.drag||beforeAfter.hinted||beforeAfter.hinting)return;
- const reach=.3,out=.24,hold=.64,duration=2200,knob=$('#before-after').querySelector?.('.ba-knob');
  beforeAfter.hinting=true;
- if(knob?.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)knob.animate([{scale:'1'},{scale:'1.3',offset:.16},{scale:'.96',offset:.32},{scale:'1',offset:.44},{scale:'1'}],{duration:1100,delay:BEFORE_AFTER_HINT_WAIT,easing:'cubic-bezier(.33,1,.68,1)'});
- tweenBeforeAfter(0,duration,t=>{if(t>=1){beforeAfter.hinting=false;beforeAfter.hinted=true;}return t<out?reach*(1-(1-t/out)**3):t<hold?reach:reach*(1-((t-hold)/(1-hold))**2*(3-2*(t-hold)/(1-hold)));},BEFORE_AFTER_HINT_WAIT);
+ if(!matchMedia('(max-width: 640px)').matches){
+  const start=performance.now()+BEFORE_AFTER_HINT_WAIT;
+  const step=now=>{
+   firstCompare=null;if(!beforeAfter.hinting)return;
+   if(now<start){firstCompare=requestAnimationFrame(step);return;}
+   beforeAfter.hinting=false;beforeAfter.hinted=true;
+   if(introMode||comparing||view!=='dice')return;
+   comparison='plain';comparing=true;renderResult();updateURL();
+  };
+  firstCompare=requestAnimationFrame(step);return;
+ }
+ const knob=$('#before-after').querySelector?.('.ba-knob');
+ if(knob?.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)knob.animate([{scale:'1'},{scale:'1.25',offset:.3},{scale:'1'}],{duration:700,delay:BEFORE_AFTER_HINT_WAIT,easing:'cubic-bezier(.33,1,.68,1)'});
+ tweenBeforeAfter(0,800,t=>{if(t>=1){beforeAfter.hinting=false;beforeAfter.hinted=true;}return .5*(1-(1-t)**3);},BEFORE_AFTER_HINT_WAIT);
 }
 (()=>{
  const handle=$('#ba-handle'),box=$('#before-after');
@@ -2008,7 +2078,8 @@ function renderRail(){
   button.disabled=introMode&&n>1;
  }
  const refining=!introMode&&stage<4;
- const label=introMode?'Add randomness':stage===1?'Refine it':stage===2?'Refine again':stage===3?'One more pass':'Roll a new pair';
+ // Each pass pushes the same pair further: more distinct, not necessarily better, so the button says push.
+ const label=introMode?'Add randomness':stage===1?'Push it further':stage===2?'Push again':stage===3?'One more push':'Roll a new pair';
  $('#experiment-next').dataset.passes=String(introMode?0:stage-1);
  const cue=refining?'+'+stage:'→';
  $('#experiment-next').dataset.action=refining?'refine':'roll';
@@ -2026,7 +2097,8 @@ function renderResult(){
  const currentLabel=method==='newer'?'Newer model':method==='stronger'?'Stronger prompt':'Original prompt';
  const otherLabel=method==='newer'?'Earlier model':method==='stronger'?'Original prompt':'Stronger prompt';
  let entries=[{item:current,label:''}];
- if(comparing&&comparison==='plain')entries=[{item:currentBaseline().steps[stage-1],label:'No ingredients'},{item:current,label:'+ Two ingredients'}];
+ const pushes=['','','one push','two pushes','three pushes'][stage]||'',pairName=INGREDIENTS_A[a]+' × '+INGREDIENTS_B[b];
+ if(comparing&&comparison==='plain')entries=[{item:currentBaseline().steps[stage-1],label:stage>1?'No ingredients, after the same '+pushes:'No ingredients'},{item:current,label:stage>1?pairName+', after '+pushes:pairName}];
  if(comparing&&comparison==='other')entries=stage===1&&method!=='newer'?[{item:current,label:'Shared one-shot'}]:method==='original'?[{item:current,label:currentLabel},{item:other,label:otherLabel}]:[{item:other,label:otherLabel},{item:current,label:currentLabel}];
  if(introMode)entries=[{item:current,label:''}];
  container.classList.toggle('comparing',entries.length>1);document.documentElement.dataset.comparing=String(entries.length>1);
@@ -2082,7 +2154,7 @@ function render(sync=true){
   if(frame.dataset.file!==item.file){frame.srcdoc=item.html;frame.dataset.file=item.file;}
  });
  $('#atlas-ingredient').value=String(a);
- renderResult();if(sync)syncDice3D();updateURL();
+ renderResult();renderKeep();if(sync)syncDice3D();updateURL();
  const entering=previousJourney!==journey&&journey!=='original'&&view==='dice';
  // Beat order: the press, then the page or dice, then the timeline, then the next label.
  updatePointer(entering?900:paintedStep===null?500:760);
@@ -2106,7 +2178,7 @@ function chooseDieFace(index,value){
 // A carried die let go of: the face it shows on top is the choice, and the page changes when the dropped
 // die reaches it.
 function dropDie(index,value,release={}){
- settlePresentation();pointer.dieHintUsed=true;
+ settlePresentation();pointer.dieHintUsed=true;if(comparing&&!introMode)comparing=false;
  const introducing=introMode;introMode=false;ingredientsChosen=true;
  if(introducing){stage=1;comparing=false;}
  const values=[selected.a,selected.b];values[index]=value;
@@ -2153,6 +2225,36 @@ function takeUpcoming(index,current){
  const face=upcoming.faces[index];upcoming.faces[index]=null;
  return face!==null&&face!==current?face:nextIngredient(index,current);
 }
+// After the third push the flow ends on a choice, not an essay: every version of this pair laid out under
+// the page, from the plain one-shot to the third push. Choosing one shows it and marks it kept.
+const keep={pair:null,pick:null,built:''};
+function keepVersions(){return [{stage:0,label:'No dice',item:currentBaseline().steps[0]},...selected.steps.map((item,index)=>({stage:index+1,label:['Dice','+1','+2','+3'][index],item}))];}
+function renderKeep(){
+ const panel=$('#keep'),list=$('#keep-versions');
+ if(view==='dice'&&!introMode&&stage===4&&keep.pair!==selected.id){keep.pair=selected.id;keep.pick=null;}
+ const show=view==='dice'&&!introMode&&keep.pair===selected.id;
+ panel.hidden=!show;if(!show)return;
+ const key=selected.id+'|'+method;
+ if(keep.built!==key){
+  keep.built=key;list.replaceChildren();
+  for(const version of keepVersions()){
+   const button=document.createElement('button'),thumb=document.createElement('span'),frame=document.createElement('iframe'),name=document.createElement('span');
+   button.type='button';button.className='keep-version';button.dataset.stage=String(version.stage);
+   thumb.className='keep-thumb';frame.title=version.label;frame.setAttribute('sandbox','allow-scripts');frame.setAttribute('aria-hidden','true');frame.tabIndex=-1;frame.loading='lazy';frame.srcdoc=version.item.html;
+   name.className='keep-name';name.textContent=version.label;
+   thumb.append(frame);button.append(thumb,name);list.append(button);thumbnailObserver.observe?.(thumb);
+   button.addEventListener('click',()=>chooseKept(version.stage));
+  }
+ }
+ const showing=beforeAfter.value>=.99?0:stage;
+ for(const button of list.children){const at=Number(button.dataset.stage);button.setAttribute('aria-pressed',String(keep.pick===at));button.dataset.showing=String(at===showing);button.setAttribute('aria-label',(button.textContent||'')+(keep.pick===at?', kept':''));}
+}
+function chooseKept(value){
+ keep.pick=value;
+ if(value===0){if(comparing){comparing=false;renderResult();}tweenBeforeAfter(1);}
+ else{if(beforeAfter.value>=.99)paintBeforeAfter(0);setAttempt(value);}
+ renderKeep();updateURL();
+}
 function randomIndex(length){
  const values=new Uint32Array(1),limit=0x100000000-(0x100000000%length);do{crypto.getRandomValues(values)}while(values[0]>=limit);return values[0]%length;
 }
@@ -2168,6 +2270,8 @@ function roll(index,gesture=null,forced=null){
  // On the plain page the first die is the action: rolling it throws both, the second thrown in beside it.
  if(introMode&&index===1)return;
  settlePresentation();
+ // A die thrown at a side-by-side comparison returns to the single page, so it can strike the page again.
+ if(comparing&&!introMode&&(index===0||index===1))comparing=false;
  const introduce=introMode;introMode=false;ingredientsChosen=true;
  if(introduce){stage=1;comparing=false;}
  if(index===0||index===1)pointer.dieHintUsed=true;

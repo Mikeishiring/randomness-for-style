@@ -120,7 +120,7 @@ function pointerSpec(){
  if(view!=='dice'||comparing)return null;
  const next=$('#experiment-next'),first=INGREDIENTS_A[a],second=INGREDIENTS_B[b],pair=first+' × '+second;
  const rollDice={label:'Roll the dice',run:()=>roll(0)};
- const refine={label:stage===1?'Refine it':stage===2?'Refine again':'One more pass',run:()=>nextExperimentStep()};
+ const refine={label:stage===1?'Push it further':stage===2?'Push again':'One more push',run:()=>nextExperimentStep()};
  // Every saved page needs both ingredients, so the first roll throws both dice and the page changes at once.
  if(introMode){
   if(lastEvent?.kind==='reset')return {target:$('#dice-lab'),title:'Fresh start.',sub:'The same one-prompt report, no ingredients. Roll for a new pair.',side:'right',action:rollDice};
@@ -131,9 +131,10 @@ function pointerSpec(){
  const rolled=lastEvent&&(lastEvent.kind==='swap'||lastEvent.kind==='choose'||lastEvent.kind==='pick');
  if(rolled||stage===1)return null;
  if(selected.steps[stage-1].html===selected.steps[stage-2].html)return {target:next,title:'Nothing changed this pass.',sub:'The model looked at its own page and kept it.',side:'right'};
- if(stage===2)return {target:next,title:'Refined once.',sub:'It critiqued its own page, then leaned into '+first+' and '+second+'.',side:'right'};
- if(stage===3)return {target:next,title:'Twice.',sub:'Same prompt again, on its own result.',side:'right'};
- return {target:next,title:'Three passes in.',sub:'More distinct, or just more? Easier to judge side by side.',side:'right',action:{label:'Compare with no dice',run:()=>$('#compare').click()}};
+ if(stage===2)return {target:next,title:'Pushed once.',sub:'It critiqued its own page and leaned harder into '+first+' and '+second+'. More distinct is not always better.',side:'right'};
+ if(stage===3)return {target:next,title:'Twice.',sub:'The same push again, on its own result.',side:'right'};
+ // After the third push the page asks the question itself, with every version laid out below.
+ return null;
 }
 // The die waiting to be rolled carries a floating "Click me" above it.
 function updateDieCall(){
@@ -194,7 +195,7 @@ function updatePointer(delay=0){
 // added to the prompt, both ingredients in it, the die that just changed underlined. Tapping it opens the
 // whole one-shot prompt with that line marked.
 function promptLineState(){
- if(view!=='dice'||introMode||comparing)return null;
+ if(view!=='dice'||introMode)return null;
  return {a:INGREDIENTS_A[a],b:INGREDIENTS_B[b],changed:lastEvent?.kind==='swap'||lastEvent?.kind==='choose'?lastEvent.index:null};
 }
 let promptLineKey='';
@@ -309,11 +310,28 @@ function updateURL(){
 // Saved reports scroll inside sandboxed frames. A small bridge, appended after the saved
 // document, shares the reading position so a new step or a comparison opens at the same place.
 // A requested position is re-applied while the report's own layout settles, until the reader scrolls.
-const REPORT_SCROLL_BRIDGE='<script data-report-scroll>(()=>{let quietUntil=0,queued=false,target=null;const room=()=>Math.max(0,document.documentElement.scrollHeight-innerHeight);const apply=()=>{if(target===null)return;quietUntil=performance.now()+150;scrollTo({top:Math.round(target*room()),behavior:"instant"});};addEventListener("message",e=>{if(e.source!==parent||e.data?.type!=="report-scroll-to")return;target=e.data.ratio;apply();});addEventListener("scroll",()=>{if(performance.now()<quietUntil)return;target=null;if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;const r=room();parent.postMessage({type:"report-scroll",ratio:r?scrollY/r:0},"*");});},{passive:true});const settle=new ResizeObserver(apply);settle.observe(document.documentElement);if(document.body)settle.observe(document.body);addEventListener("load",()=>parent.postMessage({type:"report-ready"},"*"),{once:true});})();<\/script>';
+const REPORT_SCROLL_BRIDGE='<script data-report-scroll>(()=>{let quietUntil=0,queued=false,target=null;const room=()=>Math.max(0,document.documentElement.scrollHeight-innerHeight);const apply=()=>{if(target===null)return;quietUntil=performance.now()+150;scrollTo({top:Math.round(target*room()),behavior:"instant"});};addEventListener("message",e=>{if(e.source!==parent||e.data?.type!=="report-scroll-to")return;target=e.data.ratio;apply();});addEventListener("scroll",()=>{if(performance.now()<quietUntil)return;target=null;if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;const r=room();parent.postMessage({type:"report-scroll",ratio:r?scrollY/r:0},"*");});},{passive:true});let told=0;const tell=()=>{const h=Math.ceil(document.documentElement.scrollHeight);if(Math.abs(h-told)>2){told=h;parent.postMessage({type:"report-height",height:h},"*");}};const settle=new ResizeObserver(()=>{apply();tell();});settle.observe(document.documentElement);if(document.body)settle.observe(document.body);addEventListener("load",()=>{tell();parent.postMessage({type:"report-ready"},"*");},{once:true});})();<\/script>';
 const reportScroll=new Map();
 function visibleReportFrames(container){const cache=previewCaches.get(container);return cache?[...cache.values()].filter(section=>!section.hidden).map(section=>section.querySelector('iframe')):[];}
 function scrollReport(frame,ratio){frame.contentWindow?.postMessage?.({type:'report-scroll-to',ratio},'*');}
+// A report is shown whole: its frame takes the report's own height, so the page scrolls through the full
+// composition instead of a box inside it. A frame whose width changes measures again from its default.
+function fitReportFrame(frame,height){
+ if(!(height>200))return;
+ frame.style.height=Math.min(9000,Math.round(height))+'px';frame.dataset.fitWidth=String(frame.clientWidth||0);
+}
+const reportFrameWidths=typeof ResizeObserver==='function'?new ResizeObserver(entries=>entries.forEach(({target,contentRect})=>{
+ const width=Math.round(contentRect.width);if(!width||!target.dataset.fitWidth||Math.abs(width-Number(target.dataset.fitWidth))<2)return;
+ target.style.height='';delete target.dataset.fitWidth;
+})):null;
 window.addEventListener('message',event=>{
+ if(event.data?.type==='report-height'){
+  for(const container of [$('#report-view'),$('#plain-report')]){
+   const cache=previewCaches.get(container);if(!cache)continue;
+   for(const section of cache.values()){const frame=section.querySelector('iframe');if(frame?.contentWindow===event.source){fitReportFrame(frame,Number(event.data.height));return;}}
+  }
+  return;
+ }
  const type=event.data?.type;if(type!=='report-ready'&&type!=='report-scroll')return;
  for(const container of [$('#report-view'),$('#plain-report')]){
   const frames=visibleReportFrames(container),source=frames.find(frame=>frame.contentWindow===event.source);
@@ -328,7 +346,7 @@ function addReport(container,item,label){
  const section=document.createElement('section');section.className='frame-section';
  if(label){const title=document.createElement('h3');title.textContent=label;section.append(title);}
  const frame=document.createElement('iframe');frame.title=label||selected.label;frame.className='report-frame';frame.setAttribute('sandbox','allow-scripts');frame.addEventListener('load',()=>frame.dataset.loaded='true');frame.srcdoc=item.html+REPORT_SCROLL_BRIDGE;
- section.append(frame);container.append(section);
+ section.append(frame);container.append(section);reportFrameWidths?.observe(frame);
  return section;
 }
 // Every report is a whole document. Only a few stay loaded: the ones on screen, the original the slider
@@ -353,7 +371,7 @@ function showReports(container,entries){
   cache.delete(item.file);cache.set(item.file,section);
   // Pages loaded ahead of time, or for the slider, carry no heading until one is needed.
   let heading=section.querySelector('h3');if(!heading&&label){heading=document.createElement('h3');section.prepend(heading);}
-  if(heading){heading.textContent=label||'';heading.hidden=!label;}
+  if(heading){heading.textContent=label||'';heading.hidden=!label;if(label){const badge=document.createElement('span');badge.className='same-data';badge.textContent='Same data';heading.append(badge);}}
   section.querySelector('iframe').title=label||(/^(stronger-|newer-)?plain-/.test(item.file)?'Plain weekly report':selected.label);
   section.style.order=String(order);section.hidden=false;
   const frame=section.querySelector('iframe');if(frame.dataset.loaded==='true')scrollReport(frame,reportScroll.get(container)||0);
@@ -396,7 +414,7 @@ function releaseBeforeSection(){
  const section=beforeAfter.section;if(!section)return;
  beforeAfter.section=null;section.hidden=true;section.style.clipPath='';section.inert=false;section.removeAttribute('aria-hidden');section.classList.toggle('report-before',false);
 }
-function stopBeforeAfterTween(){if(beforeAfter.tween){cancelAnimationFrame(beforeAfter.tween);beforeAfter.tween=null;}}
+function stopBeforeAfterTween(){if(beforeAfter.tween){cancelAnimationFrame(beforeAfter.tween);beforeAfter.tween=null;}if(firstCompare){cancelAnimationFrame(firstCompare);firstCompare=null;}}
 // The hint is never the visitor's position. A change cancels it on the spot and puts the slider back, so
 // nothing on the page slides while the page itself is changing. A hint that had begun to move has been
 // seen; one still waiting tries again once the next page has landed.
@@ -425,17 +443,29 @@ function renderBeforeAfter(){
  if(introMode)paintBeforeAfter(0);else if(item)paintBeforeAfter(beforeAfter.value);else releaseBeforeSection();
  box.hidden=!item;
 }
-// Once, after the first change has printed and the new page has had a while to be seen on its own, the
-// knob pops out and pulls a slice of the original across, holds it, and slides home. Later changes never
-// hint: the knob stays put while pages change.
-const BEFORE_AFTER_HINT_WAIT=1600;
+// The first time a roll's page lands, before and after are put side by side straight away, so the same
+// figures in two designs teach the mechanism at a glance. Wide screens open Compare; a phone opens the slider
+// halfway and leaves it there. It waits only long enough for the new page to be seen on its own.
+const BEFORE_AFTER_HINT_WAIT=700;
+let firstCompare=null;
 function reportHandoffSettled(container){
  if(container===$('#report-view'))warmReports();
  if(container!==$('#report-view')||!beforeAfter.item||beforeAfter.value||beforeAfter.drag||beforeAfter.hinted||beforeAfter.hinting)return;
- const reach=.3,out=.24,hold=.64,duration=2200,knob=$('#before-after').querySelector?.('.ba-knob');
  beforeAfter.hinting=true;
- if(knob?.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)knob.animate([{scale:'1'},{scale:'1.3',offset:.16},{scale:'.96',offset:.32},{scale:'1',offset:.44},{scale:'1'}],{duration:1100,delay:BEFORE_AFTER_HINT_WAIT,easing:'cubic-bezier(.33,1,.68,1)'});
- tweenBeforeAfter(0,duration,t=>{if(t>=1){beforeAfter.hinting=false;beforeAfter.hinted=true;}return t<out?reach*(1-(1-t/out)**3):t<hold?reach:reach*(1-((t-hold)/(1-hold))**2*(3-2*(t-hold)/(1-hold)));},BEFORE_AFTER_HINT_WAIT);
+ if(!matchMedia('(max-width: 640px)').matches){
+  const start=performance.now()+BEFORE_AFTER_HINT_WAIT;
+  const step=now=>{
+   firstCompare=null;if(!beforeAfter.hinting)return;
+   if(now<start){firstCompare=requestAnimationFrame(step);return;}
+   beforeAfter.hinting=false;beforeAfter.hinted=true;
+   if(introMode||comparing||view!=='dice')return;
+   comparison='plain';comparing=true;renderResult();updateURL();
+  };
+  firstCompare=requestAnimationFrame(step);return;
+ }
+ const knob=$('#before-after').querySelector?.('.ba-knob');
+ if(knob?.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)knob.animate([{scale:'1'},{scale:'1.25',offset:.3},{scale:'1'}],{duration:700,delay:BEFORE_AFTER_HINT_WAIT,easing:'cubic-bezier(.33,1,.68,1)'});
+ tweenBeforeAfter(0,800,t=>{if(t>=1){beforeAfter.hinting=false;beforeAfter.hinted=true;}return .5*(1-(1-t)**3);},BEFORE_AFTER_HINT_WAIT);
 }
 (()=>{
  const handle=$('#ba-handle'),box=$('#before-after');
@@ -488,7 +518,8 @@ function renderRail(){
   button.disabled=introMode&&n>1;
  }
  const refining=!introMode&&stage<4;
- const label=introMode?'Add randomness':stage===1?'Refine it':stage===2?'Refine again':stage===3?'One more pass':'Roll a new pair';
+ // Each pass pushes the same pair further: more distinct, not necessarily better, so the button says push.
+ const label=introMode?'Add randomness':stage===1?'Push it further':stage===2?'Push again':stage===3?'One more push':'Roll a new pair';
  $('#experiment-next').dataset.passes=String(introMode?0:stage-1);
  const cue=refining?'+'+stage:'→';
  $('#experiment-next').dataset.action=refining?'refine':'roll';
@@ -506,7 +537,8 @@ function renderResult(){
  const currentLabel=method==='newer'?'Newer model':method==='stronger'?'Stronger prompt':'Original prompt';
  const otherLabel=method==='newer'?'Earlier model':method==='stronger'?'Original prompt':'Stronger prompt';
  let entries=[{item:current,label:''}];
- if(comparing&&comparison==='plain')entries=[{item:currentBaseline().steps[stage-1],label:'No ingredients'},{item:current,label:'+ Two ingredients'}];
+ const pushes=['','','one push','two pushes','three pushes'][stage]||'',pairName=INGREDIENTS_A[a]+' × '+INGREDIENTS_B[b];
+ if(comparing&&comparison==='plain')entries=[{item:currentBaseline().steps[stage-1],label:stage>1?'No ingredients, after the same '+pushes:'No ingredients'},{item:current,label:stage>1?pairName+', after '+pushes:pairName}];
  if(comparing&&comparison==='other')entries=stage===1&&method!=='newer'?[{item:current,label:'Shared one-shot'}]:method==='original'?[{item:current,label:currentLabel},{item:other,label:otherLabel}]:[{item:other,label:otherLabel},{item:current,label:currentLabel}];
  if(introMode)entries=[{item:current,label:''}];
  container.classList.toggle('comparing',entries.length>1);document.documentElement.dataset.comparing=String(entries.length>1);
@@ -562,7 +594,7 @@ function render(sync=true){
   if(frame.dataset.file!==item.file){frame.srcdoc=item.html;frame.dataset.file=item.file;}
  });
  $('#atlas-ingredient').value=String(a);
- renderResult();if(sync)syncDice3D();updateURL();
+ renderResult();renderKeep();if(sync)syncDice3D();updateURL();
  const entering=previousJourney!==journey&&journey!=='original'&&view==='dice';
  // Beat order: the press, then the page or dice, then the timeline, then the next label.
  updatePointer(entering?900:paintedStep===null?500:760);
@@ -586,7 +618,7 @@ function chooseDieFace(index,value){
 // A carried die let go of: the face it shows on top is the choice, and the page changes when the dropped
 // die reaches it.
 function dropDie(index,value,release={}){
- settlePresentation();pointer.dieHintUsed=true;
+ settlePresentation();pointer.dieHintUsed=true;if(comparing&&!introMode)comparing=false;
  const introducing=introMode;introMode=false;ingredientsChosen=true;
  if(introducing){stage=1;comparing=false;}
  const values=[selected.a,selected.b];values[index]=value;
@@ -633,6 +665,36 @@ function takeUpcoming(index,current){
  const face=upcoming.faces[index];upcoming.faces[index]=null;
  return face!==null&&face!==current?face:nextIngredient(index,current);
 }
+// After the third push the flow ends on a choice, not an essay: every version of this pair laid out under
+// the page, from the plain one-shot to the third push. Choosing one shows it and marks it kept.
+const keep={pair:null,pick:null,built:''};
+function keepVersions(){return [{stage:0,label:'No dice',item:currentBaseline().steps[0]},...selected.steps.map((item,index)=>({stage:index+1,label:['Dice','+1','+2','+3'][index],item}))];}
+function renderKeep(){
+ const panel=$('#keep'),list=$('#keep-versions');
+ if(view==='dice'&&!introMode&&stage===4&&keep.pair!==selected.id){keep.pair=selected.id;keep.pick=null;}
+ const show=view==='dice'&&!introMode&&keep.pair===selected.id;
+ panel.hidden=!show;if(!show)return;
+ const key=selected.id+'|'+method;
+ if(keep.built!==key){
+  keep.built=key;list.replaceChildren();
+  for(const version of keepVersions()){
+   const button=document.createElement('button'),thumb=document.createElement('span'),frame=document.createElement('iframe'),name=document.createElement('span');
+   button.type='button';button.className='keep-version';button.dataset.stage=String(version.stage);
+   thumb.className='keep-thumb';frame.title=version.label;frame.setAttribute('sandbox','allow-scripts');frame.setAttribute('aria-hidden','true');frame.tabIndex=-1;frame.loading='lazy';frame.srcdoc=version.item.html;
+   name.className='keep-name';name.textContent=version.label;
+   thumb.append(frame);button.append(thumb,name);list.append(button);thumbnailObserver.observe?.(thumb);
+   button.addEventListener('click',()=>chooseKept(version.stage));
+  }
+ }
+ const showing=beforeAfter.value>=.99?0:stage;
+ for(const button of list.children){const at=Number(button.dataset.stage);button.setAttribute('aria-pressed',String(keep.pick===at));button.dataset.showing=String(at===showing);button.setAttribute('aria-label',(button.textContent||'')+(keep.pick===at?', kept':''));}
+}
+function chooseKept(value){
+ keep.pick=value;
+ if(value===0){if(comparing){comparing=false;renderResult();}tweenBeforeAfter(1);}
+ else{if(beforeAfter.value>=.99)paintBeforeAfter(0);setAttempt(value);}
+ renderKeep();updateURL();
+}
 function randomIndex(length){
  const values=new Uint32Array(1),limit=0x100000000-(0x100000000%length);do{crypto.getRandomValues(values)}while(values[0]>=limit);return values[0]%length;
 }
@@ -648,6 +710,8 @@ function roll(index,gesture=null,forced=null){
  // On the plain page the first die is the action: rolling it throws both, the second thrown in beside it.
  if(introMode&&index===1)return;
  settlePresentation();
+ // A die thrown at a side-by-side comparison returns to the single page, so it can strike the page again.
+ if(comparing&&!introMode&&(index===0||index===1))comparing=false;
  const introduce=introMode;introMode=false;ingredientsChosen=true;
  if(introduce){stage=1;comparing=false;}
  if(index===0||index===1)pointer.dieHintUsed=true;

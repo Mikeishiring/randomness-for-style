@@ -154,7 +154,7 @@ const rememberedPair=selected;
 nodes.get('#stage-1').click();assert.equal(introMode,false);assert.equal(selected,rememberedPair);assert.equal(stage,1);
 assert.equal(nodes.get('#story-title').textContent,'Now add randomness.');assert.equal(nodes.get('#reset').hidden,false);
 for(let next=2;next<=4;next++){
- assert.equal(nodes.get('#next-label').textContent,['','','Refine it','Refine again','One more pass'][next]);
+ assert.equal(nodes.get('#next-label').textContent,['','','Push it further','Push again','One more push'][next]);
  assert.equal(nodes.get('#next-cue').textContent,'+'+(next-1));
  nodes.get('#experiment-next').click();assert.equal(stage,next);assert.equal(selected,rememberedPair);
  assert.equal(nodes.get('#stage-'+next).attrs['aria-pressed'],'true');
@@ -165,7 +165,7 @@ const finishedPair=selected;nodes.get('#experiment-next').click();assert.equal(s
 const resetPair=selected;nodes.get('#reset').click();assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#story-title').textContent,'You just generated a report.');assert.equal(document.activeElement,nodes.get('#experiment-next'));
 assert.equal(nodes.get('#next-label').textContent,'Add randomness');
 // The first roll throws both dice: every saved page needs both ingredients, so the page changes at once.
-nodes.get('#experiment-next').click();assert.equal(introMode,false);assert.equal(stage,1);assert.deepEqual([...rollout.indices],[0,1]);assert.equal(nodes.get('#next-label').textContent,'Refine it');assert.equal(document.documentElement.dataset.journey,'ingredients');
+nodes.get('#experiment-next').click();assert.equal(introMode,false);assert.equal(stage,1);assert.deepEqual([...rollout.indices],[0,1]);assert.equal(nodes.get('#next-label').textContent,'Push it further');assert.equal(document.documentElement.dataset.journey,'ingredients');
 const firstPair=selected;roll(1);assert.equal(selected.a,firstPair.a);assert.notEqual(selected.b,firstPair.b,'rolling the second die changes the page again');assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);
 nodes.get('#stage-3').click();assert.equal(stage,3);
 const closedPair=selected;nodes.get('#stage-0').click();nodes.get('#stage-1').click();assert.equal(selected,closedPair);assert.equal(stage,1);
@@ -266,8 +266,13 @@ roll(1,null,[undefined,1]);assert.equal(promptLineState().b,'Disco');assert.equa
  assert.equal(panel.children[0].textContent,selected.steps[0].prompt);assert.equal(panel.children[0].addition,'Combine Weather and Disco into a distinct visual identity.','with the added line marked');
  line.click();assert.equal(panel.hidden,true);}
 setAttempt(2);assert.equal(pointerSpec().action,undefined,'a refinement card does not repeat the button it points at');
-setAttempt(2);assert.equal(pointerSpec().title,'Refined once.');
-setAttempt(4);assert.equal(pointerSpec().action.label,'Compare with no dice');
+setAttempt(2);assert.equal(pointerSpec().title,'Pushed once.');assert.ok(pointerSpec().sub.includes('not always better'),'pushing is about distinct, not better');
+setAttempt(4);assert.equal(pointerSpec(),null,'the last step asks its question on the page');
+{const panel=nodes.get('#keep'),list=nodes.get('#keep-versions');assert.equal(panel.hidden,false,'which would you keep?');
+ assert.equal(list.children.map(button=>button.children[1].textContent).join(','),'No dice,Dice,+1,+2,+3','every version is laid out');
+ assert.equal(list.children[4].children[0].children[0].srcdoc,selected.steps[3].html);
+ list.children[2].click();assert.equal(stage,2,'choosing a version shows it');assert.equal(list.children[2].attrs['aria-pressed'],'true','and marks it kept');assert.equal(panel.hidden,false,'the choice stays in view');
+ roll(0,null,[5]);assert.equal(panel.hidden,true,'a new pair starts a new journey');}
 showBrief();assert.equal(pointerSpec().title,'Fresh start.');assert.equal(promptLineState(),null,'a fresh start has no added line');
 }`,context);
 console.log('PASS: after a roll nothing floats beside the action: one line above the page is the exact sentence the dice added to the prompt, the changed die marked, and it opens the whole prompt with that line marked; each pass is said back without repeating the button, and the last card carries Compare.');
@@ -291,20 +296,22 @@ vm.runInContext(`{
  assert.equal(before()[0].querySelector('iframe').srcdoc,original().html);
  render();assert.equal(handle.attrs['aria-valuenow'],'50');assert.equal(before().length,1);
  comparing=true;renderResult();assert.equal(box.hidden,true,'side-by-side comparison replaces the slider');assert.equal(before().length,0);comparing=false;renderResult();assert.equal(before().length,1);
- // The knob shows itself once, only after a change has landed and had time to be seen; a change cancels it
- // on the spot, so nothing slides while the page changes, and it tries again once the next page lands.
+ // The first page that lands is put beside the original at once (after a beat to see it alone): wide screens
+ // open the side-by-side comparison, labelled with the same data; a change before then cancels it, and it
+ // happens only once.
  {key('Home');beforeAfter.hinted=false;let clock=0;const frames=[];
   globalThis.performance={now:()=>clock};globalThis.requestAnimationFrame=fn=>frames.push(fn);globalThis.cancelAnimationFrame=id=>{frames[id-1]=null;};
   const tick=at=>{clock=at;const queued=frames.splice(0);queued.forEach(fn=>fn?.(at));};
   const view=nodes.get('#report-view');
   reportHandoffSettled(view);assert.equal(beforeAfter.hinting,true);
-  tick(BEFORE_AFTER_HINT_WAIT-50);assert.equal(handle.attrs['aria-valuenow'],'0','the new page is left alone first');
-  setAttempt(3);assert.equal(beforeAfter.hinting,false);assert.equal(frames.filter(Boolean).length,0,'a change cancels a waiting hint');assert.equal(beforeAfter.hinted,false,'unseen, it waits for the next page');
-  clock=10000;reportHandoffSettled(view);tick(10000+BEFORE_AFTER_HINT_WAIT+600);assert.ok(Number(handle.attrs['aria-valuenow'])>0,'then the knob pulls the original across');
-  setAttempt(2);assert.equal(handle.attrs['aria-valuenow'],'0','a change puts a moving hint away at once');assert.equal(frames.filter(Boolean).length,0,'and nothing is left to slide');
-  assert.equal(beforeAfter.hinted,true,'seen once is enough');reportHandoffSettled(view);assert.equal(beforeAfter.hinting,false,'it never hints again');
-  beforeAfter.hinted=false;clock=20000;reportHandoffSettled(view);tick(20000+BEFORE_AFTER_HINT_WAIT+600);tick(20000+BEFORE_AFTER_HINT_WAIT+5000);
-  assert.equal(beforeAfter.hinted,true);assert.equal(handle.attrs['aria-valuenow'],'0','a hint left to finish returns home');
+  tick(BEFORE_AFTER_HINT_WAIT-50);assert.equal(comparing,false,'the new page is seen on its own first');
+  setAttempt(3);assert.equal(beforeAfter.hinting,false);assert.equal(frames.filter(Boolean).length,0,'a change cancels it');assert.equal(beforeAfter.hinted,false,'unseen, it waits for the next page');
+  clock=10000;reportHandoffSettled(view);tick(10000+BEFORE_AFTER_HINT_WAIT+50);assert.equal(comparing,true,'then before and after sit side by side');
+  const labels=view.children.filter(child=>child.tagName==='section'&&!child.hidden).map(section=>section.children.find(child=>child.tagName==='h3'));
+  assert.ok(labels.length===2&&labels.every(label=>label.children.some(child=>child.className==='same-data'&&child.textContent==='Same data')),'both reports say the data is the same');
+  assert.ok(labels.some(label=>label.textContent==='No ingredients, after the same two pushes'),'the baseline says it had the same pushes');
+  assert.equal(beforeAfter.hinted,true);reportHandoffSettled(view);assert.equal(beforeAfter.hinting,false,'it happens once');
+  roll(0,null,[1]);assert.equal(comparing,false,'throwing a die goes back to the single page it can strike');
   delete globalThis.requestAnimationFrame;delete globalThis.cancelAnimationFrame;delete globalThis.performance;}
  // Just after a roll the action waits quietly; once nothing is moving it steps forward, and refining brings it back at once.
  {let clock=0;const frames=[];globalThis.performance={now:()=>clock};globalThis.requestAnimationFrame=fn=>frames.push(fn);globalThis.cancelAnimationFrame=id=>{frames[id-1]=null;};
@@ -325,4 +332,4 @@ vm.runInContext(`{
  body.hidden=true;toggle.attrs['aria-expanded']='false';
  toggle.click();assert.equal(toggle.attrs['aria-expanded'],'true');assert.equal(body.hidden,false);
  toggle.click();assert.equal(toggle.attrs['aria-expanded'],'false');assert.equal(body.hidden,true);}
-console.log('PASS: the before/after slider is there from the first roll, always compares with the original, follows keys and taps, keeps its place through refinements, rolls and re-renders, hints once only after a change has landed and never while one is under way, steps aside for side-by-side comparison and goes away on a fresh start; the action waits quietly after a roll until everything is still; the gallery folds open and closed; only the first real roll is celebrated.');
+console.log('PASS: the before/after slider is there from the first roll, always compares with the original, follows keys and taps, keeps its place through refinements, rolls and re-renders, puts the first landed page beside the original once, labelled same data, and never while a change is under way, steps aside for side-by-side comparison and goes away on a fresh start; the action waits quietly after a roll until everything is still; the gallery folds open and closed; only the first real roll is celebrated.');

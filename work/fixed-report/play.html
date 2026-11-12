@@ -33,8 +33,9 @@
     <span id="dice-gesture-help" class="sr-only">Click or press Enter to roll. Drag slowly to choose the upper face; release quickly to throw. Arrow keys turn the die. Escape cancels a drag.</span>
    </section>
    <section id="dice-lab" class="result" aria-labelledby="pair-title"><h2 id="pair-title" class="sr-only" tabindex="-1"></h2><p id="prompt-row" class="prompt-row" data-empty="true"><button type="button" id="prompt-line" class="prompt-line" aria-expanded="false" aria-controls="prompt-full"></button><span id="prompt-full" class="prompt-full" role="region" aria-label="The whole prompt" hidden></span></p>
-    <div id="report-view" data-passes="0"><span class="version-stack" aria-hidden="true"><i></i><i></i><i></i></span><span class="report-sweep" aria-hidden="true"></span><div id="before-after" class="before-after" hidden><span class="ba-tag" aria-hidden="true"><b>Before</b></span><span class="ba-line" aria-hidden="true"></span><button type="button" id="ba-handle" class="ba-knob" role="slider" aria-label="Show the original report" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Current page"><svg viewBox="0 0 22 12" aria-hidden="true"><path d="M6.5 1.5 2 6l4.5 4.5"/><path d="M15.5 1.5 20 6l-4.5 4.5"/></svg></button></div></div>
+    <div id="report-view" data-passes="0"><span class="version-stack" aria-hidden="true"><i></i><i></i><i></i></span><span class="report-sweep" aria-hidden="true"></span><div id="before-after" class="before-after" hidden><span class="ba-tag" aria-hidden="true"><b>Before</b></span><span class="ba-same same-data" aria-hidden="true">Same data</span><span class="ba-line" aria-hidden="true"></span><button type="button" id="ba-handle" class="ba-knob" role="slider" aria-label="Show the original report" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Current page"><svg viewBox="0 0 22 12" aria-hidden="true"><path d="M6.5 1.5 2 6l4.5 4.5"/><path d="M15.5 1.5 20 6l-4.5 4.5"/></svg></button></div></div>
    </section>
+   <div id="dock" class="dock">
    <div id="stage-bar" class="stage-bar">
     <button type="button" id="reset" class="reset" aria-label="Start over with no ingredients"><span aria-hidden="true">↺</span> Reset</button>
     <button type="button" id="experiment-next" class="experiment-next" data-action="roll"><span id="next-label">Add randomness</span><span id="next-cue" class="next-cue" aria-hidden="true">→</span><span class="next-pips" aria-hidden="true"><i></i><i></i><i></i></span></button>
@@ -50,6 +51,8 @@
      <span id="rail-marker" class="rail-marker" aria-hidden="true"></span>
     </div>
    </nav>
+   <section id="keep" class="keep" aria-labelledby="keep-title" hidden><h2 id="keep-title" class="keep-title">Which would you keep?</h2><div id="keep-versions" class="keep-versions" role="group" aria-labelledby="keep-title"></div></section>
+   </div>
    <section id="plain-controls" class="controls plain-controls" aria-label="Plain prompt and refinement" hidden>
     <select id="plain-method" class="comparison-target" aria-label="Plain recorded run"><option value="original">Original prompt</option><option value="stronger" selected>Stronger prompt</option><option value="newer">Newer model</option></select>
     <div class="refinement"><div class="attempt-stepper" role="group" aria-label="Refinement"><button id="plain-attempt-prev" type="button" aria-label="Previous attempt" aria-controls="plain-report" disabled>−</button><output id="plain-attempt-label" aria-live="polite">One-shot</output><button id="plain-attempt-next" type="button" aria-label="Refine more" aria-controls="plain-report">+</button></div><p id="plain-attempt-note" hidden>Kept the previous attempt. See critique.</p></div>
