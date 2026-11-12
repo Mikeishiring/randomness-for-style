@@ -86,6 +86,6 @@ The protocol files document the generation method and its limitations. To repeat
 
 `npm test` checks report and prompt integrity, all 36 combinations and their stages, dice geometry, gestures, the guided path, disclosures and bundled JavaScript. `npm run check:security` scans tracked or staged files for credential patterns, local paths and forbidden account/configuration files. CI runs a checksum-pinned Gitleaks scan across the repository history, rebuilds the public files and checks for differences.
 
-Deploy `site` as the Vercel project root; `site/vercel.json` serves `dist` without a build command. The existing public site is deployed separately; pushing this repository does not change its deployment connection.
+Vercel's GitHub connection deploys from the repository root: the root `vercel.json` serves the committed `site/dist` without a build command, so every branch gets a preview and a push to the project's production branch publishes `site/dist` as it is committed. Deploying `site` as the project root works the same way through `site/vercel.json`.
 
 Local credentials, service account state, working notes and deployment logs are excluded from version control. Some untouched generated reports overflow their own frames on small screens; the viewer adapts to mobile widths.
