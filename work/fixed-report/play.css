@@ -2,10 +2,6 @@
 :root{--ink:#1d261e;--accent:#c2432a;--mono:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace;--serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;--sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--ease-out:cubic-bezier(.23,1,.32,1)}
 body{font-family:var(--sans);overflow-x:clip}
 .shell{max-width:1560px;padding:0 32px 24px}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:64px;border-bottom:1px solid var(--line)}
-.brand{font:600 15px/1.2 var(--sans);letter-spacing:-.2px}
-.topbar-actions{display:flex;align-items:center;gap:18px}
-.topbar-link{font-size:13px;color:var(--muted);text-decoration:none;min-height:40px;display:flex;align-items:center}
 .demo-toggle{display:inline-flex;align-items:center;gap:9px;min-height:36px;padding:0 14px 0 12px;border:1px solid #cfd0c3;border-radius:999px;background:transparent;color:var(--ink);font:500 13px var(--sans);transition:background 150ms ease-out,border-color 150ms ease-out}
 .demo-glyph{width:8px;height:9px;background:currentColor;clip-path:polygon(0 0,100% 50%,0 100%);transition:clip-path 160ms var(--ease-out),background 160ms ease-out}
 .demo-toggle[aria-pressed=true] .demo-glyph{clip-path:polygon(0 0,100% 0,100% 100%,0 100%);background:var(--accent);width:8px;height:8px;border-radius:1px}
@@ -18,7 +14,7 @@ body{font-family:var(--sans);overflow-x:clip}
 .workbench{position:relative;display:grid;grid-template-columns:minmax(210px,1fr) minmax(0,860px) minmax(210px,1fr);grid-template-areas:"left report right" "dock dock dock" ". keep .";column-gap:24px;row-gap:20px;align-items:center}
 /* The report is shown whole and the page scrolls through it: the dice stay beside it, and the action and the
    steps stay docked at the bottom of the window, over a fade of the paper. */
-[data-view=dice] .workbench>.die-deck .die,[data-view=dice] .die{align-self:start;position:sticky;top:18px}
+[data-view=dice] .die{align-self:start;position:sticky;top:18px}
 .dock{grid-area:dock;display:grid;grid-template-columns:subgrid;grid-template-areas:"reset bar compare" ". steps .";row-gap:14px;align-items:center;position:sticky;bottom:0;z-index:15;margin:-6px 0 0;padding:22px 0 10px;background:linear-gradient(to top,var(--paper) 78%,#f5f3ec00)}
 .frame-section.report-before,.frame-section.report-outgoing{overflow:hidden}
 #report-view .report-before .report-frame{height:100%!important}
@@ -93,19 +89,15 @@ body{font-family:var(--sans);overflow-x:clip}
 .next-cue{display:grid;place-items:center;flex:none;min-width:46px;height:40px;padding:0 10px;border-radius:8px;background:#00000026;color:#fff;font:650 15px/1 var(--mono);font-variant-numeric:tabular-nums}
 .experiment-next[data-action=roll] .next-cue{font:400 21px/1 var(--sans)}
 /* Refining shows passes as three pips: done, the one this press makes, and what is left. */
-.next-pips{display:none;gap:7px;padding:0 6px}.next-pips i{width:12px;height:12px;border-radius:50%;border:2px solid #ffffffa6;box-sizing:border-box;transition:background 200ms ease-out,border-color 200ms ease-out,transform 260ms var(--ease-out)}
-.experiment-next[data-action=refine] .next-cue{display:none}.experiment-next[data-action=refine] .next-pips{display:flex}
-.experiment-next[data-passes='1'] .next-pips i:nth-child(-n+1),.experiment-next[data-passes='2'] .next-pips i:nth-child(-n+2){background:#fff;border-color:#fff}
-.experiment-next[data-passes='0'] .next-pips i:nth-child(1),.experiment-next[data-passes='1'] .next-pips i:nth-child(2),.experiment-next[data-passes='2'] .next-pips i:nth-child(3){border-color:#fff;transform:scale(1.15)}
+
+.experiment-next[data-action=refine] .next-cue{display:none}
 .experiment-next.is-demo-hover{background:#d14c31}
 /* Just after a roll the dice and the page have the stage: the action waits, quiet but usable, then steps
    forward once everything has come to rest. */
 .experiment-next[data-quiet]{background:#fffdf8;color:#5f665c;box-shadow:inset 0 0 0 1.5px #d6d0c1,0 2px 0 #e2dccd;transition:background 480ms ease-out,box-shadow 480ms ease-out,transform 180ms var(--ease-out)}
 /* The label carries its own colour, so leaving the quiet state never strands it in grey. */
 #next-label,#next-cue{color:#fff}.experiment-next[data-quiet] #next-label,.experiment-next[data-quiet] #next-cue{color:#5f665c}
-.experiment-next[data-quiet] .next-pips i{border-color:#c4bdad!important;background:none!important}
-.experiment-next[data-quiet] .next-pips i:after{display:none}
-@media(hover:hover) and (pointer:fine){.experiment-next[data-quiet]:hover #next-label{color:#fff}.experiment-next[data-quiet]:hover{background:var(--accent);color:#fff;box-shadow:0 6px 0 #8c2a16,0 20px 30px -14px #8c2a16cc}.experiment-next[data-quiet]:hover .next-pips i{border-color:#fff!important}}
+@media(hover:hover) and (pointer:fine){.experiment-next[data-quiet]:hover #next-label{color:#fff}.experiment-next[data-quiet]:hover{background:var(--accent);color:#fff;box-shadow:0 6px 0 #8c2a16,0 20px 30px -14px #8c2a16cc}}
 .page-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:8px;padding:14px 0;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
 .page-footer>a{font-size:12px;color:var(--muted);text-decoration:none}
 .experiment-tools{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:4px}
@@ -289,7 +281,7 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 @media(hover:hover) and (pointer:fine){
  .die-object:hover .cube-face{border-color:currentColor}
  .matrix-cell:hover{border-color:var(--accent)}.matrix-cell:hover .matrix-select{background:#e9ecdf}
- summary:hover,.return-to-dice:hover,.topbar-link:hover{color:var(--ink)}
+ summary:hover,.return-to-dice:hover{color:var(--ink)}
  .rail-stops button:not(:disabled):not([aria-pressed=true]):hover:before{border-color:var(--accent);transform:scale(1.18)}
  .demo-toggle:hover{background:#f7e3db;border-color:#e6b9aa;color:#a8361f}
  #compare:not([aria-pressed=true]):not(:disabled):hover{border-color:var(--accent);color:#a8361f;background:#f7e3db}
@@ -310,7 +302,6 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 /* Narrow: the dice sit side by side above the action, the report below. */
 @media(max-width:860px){
  .shell{padding:0 16px 16px}
- .topbar{flex-wrap:wrap;gap:6px 16px;padding:10px 0 12px}
  .chapters{order:3;width:100%}.rail-stops button{flex:1;padding:0 4px;min-width:0}.rail-stops button:nth-child(3){margin-left:6px}
  .demo-toggle{min-height:34px;padding:0 12px 0 10px}
  .story{padding:24px 4px 12px}#story-title{font-size:30px}#story-text{font-size:14px;margin-top:6px}
@@ -339,8 +330,8 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 }
 
 @media(max-width:560px){.report-frame{height:520px}.matrix{gap:12px}.matrix-select{font-size:12px;gap:5px;padding:10px;min-height:48px}.notes pre{font-size:11px}}
-@media(max-width:400px){.atlas>header{display:block}#atlas-ingredient{display:block;width:100%;max-width:none;margin-top:12px}.topbar-link{display:none}}
-@media(prefers-reduced-motion:reduce){.die-call{animation:none}.pointer-card,.next-pips i{transition:none}.experiment-next:after{display:none}.reset span,.experiment-next .next-cue{transition:none}.version-stack i{transition:none}html{scroll-behavior:auto}.die-grip{transform:none!important;transition:none!important}.matrix-cell,.rail-stops button,.rail-marker,.experiment-next,.reset,.experiment-tools>button,.report-frame,.demo-arrow,.demo-touch,.demo-glyph{transition:none!important}}
+@media(max-width:400px){.atlas>header{display:block}#atlas-ingredient{display:block;width:100%;max-width:none;margin-top:12px}}
+@media(prefers-reduced-motion:reduce){.die-call{animation:none}.pointer-card{transition:none}.experiment-next:after{display:none}.reset span,.experiment-next .next-cue{transition:none}.version-stack i{transition:none}html{scroll-behavior:auto}.die-grip{transform:none!important;transition:none!important}.matrix-cell,.rail-stops button,.rail-marker,.experiment-next,.reset,.experiment-tools>button,.report-frame,.demo-arrow,.demo-touch,.demo-glyph{transition:none!important}}
 
 /* Before and after: a round knob on the page's left edge; dragging it wipes the original back in from the left. */
 .before-after{position:absolute;inset:0;z-index:5;pointer-events:none;--ba:0}
@@ -388,11 +379,8 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 .burst-chip{width:8px;height:12px;border-radius:2px}
 
 /* The refine button's next pip breathes now and then; the pip a pass has just filled pops. */
-.experiment-next[data-action=refine] .next-pips i{position:relative}
-.experiment-next[data-action=refine][data-passes='0'] .next-pips i:nth-child(1):after,.experiment-next[data-action=refine][data-passes='1'] .next-pips i:nth-child(2):after,.experiment-next[data-action=refine][data-passes='2'] .next-pips i:nth-child(3):after{content:'';position:absolute;inset:-4px;border-radius:50%;border:1.5px solid #fff;opacity:0;animation:pip-breathe 4.2s ease-out 1.8s infinite}
-@keyframes pip-breathe{0%,70%,100%{opacity:0;transform:scale(.7)}76%{opacity:.75}92%{opacity:0;transform:scale(1.35)}}
+
 @media(hover:hover) and (pointer:fine){
- .experiment-next[data-action=refine]:hover[data-passes='0'] .next-pips i:nth-child(1),.experiment-next[data-action=refine]:hover[data-passes='1'] .next-pips i:nth-child(2),.experiment-next[data-action=refine]:hover[data-passes='2'] .next-pips i:nth-child(3){transform:scale(1.35);background:#ffffff59}
  /* Gallery: hovering a pairing lifts the card and scrolls its preview a little, as if peeking further down the page. */
  .matrix-cell{transition:border-color 120ms ease-out,translate 220ms var(--ease-out),box-shadow 220ms ease-out}
  .matrix-cell:hover{translate:0 -3px;box-shadow:0 14px 26px -18px #1d261e80}
@@ -401,7 +389,7 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 }
 
 @media(prefers-reduced-motion:reduce){
- .die[data-waiting] .die-object .die-grip,.die[data-waiting] .die-object .die-shadow,.die-call,.experiment-next .next-pips i:after{animation:none!important}
+ .die[data-waiting] .die-object .die-grip,.die[data-waiting] .die-object .die-shadow,.die-call{animation:none!important}
  .die-object[data-hover] .die-grip{transform:none}
  .matrix-cell,.matrix-preview iframe,.ba-line,.ba-tag,.ba-knob,.die-ground,.die-shadow{transition:none!important}
  .matrix-cell:hover,.matrix-cell:hover .matrix-preview iframe{translate:none}
@@ -489,4 +477,4 @@ footer{justify-content:flex-end;align-items:center;margin-top:0;padding-top:12px
 @media(prefers-reduced-motion:reduce){.keep-version{transition:none}}
 
 /* The step track below already shows progress, so the action carries no second set of dots. */
-.experiment-next[data-action] .next-pips{display:none}
+

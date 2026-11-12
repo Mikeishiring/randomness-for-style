@@ -4,8 +4,8 @@ import vm from 'node:vm';
 
 const root=new URL('../../',import.meta.url);
 const source=readFileSync(new URL('outputs/index.html',root),'utf8');
-// Earlier studies stay local. The public page includes the complete current experiment.
-const html=source.replace(/\s*<footer><a href="previous-experiment\.html">[\s\S]*?<\/footer>/,'');
+// The public page is the complete current experiment, with no links to earlier studies.
+const html=source;
 const script=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)][0][1];
 const payload=script.slice(0,script.indexOf('// All six ingredients'));
 const context=vm.createContext({});
