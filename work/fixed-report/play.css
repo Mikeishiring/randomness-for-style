@@ -86,6 +86,12 @@ body{font-family:var(--sans);overflow-x:clip}
 .experiment-next[data-passes='1'] .next-pips i:nth-child(-n+1),.experiment-next[data-passes='2'] .next-pips i:nth-child(-n+2){background:#fff;border-color:#fff}
 .experiment-next[data-passes='0'] .next-pips i:nth-child(1),.experiment-next[data-passes='1'] .next-pips i:nth-child(2),.experiment-next[data-passes='2'] .next-pips i:nth-child(3){border-color:#fff;transform:scale(1.15)}
 .experiment-next.is-demo-hover{background:#d14c31}
+/* Just after a roll the dice and the page have the stage: the action waits, quiet but usable, then steps
+   forward once everything has come to rest. */
+.experiment-next[data-quiet]{background:#fffdf8;color:#5f665c;box-shadow:inset 0 0 0 1.5px #d6d0c1,0 2px 0 #e2dccd;transition:background 480ms ease-out,color 480ms ease-out,box-shadow 480ms ease-out,transform 180ms var(--ease-out)}
+.experiment-next[data-quiet] .next-pips i{border-color:#c4bdad!important;background:none!important}
+.experiment-next[data-quiet] .next-pips i:after{display:none}
+@media(hover:hover) and (pointer:fine){.experiment-next[data-quiet]:hover{background:var(--accent);color:#fff;box-shadow:0 6px 0 #8c2a16,0 20px 30px -14px #8c2a16cc}.experiment-next[data-quiet]:hover .next-pips i{border-color:#fff!important}}
 .page-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:8px;padding:14px 0;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
 .page-footer>a{font-size:12px;color:var(--muted);text-decoration:none}
 .experiment-tools{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:4px}

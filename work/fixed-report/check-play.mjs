@@ -306,6 +306,14 @@ vm.runInContext(`{
   beforeAfter.hinted=false;clock=20000;reportHandoffSettled(view);tick(20000+BEFORE_AFTER_HINT_WAIT+600);tick(20000+BEFORE_AFTER_HINT_WAIT+5000);
   assert.equal(beforeAfter.hinted,true);assert.equal(handle.attrs['aria-valuenow'],'0','a hint left to finish returns home');
   delete globalThis.requestAnimationFrame;delete globalThis.cancelAnimationFrame;delete globalThis.performance;}
+ // Just after a roll the action waits quietly; once nothing is moving it steps forward, and refining brings it back at once.
+ {let clock=0;const frames=[];globalThis.performance={now:()=>clock};globalThis.requestAnimationFrame=fn=>frames.push(fn);globalThis.cancelAnimationFrame=id=>{frames[id-1]=null;};
+  const tick=at=>{clock=at;const queued=frames.splice(0);queued.forEach(fn=>fn?.(at));},button=nodes.get('#experiment-next');
+  roll(0);assert.equal(button.dataset.quiet,'true','just after a roll the action waits quietly');
+  tick(100);tick(100+REFINE_CALM-50);assert.equal(button.dataset.quiet,'true');
+  tick(100+REFINE_CALM+50);assert.equal(button.dataset.quiet,undefined,'once everything is still it steps forward');
+  roll(1);assert.equal(button.dataset.quiet,'true');setAttempt(2);assert.equal(button.dataset.quiet,undefined,'refining brings it back at once');
+  delete globalThis.requestAnimationFrame;delete globalThis.cancelAnimationFrame;delete globalThis.performance;}
  changeFrom(nodes.get('#reset'),showBrief);assert.equal(box.hidden,true,'nothing to compare before the dice');assert.equal(handle.attrs['aria-valuenow'],'0','a fresh start puts the slider away');
  // Only a visitor's first roll is celebrated; the demo's authored rolls never are.
  firstRollCelebrated=false;const demoRoll={},first={},second={};
@@ -317,4 +325,4 @@ vm.runInContext(`{
  body.hidden=true;toggle.attrs['aria-expanded']='false';
  toggle.click();assert.equal(toggle.attrs['aria-expanded'],'true');assert.equal(body.hidden,false);
  toggle.click();assert.equal(toggle.attrs['aria-expanded'],'false');assert.equal(body.hidden,true);}
-console.log('PASS: the before/after slider is there from the first roll, always compares with the original, follows keys and taps, keeps its place through refinements, rolls and re-renders, hints once only after a change has landed and never while one is under way, steps aside for side-by-side comparison and goes away on a fresh start; the gallery folds open and closed; only the first real roll is celebrated.');
+console.log('PASS: the before/after slider is there from the first roll, always compares with the original, follows keys and taps, keeps its place through refinements, rolls and re-renders, hints once only after a change has landed and never while one is under way, steps aside for side-by-side comparison and goes away on a fresh start; the action waits quietly after a roll until everything is still; the gallery folds open and closed; only the first real roll is celebrated.');

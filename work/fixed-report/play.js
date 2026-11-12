@@ -226,7 +226,7 @@ window.addEventListener('resize',()=>updatePointer());
 // An ingredient's name carries a face slug, so it can be set in the type that ingredient brings.
 function setDieCall(index){const label=$('#ingredient-'+(index?'b':'a'));label.textContent='';label.dataset.face='call';}
 function setIngredientLabel(index,name){const label=$('#ingredient-'+(index?'b':'a'));label.textContent=name;label.dataset.face=name.toLowerCase().replace(/[^a-z]+/g,'-');}
-function showBrief(){if(introMode)return;settlePresentation();cancelDiceRoll();introMode=true;lastEvent={kind:'reset'};stage=1;comparing=false;render();}
+function showBrief(){if(introMode)return;settlePresentation();promoteRefine(false);cancelDiceRoll();introMode=true;lastEvent={kind:'reset'};stage=1;comparing=false;render();}
 // A visitor's first roll of the visit is celebrated once; the demo's authored rolls never count.
 let firstRollCelebrated=false;
 function celebrateFirstRoll(impact,forced){if(forced!=null||firstRollCelebrated)return;firstRollCelebrated=true;impact.celebrate=true;}
@@ -244,6 +244,29 @@ function pageSideOf(control){
 // A change made from a control (a step on the rail, Reset) reprints the page from that control's side.
 function changeFrom(control,run){
  const impact=reportImpactFor(run);aimReportImpact(impact,[pageSideOf(control)]);landReportImpact(impact);
+}
+// Right after a roll the dice and the new page have the stage. The action waits, quiet but usable, and steps
+// forward once everything has come to rest: no die moving, no page changing, no before/after hint playing.
+const REFINE_CALM=1000;
+let refineCalm=null;
+function quietRefine(){
+ const button=$('#experiment-next');
+ if(typeof requestAnimationFrame!=='function'||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches){promoteRefine(false);return;}
+ button.dataset.quiet='true';
+ if(refineCalm)cancelAnimationFrame(refineCalm);
+ let still=null;
+ const check=now=>{
+  const busy=(typeof dieStates!=='undefined'&&dieStates.some(state=>state.running))||(typeof reportHandoffs!=='undefined'&&reportHandoffs.has($('#report-view')))||beforeAfter.hinting||!!beforeAfter.drag;
+  still=busy?null:still??now;
+  if(still!==null&&now-still>REFINE_CALM){refineCalm=null;promoteRefine();return;}
+  refineCalm=requestAnimationFrame(check);
+ };
+ refineCalm=requestAnimationFrame(check);
+}
+function promoteRefine(sheen=true){
+ if(refineCalm&&typeof cancelAnimationFrame==="function"){cancelAnimationFrame(refineCalm);refineCalm=null;}
+ const button=$('#experiment-next');if(button.dataset.quiet!=='true')return;
+ delete button.dataset.quiet;if(sheen&&!introMode)sheenNextButton();
 }
 function sheenNextButton(){const button=$('#experiment-next');button.classList.toggle('is-firing',false);void button.offsetWidth;button.classList.toggle('is-firing',true);}
 // Rolling from the button: it sinks, springs up past its rest and settles; the dice do the rest.
@@ -572,6 +595,7 @@ function dropDie(index,value,release={}){
  const impact=reportImpactFor(()=>render(false));celebrateFirstRoll(impact,null);
  tumbleDice([index],values,()=>{syncDice3D();},{...release,drop:true,guided:true},impact);
  landLabels([index],LABEL_LAND.roll);
+ quietRefine();
 }
 // The gallery stays folded until it is wanted; opening it settles in from just above.
 $('#atlas-toggle').addEventListener('click',()=>{
@@ -639,6 +663,7 @@ function roll(index,gesture=null,forced=null){
  const impact=reportImpactFor(()=>render(false));celebrateFirstRoll(impact,forced);
  tumbleDice(indices,values,()=>{syncDice3D();},gesture||(introduce?DICE_THROW.enter:null),impact);
  landLabels(indices,introduce?LABEL_LAND.enter:LABEL_LAND.roll);
+ quietRefine();
 }
 async function copyText(text,pre,status){
  try{await navigator.clipboard.writeText(text);status.textContent='Copied.';}catch{pre.hidden=false;pre.textContent=text;const details=pre.closest?.('details');if(details)details.open=true;const range=document.createRange();range.selectNodeContents(pre);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);status.textContent='Text selected. Press Ctrl+C or use Copy.';}
@@ -651,7 +676,7 @@ $('#method-stronger').addEventListener('click',()=>changeMethod('stronger'));
 $('#method-newer').addEventListener('click',()=>changeMethod('newer'));
 $('#model-toggle').addEventListener('click',()=>changeMethod(method==='newer'?promptTrack:'newer'));
 $('#plain-method').addEventListener('change',event=>changeMethod(event.target.value==='newer'?'newer':event.target.value==='original'?'original':'stronger'));
-function setAttempt(value){if(introMode)return;settlePresentation();lastEvent=null;const next=Math.round(Number(value));if(selected.steps[next-1]){stage=next;render(false);}}
+function setAttempt(value){if(introMode)return;settlePresentation();promoteRefine(false);lastEvent=null;const next=Math.round(Number(value));if(selected.steps[next-1]){stage=next;render(false);}}
 $('#stage-0').addEventListener('click',()=>changeFrom($('#stage-0'),showBrief));
 for(let value=1;value<=4;value++)$('#stage-'+value).addEventListener('click',()=>{
  if(introMode){if(value===1)showIngredients();}
