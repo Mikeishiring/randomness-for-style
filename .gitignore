@@ -5,6 +5,7 @@
 !/README.md
 !/tweet-thread.md
 !/package.json
+!/vercel.json
 !/scripts/
 /scripts/*
 !/scripts/build.mjs
