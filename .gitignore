@@ -50,6 +50,9 @@
 !/work/fixed-report/check-dice-interaction.mjs
 !/work/fixed-report/check-prompt-peek.mjs
 !/work/fixed-report/check-report-handoff.mjs
+!/work/fixed-report/curation.json
+!/work/fixed-report/CURATION.md
+!/work/fixed-report/check-curation.mjs
 !/work/raw-astra/
 /work/raw-astra/*
 !/work/raw-astra/prompts.mjs

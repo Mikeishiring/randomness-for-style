@@ -1,0 +1,574 @@
+{
+ "original": {
+  "0-0": {
+   "pick": 1,
+   "reason": "same clarity, more voice",
+   "note": "Later passes only swapped the headline and source captions for plainer ones and dropped the ‘From the depths, a signal’ sign-off, trading voice for no gain in clarity."
+  },
+  "0-1": {
+   "pick": 2,
+   "reason": "keeps the Sunday spotlight",
+   "note": "+1 gave the wordmark more weight and kept the pink Sunday bar, which +2 recoloured to match the rest, removing the chart’s one disco accent, and +3 repeated it."
+  },
+  "0-2": {
+   "pick": 3,
+   "reason": "signboard plus receipt",
+   "note": "+1 turned the daily table into a till receipt, +2 added the green signboard masthead that completes the diner, and +3 is identical to it."
+  },
+  "0-3": {
+   "pick": 3,
+   "reason": "proscenium plus spotlight",
+   "note": "+1 found the proscenium arch but dropped the gold Sunday spotlight, +2 restored it on the chart and table, and +3 only shortened the headline."
+  },
+  "0-4": {
+   "pick": 1,
+   "reason": "keeps the brass accent",
+   "note": "+1 and +2 renamed the ledger sections to stock labels and turned the brass Sunday bar green, so the hotel faded while the 10px table headers stayed small."
+  },
+  "0-5": {
+   "pick": 2,
+   "reason": "sharper specimen idea",
+   "note": "+1 made the moth a Cthulhu specimen (the Abyssal Cabinet, C. abyssalis) at the cost of the small source bars, and +2 and +3 only relabelled columns."
+  },
+  "1-0": {
+   "pick": 2,
+   "reason": "circuit-temple emblem",
+   "note": "+1 drew the temple from circuit traces and added each source’s share, losing only the dark Sunday bar, and +2 and +3 changed spacing alone."
+  },
+  "1-1": {
+   "pick": 2,
+   "reason": "lyre and mirror ball",
+   "note": "+1 strung a disco ball inside Apollo’s lyre, while +2 moved the source bars under the visit figures, where they compare less cleanly, and +3 barely changed."
+  },
+  "1-2": {
+   "pick": 2,
+   "reason": "pediment menu board",
+   "note": "+2 traded the pediment over the totals and the awning trim for a Greek-key border, which reads as ornament rather than structure, and +3 repeated it."
+  },
+  "1-3": {
+   "pick": 2,
+   "reason": "programme-card masthead",
+   "note": "+1 framed Orpheus as a printed programme and dropped the act labels that restated the theme, while +2 moved the source bars under the figures and +3 repeated it."
+  },
+  "1-4": {
+   "pick": 2,
+   "reason": "Ariadne’s thread",
+   "note": "+1 recast Olympus as Ariadne with ‘Follow the week’ and a thread motif, and +2 swapped that line for a gold ‘Week 01’, cutting the tie for a small contrast gain."
+  },
+  "1-5": {
+   "pick": 2,
+   "reason": "pinned specimen bars",
+   "note": "+1 pinned each bar like a specimen and cleared most faint captions, then +2 pulled the pins out, leaving a plain chart, and +3 repeated it."
+  },
+  "2-0": {
+   "pick": 3,
+   "reason": "clearest instrument chart",
+   "note": "+1 put the trend on a dark weather-station screen, +2 tightened the callout to Sunday’s figures and lifted most 10px labels, and +3 is identical to it."
+  },
+  "2-1": {
+   "pick": 1,
+   "reason": "Sunday mirror-ball bar",
+   "note": "+1 tiled every bar like a mirror ball, which flattens the Sunday emphasis, and added 10px axis ticks, while +2 only redrew the cloud icon."
+  },
+  "2-2": {
+   "pick": 2,
+   "reason": "receipt-style sources",
+   "note": "+1 cut the extra boxes and set the sources as a monospace till receipt, while +2 only renamed the Social callout and tinted Sunday’s small figures just under 4:1."
+  },
+  "2-3": {
+   "pick": 2,
+   "reason": "arched stage chart",
+   "note": "+1 set the chart inside an arched stage with a crimson Sunday and fixed the faint day labels, and +2 and +3 only reworded captions and shaded the Sunday row."
+  },
+  "2-4": {
+   "pick": 1,
+   "reason": "keeps the source bars",
+   "note": "+1 dropped the source bars and added a third chart toggle the brief did not ask for, and +2 only made the chart caption follow the toggle."
+  },
+  "2-5": {
+   "pick": 3,
+   "reason": "full-width field chart",
+   "note": "+1 swapped the bars for a field-record line and specimen-label source cards but cramped the chart, +2 gave both the full width, and +3 is identical to it."
+  },
+  "3-0": {
+   "pick": 3,
+   "reason": "form codes with bars",
+   "note": "+1 coded the totals as form fields A, B and B/A but dropped the source bars, +2 put small bars back under the sign-up counts, and +3 is identical to it."
+  },
+  "3-1": {
+   "pick": 1,
+   "reason": "Sunday mirror-ball bar",
+   "note": "+1 tiled every bar like a mirror ball, which flattens the Sunday emphasis, and dropped the source bars, and +2 and +3 are identical to it."
+  },
+  "3-2": {
+   "pick": 3,
+   "reason": "form grid, aligned figures",
+   "note": "+1 set the daily chart inside a service-return form grid but dropped the source bars, +2 switched every figure to tabular numerals, and +3 is identical to it."
+  },
+  "3-3": {
+   "pick": 1,
+   "reason": "the performance pun",
+   "note": "+1 swapped ‘The week’s performance’ for ‘Website performance’, moved the source bars under the figures and added act numerals, and +2 and +3 only relabelled the baseline."
+  },
+  "3-4": {
+   "pick": 1,
+   "reason": "brass source bars",
+   "note": "+1 inked the brass source bars dark and added bar-scale captions, making the register more exact but less hotel, and +2 and +3 only retitled the masthead."
+  },
+  "3-5": {
+   "pick": 2,
+   "reason": "specimen-card charts",
+   "note": "+1 mounted both daily charts and the beetle on specimen cards and cleared the faint captions, while +2 moved the source bars under the figures and +3 barely changed."
+  },
+  "4-0": {
+   "pick": 1,
+   "reason": "cleanest floor, more voice",
+   "note": "+1 swapped the lime ‘At pace’ headline for a plain title and added 10px axis ticks, +2 moved the source bars under the visit figures, and +3 is identical to it."
+  },
+  "4-1": {
+   "pick": 2,
+   "reason": "finding in race terms",
+   "note": "+1 made the headline the finding (‘Sunday set the pace’) at the cost of the small source bars, and +2 only restacked the daily table full width."
+  },
+  "4-2": {
+   "pick": 3,
+   "reason": "clearest hierarchy",
+   "note": "+1 added the yellow pit-board header and chequered rule, +2 gave the chart and sources the full width with a burger in the flag logo, and +3 is identical to it."
+  },
+  "4-3": {
+   "pick": 1,
+   "reason": "chequered finale bar",
+   "note": "+1 curved the red banner into a curtain but dropped the chequered cap from the Sunday bar, the one mark linking finish line and finale, and +2 only renamed labels."
+  },
+  "4-4": {
+   "pick": 1,
+   "reason": "already complete",
+   "note": "+1 only set the totals in timing-screen monospace and dropped the title, while +2 and +3 squeezed the source bars under their figures and spread the page out."
+  },
+  "4-5": {
+   "pick": 3,
+   "reason": "specimen box, linked Sunday",
+   "note": "+1 framed the moth as a pinned specimen and tagged the sources, +2 linked the orange Sunday bar to a marked Sunday row, and +3 is identical to it."
+  },
+  "5-0": {
+   "pick": 1,
+   "reason": "keeps the source bars",
+   "note": "+1 added faint sonar rings and colour-keyed headers but removed the source bars, and +2 and +3 only changed header case."
+  },
+  "5-1": {
+   "pick": 3,
+   "reason": "jellyfish mirror ball",
+   "note": "+1 grew tentacles on the mirror ball but dropped the source bars and overflowed the page width, +2 fixed the overflow and keyed the sign-up total to the chart, and +3 is identical to it."
+  },
+  "5-2": {
+   "pick": 2,
+   "reason": "monospace receipt card",
+   "note": "+1 set the takeaway as a serrated monospace receipt, while +2 moved the source bars under the visit figures, where they compare less cleanly, and +3 repeated it."
+  },
+  "5-3": {
+   "pick": 1,
+   "reason": "arched bars",
+   "note": "+1 squared off the arched, bell-shaped bars and moved the source bars under the figures, keeping only a jellyfish logo, and +2 and +3 only enlarged the chart."
+  },
+  "5-4": {
+   "pick": 1,
+   "reason": "later passes add nothing",
+   "note": "Later passes only swapped the headline and section names for plainer ones, added faint ripple rings and coloured two column headers, none of which changes how the page reads."
+  },
+  "5-5": {
+   "pick": 2,
+   "reason": "specimen label tags",
+   "note": "+1 set the source names on cream specimen tags, the clearest collection cue on the page, and +2 and +3 are identical to it."
+  }
+ },
+ "stronger": {
+  "0-0": {
+   "pick": 1,
+   "reason": "readable glanceable bars",
+   "note": "+1 added a tall circuit-idol sidebar but swapped the vertical bars for horizontal ones with 10px table headers, and +2 and +3 mirrored visits against signups at 9–10px."
+  },
+  "0-1": {
+   "pick": 2,
+   "reason": "keeps the source share bars",
+   "note": "+1 found the tiled dance-floor bars and script wordmark, +2 centred the octopus disco ball under an arch but deleted the share bars under each source, and +3 repeated it."
+  },
+  "0-2": {
+   "pick": 2,
+   "reason": "menu board and receipt",
+   "note": "+1 built the dark menu board and the torn daily receipt, while +2 only added golden arches over the totals and a bigger mascot, and +3 moved the logo."
+  },
+  "0-3": {
+   "pick": 3,
+   "reason": "tentacle proscenium",
+   "note": "+2 framed the totals in a tentacle-curled proscenium with the gold Sunday bar intact, but +3 replaced the bar chart with thin underlines inside the daily table."
+  },
+  "0-4": {
+   "pick": 2,
+   "reason": "crest and arched doorway",
+   "note": "+2 turned the vertical bars into rules inside the daily table and flattened the arched sources doorway into a plain dark band, and +3 only renamed headings."
+  },
+  "0-5": {
+   "pick": 3,
+   "reason": "insect-pin bars",
+   "note": "+2 made each day a pinned specimen bar beside its figures, replacing +1's plate labels on every box, while +3 restated the pins on the source rates at 9px."
+  },
+  "1-0": {
+   "pick": 3,
+   "reason": "Ariadne thread chart",
+   "note": "The one-shot and +1 were plain dashboards with a temple icon, while +3 crammed the totals into a side column and shrank the thread chart that +2 introduced."
+  },
+  "1-1": {
+   "pick": 2,
+   "reason": "pediment over column bars",
+   "note": "+2 lifted the pediment off the chart into the masthead and turned the capped columns into plain lit tiles on a dark ground, and +3 only added dotted source bars."
+  },
+  "1-2": {
+   "pick": 2,
+   "reason": "pediment menu board",
+   "note": "+2 added a Zeus-and-burger icon to the pediment and fluted the bars, ornament on an idea already complete, and +3 only trimmed the headings."
+  },
+  "1-3": {
+   "pick": 2,
+   "reason": "lyre on the curtain",
+   "note": "+2 shrank the lyre to a small mark above a centred playbill title and dropped the wine-red curtain band, and +3 repeated it unchanged."
+  },
+  "1-4": {
+   "pick": 3,
+   "reason": "pediment letterhead, wider chart",
+   "note": "+1 had the same pediment letterhead but squeezed the chart beside a narrow sources column, and +3 swapped the pediment for a small boxed lightning crest."
+  },
+  "1-5": {
+   "pick": 2,
+   "reason": "pediment specimen plate",
+   "note": "+2 dropped the pediment from around the butterfly and swapped the hatched engraving bars for ruled stripes over a figure grid, and +3 kept that change."
+  },
+  "2-0": {
+   "pick": 2,
+   "reason": "observation log voice",
+   "note": "+1 turned the sky-tinted app into a ruled monospace observation log, while +2 only swapped in a monospace headline and a duplicate source table, and +3 squeezed the source bars into it."
+  },
+  "2-1": {
+   "pick": 3,
+   "reason": "mirror-ball forecast line",
+   "note": "+1 had lime tiled bars that carried only the disco half, and +3 kept the mirror-ball line but shrank the bold condensed headline into a small serif line beside the totals."
+  },
+  "2-2": {
+   "pick": 2,
+   "reason": "forecast board and receipt",
+   "note": "+2 swapped the yellow-Sunday bars for a thin line and put the header on a red band where the Sunday note fell to 3.5:1, and +3 only rewrote the copy around 314 of 624."
+  },
+  "2-3": {
+   "pick": 2,
+   "reason": "programme with domed chart",
+   "note": "+2 dropped the domed bar chart for a line in a plain box beside a red title card, and +3 kept that and clipped Sunday’s 2,100 label at the chart edge."
+  },
+  "2-4": {
+   "pick": 3,
+   "reason": "seven-day forecast board",
+   "note": "+1 introduced the dark forecast board but its Sunday column fell off the panel edge, and +3 only pulled the source table into the same dark panel."
+  },
+  "2-5": {
+   "pick": 1,
+   "reason": "glanceable bars, one emblem",
+   "note": "+1 swapped the bars for a faint line and gave every source its own insect icon and specimen number, and +2 and +3 added a signups line and kept the icons."
+  },
+  "3-0": {
+   "pick": 2,
+   "reason": "form grid, vertical bars",
+   "note": "+1 tightened the one-shot’s form into a ruled grid with 10px headers fixed, while +2 moved the days into horizontal bars inside a ledger and +3 did the same to the sources."
+  },
+  "3-1": {
+   "pick": 1,
+   "reason": "keeps the Sunday dance tile",
+   "note": "+1 blew the title up into a purple banner with a vinyl icon but tiled every bar, losing the single Sunday tile, and +2 and +3 folded the banner into a form row."
+  },
+  "3-2": {
+   "pick": 1,
+   "reason": "keeps the vertical bars",
+   "note": "+1 turned the daily bars into pale fills inside a table under a red price band, and +2 and +3 thinned them to underlines beside a red sidebar at 10px and then 9px."
+  },
+  "3-3": {
+   "pick": 3,
+   "reason": "acts in the form margin",
+   "note": "+1 introduced the Act I and Act II margin but set its labels at 2–3:1 contrast, +2 fixed that and named each act’s lead, and +3 only retitled the header."
+  },
+  "3-4": {
+   "pick": 1,
+   "reason": "readable monogram register",
+   "note": "+1 added a dark green letterhead and a labelled form grid but doubled the 10px captions to 16, and +3 squeezed the daily register into a narrow cramped column."
+  },
+  "3-5": {
+   "pick": 1,
+   "reason": "glanceable paired bar charts",
+   "note": "+1 boxed the beetle as a catalogue label but moved the days into horizontal bars with 10px specimen numbers, and +2 and +3 split the sources into cards with rate gauges."
+  },
+  "4-0": {
+   "pick": 1,
+   "reason": "glanceable lime bars",
+   "note": "+1 replaced the lime bar chart with thin telemetry tracks inside a table, +2 squeezed them beside a sidebar at 9px, and +3 turned every figure into gauge strips."
+  },
+  "4-1": {
+   "pick": 3,
+   "reason": "neon and racing masthead",
+   "note": "+1 found the LED segment bars but set both masthead words in the same racing italic, and +3 only pulled the neon NIGHT and italic CIRCUIT onto one line."
+  },
+  "4-2": {
+   "pick": 2,
+   "reason": "livery band, keeps bars",
+   "note": "+1 added the oval Pit Stop decal and the red and mustard livery band over the bars, while +2 and +3 swapped the bar chart for underlines inside a dark table."
+  },
+  "4-3": {
+   "pick": 3,
+   "reason": "timing sheet, clean type",
+   "note": "+2 is the first version with no text under 11px and still charts the week as timing-sheet bars with a crimson Sunday, though it gives up the one-shot’s chequered Sunday cap; +3 only set the totals in monospace."
+  },
+  "4-4": {
+   "pick": 1,
+   "reason": "cleanest readable briefing",
+   "note": "+1 added a large race-number sidebar but set a dozen labels at 10px, and +2 and +3 moved the totals into that sidebar without fixing the small type."
+  },
+  "4-5": {
+   "pick": 4,
+   "reason": "beetle racer, one bar column",
+   "note": "+1 and +2 split the week into seven separate specimen drawers over two rows, hiding the trend, and +3 restored a single bar column while keeping the numbered beetle."
+  },
+  "5-0": {
+   "pick": 3,
+   "reason": "glowing lure points",
+   "note": "The one-shot used plain teal gradient bars and +1 faded them into glowing shafts with a hidden base, while +3 rendered identically to +2’s lure points."
+  },
+  "5-1": {
+   "pick": 2,
+   "reason": "glowing dance-floor bars",
+   "note": "+2 swapped the lit tiles for dotted light grids but set the table headers at 10px, and +3 laid those dots sideways inside the daily table."
+  },
+  "5-2": {
+   "pick": 2,
+   "reason": "full daily receipt",
+   "note": "+2 squeezed the receipt into a narrow side column with 16 labels at 10px, and +3 moved it back below at full length but kept nine labels under 11px."
+  },
+  "5-3": {
+   "pick": 1,
+   "reason": "glowing arched bars",
+   "note": "+1 faded the bars into dim light shafts under a faint arch outline, +2 replaced them with a thin line chart, and +3 only renamed the headline."
+  },
+  "5-4": {
+   "pick": 2,
+   "reason": "glowing columns, cream sidebar",
+   "note": "+2 moved the cream panel into a header band and thinned the glowing columns into faint stems, and +3 set ten labels at 10px."
+  },
+  "5-5": {
+   "pick": 3,
+   "reason": "specimen labels under glow",
+   "note": "+1 found the cream specimen labels under each glowing bar but set them at 9px, +2 brought them to 11px, and +3 only restacked the sources into rows."
+  }
+ },
+ "newer": {
+  "0-0": {
+   "pick": 2,
+   "reason": "mirrored surface chart",
+   "note": "+1 folded the two daily charts into one with signups sinking below a surface line and a conversion row, while +2 only swapped the source bars for dots on thin tracks and +3 added a single header."
+  },
+  "0-1": {
+   "pick": 2,
+   "reason": "lit dance-floor baseline",
+   "note": "+1 traded the gold Sunday bar for a lit dance-floor baseline and lifted the 10px daily rates to readable size, while +2's faint spotlight beams and +3's gold conversion figure add nothing."
+  },
+  "0-2": {
+   "pick": 2,
+   "reason": "suckered tentacle bars",
+   "note": "+1 gave the drive-thru chart a sea line, suckers on the signup tentacles and a lit Sunday column, while +2 squeezed 9.5px daily rates under the tentacles and +3 repeated it."
+  },
+  "0-3": {
+   "pick": 1,
+   "reason": "cleanest two-act programme",
+   "note": "Later passes added a wave line and 10px daily rates, shrank the source signups to slivers on a shared scale, then tucked them inside the visits bars, none of it clearer than the one-shot's programme."
+  },
+  "0-4": {
+   "pick": 3,
+   "reason": "proper source table",
+   "note": "+2 turned the source rows into a headed table with aligned columns, after +1 brought in the corner tentacle and visit shares, and +3 only underlined each daily rate in gold."
+  },
+  "0-5": {
+   "pick": 1,
+   "reason": "pinned-specimen bars",
+   "note": "+1 only added catalogue numbers and curled rule ends, +2 put a specimen drawing on every source card and circled the Sunday pins, and +3 carried the pin into the peak card."
+  },
+  "1-0": {
+   "pick": 1,
+   "reason": "aligned source table",
+   "note": "+1 set the figures in monospace for a faint tech voice but dropped the gridlines, knocked the source headers out of line and added 9px god names, and +2 and +3 only lightened labels."
+  },
+  "1-1": {
+   "pick": 1,
+   "reason": "mirror-ball temple",
+   "note": "+1 fluted the bars into columns but flattened the disco-gradient title to gold and added 9px axis ranges and conversion tracks, which +2 and +3 only turned into dots."
+  },
+  "1-2": {
+   "pick": 1,
+   "reason": "temple-burger masthead",
+   "note": "+1 swapped the god badges for italic taglines and a “the summit” label, +2 repeated it, and +3 shrank the big temple-burger mark into a small badge."
+  },
+  "1-3": {
+   "pick": 2,
+   "reason": "notes on the staff",
+   "note": "+1 added the lyre crest and gave the signup dots stems so the line reads as notes on a staff, while +2 and +3 rendered it again with no visible change."
+  },
+  "1-4": {
+   "pick": 1,
+   "reason": "columns on hotel stationery",
+   "note": "+1 swapped the signup bars for conversion bars and the diamond rule for a laurel, a sideways move, and +2 and +3 only added small gold markers."
+  },
+  "1-5": {
+   "pick": 1,
+   "reason": "god-named specimen cards",
+   "note": "Later passes repeated the day labels under the signup pins, added a 9px scale caption and Greek-key rules, and moved the conversion row between the charts, none of it clearer."
+  },
+  "2-0": {
+   "pick": 2,
+   "reason": "conversion beside forecast icons",
+   "note": "+1 set each day’s conversion beside its weather icon and turned the icon key into a scale, while +2 and +3 only restyled that scale and added a hidden data table."
+  },
+  "2-1": {
+   "pick": 1,
+   "reason": "cleanest disco forecast",
+   "note": "+1 added 9px “Overcast” to “Full disco” captions and dropped Sunday’s gold outline and the signup units, +2 added a week-high card, and +3 only renamed it."
+  },
+  "2-2": {
+   "pick": 2,
+   "reason": "explains the weather icons",
+   "note": "+1 put each day’s conversion beside its weather icon so the forecast finally means something, while +2 and +3 only added a small sun to the conversion total."
+  },
+  "2-3": {
+   "pick": 3,
+   "reason": "chart on a curtained stage",
+   "note": "+2 hung the curtain over the daily chart so the week plays on a stage, after +1 had only put it at the page top, and +3 just added weather icons to each source row."
+  },
+  "2-4": {
+   "pick": 2,
+   "reason": "clearer source header",
+   "note": "+1 shaded the weekend columns and renamed the cryptic Sky column to Conversion, and +2 and +3 rendered identically, so the shared 8.5px labels stay unfixed."
+  },
+  "2-5": {
+   "pick": 3,
+   "reason": "adds the daily rate row",
+   "note": "+2 added the missing daily signup-rate row and gridlines to the plate, after +1 lifted the weather icons into a strip above the bars, and +3 rendered identically."
+  },
+  "3-0": {
+   "pick": 3,
+   "reason": "tractor-feed green-bar printout",
+   "note": "+2 put the form on tractor-feed green-bar paper, building on +1’s ticked printer bars and arrows, and +3 only inked the signup bars black, losing their red."
+  },
+  "3-1": {
+   "pick": 2,
+   "reason": "dance-floor tile bars",
+   "note": "+1 tiled the bars into a lit dance floor and hung signups below the day line, while +2 moved the daily rates beside the day names in low-contrast pink and +3 rendered identically."
+  },
+  "3-2": {
+   "pick": 1,
+   "reason": "cleanest declaration form",
+   "note": "+1 moved the totals onto a receipt, a good idea spoiled by the stamp printed over the 12,480 visits figure, and +2 and +3 kept the collision while adding 8px axis ticks."
+  },
+  "3-3": {
+   "pick": 1,
+   "reason": "cleanest programme form",
+   "note": "+1 enlarged the bar figures but clipped its new “Signups per visit” row label at the left edge, and +2 and +3 kept the clip while adding an Overture heading and a total row."
+  },
+  "3-4": {
+   "pick": 2,
+   "reason": "service-bell crest",
+   "note": "+1 swapped the W·01 seal for a service-bell crest and dropped the confusing scaled-conversion underlines, while +2 added axis ticks that collide with the Monday label and +3 kept them."
+  },
+  "3-5": {
+   "pick": 2,
+   "reason": "pinned bars and inked Sunday",
+   "note": "+1 drove visible pins through the bar tops and ringed Sunday in red ink, while +2 only moved the card pins into the insects and +3 ringed one more figure."
+  },
+  "4-0": {
+   "pick": 2,
+   "reason": "purple fastest-lap Sunday",
+   "note": "+1 marked Sunday in timing-screen purple and added a conversion row under the telemetry, while +2 only added zero ticks and +3 recoloured the stat-card edges."
+  },
+  "4-1": {
+   "pick": 2,
+   "reason": "chequered mirror ball",
+   "note": "+1 chequered the mirror ball and Sunday’s bar tops and lined the source figures into columns, while +2 only flipped signups below the day line and +3 added thin conversion bars."
+  },
+  "4-2": {
+   "pick": 1,
+   "reason": "mustard-and-ketchup kerbing",
+   "note": "+1 laid chequered start lines under the bars and signup slivers in the sources, +2 boxed the week number and added a 9px week rate, and none fixed the clipped Signups label."
+  },
+  "4-3": {
+   "pick": 1,
+   "reason": "velvet and chequer programme",
+   "note": "+1 added a daily conversion row but scattered tiny chequered glyphs beside the source rates, +2 only renamed the heading Finishing order, and +3 hung a chequered strip off Sunday."
+  },
+  "4-4": {
+   "pick": 2,
+   "reason": "timing-sheet layout",
+   "note": "+1 recast the generic bar and line charts as a racing timing sheet with a grid-slot badge, and +2 only widened the bars and added a chequered footer that +3 repeated."
+  },
+  "4-5": {
+   "pick": 1,
+   "reason": "cleanest specimen plates",
+   "note": "+1 pinned beetles to the signup stems and added a dark conversion timing board with 10px day labels, +2 added an All sources row, and +3 boxed the sources with share figures."
+  },
+  "5-0": {
+   "pick": 2,
+   "reason": "conversion photophores",
+   "note": "+1 lit each day’s conversion as a growing photophore but sank source signups to slivers inside the visits tubes, +2 rendered identically, and +3 strung the photophores into a line."
+  },
+  "5-1": {
+   "pick": 1,
+   "reason": "cleanest neon chart",
+   "note": "Later passes only widened the bars, tiled colour into the mirror ball, brightened Sunday’s glow and slid pink signup slivers into the source bars, never finding a deep-sea idea."
+  },
+  "5-2": {
+   "pick": 1,
+   "reason": "neon-sign masthead",
+   "note": "Later passes striped the top of every card, added a signups-over-visits caption and swapped the source bars for share bars, decoration that leaves the glow dashboard as generic as before."
+  },
+  "5-3": {
+   "pick": 3,
+   "reason": "footlights under a spotlight",
+   "note": "+2 cleared the source figures that +1 had jammed against the conversion column and ran Sunday’s spotlight down through its footlight orb, keeping +1’s curtain, and +3 rendered the same."
+  },
+  "5-4": {
+   "pick": 3,
+   "reason": "adds the daily rate row",
+   "note": "+2 added a glowing daily signup-rate row and labelled each chart after +1 only dropped the legend, and +3 rendered identically, though no version gets past a generic teal dashboard."
+  },
+  "5-5": {
+   "pick": 2,
+   "reason": "source bars restored",
+   "note": "+1 drew the source bars the one-shot left empty, while +2 shrank the signup bars to slivers on the visits scale and +3 rendered identically, all keeping CONV jammed into Monday’s 4.0%."
+  }
+ },
+ "showcase": [
+  {
+   "pair": "5-3",
+   "reason": "bars lit as stage arches"
+  },
+  {
+   "pair": "3-1",
+   "reason": "mirror ball on a government form"
+  },
+  {
+   "pair": "4-3",
+   "reason": "chequered flag on the final act"
+  },
+  {
+   "pair": "4-1",
+   "reason": "night race under a mirror ball"
+  },
+  {
+   "pair": "3-2",
+   "reason": "fast-food counter run as a department"
+  },
+  {
+   "pair": "2-2",
+   "reason": "a burger sun on the forecast"
+  }
+ ]
+}

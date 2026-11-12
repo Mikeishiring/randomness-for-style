@@ -10,6 +10,7 @@ const checks = [
   'work/fixed-report/check-prompt-peek.mjs',
   'work/fixed-report/check-report-handoff.mjs',
   'work/fixed-report/check-sound.mjs',
+  'work/fixed-report/check-curation.mjs',
   'scripts/security.mjs'
 ];
 for (const file of checks) execFileSync(process.execPath, [file], {stdio: 'inherit'});
