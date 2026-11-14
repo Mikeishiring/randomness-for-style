@@ -24,9 +24,14 @@ const matrixButtons=new Map();
 const matrixCells=new Map();
 const promptPeeks=[$('#prompt'),$('#plain-prompt-details')].map(bindPromptPeek);
 let ingredientsChosen=!introMode,paintedStep=null;
-// The first roll is taken one die at a time. `half`: the first die has been thrown and its ingredient named; the
-// page is still the plain one and the second die waits to be thrown. `introB` is the face that die will land on.
-let half=false,introB=null;
+// The page shows one pass of the experiment. By default that is the third refinement, with and without the
+// ingredients, and the passes themselves stay out of the way; About the experiment can bring them back.
+const SHOWN=4;
+let passes=params.get('passes')==='1';
+document.documentElement.dataset.passes=String(passes);
+function plainItem(){const steps=currentBaseline().steps;return steps[passes?0:Math.min(SHOWN,steps.length)-1];}
+// After the first throw the second die comes in at rest, already showing its ingredient, and waits to be thrown.
+let secondWaits=false;
 // The action, the step dots, Compare and Reset arrive after the first result has been seen, not with it. `ready`
 // latches for the visit. Nothing here runs on a clock: the controls come when the first reveal has played out,
 // or at once when the visitor does anything else first, or when there is no reveal to wait for.
@@ -84,8 +89,8 @@ function showStory(){
 // The slide spans the tumble's flight and bounces, so each die stops spinning as it arrives.
 const DICE_THROW={first:{direction:1,strength:.5},enter:[{direction:1,strength:.8},{direction:-1,strength:.8}],exit:[{direction:-1,strength:.55},{direction:1,strength:.55}]};
 const LABEL_LAND={roll:250,enter:330};
-// The second die comes in once the first has landed, not while it is still in the air.
-const SECOND_DIE_WAIT=900;
+// The second die comes in beside the page as the first one changes it.
+const SECOND_DIE_WAIT=250;
 let diceStageAnimations=[];
 const labelAnimations=new Map();
 function landLabels(indices,delay){
@@ -134,14 +139,17 @@ function pointerSpec(){
 }
 // The die waiting to be thrown carries a floating tag: the first says how, the second only that it is next.
 function updateDieCall(){
- const chip=$('#die-call'),index=view==='dice'&&introMode&&!comparing?(half?1:0):-1,stageBox=document.querySelector('.workbench');
+ const chip=$('#die-call'),index=view!=='dice'||comparing?-1:introMode?0:secondWaits?1:-1,stageBox=document.querySelector('.workbench');
  if(index<0||!stageBox?.getBoundingClientRect){chip.hidden=true;document.querySelectorAll('.die').forEach(die=>die.removeAttribute?.('data-waiting'));return;}
  const column=document.querySelectorAll('.die')[index],object=column?.querySelector('.die-object');
  if(!column?.getBoundingClientRect||!object){chip.hidden=true;return;}
- const moved=chip.dataset.for!==String(index);
- chip.textContent=index?'Now throw me':'Pick me up and throw me';chip.dataset.for=String(index);chip.hidden=false;
  // The waiting die is lifted and put down now and then (CSS, with rests); the other stays still.
  document.querySelectorAll('.die').forEach((die,i)=>die.toggleAttribute?.('data-waiting',i===index));
+ // On narrow screens the dice are small by the time the second one waits, and a tag would cover its name:
+ // there the lift alone does the inviting.
+ if(index===1&&matchMedia('(max-width: 860px)').matches){chip.hidden=true;return;}
+ const moved=chip.dataset.for!==String(index);
+ chip.textContent=index?'Now throw me':'Pick me up and throw me';chip.dataset.for=String(index);chip.hidden=false;
  const box=stageBox.getBoundingClientRect(),rect=column.getBoundingClientRect(),objectBox=object.getBoundingClientRect(),size=column.querySelector('.cube')?.offsetWidth||100,own=chip.getBoundingClientRect();
  // Above the die on wide screens. On narrow ones the first tag waits beside its die, in the half the second
  // die will take, and the second sits under its own die.
@@ -202,8 +210,8 @@ const PUSH_TIMES=['','once','twice','three times'];
 function promptLineState(){
  if(view!=='dice')return null;
  // On the plain page the sentence is already there, with its two gaps: the dice are what fill them.
- if(introMode)return {pending:true,a:half?INGREDIENTS_A[selected.a]:null};
- const pushes=stage-1;
+ if(introMode)return {pending:true};
+ const pushes=passes?stage-1:0;
  return {a:INGREDIENTS_A[a],b:INGREDIENTS_B[b],changed:lastEvent?.kind==='swap'||lastEvent?.kind==='choose'?lastEvent.index:null,pushes,same:pushes>0&&selected.steps[stage-1].html===selected.steps[stage-2].html,ask:pushes>0?pushAsk():'',fresh:lastEvent?.kind==='pair'};
 }
 let promptLineKey='';
@@ -215,11 +223,11 @@ function renderPromptLine(){
  const part=(tag,content,className,flag)=>{const node=document.createElement(tag);node.textContent=content;if(className)node.className=className;if(flag)node.dataset[flag]='true';return node;};
  if(state.pending){
   const gap=()=>{const node=part('span','','prompt-gap');node.setAttribute('aria-hidden','true');return node;};
-  line.replaceChildren(part('span','Combine '),state.a?part('b',state.a,'','fill'):gap(),part('span',' and '),gap(),part('span',' into a distinct visual identity.'));
-  line.setAttribute('aria-label',state.a?`Combine ${state.a} and a second ingredient into a distinct visual identity. Throw the second die to choose it.`:'Combine two ingredients into a distinct visual identity. Throw the die to choose the first.');
+  line.replaceChildren(part('span','Combine '),gap(),part('span',' and '),gap(),part('span',' into a distinct visual identity.'));
+  line.setAttribute('aria-label','Combine two ingredients into a distinct visual identity. Throw the die to choose them.');
   return;
  }
- const parts=[part('span','Added to the prompt: ','prompt-line-label'),part('span','Combine '),part('b',state.a,'',state.changed===0?'changed':''),part('span',' and '),part('b',state.b,'',state.changed===1?'changed':state.fresh?'fill':''),part('span',' into a distinct visual identity.')];
+ const parts=[part('span','Added to the prompt: ','prompt-line-label'),part('span','Combine '),part('b',state.a,'',state.changed===0?'changed':state.fresh?'fill':''),part('span',' and '),part('b',state.b,'',state.changed===1?'changed':state.fresh?'fill':''),part('span',' into a distinct visual identity.')];
  // After a push, a second line says what was asked: the same sentence each time, so only the count changes.
  if(state.pushes>0){
   const push=part('span','','prompt-push');
@@ -250,7 +258,7 @@ window.addEventListener('resize',()=>updatePointer());
 // An ingredient's name carries a face slug, so it can be set in the type that ingredient brings.
 function setDieCall(index){const label=$('#ingredient-'+(index?'b':'a'));label.textContent='';label.dataset.face='call';}
 function setIngredientLabel(index,name){const label=$('#ingredient-'+(index?'b':'a'));label.textContent=name;label.dataset.face=name.toLowerCase().replace(/[^a-z]+/g,'-');}
-function showBrief(){if(introMode)return;settlePresentation();promoteRefine(false);cancelDiceRoll();introMode=true;half=false;introB=null;lastEvent={kind:'reset'};stage=1;comparing=false;render();}
+function showBrief(){if(introMode)return;settlePresentation();promoteRefine(false);cancelDiceRoll();introMode=true;secondWaits=false;lastEvent={kind:'reset'};stage=1;comparing=false;render();}
 // A visitor's first roll of the visit is celebrated once; the demo's authored rolls never count.
 let firstRollCelebrated=false;
 // The first roll of a visit is guided in: it lands on one of a few curated showcase pairs, where the one added
@@ -264,7 +272,7 @@ function introPair(){
 }
 function celebrateFirstRoll(impact,forced){if(forced!=null||firstRollCelebrated)return;firstRollCelebrated=true;impact.celebrate=true;}
 function showIngredients(){
- if(!ingredientsChosen||half){roll();return;}
+ if(!ingredientsChosen){roll();return;}
  settlePresentation();introMode=false;stage=1;markReady();render();
 }
 // Which edge of the page a control sits beyond: a change it causes starts from that edge.
@@ -336,6 +344,7 @@ function updateURL(){
  if(method==='newer')query.set('model','newer');else query.set('prompt',method);
  if(comparing)query.set('compare','1');
  if(comparison==='other')query.set('against','other');
+ if(passes)query.set('passes','1');
  if(introMode)query.set('start','original');
  try{history.replaceState(null,'',location.pathname+'?'+query);}catch{}
 }
@@ -421,7 +430,7 @@ function showReports(container,entries){
 const beforeAfter={value:0,item:null,section:null,tween:null,hinted:false,hinting:false,drag:null};
 function beforeItem(){
  if(view!=='dice'||introMode||comparing)return null;
- return currentBaseline().steps[0];
+ return plainItem();
 }
 function paintBeforeAfter(value){
  const box=$('#before-after'),handle=$('#ba-handle'),container=$('#report-view');
@@ -554,7 +563,7 @@ function renderRail(){
 function renderResult(){
  quietBeforeAfterHint();stopBeforeAfterTween();releaseBeforeSection();
  const container=$('#report-view');container.classList.toggle('comparing',comparing);
- const current=introMode?currentBaseline().steps[0]:selected.steps[stage-1];
+ const current=introMode?plainItem():selected.steps[stage-1];
  // "Other" is each track's one alternative: the earlier model's two prompts compare with each
  // other from a shared one-shot; the newer model compares with the earlier original-prompt run.
  const other=(method==='original'?STRONGER_EXPERIMENT:EXPERIMENT).runs.find(run=>run.id===selected.id).steps[stage-1];
@@ -562,7 +571,7 @@ function renderResult(){
  const otherLabel=method==='newer'?'Earlier model':method==='stronger'?'Original prompt':'Stronger prompt';
  let entries=[{item:current,label:''}];
  const pairName=INGREDIENTS_A[a]+' × '+INGREDIENTS_B[b];
- if(comparing&&comparison==='plain')entries=[{item:currentBaseline().steps[0],label:'No dice'},{item:current,label:stage>1?pairName+' \u00b7 +'+(stage-1):pairName}];
+ if(comparing&&comparison==='plain')entries=[{item:plainItem(),label:'No dice'},{item:current,label:passes&&stage>1?pairName+' \u00b7 +'+(stage-1):pairName}];
  if(comparing&&comparison==='other')entries=stage===1&&method!=='newer'?[{item:current,label:'Shared one-shot'}]:method==='original'?[{item:current,label:currentLabel},{item:other,label:otherLabel}]:[{item:other,label:otherLabel},{item:current,label:currentLabel}];
  if(introMode)entries=[{item:current,label:''}];
  container.classList.toggle('comparing',entries.length>1);document.documentElement.dataset.comparing=String(entries.length>1);
@@ -576,7 +585,7 @@ function renderResult(){
  $('#compare-target').hidden=introMode||!comparing;$('#compare-target').value=comparison;$('#compare-other').textContent=otherLabel;
  $('#view-plain').disabled=false;$('#view-plain').textContent='Refine brief alone →';
  $('#method-original').setAttribute('aria-pressed',String(method==='original'));$('#method-stronger').setAttribute('aria-pressed',String(method==='stronger'));$('#method-newer').setAttribute('aria-pressed',String(method==='newer'));
- $('#model-toggle').setAttribute('aria-pressed',String(method==='newer'));
+ $('#model-toggle').setAttribute('aria-pressed',String(method==='newer'));$('#passes-toggle')?.setAttribute('aria-pressed',String(passes));
  $('#method-note').hidden=stage!==1;
  $('#method-note').textContent=method==='newer'?'Same prompts, a newer model, its own one-shot.':'Both prompts start from this one-shot.';
  renderRail();
@@ -604,12 +613,12 @@ function buildMatrix(){
  }
 }
 function render(sync=true){
- a=selected.a;b=selected.b;stage=Math.min(stage,selected.steps.length);
+ a=selected.a;b=selected.b;if(!passes)stage=SHOWN;stage=Math.min(stage,selected.steps.length);
  const journey=introMode?'original':'ingredients',previousJourney=document.documentElement.dataset.journey;
  document.documentElement.dataset.journey=journey;$('#reset').hidden=journey==='original';
  // In the plain step the dice are away; they keep their last names so an exit never shows placeholder labels.
  // A die that is waiting to be rolled says so; a rolled die shows its ingredient in that ingredient's type.
- if(!introMode||half)setIngredientLabel(0,INGREDIENTS_A[a]);else setDieCall(0);
+ if(!introMode)setIngredientLabel(0,INGREDIENTS_A[a]);else setDieCall(0);
  if(!introMode)setIngredientLabel(1,INGREDIENTS_B[b]);else setDieCall(1);
  matrixButtons.forEach((button,id)=>{button.setAttribute('aria-pressed',String(!introMode&&id===selected.id));const run=currentExperiment().runs.find(item=>item.id===id);button.setAttribute('aria-label',run.label+' — '+attemptName(stage));});
  matrixCells.forEach((cell,id)=>{
@@ -624,30 +633,19 @@ function render(sync=true){
  updatePointer(entering?900:paintedStep===null?500:760);
  // The second die waits off the table until the first has been thrown. It slides in beside the page then, at
  // rest, for the visitor to throw, and rolls away again on a fresh start.
- const second=!introMode||half,hadSecond=document.documentElement.dataset.second;
+ const second=!introMode,hadSecond=document.documentElement.dataset.second;
  document.documentElement.dataset.second=String(second);
- if(hadSecond!==undefined&&hadSecond!==String(second)&&view==='dice')moveDice(second,[1],second&&introMode?SECOND_DIE_WAIT:0);
- $('#status').textContent=introMode?(half?INGREDIENTS_A[a]+'. Throw the second die to add another ingredient and change the page.':'The report with no ingredients. Throw the die to add the first.'):selected.label+'. '+attemptName(stage)+'.';
+ if(hadSecond!==undefined&&hadSecond!==String(second)&&view==='dice')moveDice(second,[1],second?SECOND_DIE_WAIT:0);
+ $('#status').textContent=introMode?'The report with no ingredients. Throw the die to add two.':selected.label+'. '+attemptName(stage)+'.';
 }
 function selectPair(run){settlePresentation();introMode=false;lastEvent={kind:'pick'};ingredientsChosen=true;cancelDiceRoll();selected=currentExperiment().runs.find(item=>item.id===run.id);render();}
-// The first die's throw on the plain page: its ingredient is named in the sentence, the page stays as it is, and
-// the second die comes in to be thrown.
-function nameFirstDie(value,second){
- if(!half)introB=second??introB??(upcoming.intro??introPair())[1];
- upcoming.intro=null;half=true;ingredientsChosen=true;pointer.dieHintUsed=true;
- selected=currentExperiment().runs.find(run=>run.a===value&&run.b===selected.b);lastEvent={kind:'first'};
- render(false);warmReports();
-}
 function chooseDieFace(index,value){
  settlePresentation();pointer.dieHintUsed=true;
- // On the plain page a chosen face is that die's throw: the first names its ingredient, the second changes the page.
- if(introMode&&index===0){nameFirstDie(value);settleDieGrab(index,true);syncDice3D();return;}
- if(introMode&&!half)return;
- const introducing=introMode;introMode=false;ingredientsChosen=true;half=false;introB=null;
- if(introducing){stage=1;comparing=false;}
+ const introducing=introMode;introMode=false;ingredientsChosen=true;
+ if(introducing){stage=1;comparing=false;secondWaits=true;}else if(index===1)secondWaits=false;
  const values=[selected.a,selected.b];values[index]=value;
  lastEvent=introducing?{kind:'pair'}:{kind:'choose',index,name:index?INGREDIENTS_B[value]:INGREDIENTS_A[value]};
- // A deliberate choice keeps the other face.
+ // A deliberate choice keeps the other face, even on the first interaction.
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  render(false);settleDieGrab(index,true);syncDice3D();awaitReady(!introducing);
 }
@@ -657,19 +655,15 @@ function dieShowsFace(index,value){return value===(index?selected.b:selected.a);
 // die reaches it.
 function dropDie(index,value,release={}){
  settlePresentation();pointer.dieHintUsed=true;if(comparing&&!introMode)comparing=false;
- if(introMode&&index===0){
-  nameFirstDie(value);
-  tumbleDice([0],[selected.a,selected.b],()=>{syncDice3D();},{...release,drop:true,guided:true},null);
-  landLabels([0],LABEL_LAND.roll);return;
- }
- if(introMode&&!half)return;
- const introducing=introMode;introMode=false;ingredientsChosen=true;half=false;introB=null;
- if(introducing){stage=1;comparing=false;}
+ const introducing=introMode;introMode=false;ingredientsChosen=true;
+ if(introducing){stage=1;comparing=false;secondWaits=true;}else if(index===1)secondWaits=false;
  const values=[selected.a,selected.b];values[index]=value;
  lastEvent=introducing?{kind:'pair'}:{kind:'choose',index,name:index?INGREDIENTS_B[value]:INGREDIENTS_A[value]};
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  const impact=reportImpactFor(()=>render(false));celebrateFirstRoll(impact,null);
  tumbleDice([index],values,()=>{syncDice3D();},{...release,drop:true,guided:true},impact);
+ // The second die is not thrown on the first roll: it arrives at rest with its face up.
+ if(introducing){syncDice3D();landLabels([1],SECOND_DIE_WAIT+LABEL_LAND.enter);}
  landLabels([index],LABEL_LAND.roll);
  awaitReady(!introducing);
  quietRefine();
@@ -692,9 +686,8 @@ function warmReports(){
   if(!cache||view!=='dice'||comparing)return;
   const runs=currentExperiment().runs,find=(a,b)=>runs.find(run=>run.a===a&&run.b===b),items=[];
   if(introMode){
-   // The page the second die will bring: the first die's face, once thrown, with the face drawn for the second.
-   if(half)items.push(find(selected.a,introB)?.steps[0]);
-   else{upcoming.intro??=introPair();items.push(find(...upcoming.intro)?.steps[0]);}
+   upcoming.intro??=introPair();
+   items.push(find(...upcoming.intro)?.steps[(passes?1:SHOWN)-1]);
   }else{
    if(stage<4)items.push(selected.steps[stage]);
    [0,1].forEach(i=>{
@@ -715,7 +708,7 @@ function takeUpcoming(index,current){
 // the page, from the plain one-shot to the third push. Choosing one shows it and marks it kept.
 const keep={pair:null,pick:null,built:''};
 // A version has been kept for the pair on screen: the pass is over, and the action offers the next pair.
-function pairKept(){return view==='dice'&&!introMode&&keep.pair===selected.id&&keep.pick!==null;}
+function pairKept(){return passes&&view==='dice'&&!introMode&&keep.pair===selected.id&&keep.pick!==null;}
 // The saved editorial pick for this pair on this track (1 = Dice … 4 = +3), with its reason.
 function editorPick(){const entry=(typeof CURATION!=='undefined'?CURATION.picks?.[method]:null)?.[selected.id];return entry&&Number.isInteger(entry.pick)?entry:null;}
 const KEEP_LABELS=['No dice','Dice','+1','+2','+3'];
@@ -723,7 +716,7 @@ function keepVersions(){return [{stage:0,label:'No dice',item:currentBaseline().
 function renderKeep(){
  const panel=$('#keep'),list=$('#keep-versions');
  if(view==='dice'&&!introMode&&stage===4&&keep.pair!==selected.id){keep.pair=selected.id;keep.pick=null;}
- const show=view==='dice'&&!introMode&&keep.pair===selected.id;
+ const show=passes&&view==='dice'&&!introMode&&keep.pair===selected.id;
  panel.hidden=!show;panel.dataset.picked=String(show&&keep.pick!==null);if(!show)return;
  const key=selected.id+'|'+method;
  if(keep.built!==key){
@@ -760,36 +753,29 @@ function nextIngredient(index,current){
  return bag.splice(position,1)[0];
 }
 function roll(index,gesture=null,forced=null){
- // On the plain page the dice are thrown one at a time. The first names an ingredient and brings the second die
- // in; the second changes the page. Until the first has been thrown there is no second die to roll.
- if(introMode&&index===1&&!half)return;
+ // On the plain page there is one die. Throwing it brings both ingredients, so the page changes at once; the
+ // second die comes in beside the page, already showing its ingredient, and waits there to be thrown.
+ if(introMode&&index===1)return;
  settlePresentation();
- if(introMode&&(!half||index===0)){
-  const drawn=half?null:upcoming.intro??introPair();
-  if(forced==null)guidedIn=true;
-  nameFirstDie(forced?.[0]??(half?nextIngredient(0,selected.a):drawn[0]),forced?.[1]??drawn?.[1]);
-  tumbleDice([0],[selected.a,selected.b],()=>{syncDice3D();},gesture||DICE_THROW.first,null);
-  landLabels([0],LABEL_LAND.roll);
-  return;
- }
  // A die thrown at a side-by-side comparison returns to the single page, so it can strike the page again.
  if(comparing&&!introMode&&(index===0||index===1))comparing=false;
  const introduce=introMode;introMode=false;ingredientsChosen=true;
  if(introduce){stage=1;comparing=false;}
  if(index===0||index===1)pointer.dieHintUsed=true;
- const before=selected,indices=introduce?[1]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
+ const before=selected,indices=introduce?[0]:index===0||index===1?[index]:[0,1],values=[before.a,before.b];
  const announce=!introduce&&(index===0||index===1);
  // The demo passes authored faces; every visitor roll stays random.
- indices.forEach(i=>{values[i]=forced?.[i]??(introduce?introB??randomIndex(INGREDIENTS_B.length):takeUpcoming(i,values[i]));});
- half=false;introB=null;
+ if(introduce){const drawn=upcoming.intro??introPair();upcoming.intro=null;if(!forced)guidedIn=true;values[0]=forced?.[0]??drawn[0];values[1]=forced?.[1]??drawn[1];secondWaits=true;}
+ else{indices.forEach(i=>{values[i]=forced?.[i]??takeUpcoming(i,values[i]);});if(indices.includes(1))secondWaits=false;}
  selected=currentExperiment().runs.find(run=>run.a===values[0]&&run.b===values[1]);
  if(announce){const i=indices[0];lastEvent={kind:'swap',index:i,name:i?INGREDIENTS_B[values[1]]:INGREDIENTS_A[values[0]]};}
  else lastEvent={kind:'pair'};
  // Selection is immediate; only the old page's cover waits for the die to reach the page.
  const impact=reportImpactFor(()=>render(false));celebrateFirstRoll(impact,forced);
- // The second die is thrown at the page from rest, by the visitor's own gesture when there is one.
- tumbleDice(indices,values,()=>{syncDice3D();},introduce?[null,gesture||DICE_THROW.enter[1]]:gesture,impact);
- landLabels(indices,introduce?LABEL_LAND.enter:LABEL_LAND.roll);
+ tumbleDice(indices,values,()=>{syncDice3D();},introduce?[gesture||DICE_THROW.first,null]:gesture,impact);
+ // The second die is not thrown on the first roll: it arrives at rest with its face up.
+ if(introduce){syncDice3D();landLabels([1],SECOND_DIE_WAIT+LABEL_LAND.enter);}
+ landLabels(indices,LABEL_LAND.roll);
  // The first result is left alone to be looked at; anything a visitor does after it brings the controls at once.
  awaitReady(!introduce||forced!=null);
  quietRefine();
@@ -804,6 +790,8 @@ $('#method-original').addEventListener('click',()=>changeMethod('original'));
 $('#method-stronger').addEventListener('click',()=>changeMethod('stronger'));
 $('#method-newer').addEventListener('click',()=>changeMethod('newer'));
 $('#model-toggle').addEventListener('click',()=>changeMethod(method==='newer'?promptTrack:'newer'));
+// About the experiment can bring the passes back: the action, the step track and the keep question.
+$('#passes-toggle')?.addEventListener('click',()=>{settlePresentation();passes=!passes;document.documentElement.dataset.passes=String(passes);if(!introMode)markReady();render();});
 $('#plain-method').addEventListener('change',event=>changeMethod(event.target.value==='newer'?'newer':event.target.value==='original'?'original':'stronger'));
 function setAttempt(value){if(introMode)return;settlePresentation();promoteRefine(false);lastEvent=null;const next=Math.round(Number(value));if(selected.steps[next-1]){stage=next;render(false);}}
 $('#stage-0').addEventListener('click',()=>changeFrom($('#stage-0'),showBrief));
