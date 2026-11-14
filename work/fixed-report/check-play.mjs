@@ -84,13 +84,13 @@ roll(0);assert.notEqual(selected.a,first.a);assert.equal(selected.b,first.b);
 const leftPending=selected;roll(1,{direction:-1,strength:.8});assert.equal(selected.a,leftPending.a);assert.notEqual(selected.b,leftPending.b);assert.equal(rollout.gesture.direction,-1);
 const final=selected;rollout.complete();assert.equal(selected,final);
 roll(0);const stale=rollout.complete;selectPair(EXPERIMENT.runs[0]);assert.equal(rollout.complete,null);stale();assert.equal(selected,EXPERIMENT.runs[0]);
-nodes.get('#compare').click();assert.equal(visibleFrames(nodes.get('#report-view')).length,2);assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===BASELINE.steps[stage-1].html));
+nodes.get('#compare').click();assert.equal(visibleFrames(nodes.get('#report-view')).length,2);assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===BASELINE.steps[0].html));
 nodes.get('#compare').click();assert.equal(visibleFrames(nodes.get('#report-view')).length,1);
 selectPair(EXPERIMENT.runs[2]);assert.equal(stage,1);setAttempt(stage-1);assert.equal(stage,1);
 nodes.get('#compare').click();
 for(let n=2;n<=4;n++){
  setAttempt(stage+1);assert.equal(stage,n);assert.equal(nodes.get('#stage-'+n).attrs['aria-pressed'],'true');
- assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===BASELINE.steps[n-1].html));
+ assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===BASELINE.steps[0].html));
  assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===selected.steps[n-1].html));
 }
 assert.equal(nodes.get('#critique').hidden,false);assert.equal(nodes.get('#stage-4').attrs['aria-pressed'],'true');setAttempt(stage+1);assert.equal(stage,4);
@@ -132,7 +132,7 @@ for(const track of ['stronger','original','newer']){
     if(pass===1){assert.equal(sections[0].querySelector('h3').textContent,'Shared one-shot');}
     else{assert.equal(sections[0].querySelector('iframe').srcdoc,EXPERIMENT.runs.find(old=>old.id===run.id).steps[pass-1].html);assert.equal(sections[1].querySelector('iframe').srcdoc,STRONGER_EXPERIMENT.runs.find(newer=>newer.id===run.id).steps[pass-1].html);}
    }
-   comparison='plain';renderResult();assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===currentBaseline().steps[pass-1].html));comparing=false;
+   comparison='plain';renderResult();assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===currentBaseline().steps[0].html));comparing=false;
   }
  }
  for(let pass=1;pass<=4;pass++){plainStage=pass;renderPlain();assert.equal(visibleFrames(nodes.get('#plain-report'))[0].srcdoc,currentBaseline().steps[pass-1].html);}
@@ -154,7 +154,7 @@ const rememberedPair=selected;
 nodes.get('#stage-1').click();assert.equal(introMode,false);assert.equal(selected,rememberedPair);assert.equal(stage,1);
 assert.equal(nodes.get('#story-title').textContent,'Now add randomness.');assert.equal(nodes.get('#reset').hidden,false);
 for(let next=2;next<=4;next++){
- assert.equal(nodes.get('#next-label').textContent,['','','Push it further','Push again','One more push'][next]);
+ assert.equal(nodes.get('#next-label').textContent,['','','Critique and redo','Again','Again'][next]);
  assert.equal(nodes.get('#next-cue').textContent,'+'+(next-1));
  nodes.get('#experiment-next').click();assert.equal(stage,next);assert.equal(selected,rememberedPair);
  assert.equal(nodes.get('#stage-'+next).attrs['aria-pressed'],'true');
@@ -164,8 +164,10 @@ assert.equal(nodes.get('#next-label').textContent,'Roll a new pair');assert.equa
 const finishedPair=selected;nodes.get('#experiment-next').click();assert.equal(stage,1);assert.notEqual(selected,finishedPair);
 const resetPair=selected;nodes.get('#reset').click();assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#story-title').textContent,'This is what one prompt gets you.');assert.equal(document.activeElement,nodes.get('#experiment-next'));
 assert.equal(nodes.get('#next-label').textContent,'Add randomness');
-// The first roll throws both dice: every saved page needs both ingredients, so the page changes at once.
-nodes.get('#experiment-next').click();assert.equal(introMode,false);assert.equal(stage,1);assert.deepEqual([...rollout.indices],[0,1]);assert.equal(nodes.get('#next-label').textContent,'Push it further');assert.equal(document.documentElement.dataset.journey,'ingredients');
+// The first roll is taken one die at a time: the first throw names an ingredient and leaves the page alone, the second changes it.
+assert.equal(document.documentElement.dataset.second,'false','the second die waits off the table');nodes.get('#experiment-next').click();assert.equal(introMode,true,'one die does not change the page');assert.equal(half,true);assert.deepEqual([...rollout.indices],[0]);assert.equal(document.documentElement.dataset.journey,'original');assert.equal(document.documentElement.dataset.second,'true','the second die comes in to be thrown');assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,currentBaseline().steps[0].html);assert.equal(promptLineState().a,INGREDIENTS_A[selected.a],'the first ingredient fills the first gap');
+{const named=selected.a;roll(0);assert.equal(introMode,true);assert.notEqual(selected.a,named,'throwing the first die again only changes its ingredient');}
+{const named=selected.a;nodes.get('#experiment-next').click();assert.equal(introMode,false);assert.equal(half,false);assert.equal(selected.a,named,'the second throw keeps the first ingredient');assert.equal(stage,1);assert.deepEqual([...rollout.indices],[1]);assert.equal(nodes.get('#next-label').textContent,'Critique and redo');assert.equal(document.documentElement.dataset.journey,'ingredients');}
 const firstPair=selected;roll(1);assert.equal(selected.a,firstPair.a);assert.notEqual(selected.b,firstPair.b,'rolling the second die changes the page again');assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);
 nodes.get('#stage-3').click();assert.equal(stage,3);
 const closedPair=selected;nodes.get('#stage-0').click();nodes.get('#stage-1').click();assert.equal(selected,closedPair);assert.equal(stage,1);
@@ -211,8 +213,9 @@ assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#stag
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,STRONGER_BASELINE.steps[0].html);
 assert.equal(nodes.get('#current-prompt').textContent,STRONGER_BASELINE.steps[0].prompt);
 assert.ok(history.url.includes('start=original'));assert.ok([...matrixButtons.values()].every(button=>button.attrs['aria-pressed']==='false'));
-setAttempt(4);assert.equal(stage,1);rollout.defer=false;const initial=selected;roll();
-assert.equal(introMode,false);assert.equal(stage,1);assert.deepEqual(rollout.indices,[0,1]);
+setAttempt(4);assert.equal(stage,1);rollout.defer=false;const initial=selected;assert.equal(document.documentElement.dataset.ready,'false','on a first visit the controls wait');roll(1);assert.equal(introMode,true,'there is no second die to throw yet');roll();
+assert.equal(introMode,true);assert.equal(half,true);assert.deepEqual(rollout.indices,[0]);roll();
+assert.equal(introMode,false);assert.equal(stage,1);assert.deepEqual(rollout.indices,[1]);
 assert.equal(nodes.get('#stage-2').disabled,false);
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);assert.ok(!history.url.includes('start=original'));
 `,home);
@@ -222,19 +225,20 @@ vm.runInContext(`introMode=true;stage=1;render();selectPair(currentExperiment().
 vm.runInContext(`
 const secureDraw=randomIndex;
 for(let left=0;left<6;left++)for(let right=0;right<6;right++){
- introMode=true;stage=1;selected=currentExperiment().runs[2];const draws=[left,right];randomIndex=length=>{assert.equal(length,6);return draws.shift()};roll();assert.equal(selected.id,left+'-'+right);assert.equal(stage,1);
+ introMode=true;stage=1;selected=currentExperiment().runs[2];const draws=[left,right];randomIndex=length=>{assert.equal(length,6);return draws.shift()};roll();assert.equal(introMode,true);assert.equal(selected.a,left);roll();assert.equal(introMode,false);assert.equal(selected.id,left+'-'+right);assert.equal(stage,1);
 }
 randomIndex=secureDraw;
 `,home);
-console.log('PASS: plain-first home, shared later-stage bypass, original prompt identity, a first roll that throws both dice and changes the page, a second-die roll that changes it again, a five-step story headline without timers, reset to the plain page, subsequent independent rolls and gallery bypass.');
+console.log('PASS: plain-first home, shared later-stage bypass, original prompt identity, a first roll taken one die at a time (the first throw names an ingredient and leaves the page alone, the second changes it), a second-die roll that changes it again, a five-step story headline without timers, reset to the plain page, subsequent independent rolls and gallery bypass.');
 vm.runInContext(`
 introMode=true;stage=1;selected=currentExperiment().runs[2];render();chooseDieFace(0,5);
-assert.equal(introMode,false);assert.equal(selected.id,'5-2');assert.equal(stage,1);
+assert.equal(introMode,true,'a chosen first face names its ingredient and leaves the page alone');assert.equal(half,true);assert.equal(selected.id,'5-2');
+chooseDieFace(1,2);assert.equal(introMode,false);assert.equal(half,false);assert.equal(selected.id,'5-2');assert.equal(stage,1);
 setAttempt(4);chooseDieFace(1,0);assert.equal(selected.id,'5-0');assert.equal(stage,4);
 assert.equal(nodes.get('#refinement-rail').style['--step'],'4');
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[3].html);
 `,home);
-console.log('PASS: deliberate face choice preserves the other ingredient and refinement, bypasses the intro and updates the report and rail together.');
+console.log('PASS: deliberate face choice preserves the other ingredient and refinement, takes the plain page one die at a time and updates the report and rail together.');
 vm.runInContext(`{
 comparing=false;introMode=false;view='dice';selected=currentExperiment().runs[0];stage=1;render();
 const message=(frame,data)=>window.listeners.message.forEach(fn=>fn({source:frame.contentWindow,data}));
@@ -254,9 +258,12 @@ comparing=false;renderResult();
 console.log('PASS: reports keep the reading position across steps and scroll together in comparison.');
 vm.runInContext(`{
 pointer.custom=null;comparing=false;view='dice';introMode=true;stage=1;render();
-assert.equal(pointerSpec().title,'This is what one prompt gets you.');assert.equal(pointerSpec().action.label,'Roll the dice');assert.equal(typeof pointerSpec().demo.run,'function','the first card also offers the demo');
-roll(0,null,[3,0]);assert.equal(introMode,false);assert.equal(pointerSpec(),null,'after a roll nothing floats beside the Refine button');
-assert.deepEqual({...promptLineState()},{a:'Bureaucracy',b:'Tech',changed:null,pushes:0,same:false,ask:''});
+assert.equal(pointerSpec(),null,'nothing floats beside the plain page');assert.deepEqual({...promptLineState()},{pending:true,a:null},'the sentence waits above the page with two gaps');
+{renderPromptLine();const line=nodes.get('#prompt-line');assert.equal(line.children.filter(child=>child.className==='prompt-gap').length,2);assert.equal(nodes.get('#prompt-row').dataset.pending,'true');line.click();assert.notEqual(nodes.get('#prompt-full').hidden,false,'and does not open while it is being filled');}
+roll(0,null,[3,0]);assert.equal(introMode,true);assert.deepEqual({...promptLineState()},{pending:true,a:'Bureaucracy'},'the first die fills the first gap');
+{renderPromptLine();const line=nodes.get('#prompt-line');assert.equal(line.children.filter(child=>child.className==='prompt-gap').length,1);assert.equal(line.children.find(child=>child.tagName==='b').textContent,'Bureaucracy');}
+roll(1);assert.equal(introMode,false);assert.equal(pointerSpec(),null,'after a roll nothing floats beside the action');
+assert.deepEqual({...promptLineState()},{a:'Bureaucracy',b:'Tech',changed:null,pushes:0,same:false,ask:'',fresh:true});
 assert.ok(selected.steps[0].prompt.includes(ingredientLine('Bureaucracy','Tech')),'the line above the page is the exact sentence added to the prompt');
 roll(0,null,[2]);assert.equal(promptLineState().a,'Weather');assert.equal(promptLineState().changed,0,'the die that changed is marked');
 roll(1,null,[undefined,1]);assert.equal(promptLineState().b,'Disco');assert.equal(promptLineState().changed,1);
@@ -271,18 +278,18 @@ setAttempt(4);assert.equal(pointerSpec(),null,'the last step asks its question o
 {const panel=nodes.get('#keep'),list=nodes.get('#keep-versions');assert.equal(panel.hidden,false,'which would you keep?');
  assert.equal(list.children.map(button=>button.children[1].textContent).join(','),'No dice,Dice,+1,+2,+3','every version is laid out');
  assert.equal(list.children[4].children[0].children[0].srcdoc,selected.steps[3].html);
- assert.equal(nodes.get('#keep-title').textContent,'Which would you keep?');globalThis.CURATION={picks:{[method]:{[selected.id]:{pick:3,reason:'test reason'}}}};
+ assert.equal(nodes.get('#keep-title').textContent,'Which would you keep?');assert.equal(panel.dataset.picked,'false','nothing looks chosen yet');assert.equal(nodes.get('#experiment-next').dataset.wait,'true','and the action waits for the answer');globalThis.CURATION={picks:{[method]:{[selected.id]:{pick:3,reason:'test reason'}}}};
  list.children[2].click();assert.equal(stage,2,'choosing a version shows it');assert.equal(list.children[2].attrs['aria-pressed'],'true','and marks it kept');assert.equal(panel.hidden,false,'the choice stays in view');
  assert.equal(nodes.get('#keep-title').textContent,'You kept +1. Our pick is +2: test reason.','the question is answered with the pick saved for this pair');assert.equal(list.children[3].dataset.ours,'true');
- assert.equal(nodes.get('#next-label').textContent,'Roll a new pair','keeping one ends the pass: the action offers the next pair');
+ assert.equal(nodes.get('#next-label').textContent,'Roll a new pair','keeping one ends the pass: the action offers the next pair');assert.equal(nodes.get('#experiment-next').dataset.wait,'false');assert.equal(panel.dataset.picked,'true');
  list.children[3].click();assert.equal(nodes.get('#keep-title').textContent,'You kept +2. So did we: test reason.');assert.equal(list.children[3].dataset.ours,'false');delete globalThis.CURATION;
  roll(0,null,[5]);assert.equal(panel.hidden,true,'a new pair starts a new journey');}
-showBrief();assert.equal(pointerSpec().title,'Fresh start.');
+showBrief();assert.equal(pointerSpec(),null);assert.equal(half,false,'a fresh start is back to one die');
 {const keep=SHOWCASE;SHOWCASE=['3-1'];guidedIn=false;const drawn=introPair();assert.equal(drawn.join('-'),'3-1','the first roll of a visit lands on a curated showcase pair');
- roll(0);assert.equal(selected.a+'-'+selected.b,'3-1');assert.equal(guidedIn,true,'after that, rolls are random');
- SHOWCASE=keep;showBrief();}assert.equal(promptLineState(),null,'a fresh start has no added line');
+ roll(0);assert.equal(introMode,true);assert.equal(selected.a,3);roll(1);assert.equal(selected.a+'-'+selected.b,'3-1');assert.equal(guidedIn,true,'after that, rolls are random');
+ SHOWCASE=keep;showBrief();}assert.deepEqual({...promptLineState()},{pending:true,a:null},'a fresh start waits with both gaps again');
 }`,context);
-console.log('PASS: after a roll nothing floats beside the action: one line above the page is the exact sentence the dice added to the prompt, the changed die marked, and it opens the whole prompt with that line marked; each push is said in that line in the opening words of the refinement prompt, a kept version is answered with the saved pick and ends the pass, the first roll of a visit lands on a curated showcase pair and later ones are random, and the last card carries Compare.');
+console.log('PASS: the plain page waits with a two-gap sentence that the dice fill one at a time; after a roll nothing floats beside the action: one line above the page is the exact sentence the dice added to the prompt, the changed die marked, and it opens the whole prompt with that line marked; each push is said in that line in the opening words of the refinement prompt, a kept version is answered with the saved pick and ends the pass, the first roll of a visit lands on a curated showcase pair and later ones are random, and the last card carries Compare.');
 vm.runInContext(`{
  const box=nodes.get('#before-after'),handle=nodes.get('#ba-handle'),key=k=>handle.events.keydown({key:k,preventDefault(){}});
  const before=()=>nodes.get('#report-view').children.filter(c=>c.tagName==='section'&&!c.hidden&&c.className==='report-before');
@@ -306,18 +313,20 @@ vm.runInContext(`{
  // The first page that lands is put beside the original at once (after a beat to see it alone): wide screens
  // open the side-by-side comparison, labelled with the same data; a change before then cancels it, and it
  // happens only once.
- {key('Home');beforeAfter.hinted=false;let clock=0;const frames=[];
+ {key('Home');beforeAfter.hinted=false;ready=false;document.documentElement.dataset.ready='false';let clock=0;const frames=[];
   globalThis.performance={now:()=>clock};globalThis.requestAnimationFrame=fn=>frames.push(fn);globalThis.cancelAnimationFrame=id=>{frames[id-1]=null;};
   const tick=at=>{clock=at;const queued=frames.splice(0);queued.forEach(fn=>fn?.(at));};
   const view=nodes.get('#report-view');
   reportHandoffSettled(view);assert.equal(beforeAfter.hinting,true);
-  tick(BEFORE_AFTER_HINT_WAIT-50);assert.equal(comparing,false,'the new page is seen on its own first');
-  setAttempt(3);assert.equal(beforeAfter.hinting,false);assert.equal(frames.filter(Boolean).length,0,'a change cancels it');assert.equal(beforeAfter.hinted,false,'unseen, it waits for the next page');
-  clock=10000;reportHandoffSettled(view);tick(10000+BEFORE_AFTER_HINT_WAIT+50);assert.equal(comparing,true,'then before and after sit side by side');
+  tick(FIRST_HOLD-50);assert.equal(beforeAfter.value,0,'the new page is seen on its own first');assert.equal(comparing,false);assert.equal(ready,false,'and the controls wait');
+  setAttempt(3);assert.equal(beforeAfter.hinting,false);assert.equal(frames.filter(Boolean).length,0,'a change cancels it');assert.equal(beforeAfter.hinted,false,'unseen, it waits for the next page');assert.equal(ready,true,'doing something else brings the controls at once');
+  ready=false;clock=10000;reportHandoffSettled(view);tick(10000+FIRST_HOLD+FIRST_PEEK*.4);assert.ok(beforeAfter.value>.4,'then the original is wiped in from the left, once');assert.equal(comparing,false,'without changing the layout');assert.equal(ready,false);
+  tick(10000+FIRST_HOLD+FIRST_PEEK+50);assert.equal(beforeAfter.value,0,'and away again, leaving the handle at the edge');assert.equal(ready,true,'only then do the controls arrive');assert.equal(document.documentElement.dataset.ready,'true');
+  assert.equal(beforeAfter.hinted,true);reportHandoffSettled(view);assert.equal(beforeAfter.hinting,false,'it happens once');
+  comparing=true;renderResult();
   const labels=view.children.filter(child=>child.tagName==='section'&&!child.hidden).map(section=>section.children.find(child=>child.tagName==='h3'));
   assert.ok(labels.length===2&&labels.every(label=>label.children.some(child=>child.className==='same-data'&&child.textContent==='Same data')),'both reports say the data is the same');
-  assert.ok(labels.some(label=>label.textContent==='No dice, pushed twice'),'the baseline says it had the same pushes');
-  assert.equal(beforeAfter.hinted,true);reportHandoffSettled(view);assert.equal(beforeAfter.hinting,false,'it happens once');
+  assert.ok(labels.some(label=>label.textContent==='No dice'),'the comparison is always with the original');assert.ok(visibleFrames(view).some(frame=>frame.srcdoc===currentBaseline().steps[0].html));
   roll(0,null,[1]);assert.equal(comparing,false,'throwing a die goes back to the single page it can strike');
   delete globalThis.requestAnimationFrame;delete globalThis.cancelAnimationFrame;delete globalThis.performance;}
  // Just after a roll the action waits quietly; once nothing is moving it steps forward, and refining brings it back at once.
@@ -339,4 +348,4 @@ vm.runInContext(`{
  body.hidden=true;toggle.attrs['aria-expanded']='false';
  toggle.click();assert.equal(toggle.attrs['aria-expanded'],'true');assert.equal(body.hidden,false);
  toggle.click();assert.equal(toggle.attrs['aria-expanded'],'false');assert.equal(body.hidden,true);}
-console.log('PASS: the before/after slider is there from the first roll, always compares with the original, follows keys and taps, keeps its place through refinements, rolls and re-renders, puts the first landed page beside the original once, labelled same data, and never while a change is under way, steps aside for side-by-side comparison and goes away on a fresh start; the action waits quietly after a roll until everything is still; the gallery folds open and closed; only the first real roll is celebrated.');
+console.log('PASS: the before/after slider is there from the first roll, always compares with the original, follows keys and taps, keeps its place through refinements, rolls and re-renders, leaves the first landed page alone, then wipes the original in and away once and only then brings the controls, never while a change is under way, compares side by side with the original labelled same data, steps aside for side-by-side comparison and goes away on a fresh start; the action waits quietly after a roll until everything is still; the gallery folds open and closed; only the first real roll is celebrated.');
