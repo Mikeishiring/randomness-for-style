@@ -83,7 +83,7 @@ async function runDemo(){
  await demoWait(DEMO_BEATS.hover+80);if(!live())return;
  await demoPress(die);if(!live())return;demoHover(null);
  roll(0,null,[0,2]);
- // 2. Both dice land and the page changes. Roll the second die, and it changes again.
+ // 2. The first die names its ingredient and the second comes in. Throw that one, and the page changes.
  await demoWait(160);if(!live())return;
  await demoRestBeside(die,demoNarrow()?60:0,demoNarrow()?70:120);if(!live())return;
  await demoWait(DEMO_BEATS.readFirst);if(!live())return;
@@ -128,7 +128,7 @@ async function runDemo(){
 $('#demo-toggle').addEventListener('click',()=>demo.running?stopDemo():runDemo());
 // Real input from the visitor ends the demo immediately; synthetic clicks from the demo do not.
 const demoTakeover=event=>{
- if(!event.isTrusted||event.target?.closest?.('#demo-toggle,#pointer-demo'))return;
+ if(!event.isTrusted||event.target?.closest?.('#demo-toggle'))return;
  if(demo.running)stopDemo();else{demo.token++;if(pointer.custom)clearPointer();}
 };
 ['pointerdown','keydown','wheel','touchstart'].forEach(type=>addEventListener(type,demoTakeover,{capture:true,passive:true}));

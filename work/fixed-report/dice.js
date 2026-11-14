@@ -101,7 +101,7 @@ function paintDiePose(i,pose){
 function syncDice3D(){
  [a,b].forEach((value,i)=>{
   const button=$('#throw-'+i),state=dieStates[i],name=i?modes[active].options[value].name:worlds[value].name;
-  button.setAttribute('aria-label',typeof introMode!=='undefined'&&introMode?`Roll both ingredients. ${i?'Second':'First'} die`:`Roll ${i?'second':'first'} die${state.running?' again':''}. ${name}`);
+  button.setAttribute('aria-label',typeof introMode!=='undefined'&&introMode?`Pick up and throw the ${i?'second':'first'} die`:`Roll ${i?'second':'first'} die${state.running?' again':''}. ${name}`);
   if(state.running)return;
   if(state.value!==value){state.value=value;state.pose={q:dieLanding(value),x:0,y:0};}
   paintDiePose(i,state.pose);
@@ -214,12 +214,9 @@ function prepareThrows(i){
  const step=deadline=>{
   preparing[i]=null;const state=dieStates[i];
   if(state.running||document.hidden||view!=='dice')return;
-  const gesture=typeof introMode!=='undefined'&&introMode&&typeof DICE_THROW!=='undefined'?DICE_THROW.enter[i]:null;
-  // The second die waits off the table on the plain page and is thrown in while it slides on, out of reach
-  // of the page: its throw is prepared that way, so the first roll can use it.
-  const entering=!!gesture&&i===1;
-  const {wall,width,travel}=throwSetup(i,gesture),edge=entering?null:wall?.edge??null,key=throwKey(state.pose,edge,width,travel,gesture);
-  for(const [value,ready] of preparedThrows[i])if(ready.key!==key)preparedThrows[i].delete(value);
+  // On the plain page each die is thrown by the visitor from rest, at the page beside it.
+  const gesture=typeof introMode!=='undefined'&&introMode&&typeof DICE_THROW!=='undefined'?(i?DICE_THROW.enter[1]:DICE_THROW.first):null;
+  const {wall,width,travel}=throwSetup(i,gesture),edge=wall?.edge??null,key=throwKey(state.pose,edge,width,travel,gesture);
   const misses=throwMisses[i];if(misses.key!==key){misses.key=key;misses.counts.clear();}
   for(const value of DIE_FACE_VALUES){
    if(preparedThrows[i].has(value))continue;
