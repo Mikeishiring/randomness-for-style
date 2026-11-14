@@ -280,7 +280,9 @@ function dieTravel(plan,{from=[0,0],velocity=null,target=null,bounds=null}={}){
  let total=duration;
  if(far>4){
   const lift=Math.min(size*.42,far*.16),start=duration+DIE_TRAVEL.pause;path.push({t:start,x:rest.x,y:rest.y});
-  for(let n=1;n<=24;n++){const p=n/24,ease=p<.5?4*p*p*p:1-(-2*p+2)**3/2;path.push({t:start+p*DIE_TRAVEL.home,x:rest.x*(1-ease),y:rest.y*(1-ease)-4*lift*p*(1-p)});}
+  // The hop never lifts the die past the top of its room: a tray at the top of a phone screen is hopped to flat.
+  const roof=bounds?Math.min(bounds[1],rest.y,0):-Infinity;
+  for(let n=1;n<=24;n++){const p=n/24,ease=p<.5?4*p*p*p:1-(-2*p+2)**3/2;path.push({t:start+p*DIE_TRAVEL.home,x:rest.x*(1-ease),y:Math.max(roof,rest.y*(1-ease)-4*lift*p*(1-p))});}
   total=start+DIE_TRAVEL.home;
  }
  return {path,duration:total,rest:[rest.x,rest.y],restAt:duration};
