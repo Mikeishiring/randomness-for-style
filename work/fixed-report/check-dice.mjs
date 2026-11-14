@@ -129,7 +129,7 @@ a=2;b=4;syncDice3D();tumbleDice([0],[a,b],()=>completed++);
 const grabbedRun=dieStates[0].running;grabbedRun.animations[0].currentTime=grabbedRun.plan.duration*.32;
 const expectedGrab=sampleDiePlan(grabbedRun.plan,.32),grab=beginDieGrab(0);
 near(grab.x,expectedGrab.x);near(grab.y,expectedGrab.y);assert.equal(dieStates[0].running,null);
-moveDieGrab(0,grab,-70);const held={...dieStates[0].pose};assert.ok(held.x<grab.x);assert.ok(held.air>=0);
+moveDieGrab(0,grab,-70,25);const held={...dieStates[0].pose};near(held.x,grab.x);near(held.g[0],-70);near(held.g[1],25);assert.ok(held.air>=0,'a carried die goes where the pointer goes, off the tray');
 tumbleDice([0],[3,b],()=>completed++,{direction:-1,strength:.7});
 near(dieStates[0].running.plan.from.x,held.x);near(dieStates[0].running.plan.from.y,held.y);
 beginDieGrab(0);settleDieGrab(0);const settling=dieStates[0].running;
@@ -139,6 +139,21 @@ const invitation={kind:'invitation',from:{q:dieLanding(a),x:0,y:0},size:104,dura
 assert.ok(Math.abs(sampleDiePlan(invitation,.25).y)>0);near(sampleDiePlan(invitation,1).y,0);
 motion.matches=true;const beforeReduced={...dieStates[0].pose};moveDieGrab(0,beforeReduced,104);assert.notEqual(dieTopFace(dieStates[0].pose.q),dieTopFace(beforeReduced.q));settleDieGrab(0);assert.equal(dieStates[0].running,null);
 assert.ok(soundCalls.length>0&&soundCalls.every(call=>call[0]==='play'),'every throw schedules its contact sounds');
+// A thrown die travels across the screen on top of its tumble. Thrown at a spot it comes to rest there, feels
+// the page where it first lands on it, stays inside the arena however hard it is thrown, and ends on its tray.
+for(let n=0;n<40;n++){
+ const plan=makeDiePlan({q:dieLanding(n%6),x:0,y:0},(n+2)%6,random,116,18,{direction:1,strength:.25,axis:[-.3,0,.95]},null),target=[260+n*9,120+n*4];
+ const toss=dieTravel(plan,{target,bounds:[-90,-60,900,640]});
+ near(toss.path[0].x,0);near(toss.rest[0],target[0]);near(toss.rest[1],target[1]);
+ assert.ok(toss.duration>plan.duration,'coming home takes a moment after the tumble ends');
+ const home=sampleDieTravel(toss,toss.duration);near(home[0],0);near(home[1],0);
+ const landing=sampleDieTravel(toss,plan.contacts[0]*plan.duration);assert.ok(landing[0]>0&&landing[0]<target[0],'the first landing is on the way there');
+ const flick=dieTravel(plan,{velocity:[2600,-1800],bounds:[-90,-60,900,640]});
+ assert.ok(flick.path.every(point=>point.x>=-90-1e-6&&point.x<=900+1e-6&&point.y>=-60-1e-6-116*.42),'a hard throw turns back at the edges');
+ const end=sampleDieTravel(flick,flick.duration);near(end[0],0);near(end[1],0);
+ const still=dieTravel(plan,{velocity:[0,0]});assert.equal(still.duration,plan.duration,'a die that goes nowhere has no way home to make');
+}
+{const from={q:dieLanding(2),x:0,y:0,g:[40,10]},pose=dieHoldPose(from,300,200,116,{bounds:[-50,-50,200,150]});assert.deepEqual(pose.g,[200,150],'a held die stops at the edge of the arena');near(pose.x,0);}
 // Idle preparation does not settle for the scripted hop: a search that ran out of time is tried again on a
 // later idle slice. A die that cannot be simulated keeps the hop after a few tries instead of searching forever.
 var view='dice';const prepIdle=[],prepSlice={timeRemaining:()=>50},prepReal=makeDiePlan;let prepCount=0,prepGuard=0;
@@ -151,5 +166,5 @@ preparedThrows[0].clear();throwMisses[0].key='';prepCount=0;prepGuard=0;makeDieP
 prepareThrows(0);while(prepIdle.length&&prepGuard++<60)prepIdle.shift()(prepSlice);
 assert.equal(preparedThrows[0].size,6);assert.equal(prepCount,6*THROW_RETRIES,'the hop is kept once the retries are spent');
 makeDiePlan=prepReal;delete globalThis.requestIdleCallback;
-console.log('PASS: 96 exact face-up orientations/CSS matrices; 300 simulated throws that bounce on the tray, never sink into it and land flat on the chosen face near home; stable face markup; flicks livelier than clicks; a tray that gives with each impact; 200 page strikes in mid-air that never pass the edge; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion; idle preparation that retries a missed search before keeping the scripted hop.');
+console.log('PASS: 96 exact face-up orientations/CSS matrices; 300 simulated throws that bounce on the tray, never sink into it and land flat on the chosen face near home; stable face markup; flicks livelier than clicks; a tray that gives with each impact; 200 page strikes in mid-air that never pass the edge; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion; a die carried with the pointer; throws that travel to a spot, turn back at the edges and come home; idle preparation that retries a missed search before keeping the scripted hop.');
 `,context);

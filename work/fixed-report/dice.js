@@ -72,8 +72,10 @@ function initDice3D(){
  document.querySelectorAll('.die').forEach((die,i)=>{
   const button=document.createElement('button');button.className='die-object';button.type='button';button.id='throw-'+i;
   button.setAttribute('aria-describedby','dice-gesture-help');
-  // The floor shares the die's camera, so the die lands on it; the die moves in the same space above it.
-  button.innerHTML='<span class="die-floor" aria-hidden="true"><span class="die-ground"></span><span class="die-shadow"></span></span><span class="die-grip" aria-hidden="true"><span class="die-camera"><span class="die-flight"><span class="cube">'+dieSolidMarkup()+dieFaceMarkup(i)+'</span></span></span></span>';
+  // The floor shares the die's camera, so the die lands on it; the die moves in the same space above it. The
+  // tray stays where it is. The die and its shadow, on a floor of its own, are carried across the screen
+  // together, in a scene with its own vanishing point, so the die looks the same wherever it is.
+  button.innerHTML='<span class="die-floor" aria-hidden="true"><span class="die-ground"></span></span><span class="die-carry" aria-hidden="true"><span class="die-floor die-shade"><span class="die-shadow"></span></span><span class="die-grip"><span class="die-camera"><span class="die-flight"><span class="cube">'+dieSolidMarkup()+dieFaceMarkup(i)+'</span></span></span></span></span>';
   die.querySelector('.die-top').after(button);bindDieInteraction(button,i);
   const faces=[...button.querySelectorAll('.cube-face')],pieces=[...button.querySelectorAll('.cube-bevel,.cube-corner'),...faces];
   dieShading[i]={pieces,normals:[...DIE_SOLIDS.map(solid=>solid.normal),...faces.map((_,n)=>DIE_FACE_NORMALS[n])],camera:dieCameraMatrix(button.querySelector('.die-camera'))};
@@ -97,6 +99,51 @@ function paintDiePose(i,pose){
  $('#throw-'+i+' .die-flight').style.transform=`translate3d(${pose.x}px,${pose.y}px,0)`;
  const shadow=$('#throw-'+i+' .die-shadow'),frame=dieShadowFrame(pose,cube.clientWidth||116);
  shadow.style.transform=frame.transform;shadow.style.opacity=String(frame.opacity);
+ // Where the die is on screen, away from its tray: the cube and its shadow are carried there together.
+ const g=pose.g||[0,0],shift=g[0].toFixed(1)+'px '+g[1].toFixed(1)+'px';
+ const carry=$('#throw-'+i+' .die-carry');if(carry?.style)carry.style.translate=shift;
+}
+// The room a die has: the window, as far as the cube stays whole on screen, and the part of the page that is
+// in view, all measured in pixels from the die's own tray. Read once per throw or grab, never per frame.
+function dieArena(i){
+ const button=$('#throw-'+i),page=document.querySelector?.('#report-view');
+ if(!button?.getBoundingClientRect||typeof innerWidth!=='number')return null;
+ const box=button.getBoundingClientRect();if(!box.width)return null;
+ const size=$('#throw-'+i+' .cube')?.clientWidth||116,hx=box.left+box.width/2,hy=box.top+box.height/2,edge=size*.75+10;
+ const arena={bounds:[edge-hx,edge-hy,innerWidth-edge-hx,innerHeight-edge-hy],page:null,origin:null};
+ const rect=page?.getBoundingClientRect?.();
+ if(rect?.width){
+  const top=Math.max(rect.top,0),bottom=Math.min(rect.bottom,innerHeight);
+  if(bottom-top>size)arena.page={left:rect.left-hx,top:top-hy,right:rect.right-hx,bottom:bottom-hy};
+  arena.origin=[rect.left-hx,rect.top-hy];
+ }
+ return arena;
+}
+// Where a clicked die is thrown: a spot on the page that is in view, on its own side and clear of the dock.
+function dieAim(i,arena,random=Math.random){
+ const page=arena?.page;if(!page)return null;
+ const w=page.right-page.left,h=page.bottom-page.top,u=.16+random()*.5;
+ return [i?page.right-w*u:page.left+w*u,page.top+Math.min(h*.62,Math.max(h*.12,h*(.14+random()*.42)))];
+}
+// How a die tumbles when it is thrown at the page: rolling the way it is going.
+function dieTossGesture(i,arena,thrown=null){
+ const page=arena?.page;if(!page)return thrown||null;
+ const cx=(page.left+page.right)/2,cy=page.top+(page.bottom-page.top)*.35,far=Math.hypot(cx,cy)||1;
+ return {direction:Math.sign(cx)||1,strength:thrown?.strength??.25,axis:[-cy/far,0,cx/far]};
+}
+// When and where the page feels a throw: the first landing that is on the page, at that spot; a die that never
+// lands on it still changes the page, when it first lands.
+function dieImpactSpot(i,plan,journey,arena){
+ const first=(plan.contacts[0]??1)*plan.duration,page=arena?.page;
+ const away={ms:first,point:null,side:page?(page.left>0?'left':page.right<0?'right':'top'):(i?'right':'left')};
+ if(!journey||!page)return away;
+ for(const contact of plan.contacts){
+  const ms=contact*plan.duration,g=sampleDieTravel(journey,ms);
+  if(g[0]<page.left||g[0]>page.right||g[1]<page.top||g[1]>page.bottom)continue;
+  const near={left:g[0]-page.left,right:page.right-g[0],top:g[1]-page.top,bottom:page.bottom-g[1]};
+  return {ms,point:[g[0]-arena.origin[0],g[1]-arena.origin[1]],side:Object.keys(near).sort((p,q)=>near[p]-near[q])[0]};
+ }
+ return away;
 }
 function syncDice3D(){
  [a,b].forEach((value,i)=>{
@@ -141,24 +188,24 @@ function flushDieImpact(i){const pending=dieImpacts[i];if(pending){clearTimeout(
 function releaseDieAnimation(i){
  clearDieImpact(i);
  const state=dieStates[i],running=state.running;
- if(running){state.pose=sampleDiePlan(running.plan,dieClamp(Number(running.animations[0].currentTime||0)/running.plan.duration));running.animations.forEach(animation=>animation.cancel());state.running=null;paintDiePose(i,state.pose);}
+ if(running){const ms=Number((running.clock||running.animations[0]).currentTime||0);state.pose=sampleDiePlan(running.plan,dieClamp(ms/running.plan.duration));if(running.travel)state.pose.g=sampleDieTravel(running.travel,ms);running.animations.forEach(animation=>animation.cancel());state.running=null;paintDiePose(i,state.pose);}
  return state.pose;
 }
 function finishDie(i){
  const state=dieStates[i],running=state.running;
  if(!running)return;
- state.pose=sampleDiePlan(running.plan,1);state.value=running.value;state.running=null;
+ state.pose=sampleDiePlan(running.plan,1);if(running.travel)state.pose.g=sampleDieTravel(running.travel,running.travel.duration);state.value=running.value;state.running=null;
  paintDiePose(i,state.pose);running.animations.forEach(animation=>animation.cancel());
  if(activeDiceRoll){activeDiceRoll.remaining.delete(i);if(!activeDiceRoll.remaining.size){const complete=activeDiceRoll.complete;activeDiceRoll=null;complete();}}
  prepareThrows(i);
 }
 function stopDieMotion(i){clearDieInvitation(i);resetDieInteraction(i);flushDieImpact(i);finishDie(i);}
 function cancelDiceRoll(){activeDiceRoll=null;[0,1].forEach(i=>{clearDieInvitation(i);resetDieInteraction(i);releaseDieAnimation(i);dieStates[i].value=null;});}
-// Picking a die up: where the page sits is read once, so carrying it never reads layout per move.
-function beginDieGrab(i){clearDieInvitation(i);activeDiceRoll=null;const pose=releaseDieAnimation(i);dieStates[i].hold={wall:dieWall(i,null)?.edge??null};return pose;}
+// Picking a die up: the room it has is read once, so carrying it never reads layout per move.
+function beginDieGrab(i){clearDieInvitation(i);activeDiceRoll=null;const pose=releaseDieAnimation(i);dieStates[i].hold={bounds:dieArena(i)?.bounds||null};return pose;}
 function moveDieGrab(i,from,dx,dy=0){
  const size=$('#throw-'+i+' .cube').clientWidth||104;
- dieStates[i].pose=dieHoldPose(from,dx,dy,size,{wall:dieStates[i].hold?.wall??null,camera:dieShading[i]?.camera||null});
+ dieStates[i].pose=dieHoldPose(from,dx,dy,size,{bounds:dieStates[i].hold?.bounds||null});
  paintDiePose(i,dieStates[i].pose);
  const value=dieTopFace(dieStates[i].pose.q);
  const name=i?modes[active].options[value].name:worlds[value].name;
@@ -170,9 +217,12 @@ function settleDieGrab(i,keepYaw=false){
  const plan={kind:'settle',from:state.pose,target:keepYaw?dieSnap(state.pose.q,value):dieLanding(value),size,duration:180,contacts:[]};
  $('#ingredient-'+(i?'b':'a')).textContent=typeof introMode!=='undefined'&&introMode?'Ingredient '+(i+1):i?modes[active].options[value].name:worlds[value].name;
  if(diceMotion.matches||document.hidden){state.pose=sampleDiePlan(plan,1);state.value=value;paintDiePose(i,state.pose);return;}
- animateDiePlan(i,plan,value);
+ // Put down away from its tray, it is carried back as it settles.
+ const g=state.pose.g||[0,0],far=Math.hypot(g[0],g[1]),back=far>2?Math.min(420,180+far*.5):0;
+ if(back)plan.duration=back;
+ animateDiePlan(i,plan,value,back?{path:[{t:0,x:g[0],y:g[1]},{t:back*.5,x:g[0]*.22,y:g[1]*.22},{t:back,x:0,y:0}],duration:back}:null);
 }
-function animateDiePlan(i,plan,value){
+function animateDiePlan(i,plan,value,travel=null){
  const state=dieStates[i];
  // A simulated throw is sampled at 120 frames a second; exact contact times keep each impact sharp.
  const regular=plan.kind==='physics'?plan.frames.map(frame=>frame.t):Array.from({length:67},(_,n)=>n/66);
@@ -189,14 +239,23 @@ function animateDiePlan(i,plan,value){
  if(ground?.animate&&plan.contacts?.length){
   const frames=[{offset:0,scale:'1'}];
   plan.contacts.forEach((contact,n)=>{
-   const depth=.045*(plan.levels?.[n]??.58**n),next=plan.contacts[n+1]??1,dip=Math.min(contact+.014,next),back=Math.min(contact+.085,next);
+   // The tray only gives under a die that lands on it.
+   const g=travel?sampleDieTravel(travel,contact*plan.duration):[0,0],onTray=Math.hypot(g[0],g[1])<size*.7;
+   const depth=onTray?.045*(plan.levels?.[n]??.58**n):0,next=plan.contacts[n+1]??1,dip=Math.min(contact+.014,next),back=Math.min(contact+.085,next);
    frames.push({offset:contact,scale:'1'},{offset:dip,scale:`${1-depth} ${1-depth*1.7}`},{offset:back,scale:'1'});
   });
   frames.push({offset:1,scale:'1'});
   animations.push(ground.animate(frames,options));
  }
- state.running={plan,animations,value};
- animations[0].onfinish=()=>{if(state.running?.animations===animations)finishDie(i);};
+ // Its way across the screen and home again runs beside the tumble, and outlasts it.
+ let clock=animations[0];
+ if(travel){
+  const frames=travel.path.map(point=>({offset:Math.min(1,point.t/travel.duration),translate:point.x.toFixed(1)+'px '+point.y.toFixed(1)+'px'}));
+  const carry=$('#throw-'+i+' .die-carry');
+  if(carry?.animate){const journey=carry.animate(frames,{duration:travel.duration,easing:'linear',fill:'forwards'});animations.push(journey);if(travel.duration>plan.duration)clock=journey;}
+ }
+ state.running={plan,animations,value,travel,clock};
+ clock.onfinish=()=>{if(state.running?.animations===animations)finishDie(i);};
 }
 // The next click's throws are worked out while the page is idle, one face at a time, so a click only has to
 // start the animation. A plan is used only if nothing it depends on has changed since.
@@ -204,24 +263,24 @@ const preparedThrows=[new Map(),new Map()],preparing=[null,null];
 // The scripted hop is for a click that cannot wait. Idle time can: a face whose search ran out of time is
 // tried again on later idle slices, and the hop is kept only when the simulation keeps missing.
 const THROW_RETRIES=4,throwMisses=[{key:'',counts:new Map()},{key:'',counts:new Map()}];
-function throwKey(from,wall,size,travel,gesture){return JSON.stringify([from.q.map(c=>+c.toFixed(5)),+from.x.toFixed(2),+from.y.toFixed(2),wall,size,travel,gesture?{d:gesture.direction,s:gesture.strength}:null]);}
-function throwSetup(i,gesture){
- const wall=dieWall(i,gesture),cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8));
- return {wall,width,travel:Number.isFinite(travel)?travel:18};
+function throwKey(from,size,travel,gesture){return JSON.stringify([from.q.map(c=>+c.toFixed(5)),+from.x.toFixed(2),+from.y.toFixed(2),(from.g||[0,0]).map(c=>Math.round(c)),size,travel,gesture?{d:gesture.direction,s:gesture.strength,a:gesture.axis?.map(c=>+c.toFixed(2))}:null]);}
+function throwSetup(i){
+ const cube=$('#throw-'+i+' .cube'),width=cube.clientWidth||116,travel=Math.max(6,Math.min(20,($('#throw-'+i).clientWidth-width*1.2)/2+8));
+ return {width,travel:Number.isFinite(travel)?travel:18,arena:dieArena(i)};
 }
 function prepareThrows(i){
  if(typeof requestIdleCallback!=='function'||preparing[i]||diceMotion.matches)return;
  const step=deadline=>{
   preparing[i]=null;const state=dieStates[i];
   if(state.running||document.hidden||view!=='dice')return;
-  // On the plain page each die is thrown by the visitor from rest, at the page beside it.
-  const gesture=typeof introMode!=='undefined'&&introMode&&typeof DICE_THROW!=='undefined'?(i?null:DICE_THROW.first):null;
-  const {wall,width,travel}=throwSetup(i,gesture),edge=wall?.edge??null,key=throwKey(state.pose,edge,width,travel,gesture);
+  // A clicked die is thrown at the page, tumbling the way it goes; the first throw of a visit a little harder.
+  const first=typeof introMode!=='undefined'&&introMode&&typeof DICE_THROW!=='undefined'?(i?null:DICE_THROW.first):null;
+  const {width,travel,arena}=throwSetup(i),gesture=dieTossGesture(i,arena,first),key=throwKey(state.pose,width,travel,gesture);
   const misses=throwMisses[i];if(misses.key!==key){misses.key=key;misses.counts.clear();}
   for(const value of DIE_FACE_VALUES){
    if(preparedThrows[i].has(value))continue;
    if(deadline.timeRemaining()<6){preparing[i]=requestIdleCallback(step,{timeout:2000});return;}
-   const plan=makeDiePlan(state.pose,value,Math.random,width,travel,gesture,edge!=null?wall:null,dieShading[i]?.camera||null);
+   const plan=makeDiePlan(state.pose,value,Math.random,width,travel,gesture,null,dieShading[i]?.camera||null);
    if(plan.kind!=='physics'){
     const missed=(misses.counts.get(value)||0)+1;misses.counts.set(value,missed);
     if(missed<THROW_RETRIES){preparing[i]=requestIdleCallback(step,{timeout:2000});return;}
@@ -242,29 +301,32 @@ function tumbleDice(indices,values,complete,gesture=null,impact=null){
   activeDiceRoll=null;complete();return;
  }
  const sides=[];
- // Read every die's place against the page before any of them starts moving.
- const setups=new Map(indices.map(i=>[i,throwSetup(i,Array.isArray(gesture)?gesture[i]:gesture)]));
+ // Read every die's room before any of them starts moving.
+ const setups=new Map(indices.map(i=>[i,throwSetup(i)]));
  indices.forEach(i=>{
   clearDieInvitation(i);
-  const thrown=Array.isArray(gesture)?gesture[i]:gesture,{wall,width,travel}=setups.get(i),edge=wall?.edge??null;
-  const ready=!thrown?.velocity?preparedThrows[i].get(values[i]):null;
-  const plan=ready&&ready.key===throwKey(from[i],edge,width,travel,thrown)?ready.plan:makeDiePlan(from[i],values[i],Math.random,width,travel,thrown,edge!=null?wall:null,dieShading[i]?.camera||null);
+  const thrown=Array.isArray(gesture)?gesture[i]:gesture,{width,travel,arena}=setups.get(i),hand=thrown?.velocity||null;
+  // From the hand the tumble follows the hand; a click throws the die at the page. Either way the tumble
+  // itself stays on the spot, and the die's way across the screen is worked out on top of it.
+  const tumble=hand?{direction:thrown.direction||Math.sign(hand[0])||1,strength:thrown.strength||0,axis:thrown.axis,flick:thrown.flick,drop:thrown.drop}:dieTossGesture(i,arena,thrown);
+  const ready=!hand?preparedThrows[i].get(values[i]):null;
+  const plan=ready&&ready.key===throwKey(from[i],width,travel,tumble)?ready.plan:makeDiePlan(from[i],values[i],Math.random,width,travel,tumble,null,dieShading[i]?.camera||null);
   preparedThrows[i].clear();
-  dieKnockWall(i,plan);
-  animateDiePlan(i,plan,values[i]);
+  const speed=hand?Math.hypot(hand[0],hand[1]):0,cap=speed>2600?2600/speed:1;
+  const journey=arena?dieTravel(plan,{from:from[i].g||[0,0],velocity:hand?[hand[0]*cap,hand[1]*cap]:null,target:hand?null:dieAim(i,arena),bounds:arena.bounds}):null;
+  animateDiePlan(i,plan,values[i],journey);
   if(typeof playDiceClatter==='function')playDiceClatter(i,plan,performance.now());
-  // The page reacts when the die strikes its edge, or, out of reach, when the die first lands.
-  const side=wall?.side||(i?'right':'left'),knock=plan.knock!=null;
-  const hit={side,knock,die:i,strength:dieClamp(thrown?.strength||0),y:knock?wall.y+(plan.strikeY??sampleDiePlan(plan,plan.knock).y):0};
+  // The page reacts where and when the die first lands on it; thrown clear of the page, when it first lands.
+  const spot=dieImpactSpot(i,plan,journey,arena),knock=!!spot.point;
+  const hit={side:spot.side,knock,die:i,strength:dieClamp(thrown?.strength||0),x:spot.point?.[0]??0,y:spot.point?.[1]??0,point:spot.point};
   const run=()=>{if(typeof hitReport==='function')hitReport(impact,hit);},land=()=>{if(typeof landReportImpact==='function')landReportImpact(impact);};
-  dieImpacts[i]={run,land,timer:setTimeout(()=>{dieImpacts[i]=null;run();},(knock?plan.knock:plan.contacts[0])*plan.duration)};
-  sides.push({side,knock});
+  dieImpacts[i]={run,land,timer:setTimeout(()=>{dieImpacts[i]=null;run();},spot.ms)};
+  sides.push({side:spot.side,knock});
   const name=i?modes[active].options[values[i]].name:worlds[values[i]].name;
   $('#throw-'+i).setAttribute('aria-label',`Roll ${i?'second':'first'} die again. ${name}`);
  });
- // The page changes from the edges that were struck; with no strike, from where the dice landed.
- const struck=sides.filter(hit=>hit.knock).map(hit=>hit.side);
- if(impact&&typeof aimReportImpact==='function')aimReportImpact(impact,struck.length?struck:sides.map(hit=>hit.side));
+ // The page changes from the edge nearest to where each die landed.
+ if(impact&&typeof aimReportImpact==='function')aimReportImpact(impact,[...new Set(sides.map(hit=>hit.side))]);
  // A visitor's first roll of a visit lands with a small burst of confetti around the die.
  if(impact?.celebrate){const i=indices[0],landing=dieStates[i].running?.plan;if(landing)setTimeout(()=>celebrateDie(i),landing.contacts[0]*landing.duration);}
 }

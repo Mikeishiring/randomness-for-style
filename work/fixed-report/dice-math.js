@@ -43,17 +43,14 @@ function dieGrabPose(from,dx,dy,size=94){
 const DIE_HULL=(()=>{const out=[];for(let axis=0;axis<3;axis++)for(const s of [-1,1])for(const u of [-1,1])for(const v of [-1,1]){const p=[0,0,0];p[axis]=s*.5;p[(axis+1)%3]=u*.425;p[(axis+2)%3]=v*.425;out.push(p);}return out;})();
 function quatMatrix(q){const [x,y,z,w]=q;return [1-2*(y*y+z*z),2*(x*y-w*z),2*(x*z+w*y),2*(x*y+w*z),1-2*(x*x+z*z),2*(y*z-w*x),2*(x*z-w*y),2*(y*z+w*x),1-2*(x*x+y*y)];}
 // How far the die's centre must rise for its lowest point to rest on the tray.
-// Held in the hand: lifted off the tray as the drag begins, carried with the pointer and turned as it
-// goes. Dragging up lifts it higher. It never reaches into the page beside it (wall: the page edge's
-// distance from home on screen; camera: the die's view, to convert screen to world).
-function dieHoldPose(from,dx,dy,size=94,{wall=null,camera=null}={}){
+// Held in the hand: lifted off the tray as the drag begins, turned as it goes, and carried wherever the pointer
+// goes, as far as the edges of the arena (g: its place on screen, in pixels from its tray).
+function dieHoldPose(from,dx,dy,size=94,{bounds=null}={}){
  const turned=dieGrabPose(from,dx,dy,size),rise=Math.min(1,Math.hypot(dx,dy)/40),eased=rise*rise*(3-2*rise);
- const before=Math.max(0,-from.y-dieSupportLift(from.q,size));
- const height=Math.max(before*(1-eased),eased*Math.max(size*.2,Math.min(size*1.1,size*.55-dy*1.4)));
- const across=camera?Math.max(.5,Math.abs(camera[0][0])):1;
- let x=Math.max(-size*1.2,Math.min(size*1.2,from.x+dx/across));
- if(wall!=null){const side=Math.sign(wall),limit=(Math.abs(wall)-size*.9)/across;if(side*x>limit)x=side*Math.max(0,limit);}
- return {q:turned.q,x,y:-height-dieSupportLift(turned.q,size),air:height};
+ const before=Math.max(0,-from.y-dieSupportLift(from.q,size)),height=Math.max(before*(1-eased),eased*size*.5);
+ const start=from.g||[0,0];let gx=start[0]+dx,gy=start[1]+dy;
+ if(bounds){gx=Math.max(bounds[0],Math.min(bounds[2],gx));gy=Math.max(bounds[1],Math.min(bounds[3],gy));}
+ return {q:turned.q,x:from.x,y:-height-dieSupportLift(turned.q,size),air:height,g:[gx,gy]};
 }
 function dieSupportLift(q,size=116){
  const M=quatMatrix(q);let low=-Infinity;
@@ -252,4 +249,48 @@ function sampleDiePlan(plan,t){
  }
  q=t===1?plan.target:q;
  return {q,x,y:-air-dieSupportLift(q,plan.size),air};
+}
+// How far the die is from its tray on screen, in pixels, through a throw. This rides on top of the simulated
+// tumble, which stays on the spot: the die keeps its speed in the air, loses some at every landing and while it
+// slides, turns back at the edges of the arena, and once it has come to rest it is brought home to its tray.
+const DIE_TRAVEL={keep:.62,slide:4.2,bounce:.55,pause:170,home:440};
+function dieTravel(plan,{from=[0,0],velocity=null,target=null,bounds=null}={}){
+ const times=plan.kind==='physics'?plan.frames.map(frame=>frame.t):Array.from({length:67},(_,n)=>n/66),duration=plan.duration,size=plan.size||116;
+ const touching=times.map(t=>(sampleDiePlan(plan,t).air??0)<1.5),contacts=plan.contacts||[];
+ const run=(v,limits)=>{
+  let x=from[0],y=from[1],vx=v[0],vy=v[1],next=0;const path=[{t:0,x,y}];
+  for(let n=1;n<times.length;n++){
+   const dt=(times[n]-times[n-1])*duration/1000;
+   while(next<contacts.length&&contacts[next]<=times[n]){vx*=DIE_TRAVEL.keep;vy*=DIE_TRAVEL.keep;next++;}
+   if(touching[n]){const k=Math.exp(-DIE_TRAVEL.slide*dt);vx*=k;vy*=k;}
+   x+=vx*dt;y+=vy*dt;
+   if(limits){
+    if(x<limits[0]){x=limits[0];vx=Math.abs(vx)*DIE_TRAVEL.bounce;}else if(x>limits[2]){x=limits[2];vx=-Math.abs(vx)*DIE_TRAVEL.bounce;}
+    if(y<limits[1]){y=limits[1];vy=Math.abs(vy)*DIE_TRAVEL.bounce;}else if(y>limits[3]){y=limits[3];vy=-Math.abs(vy)*DIE_TRAVEL.bounce;}
+   }
+   path.push({t:times[n]*duration,x,y});
+  }
+  return path;
+ };
+ let v=velocity||[0,0];
+ // Thrown at a spot: the speed that brings the die to rest exactly there.
+ if(target){const reach=run([1,0],null).at(-1).x-from[0];if(reach>1e-6)v=[(target[0]-from[0])/reach,(target[1]-from[1])/reach];}
+ const path=run(v,bounds),rest=path.at(-1),far=Math.hypot(rest.x,rest.y);
+ // Home again: a pause where it stopped, then a short hop back onto its tray.
+ let total=duration;
+ if(far>4){
+  const lift=Math.min(size*.42,far*.16),start=duration+DIE_TRAVEL.pause;path.push({t:start,x:rest.x,y:rest.y});
+  for(let n=1;n<=24;n++){const p=n/24,ease=p<.5?4*p*p*p:1-(-2*p+2)**3/2;path.push({t:start+p*DIE_TRAVEL.home,x:rest.x*(1-ease),y:rest.y*(1-ease)-4*lift*p*(1-p)});}
+  total=start+DIE_TRAVEL.home;
+ }
+ return {path,duration:total,rest:[rest.x,rest.y],restAt:duration};
+}
+function sampleDieTravel(travel,ms){
+ const path=travel.path;
+ if(ms<=0)return [path[0].x,path[0].y];
+ if(ms>=travel.duration)return [path.at(-1).x,path.at(-1).y];
+ let lo=0,hi=path.length-1;
+ while(hi-lo>1){const mid=(lo+hi)>>1;if(path[mid].t<=ms)lo=mid;else hi=mid;}
+ const a=path[lo],b=path[hi],k=b.t>a.t?Math.min(1,Math.max(0,(ms-a.t)/(b.t-a.t))):0;
+ return [a.x+(b.x-a.x)*k,a.y+(b.y-a.y)*k];
 }

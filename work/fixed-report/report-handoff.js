@@ -52,6 +52,7 @@ function knockReport(hit){
  const mark=document.createElement('span');mark.className='report-knock';mark.dataset.die=String(hit.die);
  if(lateral){mark.style.left=hit.side==='left'?'0':'100%';mark.style.top=Math.max(12,Math.min(rect.height-12,hit.y))+'px';}
  else{mark.style.left=Math.max(12,Math.min(rect.width-12,hit.x))+'px';mark.style.top=hit.side==='top'?'0':'100%';}
+ if(hit.point){mark.style.left=hit.point[0]+'px';mark.style.top=hit.point[1]+'px';}
  view.append(mark);
  mark.animate([{transform:'translate(-50%,-50%) scale(.3)',opacity:.9},{transform:'translate(-50%,-50%) scale(1.15)',opacity:.55,offset:.35},{transform:'translate(-50%,-50%) scale(1.9)',opacity:0}],{duration:560,easing:'cubic-bezier(.16,1,.3,1)'}).onfinish=()=>mark.remove();
 }
