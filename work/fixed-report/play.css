@@ -524,3 +524,11 @@ html[data-passes=false] :is(#experiment-next,#refinement-rail,#keep){display:non
 [data-carrying=true] .report-frame,#report-view:has(.before-after[data-dragging]) .report-frame{pointer-events:none}
 /* The carried scene: the die and its shadow, with the same view of them wherever on screen they are. */
 .die-carry{position:absolute;inset:0;display:grid;place-items:center;perspective:1100px}
+/* The sentence above the page is the walkthrough: what the plain page is, then the same report with each ingredient a die adds. */
+.prompt-line{font-size:16px;color:var(--ink)}
+.prompt-row{min-height:calc(16px*1.45*2)}
+.prompt-lead{display:block}
+.prompt-push{font-size:14px;color:var(--muted)}
+.prompt-row[data-half=true] .prompt-line{cursor:default;pointer-events:none}
+@media(max-width:860px){.prompt-row,.prompt-row[data-pending=true]{min-height:calc(16px*1.45*3)}}
+.prompt-phrase{display:inline-block}

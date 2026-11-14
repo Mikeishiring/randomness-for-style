@@ -164,9 +164,9 @@ assert.equal(nodes.get('#next-label').textContent,'Roll a new pair');assert.equa
 const finishedPair=selected;nodes.get('#experiment-next').click();assert.equal(stage,1);assert.notEqual(selected,finishedPair);
 const resetPair=selected;nodes.get('#reset').click();assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#story-title').textContent,'This is what one prompt gets you.');assert.equal(document.activeElement,nodes.get('#experiment-next'));
 assert.equal(nodes.get('#next-label').textContent,'Add randomness');
-// The first throw brings both ingredients, so the page changes at once; the second die comes in at rest, to be thrown.
-assert.equal(document.documentElement.dataset.second,'false','the second die waits off the table');nodes.get('#experiment-next').click();assert.equal(introMode,false,'the first throw changes the page');assert.equal(stage,1);assert.deepEqual([...rollout.indices],[0],'only the first die is thrown');assert.equal(secondWaits,true);assert.equal(document.documentElement.dataset.second,'true','the second die comes in beside the page');assert.equal(nodes.get('#next-label').textContent,'Critique and redo');assert.equal(document.documentElement.dataset.journey,'ingredients');
-const firstPair=selected;roll(1);assert.equal(secondWaits,false,'once thrown it no longer waits');assert.equal(selected.a,firstPair.a);assert.notEqual(selected.b,firstPair.b,'rolling the second die changes the page again');assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);
+// The first throw adds one ingredient and the page changes at once; the second die comes in at rest, unnamed, to be thrown.
+assert.equal(document.documentElement.dataset.second,'false','the second die waits off the table');nodes.get('#experiment-next').click();assert.equal(introMode,false,'the first throw changes the page');assert.equal(stage,1);assert.deepEqual([...rollout.indices],[0],'only the first die is thrown');assert.equal(secondWaits,true);assert.equal(document.documentElement.dataset.second,'true','the second die comes in beside the page');assert.equal(nodes.get('#ingredient-a').textContent,INGREDIENTS_A[selected.a]);assert.equal(nodes.get('#ingredient-b').textContent,'','and has no name until it is thrown');assert.equal(nodes.get('#pair-title').textContent,INGREDIENTS_A[selected.a]);assert.equal(nodes.get('#next-label').textContent,'Critique and redo');assert.equal(document.documentElement.dataset.journey,'ingredients');
+const firstPair=selected;roll(1);assert.equal(rollout.gesture?.page,true,'the throw that adds the second ingredient lands on the page');assert.equal(secondWaits,false,'once thrown it no longer waits');assert.equal(nodes.get('#ingredient-b').textContent,INGREDIENTS_B[selected.b],'and has its name');assert.equal(nodes.get('#pair-title').textContent,selected.label);assert.equal(selected.a,firstPair.a);assert.notEqual(selected.b,firstPair.b,'rolling the second die changes the page again');assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);
 nodes.get('#stage-3').click();assert.equal(stage,3);
 const closedPair=selected;nodes.get('#stage-0').click();nodes.get('#stage-1').click();assert.equal(selected,closedPair);assert.equal(stage,1);
 const priorMethod=method,priorPair=selected;method='original';
@@ -214,10 +214,10 @@ assert.ok(history.url.includes('start=original'));assert.ok([...matrixButtons.va
 setAttempt(4);assert.equal(stage,1);rollout.defer=false;const initial=selected;assert.equal(document.documentElement.dataset.ready,'false','on a first visit the controls wait');roll(1);assert.equal(introMode,true,'there is no second die to throw yet');roll();
 assert.equal(introMode,false);assert.equal(stage,1);assert.deepEqual(rollout.indices,[0]);
 assert.equal(nodes.get('#stage-2').disabled,false);
-assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);assert.ok(!history.url.includes('start=original'));
+assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);assert.ok(history.url.includes('start=original'),'until the second die is thrown a link still opens on the plain page');
 `,home);
 assert.equal(guideTasks.size,0,'The guided path must not schedule automatic progression');
-vm.runInContext(`setAttempt(2);assert.equal(stage,2);const before=selected;roll(1);assert.equal(stage,2);assert.equal(selected.a,before.a);assert.notEqual(selected.b,before.b);`,home);
+vm.runInContext(`setAttempt(2);assert.equal(stage,2);const before=selected;roll(1);assert.equal(stage,2);assert.equal(selected.a,before.a);assert.notEqual(selected.b,before.b);assert.ok(!history.url.includes('start=original'));`,home);
 vm.runInContext(`introMode=true;stage=1;render();selectPair(currentExperiment().runs[5]);assert.equal(introMode,false);assert.equal(selected.id,'0-5');assert.equal(stage,1);`,home);
 vm.runInContext(`
 const secureDraw=randomIndex;
@@ -226,7 +226,7 @@ for(let left=0;left<6;left++)for(let right=0;right<6;right++){
 }
 randomIndex=secureDraw;
 `,home);
-console.log('PASS: plain-first home, shared later-stage bypass, original prompt identity, a first throw that brings both ingredients and changes the page while the second die comes in at rest, a second-die roll that changes it again, a five-step story headline without timers, reset to the plain page, subsequent independent rolls and gallery bypass.');
+console.log('PASS: plain-first home, shared later-stage bypass, original prompt identity, a first throw that adds one ingredient and changes the page while the second die comes in at rest and unnamed, a second-die roll that changes it again, a five-step story headline without timers, reset to the plain page, subsequent independent rolls and gallery bypass.');
 vm.runInContext(`
 // With the passes out of the way (the default), the page shows the third refinement, with and without the dice.
 passes=false;if(!introMode)showBrief();render();
@@ -270,9 +270,11 @@ pointer.custom=null;comparing=false;view='dice';introMode=true;stage=1;render();
 assert.equal(pointerSpec(),null,'nothing floats beside the plain page');assert.deepEqual({...promptLineState()},{pending:true},'the sentence waits above the page with two gaps');
 {renderPromptLine();const line=nodes.get('#prompt-line');assert.equal(line.children.filter(child=>child.className==='prompt-gap').length,2);assert.equal(nodes.get('#prompt-row').dataset.pending,'true');line.click();assert.notEqual(nodes.get('#prompt-full').hidden,false,'and does not open while it is being filled');}
 roll(0,null,[3,0]);assert.equal(introMode,false);assert.equal(pointerSpec(),null,'after a roll nothing floats beside the action');
-assert.deepEqual({...promptLineState()},{a:'Bureaucracy',b:'Tech',changed:null,pushes:0,same:false,ask:'',fresh:true});
-assert.ok(selected.steps[0].prompt.includes(ingredientLine('Bureaucracy','Tech')),'the line above the page is the exact sentence added to the prompt');
-roll(0,null,[2]);assert.equal(promptLineState().a,'Weather');assert.equal(promptLineState().changed,0,'the die that changed is marked');
+assert.deepEqual({...promptLineState()},{a:'Bureaucracy',b:null,changed:null,pushes:0,same:false,ask:'',fresh:0},'one throw fills one gap');
+{renderPromptLine();const row=nodes.get('#prompt-row'),line=nodes.get('#prompt-line');assert.equal(row.dataset.half,'true');assert.equal(line.children.filter(child=>child.className==='prompt-gap').length,1,'the second gap stays open');assert.equal(line.children.filter(child=>child.tagName==='b').map(child=>child.textContent).join(),'Bureaucracy');line.click();assert.notEqual(nodes.get('#prompt-full').hidden,false,'and the line does not open until both are in');}
+assert.ok(selected.steps[0].prompt.includes(ingredientLine('Bureaucracy','Tech')),'the page shown is a saved pair: the first ingredient with the face the second die shows');
+roll(0,null,[2]);assert.equal(promptLineState().a,'Weather');assert.equal(promptLineState().changed,0,'the die that changed is marked');assert.equal(promptLineState().b,null,'throwing the first die again leaves the second gap open');
+roll(1,null,[undefined,4]);assert.equal(promptLineState().b,'Luxury hotel');assert.equal(promptLineState().fresh,1,'the second throw fills the second gap');renderPromptLine();assert.equal(nodes.get('#prompt-row').dataset.half,'false');
 roll(1,null,[undefined,1]);assert.equal(promptLineState().b,'Disco');assert.equal(promptLineState().changed,1);
 {const row=nodes.get('#prompt-row'),line=nodes.get('#prompt-line'),panel=nodes.get('#prompt-full');renderPromptLine();assert.equal(row.dataset.empty,'false');
  assert.equal(line.children.filter(child=>child.tagName==='b').map(child=>child.textContent).join(' + '),'Weather + Disco');
@@ -296,7 +298,7 @@ showBrief();assert.equal(pointerSpec(),null);assert.equal(secondWaits,false,'a f
  roll(0);assert.equal(selected.a+'-'+selected.b,'3-1');assert.equal(guidedIn,true,'after that, rolls are random');
  SHOWCASE=keep;showBrief();}assert.deepEqual({...promptLineState()},{pending:true},'a fresh start waits with both gaps again');
 }`,context);
-console.log('PASS: the plain page waits with a two-gap sentence that the first throw fills; after a roll nothing floats beside the action: one line above the page is the exact sentence the dice added to the prompt, the changed die marked, and it opens the whole prompt with that line marked; each push is said in that line in the opening words of the refinement prompt, a kept version is answered with the saved pick and ends the pass, the first roll of a visit lands on a curated showcase pair and later ones are random, and the last card carries Compare.');
+console.log('PASS: the plain page waits with a two-gap sentence; each throw fills one gap; after a roll nothing floats beside the action: one line above the page names what the dice added, the changed die marked, and it opens the whole prompt with that line marked; each push is said in that line in the opening words of the refinement prompt, a kept version is answered with the saved pick and ends the pass, the first roll of a visit lands on a curated showcase pair and later ones are random, and the last card carries Compare.');
 vm.runInContext(`{
  const box=nodes.get('#before-after'),handle=nodes.get('#ba-handle'),key=k=>handle.events.keydown({key:k,preventDefault(){}});
  const before=()=>nodes.get('#report-view').children.filter(c=>c.tagName==='section'&&!c.hidden&&c.className==='report-before');

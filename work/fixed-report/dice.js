@@ -119,16 +119,43 @@ function dieArena(i){
  }
  return arena;
 }
-// Where a clicked die is thrown: a spot on the page that is in view, on its own side and clear of the dock.
-function dieAim(i,arena,random=Math.random){
+// Where a clicked die is thrown. Most throws land on the page, on the die's own side and clear of the dock; some
+// stay on the table beside it, where the window leaves room. A throw that must show its effect asks for the page.
+const DIE_BESIDE=.4;
+function dieAim(i,arena,random=Math.random,onPage=false){
  const page=arena?.page;if(!page)return null;
+ if(!onPage&&random()<DIE_BESIDE){const spot=dieAimBeside(i,arena,random);if(spot)return spot;}
  const w=page.right-page.left,h=page.bottom-page.top,u=.16+random()*.5;
  return [i?page.right-w*u:page.left+w*u,page.top+Math.min(h*.62,Math.max(h*.12,h*(.14+random()*.42)))];
 }
-// How a die tumbles when it is thrown at the page: rolling the way it is going.
-function dieTossGesture(i,arena,thrown=null){
+// A spot off the page that the die can reach and rest on whole, its centre clear of the page: the strips of window beside, above and below
+// the page, far enough from the tray that the throw goes somewhere. Null when the page fills the window.
+function dieAimBeside(i,arena,random=Math.random){
+ const page=arena?.page,bounds=arena?.bounds;if(!page||!bounds)return null;
+ const size=$('#throw-'+i+' .cube')?.clientWidth||116,gap=size*.3,reach=size*1.1;
+ // Only spots the die reaches without passing over the page: sent across it, it would land on the page on its way.
+ const clear=(x,y)=>{for(let k=1;k<=16;k++){const px=x*k/16,py=y*k/16;if(px>page.left&&px<page.right&&py>page.top&&py<page.bottom)return false;}return true;};
+ const strips=[[bounds[0],bounds[1],page.left-gap,bounds[3]],[page.right+gap,bounds[1],bounds[2],bounds[3]],[bounds[0],bounds[1],bounds[2],page.top-gap],[bounds[0],page.bottom+gap,bounds[2],bounds[3]]].filter(([l,t,r,b])=>r-l>=8&&b-t>=8);
+ // Never onto the other die's tray.
+ const own=$('#throw-'+i)?.getBoundingClientRect?.(),next=$('#throw-'+(1-i))?.getBoundingClientRect?.();
+ const other=own?.width&&next?.width?[next.left+next.width/2-own.left-own.width/2,next.top+next.height/2-own.top-own.height/2]:null;
+ const spots=[];
+ for(const [l,t,r,b] of strips)for(let n=0;n<6;n++){const x=l+random()*(r-l),y=t+random()*(b-t);if(Math.hypot(x,y)>=reach&&clear(x,y)&&(!other||Math.hypot(x-other[0],y-other[1])>=size*1.6))spots.push([x,y]);}
+ return spots.length?spots[Math.floor(random()*spots.length)]:null;
+}
+// The spot the next click throws each die to is drawn ahead of the click, so the throw can be prepared for it.
+const dieNextAims=[null,null];
+function dieNextAim(i,arena,onPage=false){
+ if(!arena)return null;
+ const stamp=JSON.stringify([arena.bounds.map(Math.round),arena.page?Object.values(arena.page).map(Math.round):null,onPage]);
+ if(dieNextAims[i]?.stamp!==stamp)dieNextAims[i]={stamp,spot:dieAim(i,arena,Math.random,onPage)};
+ return dieNextAims[i].spot;
+}
+// How a die tumbles when it is thrown: rolling the way it is going, toward the page or the spot beside it.
+function dieTossGesture(i,arena,thrown=null,aim=null){
  const page=arena?.page;if(!page)return thrown||null;
- const cx=(page.left+page.right)/2,cy=page.top+(page.bottom-page.top)*.35,far=Math.hypot(cx,cy)||1;
+ const beside=!!aim&&(aim[0]<page.left||aim[0]>page.right||aim[1]<page.top||aim[1]>page.bottom);
+ const cx=beside?aim[0]:(page.left+page.right)/2,cy=beside?aim[1]:page.top+(page.bottom-page.top)*.35,far=Math.hypot(cx,cy)||1;
  return {direction:Math.sign(cx)||1,strength:thrown?.strength??.25,axis:[-cy/far,0,cx/far]};
 }
 // When and where the page feels a throw: the first landing that is on the page, at that spot; a die that never
@@ -273,9 +300,10 @@ function prepareThrows(i){
  const step=deadline=>{
   preparing[i]=null;const state=dieStates[i];
   if(state.running||document.hidden||view!=='dice')return;
-  // A clicked die is thrown at the page, tumbling the way it goes; the first throw of a visit a little harder.
-  const first=typeof introMode!=='undefined'&&introMode&&typeof DICE_THROW!=='undefined'?(i?null:DICE_THROW.first):null;
-  const {width,travel,arena}=throwSetup(i),gesture=dieTossGesture(i,arena,first),key=throwKey(state.pose,width,travel,gesture);
+  // A clicked die is thrown at the page or beside it, tumbling the way it goes; the first throw of a visit a
+  // little harder, and it and the second die's first throw always at the page.
+  const first=typeof DICE_THROW==='undefined'?null:typeof introMode!=='undefined'&&introMode?(i?null:DICE_THROW.first):typeof secondWaits!=='undefined'&&secondWaits&&i===1?DICE_THROW.second:null;
+  const {width,travel,arena}=throwSetup(i),gesture=dieTossGesture(i,arena,first,dieNextAim(i,arena,!!first?.page)),key=throwKey(state.pose,width,travel,gesture);
   const misses=throwMisses[i];if(misses.key!==key){misses.key=key;misses.counts.clear();}
   for(const value of DIE_FACE_VALUES){
    if(preparedThrows[i].has(value))continue;
@@ -308,12 +336,13 @@ function tumbleDice(indices,values,complete,gesture=null,impact=null){
   const thrown=Array.isArray(gesture)?gesture[i]:gesture,{width,travel,arena}=setups.get(i),hand=thrown?.velocity||null;
   // From the hand the tumble follows the hand; a click throws the die at the page. Either way the tumble
   // itself stays on the spot, and the die's way across the screen is worked out on top of it.
-  const tumble=hand?{direction:thrown.direction||Math.sign(hand[0])||1,strength:thrown.strength||0,axis:thrown.axis,flick:thrown.flick,drop:thrown.drop}:dieTossGesture(i,arena,thrown);
+  const aim=hand?null:dieNextAim(i,arena,!!thrown?.page);dieNextAims[i]=null;
+  const tumble=hand?{direction:thrown.direction||Math.sign(hand[0])||1,strength:thrown.strength||0,axis:thrown.axis,flick:thrown.flick,drop:thrown.drop}:dieTossGesture(i,arena,thrown,aim);
   const ready=!hand?preparedThrows[i].get(values[i]):null;
   const plan=ready&&ready.key===throwKey(from[i],width,travel,tumble)?ready.plan:makeDiePlan(from[i],values[i],Math.random,width,travel,tumble,null,dieShading[i]?.camera||null);
   preparedThrows[i].clear();
   const speed=hand?Math.hypot(hand[0],hand[1]):0,cap=speed>2600?2600/speed:1;
-  const journey=arena?dieTravel(plan,{from:from[i].g||[0,0],velocity:hand?[hand[0]*cap,hand[1]*cap]:null,target:hand?null:dieAim(i,arena),bounds:arena.bounds}):null;
+  const journey=arena?dieTravel(plan,{from:from[i].g||[0,0],velocity:hand?[hand[0]*cap,hand[1]*cap]:null,target:aim,bounds:arena.bounds}):null;
   animateDiePlan(i,plan,values[i],journey);
   if(typeof playDiceClatter==='function')playDiceClatter(i,plan,performance.now());
   // The page reacts where and when the die first lands on it; thrown clear of the page, when it first lands.
