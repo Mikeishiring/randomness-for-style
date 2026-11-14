@@ -5,9 +5,11 @@ function resetDieInteraction(index){dieInteractions.get(index)?.();}
 function bindDieInteraction(button,index){
  let pointer=null,dragging=false,suppressPointerClick=false;
  const style=(key,value)=>button.style.setProperty(key,value);
+ // While a die is carried the saved pages under it let the pointer through, so the carry is never lost to them.
+ const carrying=on=>{const root=document.documentElement;if(!root?.dataset)return;if(on)root.dataset.carrying='true';else delete root.dataset.carrying;};
  const reset=(settle=true)=>{
   // Only a die that was actually picked up has to be put back; a press alone never took hold of it.
-  const id=pointer?.id,wasHeld=!!pointer,grabbed=!!pointer?.from;pointer=null;dragging=false;
+  const id=pointer?.id,wasHeld=!!pointer,grabbed=!!pointer?.from;pointer=null;dragging=false;carrying(false);
   if(id!==undefined&&button.hasPointerCapture(id))button.releasePointerCapture(id);
   button.removeAttribute('data-pressed');button.removeAttribute('data-dragging');button.removeAttribute('data-hover');
   ['--touch-x','--touch-y','--touch-z'].forEach(key=>style(key,'0deg'));style('--lean-x','0');style('--lean-y','0');
@@ -38,7 +40,7 @@ function bindDieInteraction(button,index){
    const dx=event.clientX-pointer.x,dy=event.clientY-pointer.y,now=performance.now();
    pointer.samples.push({x:event.clientX,y:event.clientY,t:now});
    pointer.samples=pointer.samples.filter(sample=>now-sample.t<=120);
-   if(!dragging&&Math.hypot(dx,dy)>7){dragging=true;button.dataset.dragging='true';pointer.from=beginDieGrab(index);pointer.face=dieTopFace(pointer.from.q);dieTick(index,'lift');}
+   if(!dragging&&Math.hypot(dx,dy)>7){dragging=true;carrying(true);button.dataset.dragging='true';pointer.from=beginDieGrab(index);pointer.face=dieTopFace(pointer.from.q);dieTick(index,'lift');}
    if(dragging){
     event.preventDefault();const face=moveDieGrab(index,pointer.from,dx,dy);
     // Each new face that comes up clicks into place under the finger.

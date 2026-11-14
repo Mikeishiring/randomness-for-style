@@ -517,3 +517,10 @@ html[data-passes=false] :is(#experiment-next,#refinement-rail,#keep){display:non
 /* The second ingredient fills its gap as its die arrives. */
 .prompt-line b[data-fill]~b[data-fill]{animation-delay:760ms}
 .text-button[aria-pressed=true]{color:var(--ink);text-decoration:underline 2px var(--accent);text-underline-offset:4px}
+/* Thrown dice travel across the screen, over the page: they are drawn above it, shadow and all. */
+.die{z-index:20}
+@media(max-width:860px){.die{position:relative}}
+/* A die being carried, or the before/after handle being pulled, is never lost to the saved page under the pointer. */
+[data-carrying=true] .report-frame,#report-view:has(.before-after[data-dragging]) .report-frame{pointer-events:none}
+/* The carried scene: the die and its shadow, with the same view of them wherever on screen they are. */
+.die-carry{position:absolute;inset:0;display:grid;place-items:center;perspective:1100px}
