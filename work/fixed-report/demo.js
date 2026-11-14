@@ -72,7 +72,7 @@ async function runDemo(){
  if(view!=='dice')selectView('dice');
  if(!introMode)showBrief();
  scrollTo({top:0,behavior:'instant'});
- const next=$('#experiment-next'),die=$('#throw-0'),start=next.getBoundingClientRect();
+ const next=$('#experiment-next'),die=$('#throw-0'),start=$('#dock').getBoundingClientRect();
  demo.x=Math.min(innerWidth-24,start.right+120);demo.y=Math.min(innerHeight-24,start.bottom+70);
  await demoWait(DEMO_BEATS.enter);if(!live())return;
  showDemoCursor(true);
@@ -83,7 +83,7 @@ async function runDemo(){
  await demoWait(DEMO_BEATS.hover+80);if(!live())return;
  await demoPress(die);if(!live())return;demoHover(null);
  roll(0,null,[0,2]);
- // 2. The first die names its ingredient and the second comes in. Throw that one, and the page changes.
+ // 2. The first throw changes the page and the second die comes in. Throw that one, and it changes again.
  await demoWait(160);if(!live())return;
  await demoRestBeside(die,demoNarrow()?60:0,demoNarrow()?70:120);if(!live())return;
  await demoWait(DEMO_BEATS.readFirst);if(!live())return;
@@ -95,8 +95,8 @@ async function runDemo(){
  await demoRestBeside(second,demoNarrow()?-60:0,demoNarrow()?70:120);if(!live())return;
  await demoWait(DEMO_BEATS.readPair);if(!live())return;
  // 3. Refine the same pair three times with the same prompt.
- await demoMoveTo(next);if(!live())return;demoHover(next);
- for(const hold of DEMO_BEATS.refine){
+ if(passes){await demoMoveTo(next);if(!live())return;demoHover(next);}
+ for(const hold of passes?DEMO_BEATS.refine:[]){
   await demoWait(DEMO_BEATS.hover);if(!live())return;
   await demoPress(next);if(!live())return;
   next.click();
@@ -116,7 +116,7 @@ async function runDemo(){
   await demoPress(compareButton);if(!live())return;compareButton.click();
  }
  // 5. Step aside, hand over, and point at what to try next.
- await demoRestBeside(comparable?compareButton:next,demoNarrow()?0:90,demoNarrow()?56:0);if(!live())return;
+ await demoRestBeside(comparable?compareButton:passes?next:$('#throw-1'),demoNarrow()?0:90,demoNarrow()?56:0);if(!live())return;
  await demoWait(DEMO_BEATS.handover);if(!live())return;
  demo.running=false;demo.token++;showDemoCursor(false);renderDemoToggle();
  if(innerWidth>860)showPointer($('#throw-0 .cube'),'Your turn.','Roll a die, or drag it to choose a face.','above');

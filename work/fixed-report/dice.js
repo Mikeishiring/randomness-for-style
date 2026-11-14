@@ -215,7 +215,7 @@ function prepareThrows(i){
   preparing[i]=null;const state=dieStates[i];
   if(state.running||document.hidden||view!=='dice')return;
   // On the plain page each die is thrown by the visitor from rest, at the page beside it.
-  const gesture=typeof introMode!=='undefined'&&introMode&&typeof DICE_THROW!=='undefined'?(i?DICE_THROW.enter[1]:DICE_THROW.first):null;
+  const gesture=typeof introMode!=='undefined'&&introMode&&typeof DICE_THROW!=='undefined'?(i?null:DICE_THROW.first):null;
   const {wall,width,travel}=throwSetup(i,gesture),edge=wall?.edge??null,key=throwKey(state.pose,edge,width,travel,gesture);
   const misses=throwMisses[i];if(misses.key!==key){misses.key=key;misses.counts.clear();}
   for(const value of DIE_FACE_VALUES){

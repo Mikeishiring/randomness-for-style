@@ -512,3 +512,8 @@ html[data-ready=true]:not([data-journey=original]) :is(#experiment-next,#compare
 @media(prefers-reduced-motion:reduce){.prompt-line b[data-fill],.prompt-push,html[data-ready=true] :is(#experiment-next,#compare,#reset,#refinement-rail){animation:none!important}}
 /* A die in the hand needs no tag. */
 .workbench:has(.die-object[data-dragging]) .die-call{opacity:0}
+/* By default the page shows one pass, the third refinement, and the passes themselves stay out of the way. */
+html[data-passes=false] :is(#experiment-next,#refinement-rail,#keep){display:none}
+/* The second ingredient fills its gap as its die arrives. */
+.prompt-line b[data-fill]~b[data-fill]{animation-delay:760ms}
+.text-button[aria-pressed=true]{color:var(--ink);text-decoration:underline 2px var(--accent);text-underline-offset:4px}

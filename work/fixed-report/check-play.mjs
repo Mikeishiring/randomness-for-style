@@ -46,7 +46,7 @@ nodes.set('#plain-prompt-details>summary',new Element('summary'));
 const visibleFrames=node=>node.children.filter(child=>!child.hidden).flatMap(child=>[...(child.tagName==='iframe'?[child]:[]),...visibleFrames(child)]);
 document={documentElement:{dataset:{}},events:{},addEventListener(k,v){(this.events[k]||=[]).push(v)},activeElement:null,querySelector:s=>nodes.get(s),querySelectorAll:()=>[],createElement:tag=>new Element(tag)};
 const observers=[],copies=[],downloads=[],rollout={defer:false,complete:null};
-const context=vm.createContext({assert,console,reduced:false,document,window:{listeners:{},addEventListener(k,v){(this.listeners[k]||=[]).push(v)}},history:{replaceState(){}},navigator:{clipboard:{async writeText(text){copies.push(text)}}},URLSearchParams,location:{search:'?stage=4',pathname:'/index.html',href:'https://randomness-for-style.vercel.app/?pair=0-2&stage=2&prompt=stronger'},crypto:webcrypto,EXPERIMENT:experiment,BASELINE:baseline,STRONGER_EXPERIMENT:stronger.experiment,STRONGER_BASELINE:stronger.baseline,NEWER_EXPERIMENT:newer.experiment,NEWER_BASELINE:newer.baseline,INGREDIENTS_A:ingredientsA,INGREDIENTS_B:ingredientsB,IntersectionObserver:function(){this.observe=()=>{}},ResizeObserver:function(callback){this.callback=callback;this.observed=[];this.observe=e=>this.observed.push(e);this.disconnect=()=>{this.observed=[]};observers.push(this)},inviteDice(){},bindPromptPeek(){return {close(){}}},showPrompt(pre,text,addition=''){pre.textContent=text;pre.addition=addition},matchMedia(query){return {matches:query.includes('prefers-reduced-motion')&&context.reduced,addEventListener(){}}},initDice3D(){},syncDice3D(){},cancelDiceRoll(){rollout.complete=null;},tumbleDice(indices,values,complete,gesture){rollout.indices=indices;rollout.values=values;rollout.gesture=gesture;if(rollout.defer)rollout.complete=complete;else complete();},Blob,URL:{createObjectURL(blob){downloads.push(blob);return 'blob:html'},revokeObjectURL(){}},setTimeout(){},clearTimeout(){},nodes,visibleFrames,rollout});
+const context=vm.createContext({assert,console,reduced:false,document,window:{listeners:{},addEventListener(k,v){(this.listeners[k]||=[]).push(v)}},history:{replaceState(){}},navigator:{clipboard:{async writeText(text){copies.push(text)}}},URLSearchParams,location:{search:'?stage=4&passes=1',pathname:'/index.html',href:'https://randomness-for-style.vercel.app/?pair=0-2&stage=2&prompt=stronger'},crypto:webcrypto,EXPERIMENT:experiment,BASELINE:baseline,STRONGER_EXPERIMENT:stronger.experiment,STRONGER_BASELINE:stronger.baseline,NEWER_EXPERIMENT:newer.experiment,NEWER_BASELINE:newer.baseline,INGREDIENTS_A:ingredientsA,INGREDIENTS_B:ingredientsB,IntersectionObserver:function(){this.observe=()=>{}},ResizeObserver:function(callback){this.callback=callback;this.observed=[];this.observe=e=>this.observed.push(e);this.disconnect=()=>{this.observed=[]};observers.push(this)},inviteDice(){},bindPromptPeek(){return {close(){}}},showPrompt(pre,text,addition=''){pre.textContent=text;pre.addition=addition},matchMedia(query){return {matches:query.includes('prefers-reduced-motion')&&context.reduced,addEventListener(){}}},initDice3D(){},syncDice3D(){},cancelDiceRoll(){rollout.complete=null;},tumbleDice(indices,values,complete,gesture){rollout.indices=indices;rollout.values=values;rollout.gesture=gesture;if(rollout.defer)rollout.complete=complete;else complete();},Blob,URL:{createObjectURL(blob){downloads.push(blob);return 'blob:html'},revokeObjectURL(){}},setTimeout(){},clearTimeout(){},nodes,visibleFrames,rollout});
 context.settleDieGrab=()=>{};
 vm.runInContext(read('report-handoff.js')+'\n'+read('play.js'),context);
 vm.runInContext(`
@@ -164,11 +164,9 @@ assert.equal(nodes.get('#next-label').textContent,'Roll a new pair');assert.equa
 const finishedPair=selected;nodes.get('#experiment-next').click();assert.equal(stage,1);assert.notEqual(selected,finishedPair);
 const resetPair=selected;nodes.get('#reset').click();assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#story-title').textContent,'This is what one prompt gets you.');assert.equal(document.activeElement,nodes.get('#experiment-next'));
 assert.equal(nodes.get('#next-label').textContent,'Add randomness');
-// The first roll is taken one die at a time: the first throw names an ingredient and leaves the page alone, the second changes it.
-assert.equal(document.documentElement.dataset.second,'false','the second die waits off the table');nodes.get('#experiment-next').click();assert.equal(introMode,true,'one die does not change the page');assert.equal(half,true);assert.deepEqual([...rollout.indices],[0]);assert.equal(document.documentElement.dataset.journey,'original');assert.equal(document.documentElement.dataset.second,'true','the second die comes in to be thrown');assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,currentBaseline().steps[0].html);assert.equal(promptLineState().a,INGREDIENTS_A[selected.a],'the first ingredient fills the first gap');
-{const named=selected.a;roll(0);assert.equal(introMode,true);assert.notEqual(selected.a,named,'throwing the first die again only changes its ingredient');}
-{const named=selected.a;nodes.get('#experiment-next').click();assert.equal(introMode,false);assert.equal(half,false);assert.equal(selected.a,named,'the second throw keeps the first ingredient');assert.equal(stage,1);assert.deepEqual([...rollout.indices],[1]);assert.equal(nodes.get('#next-label').textContent,'Critique and redo');assert.equal(document.documentElement.dataset.journey,'ingredients');}
-const firstPair=selected;roll(1);assert.equal(selected.a,firstPair.a);assert.notEqual(selected.b,firstPair.b,'rolling the second die changes the page again');assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);
+// The first throw brings both ingredients, so the page changes at once; the second die comes in at rest, to be thrown.
+assert.equal(document.documentElement.dataset.second,'false','the second die waits off the table');nodes.get('#experiment-next').click();assert.equal(introMode,false,'the first throw changes the page');assert.equal(stage,1);assert.deepEqual([...rollout.indices],[0],'only the first die is thrown');assert.equal(secondWaits,true);assert.equal(document.documentElement.dataset.second,'true','the second die comes in beside the page');assert.equal(nodes.get('#next-label').textContent,'Critique and redo');assert.equal(document.documentElement.dataset.journey,'ingredients');
+const firstPair=selected;roll(1);assert.equal(secondWaits,false,'once thrown it no longer waits');assert.equal(selected.a,firstPair.a);assert.notEqual(selected.b,firstPair.b,'rolling the second die changes the page again');assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);
 nodes.get('#stage-3').click();assert.equal(stage,3);
 const closedPair=selected;nodes.get('#stage-0').click();nodes.get('#stage-1').click();assert.equal(selected,closedPair);assert.equal(stage,1);
 const priorMethod=method,priorPair=selected;method='original';
@@ -206,7 +204,7 @@ console.log('PASS: all three recorded tracks and baselines, independent dice, al
 const homeNodes=new Map([...read('play.html').matchAll(/\bid="([^"]+)"/g)].map(m=>['#'+m[1],new Element()]));
 const homeDocument={...document,documentElement:{dataset:{}},events:{},querySelector:s=>homeNodes.get(s)};
 const guideTasks=new Map();let guideID=0;
-const home=vm.createContext({...context,document:homeDocument,nodes:homeNodes,location:{search:'',pathname:'/',href:'https://randomness-for-style.vercel.app/'},history:{replaceState(_a,_b,url){this.url=url}},setTimeout(fn,delay){const id=++guideID;guideTasks.set(id,{fn,delay});return id},clearTimeout(id){guideTasks.delete(id)}});
+const home=vm.createContext({...context,document:homeDocument,nodes:homeNodes,location:{search:'?passes=1',pathname:'/',href:'https://randomness-for-style.vercel.app/'},history:{replaceState(_a,_b,url){this.url=url}},setTimeout(fn,delay){const id=++guideID;guideTasks.set(id,{fn,delay});return id},clearTimeout(id){guideTasks.delete(id)}});
 vm.runInContext(read('report-handoff.js')+'\n'+read('play.js'),home);
 vm.runInContext(`
 assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#stage-2').disabled,true);assert.equal(nodes.get('#story-title').textContent,'This is what one prompt gets you.');assert.equal(nodes.get('#reset').hidden,true);
@@ -214,8 +212,7 @@ assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,STRONGER_BASELIN
 assert.equal(nodes.get('#current-prompt').textContent,STRONGER_BASELINE.steps[0].prompt);
 assert.ok(history.url.includes('start=original'));assert.ok([...matrixButtons.values()].every(button=>button.attrs['aria-pressed']==='false'));
 setAttempt(4);assert.equal(stage,1);rollout.defer=false;const initial=selected;assert.equal(document.documentElement.dataset.ready,'false','on a first visit the controls wait');roll(1);assert.equal(introMode,true,'there is no second die to throw yet');roll();
-assert.equal(introMode,true);assert.equal(half,true);assert.deepEqual(rollout.indices,[0]);roll();
-assert.equal(introMode,false);assert.equal(stage,1);assert.deepEqual(rollout.indices,[1]);
+assert.equal(introMode,false);assert.equal(stage,1);assert.deepEqual(rollout.indices,[0]);
 assert.equal(nodes.get('#stage-2').disabled,false);
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);assert.ok(!history.url.includes('start=original'));
 `,home);
@@ -225,20 +222,32 @@ vm.runInContext(`introMode=true;stage=1;render();selectPair(currentExperiment().
 vm.runInContext(`
 const secureDraw=randomIndex;
 for(let left=0;left<6;left++)for(let right=0;right<6;right++){
- introMode=true;stage=1;selected=currentExperiment().runs[2];const draws=[left,right];randomIndex=length=>{assert.equal(length,6);return draws.shift()};roll();assert.equal(introMode,true);assert.equal(selected.a,left);roll();assert.equal(introMode,false);assert.equal(selected.id,left+'-'+right);assert.equal(stage,1);
+ introMode=true;stage=1;selected=currentExperiment().runs[2];const draws=[left,right];randomIndex=length=>{assert.equal(length,6);return draws.shift()};roll();assert.equal(introMode,false);assert.equal(selected.id,left+'-'+right);assert.equal(stage,1);
 }
 randomIndex=secureDraw;
 `,home);
-console.log('PASS: plain-first home, shared later-stage bypass, original prompt identity, a first roll taken one die at a time (the first throw names an ingredient and leaves the page alone, the second changes it), a second-die roll that changes it again, a five-step story headline without timers, reset to the plain page, subsequent independent rolls and gallery bypass.');
+console.log('PASS: plain-first home, shared later-stage bypass, original prompt identity, a first throw that brings both ingredients and changes the page while the second die comes in at rest, a second-die roll that changes it again, a five-step story headline without timers, reset to the plain page, subsequent independent rolls and gallery bypass.');
+vm.runInContext(`
+// With the passes out of the way (the default), the page shows the third refinement, with and without the dice.
+passes=false;if(!introMode)showBrief();render();
+assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,currentBaseline().steps[3].html,'the plain page is the third refinement of the brief alone');
+roll(0,null,[1,2]);assert.equal(introMode,false);assert.equal(stage,4);
+assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[3].html,'the first throw shows the third refinement of the pair');
+assert.equal(promptLineState().pushes,0,'and the line above the page does not narrate the passes');
+roll(1,null,[undefined,4]);assert.equal(stage,4);assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[3].html);
+assert.equal(nodes.get('#keep').hidden,true,'no question about passes that are not on show');
+comparing=true;renderResult();assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===currentBaseline().steps[3].html),'the comparison is with the same pass of the plain brief');comparing=false;renderResult();
+nodes.get('#passes-toggle').click();assert.equal(passes,true);assert.equal(document.documentElement.dataset.passes,'true');assert.equal(nodes.get('#passes-toggle').attrs['aria-pressed'],'true');
+`,home);
+console.log('PASS: by default the page shows the third refinement with and without the dice, compares like with like, and keeps the passes out of the way until About the experiment brings them back.');
 vm.runInContext(`
 introMode=true;stage=1;selected=currentExperiment().runs[2];render();chooseDieFace(0,5);
-assert.equal(introMode,true,'a chosen first face names its ingredient and leaves the page alone');assert.equal(half,true);assert.equal(selected.id,'5-2');
-chooseDieFace(1,2);assert.equal(introMode,false);assert.equal(half,false);assert.equal(selected.id,'5-2');assert.equal(stage,1);
+assert.equal(introMode,false);assert.equal(selected.id,'5-2');assert.equal(stage,1);
 setAttempt(4);chooseDieFace(1,0);assert.equal(selected.id,'5-0');assert.equal(stage,4);
 assert.equal(nodes.get('#refinement-rail').style['--step'],'4');
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[3].html);
 `,home);
-console.log('PASS: deliberate face choice preserves the other ingredient and refinement, takes the plain page one die at a time and updates the report and rail together.');
+console.log('PASS: deliberate face choice preserves the other ingredient and refinement, bypasses the intro and updates the report and rail together.');
 vm.runInContext(`{
 comparing=false;introMode=false;view='dice';selected=currentExperiment().runs[0];stage=1;render();
 const message=(frame,data)=>window.listeners.message.forEach(fn=>fn({source:frame.contentWindow,data}));
@@ -258,11 +267,9 @@ comparing=false;renderResult();
 console.log('PASS: reports keep the reading position across steps and scroll together in comparison.');
 vm.runInContext(`{
 pointer.custom=null;comparing=false;view='dice';introMode=true;stage=1;render();
-assert.equal(pointerSpec(),null,'nothing floats beside the plain page');assert.deepEqual({...promptLineState()},{pending:true,a:null},'the sentence waits above the page with two gaps');
+assert.equal(pointerSpec(),null,'nothing floats beside the plain page');assert.deepEqual({...promptLineState()},{pending:true},'the sentence waits above the page with two gaps');
 {renderPromptLine();const line=nodes.get('#prompt-line');assert.equal(line.children.filter(child=>child.className==='prompt-gap').length,2);assert.equal(nodes.get('#prompt-row').dataset.pending,'true');line.click();assert.notEqual(nodes.get('#prompt-full').hidden,false,'and does not open while it is being filled');}
-roll(0,null,[3,0]);assert.equal(introMode,true);assert.deepEqual({...promptLineState()},{pending:true,a:'Bureaucracy'},'the first die fills the first gap');
-{renderPromptLine();const line=nodes.get('#prompt-line');assert.equal(line.children.filter(child=>child.className==='prompt-gap').length,1);assert.equal(line.children.find(child=>child.tagName==='b').textContent,'Bureaucracy');}
-roll(1);assert.equal(introMode,false);assert.equal(pointerSpec(),null,'after a roll nothing floats beside the action');
+roll(0,null,[3,0]);assert.equal(introMode,false);assert.equal(pointerSpec(),null,'after a roll nothing floats beside the action');
 assert.deepEqual({...promptLineState()},{a:'Bureaucracy',b:'Tech',changed:null,pushes:0,same:false,ask:'',fresh:true});
 assert.ok(selected.steps[0].prompt.includes(ingredientLine('Bureaucracy','Tech')),'the line above the page is the exact sentence added to the prompt');
 roll(0,null,[2]);assert.equal(promptLineState().a,'Weather');assert.equal(promptLineState().changed,0,'the die that changed is marked');
@@ -284,12 +291,12 @@ setAttempt(4);assert.equal(pointerSpec(),null,'the last step asks its question o
  assert.equal(nodes.get('#next-label').textContent,'Roll a new pair','keeping one ends the pass: the action offers the next pair');assert.equal(nodes.get('#experiment-next').dataset.wait,'false');assert.equal(panel.dataset.picked,'true');
  list.children[3].click();assert.equal(nodes.get('#keep-title').textContent,'You kept +2. So did we: test reason.');assert.equal(list.children[3].dataset.ours,'false');delete globalThis.CURATION;
  roll(0,null,[5]);assert.equal(panel.hidden,true,'a new pair starts a new journey');}
-showBrief();assert.equal(pointerSpec(),null);assert.equal(half,false,'a fresh start is back to one die');
+showBrief();assert.equal(pointerSpec(),null);assert.equal(secondWaits,false,'a fresh start is back to one die');
 {const keep=SHOWCASE;SHOWCASE=['3-1'];guidedIn=false;const drawn=introPair();assert.equal(drawn.join('-'),'3-1','the first roll of a visit lands on a curated showcase pair');
- roll(0);assert.equal(introMode,true);assert.equal(selected.a,3);roll(1);assert.equal(selected.a+'-'+selected.b,'3-1');assert.equal(guidedIn,true,'after that, rolls are random');
- SHOWCASE=keep;showBrief();}assert.deepEqual({...promptLineState()},{pending:true,a:null},'a fresh start waits with both gaps again');
+ roll(0);assert.equal(selected.a+'-'+selected.b,'3-1');assert.equal(guidedIn,true,'after that, rolls are random');
+ SHOWCASE=keep;showBrief();}assert.deepEqual({...promptLineState()},{pending:true},'a fresh start waits with both gaps again');
 }`,context);
-console.log('PASS: the plain page waits with a two-gap sentence that the dice fill one at a time; after a roll nothing floats beside the action: one line above the page is the exact sentence the dice added to the prompt, the changed die marked, and it opens the whole prompt with that line marked; each push is said in that line in the opening words of the refinement prompt, a kept version is answered with the saved pick and ends the pass, the first roll of a visit lands on a curated showcase pair and later ones are random, and the last card carries Compare.');
+console.log('PASS: the plain page waits with a two-gap sentence that the first throw fills; after a roll nothing floats beside the action: one line above the page is the exact sentence the dice added to the prompt, the changed die marked, and it opens the whole prompt with that line marked; each push is said in that line in the opening words of the refinement prompt, a kept version is answered with the saved pick and ends the pass, the first roll of a visit lands on a curated showcase pair and later ones are random, and the last card carries Compare.');
 vm.runInContext(`{
  const box=nodes.get('#before-after'),handle=nodes.get('#ba-handle'),key=k=>handle.events.keydown({key:k,preventDefault(){}});
  const before=()=>nodes.get('#report-view').children.filter(c=>c.tagName==='section'&&!c.hidden&&c.className==='report-before');
