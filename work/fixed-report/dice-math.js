@@ -254,7 +254,7 @@ function sampleDiePlan(plan,t){
 // tumble, which stays on the spot: the die keeps its speed in the air, loses some at every landing and while it
 // slides, turns back at the edges of the arena, and once it has come to rest it is brought home to its tray.
 const DIE_TRAVEL={keep:.62,slide:4.2,bounce:.55,pause:170,home:440};
-function dieTravel(plan,{from=[0,0],velocity=null,target=null,bounds=null}={}){
+function dieTravel(plan,{from=[0,0],velocity=null,target=null,bounds=null,rebound=false}={}){
  const times=plan.kind==='physics'?plan.frames.map(frame=>frame.t):Array.from({length:67},(_,n)=>n/66),duration=plan.duration,size=plan.size||116;
  const touching=times.map(t=>(sampleDiePlan(plan,t).air??0)<1.5),contacts=plan.contacts||[];
  const run=(v,limits)=>{
@@ -272,6 +272,18 @@ function dieTravel(plan,{from=[0,0],velocity=null,target=null,bounds=null}={}){
   }
   return path;
  };
+ // Thrown at the page by a click: there by its first landing, then back to its tray as it bounces to rest. It
+ // marks the spot it struck without sitting on what it changed.
+ if(target&&rebound&&contacts.length){
+  const hit=contacts[0],home=hit+(1-hit)*.92,pin=(n,lo,hi)=>bounds?Math.min(hi,Math.max(lo,n)):n;
+  const tx=pin(target[0],bounds?.[0],bounds?.[2]),ty=pin(target[1],bounds?.[1],bounds?.[3]);
+  const path=times.map(t=>{
+   if(t<=hit){const p=hit>0?t/hit:1;return {t:t*duration,x:from[0]+(tx-from[0])*p,y:from[1]+(ty-from[1])*p};}
+   const s=Math.min(1,(t-hit)/(home-hit)),ease=s*s*(3-2*s);
+   return {t:t*duration,x:tx*(1-ease),y:ty*(1-ease)};
+  });
+  return {path,duration,rest:[0,0],restAt:duration};
+ }
  let v=velocity||[0,0];
  // Thrown at a spot: the speed that brings the die to rest exactly there.
  if(target){const reach=run([1,0],null).at(-1).x-from[0];if(reach>1e-6)v=[(target[0]-from[0])/reach,(target[1]-from[1])/reach];}

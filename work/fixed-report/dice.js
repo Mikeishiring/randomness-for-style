@@ -143,6 +143,9 @@ function dieAimBeside(i,arena,random=Math.random){
  for(const [l,t,r,b] of strips)for(let n=0;n<6;n++){const x=l+random()*(r-l),y=t+random()*(b-t);if(Math.hypot(x,y)>=reach&&clear(x,y)&&(!other||Math.hypot(x-other[0],y-other[1])>=size*1.6))spots.push([x,y]);}
  return spots.length?spots[Math.floor(random()*spots.length)]:null;
 }
+function dieOnPage(spot,arena){const page=arena?.page;return !!spot&&!!page&&spot[0]>=page.left&&spot[0]<=page.right&&spot[1]>=page.top&&spot[1]<=page.bottom;}
+// When the throw in the air first lands, in milliseconds from when it was thrown; null when none is pending.
+function dieLandingMs(i){return dieImpacts[i]?.ms??null;}
 // The spot the next click throws each die to is drawn ahead of the click, so the throw can be prepared for it.
 const dieNextAims=[null,null];
 function dieNextAim(i,arena,onPage=false){
@@ -342,14 +345,14 @@ function tumbleDice(indices,values,complete,gesture=null,impact=null){
   const plan=ready&&ready.key===throwKey(from[i],width,travel,tumble)?ready.plan:makeDiePlan(from[i],values[i],Math.random,width,travel,tumble,null,dieShading[i]?.camera||null);
   preparedThrows[i].clear();
   const speed=hand?Math.hypot(hand[0],hand[1]):0,cap=speed>2600?2600/speed:1;
-  const journey=arena?dieTravel(plan,{from:from[i].g||[0,0],velocity:hand?[hand[0]*cap,hand[1]*cap]:null,target:aim,bounds:arena.bounds}):null;
+  const journey=arena?dieTravel(plan,{from:from[i].g||[0,0],velocity:hand?[hand[0]*cap,hand[1]*cap]:null,target:aim,rebound:dieOnPage(aim,arena),bounds:arena.bounds}):null;
   animateDiePlan(i,plan,values[i],journey);
   if(typeof playDiceClatter==='function')playDiceClatter(i,plan,performance.now());
   // The page reacts where and when the die first lands on it; thrown clear of the page, when it first lands.
   const spot=dieImpactSpot(i,plan,journey,arena),knock=!!spot.point;
   const hit={side:spot.side,knock,die:i,strength:dieClamp(thrown?.strength||0),x:spot.point?.[0]??0,y:spot.point?.[1]??0,point:spot.point};
   const run=()=>{if(typeof hitReport==='function')hitReport(impact,hit);},land=()=>{if(typeof landReportImpact==='function')landReportImpact(impact);};
-  dieImpacts[i]={run,land,timer:setTimeout(()=>{dieImpacts[i]=null;run();},spot.ms)};
+  dieImpacts[i]={run,land,ms:spot.ms,timer:setTimeout(()=>{dieImpacts[i]=null;run();},spot.ms)};
   sides.push({side:spot.side,knock});
   const name=i?modes[active].options[values[i]].name:worlds[values[i]].name;
   $('#throw-'+i).setAttribute('aria-label',`Roll ${i?'second':'first'} die again. ${name}`);
