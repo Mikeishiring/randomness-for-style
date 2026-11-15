@@ -75,7 +75,7 @@ function initDice3D(){
   // The floor shares the die's camera, so the die lands on it; the die moves in the same space above it. The
   // tray stays where it is. The die and its shadow, on a floor of its own, are carried across the screen
   // together, in a scene with its own vanishing point, so the die looks the same wherever it is.
-  button.innerHTML='<span class="die-floor" aria-hidden="true"><span class="die-ground"></span></span><span class="die-carry" aria-hidden="true"><span class="die-floor die-shade"><span class="die-shadow"></span></span><span class="die-grip"><span class="die-camera"><span class="die-flight"><span class="cube">'+dieSolidMarkup()+dieFaceMarkup(i)+'</span></span></span></span></span>';
+  button.innerHTML='<span class="die-floor" aria-hidden="true"><span class="die-ground"></span></span><span class="die-carry" aria-hidden="true"><span class="die-floor die-shade"><span class="die-shadow"></span></span><span class="die-grip"><span class="die-camera"><span class="die-flight"><span class="cube">'+dieSolidMarkup()+dieFaceMarkup(i)+'</span></span></span></span><span class="die-hand"><svg class="demo-arrow" viewBox="0 0 24 24" width="24" height="24"><path d="M5.5 3.2v15.6l4.2-4.1 2.7 6.1 2.6-1.1-2.7-6h5.9z"/></svg><span class="demo-touch"></span></span></span>';
   die.querySelector('.die-top').after(button);bindDieInteraction(button,i);
   const faces=[...button.querySelectorAll('.cube-face')],pieces=[...button.querySelectorAll('.cube-bevel,.cube-corner'),...faces];
   dieShading[i]={pieces,normals:[...DIE_SOLIDS.map(solid=>solid.normal),...faces.map((_,n)=>DIE_FACE_NORMALS[n])],camera:dieCameraMatrix(button.querySelector('.die-camera'))};
@@ -119,54 +119,55 @@ function dieArena(i){
  }
  return arena;
 }
-// Where a clicked die is thrown. Most throws land on the page, on the die's own side and clear of the dock; some
-// stay on the table beside it, where the window leaves room. A throw that must show its effect asks for the page.
-const DIE_BESIDE=.4;
-function dieAim(i,arena,random=Math.random,onPage=false){
+// Where a clicked die is thrown: at the nearest edge of the page. It gets there in the air, strikes the edge and
+// bounces back to its tray, so it never comes to rest on what it changed. Null when the die sits over the page.
+function dieAim(i,arena,random=Math.random){
  const page=arena?.page;if(!page)return null;
- if(!onPage&&random()<DIE_BESIDE){const spot=dieAimBeside(i,arena,random);if(spot)return spot;}
- const w=page.right-page.left,h=page.bottom-page.top,u=.16+random()*.5;
- return [i?page.right-w*u:page.left+w*u,page.top+Math.min(h*.62,Math.max(h*.12,h*(.14+random()*.42)))];
+ const size=$('#throw-'+i+' .cube')?.clientWidth||116,half=size*DIE_REACH,pin=(n,lo,hi)=>hi<lo?(lo+hi)/2:Math.min(hi,Math.max(lo,n));
+ const cx=pin(0,page.left,page.right),cy=pin(0,page.top,page.bottom);
+ if(!cx&&!cy)return null;
+ // Never quite the same place on the edge twice.
+ const drift=(random()-.5)*size*1.1,short=n=>Math.abs(n)>half?n-Math.sign(n)*half:0;
+ return Math.abs(cx)>=Math.abs(cy)?{spot:[short(cx),pin(drift,page.top+half,page.bottom-half)],side:cx>0?'left':'right'}:{spot:[pin(drift,page.left+half,page.right-half),short(cy)],side:cy>0?'top':'bottom'};
 }
-// A spot off the page that the die can reach and rest on whole, its centre clear of the page: the strips of window beside, above and below
-// the page, far enough from the tray that the throw goes somewhere. Null when the page fills the window.
-function dieAimBeside(i,arena,random=Math.random){
- const page=arena?.page,bounds=arena?.bounds;if(!page||!bounds)return null;
- const size=$('#throw-'+i+' .cube')?.clientWidth||116,gap=size*.3,reach=size*1.1;
- // Only spots the die reaches without passing over the page: sent across it, it would land on the page on its way.
- const clear=(x,y)=>{for(let k=1;k<=16;k++){const px=x*k/16,py=y*k/16;if(px>page.left&&px<page.right&&py>page.top&&py<page.bottom)return false;}return true;};
- const strips=[[bounds[0],bounds[1],page.left-gap,bounds[3]],[page.right+gap,bounds[1],bounds[2],bounds[3]],[bounds[0],bounds[1],bounds[2],page.top-gap],[bounds[0],page.bottom+gap,bounds[2],bounds[3]]].filter(([l,t,r,b])=>r-l>=8&&b-t>=8);
- // Never onto the other die's tray.
- const own=$('#throw-'+i)?.getBoundingClientRect?.(),next=$('#throw-'+(1-i))?.getBoundingClientRect?.();
- const other=own?.width&&next?.width?[next.left+next.width/2-own.left-own.width/2,next.top+next.height/2-own.top-own.height/2]:null;
- const spots=[];
- for(const [l,t,r,b] of strips)for(let n=0;n<6;n++){const x=l+random()*(r-l),y=t+random()*(b-t);if(Math.hypot(x,y)>=reach&&clear(x,y)&&(!other||Math.hypot(x-other[0],y-other[1])>=size*1.6))spots.push([x,y]);}
- return spots.length?spots[Math.floor(random()*spots.length)]:null;
+// Half a die as it meets the page: its centre stops this far short of the edge.
+const DIE_REACH=.56;
+// The page as a thrown die meets it: the die's centre never enters this.
+function dieBlock(arena,size){const page=arena?.page,half=size*DIE_REACH;return page?{left:page.left-half,top:page.top-half,right:page.right+half,bottom:page.bottom+half}:null;}
+// How far a die leaves the hand: as far as the hand was moving, and a flick toward the page always reaches it.
+function dieReach(from,hand,block,flick){
+ const speed=Math.hypot(hand[0],hand[1]),reach=Math.min(760,speed*.3);
+ if(!flick||!block||speed<1e-6)return reach;
+ let near=0,far=Infinity;
+ for(const k of [0,1]){
+  const o=from[k],d=hand[k]/speed,lo=k?block.top:block.left,hi=k?block.bottom:block.right;
+  if(Math.abs(d)<1e-9){if(o<lo||o>hi)return reach;continue;}
+  const a=(lo-o)/d,b=(hi-o)/d;near=Math.max(near,Math.min(a,b));far=Math.min(far,Math.max(a,b));
+ }
+ return near>0&&near<=far?Math.max(reach,near+40):reach;
 }
-function dieOnPage(spot,arena){const page=arena?.page;return !!spot&&!!page&&spot[0]>=page.left&&spot[0]<=page.right&&spot[1]>=page.top&&spot[1]<=page.bottom;}
 // When the throw in the air first lands, in milliseconds from when it was thrown; null when none is pending.
 function dieLandingMs(i){return dieImpacts[i]?.ms??null;}
 // The spot the next click throws each die to is drawn ahead of the click, so the throw can be prepared for it.
 const dieNextAims=[null,null];
-function dieNextAim(i,arena,onPage=false){
+function dieNextAim(i,arena){
  if(!arena)return null;
- const stamp=JSON.stringify([arena.bounds.map(Math.round),arena.page?Object.values(arena.page).map(Math.round):null,onPage]);
- if(dieNextAims[i]?.stamp!==stamp)dieNextAims[i]={stamp,spot:dieAim(i,arena,Math.random,onPage)};
- return dieNextAims[i].spot;
+ const stamp=JSON.stringify([arena.bounds.map(Math.round),arena.page?Object.values(arena.page).map(Math.round):null]);
+ if(dieNextAims[i]?.stamp!==stamp)dieNextAims[i]={stamp,aim:dieAim(i,arena)};
+ return dieNextAims[i].aim;
 }
-// How a die tumbles when it is thrown: rolling the way it is going, toward the page or the spot beside it.
-function dieTossGesture(i,arena,thrown=null,aim=null){
- const page=arena?.page;if(!page)return thrown||null;
- const beside=!!aim&&(aim[0]<page.left||aim[0]>page.right||aim[1]<page.top||aim[1]>page.bottom);
- const cx=beside?aim[0]:(page.left+page.right)/2,cy=beside?aim[1]:page.top+(page.bottom-page.top)*.35,far=Math.hypot(cx,cy)||1;
- return {direction:Math.sign(cx)||1,strength:thrown?.strength??.25,axis:[-cy/far,0,cx/far]};
+// How a clicked die tumbles: rolling the way it is thrown, toward the spot on the page's edge.
+function dieTossGesture(i,arena,thrown=null,spot=null){
+ const far=spot?Math.hypot(spot[0],spot[1]):0;if(far<1)return thrown||null;
+ return {direction:Math.sign(spot[0])||1,strength:thrown?.strength??.25,axis:[-spot[1]/far,0,spot[0]/far]};
 }
-// When and where the page feels a throw: the first landing that is on the page, at that spot; a die that never
-// lands on it still changes the page, when it first lands.
+// When and where the page feels a throw: where the die strikes its edge; failing that the first landing that is on
+// the page, at that spot; a die that never touches it still changes the page, when it first lands.
 function dieImpactSpot(i,plan,journey,arena){
  const first=(plan.contacts[0]??1)*plan.duration,page=arena?.page;
  const away={ms:first,point:null,side:page?(page.left>0?'left':page.right<0?'right':'top'):(i?'right':'left')};
  if(!journey||!page)return away;
+ if(journey.strike){const hit=journey.strike,pin=(n,lo,hi)=>Math.min(hi,Math.max(lo,n));return {ms:hit.ms,edge:true,side:hit.side,point:[pin(hit.x,page.left,page.right)-arena.origin[0],pin(hit.y,page.top,page.bottom)-arena.origin[1]]};}
  for(const contact of plan.contacts){
   const ms=contact*plan.duration,g=sampleDieTravel(journey,ms);
   if(g[0]<page.left||g[0]>page.right||g[1]<page.top||g[1]>page.bottom)continue;
@@ -282,7 +283,13 @@ function animateDiePlan(i,plan,value,travel=null){
  if(travel){
   const frames=travel.path.map(point=>({offset:Math.min(1,point.t/travel.duration),translate:point.x.toFixed(1)+'px '+point.y.toFixed(1)+'px'}));
   const carry=$('#throw-'+i+' .die-carry');
-  if(carry?.animate){const journey=carry.animate(frames,{duration:travel.duration,easing:'linear',fill:'forwards'});animations.push(journey);if(travel.duration>plan.duration)clock=journey;}
+   if(carry?.animate){const journey=carry.animate(frames,{duration:travel.duration,easing:'linear',fill:'forwards'});animations.push(journey);if(travel.duration>plan.duration)clock=journey;}
+  // A die that stopped away from its tray is fetched: a pointer comes in, presses on it, carries it home, lets go.
+  const hand=$('#throw-'+i+' .die-hand');
+  if(travel.hand&&hand?.animate){
+   const at=ms=>Math.min(1,ms/travel.duration),{start,grab,drop}=travel.hand,on='9px 11px',off='84px 66px';
+   animations.push(hand.animate([{offset:0,opacity:0,translate:off,scale:'1'},{offset:at(start),opacity:0,translate:off,scale:'1',easing:'cubic-bezier(.23,1,.32,1)'},{offset:at(grab-70),opacity:1,translate:on,scale:'1'},{offset:at(grab),opacity:1,translate:on,scale:'.86'},{offset:at(drop),opacity:1,translate:on,scale:'.86'},{offset:at(drop+70),opacity:1,translate:on,scale:'1'},{offset:1,opacity:0,translate:'34px 28px',scale:'1'}],{duration:travel.duration,easing:'linear',fill:'forwards'}));
+  }
  }
  state.running={plan,animations,value,travel,clock};
  clock.onfinish=()=>{if(state.running?.animations===animations)finishDie(i);};
@@ -303,10 +310,9 @@ function prepareThrows(i){
  const step=deadline=>{
   preparing[i]=null;const state=dieStates[i];
   if(state.running||document.hidden||view!=='dice')return;
-  // A clicked die is thrown at the page or beside it, tumbling the way it goes; the first throw of a visit a
-  // little harder, and it and the second die's first throw always at the page.
+  // A clicked die is thrown at the page's edge, tumbling the way it goes; the first throw of a visit a little harder.
   const first=typeof DICE_THROW==='undefined'?null:typeof introMode!=='undefined'&&introMode?(i?null:DICE_THROW.first):typeof secondWaits!=='undefined'&&secondWaits&&i===1?DICE_THROW.second:null;
-  const {width,travel,arena}=throwSetup(i),gesture=dieTossGesture(i,arena,first,dieNextAim(i,arena,!!first?.page)),key=throwKey(state.pose,width,travel,gesture);
+  const {width,travel,arena}=throwSetup(i),gesture=dieTossGesture(i,arena,first,dieNextAim(i,arena)?.spot),key=throwKey(state.pose,width,travel,gesture);
   const misses=throwMisses[i];if(misses.key!==key){misses.key=key;misses.counts.clear();}
   for(const value of DIE_FACE_VALUES){
    if(preparedThrows[i].has(value))continue;
@@ -339,18 +345,20 @@ function tumbleDice(indices,values,complete,gesture=null,impact=null){
   const thrown=Array.isArray(gesture)?gesture[i]:gesture,{width,travel,arena}=setups.get(i),hand=thrown?.velocity||null;
   // From the hand the tumble follows the hand; a click throws the die at the page. Either way the tumble
   // itself stays on the spot, and the die's way across the screen is worked out on top of it.
-  const aim=hand?null:dieNextAim(i,arena,!!thrown?.page);dieNextAims[i]=null;
-  const tumble=hand?{direction:thrown.direction||Math.sign(hand[0])||1,strength:thrown.strength||0,axis:thrown.axis,flick:thrown.flick,drop:thrown.drop}:dieTossGesture(i,arena,thrown,aim);
+  const aim=hand?null:dieNextAim(i,arena);dieNextAims[i]=null;
+  const tumble=hand?{direction:thrown.direction||Math.sign(hand[0])||1,strength:thrown.strength||0,axis:thrown.axis,flick:thrown.flick,drop:thrown.drop}:dieTossGesture(i,arena,thrown,aim?.spot);
   const ready=!hand?preparedThrows[i].get(values[i]):null;
   const plan=ready&&ready.key===throwKey(from[i],width,travel,tumble)?ready.plan:makeDiePlan(from[i],values[i],Math.random,width,travel,tumble,null,dieShading[i]?.camera||null);
   preparedThrows[i].clear();
-  const speed=hand?Math.hypot(hand[0],hand[1]):0,cap=speed>2600?2600/speed:1;
-  const journey=arena?dieTravel(plan,{from:from[i].g||[0,0],velocity:hand?[hand[0]*cap,hand[1]*cap]:null,target:aim,rebound:dieOnPage(aim,arena),bounds:arena.bounds}):null;
+  // A click strikes the page's edge and bounces home. From the hand the die goes as far as the hand threw it,
+  // and turns back from the page if it reaches it.
+  const start=from[i].g||[0,0],block=dieBlock(arena,width);
+  const journey=!arena?null:hand?dieTravel(plan,{from:start,velocity:hand,reach:dieReach(start,hand,block,!!thrown.flick),wall:block,bounds:arena.bounds}):dieTravel(plan,{from:start,strike:aim,bounds:arena.bounds});
   animateDiePlan(i,plan,values[i],journey);
   if(typeof playDiceClatter==='function')playDiceClatter(i,plan,performance.now());
   // The page reacts where and when the die first lands on it; thrown clear of the page, when it first lands.
   const spot=dieImpactSpot(i,plan,journey,arena),knock=!!spot.point;
-  const hit={side:spot.side,knock,die:i,strength:dieClamp(thrown?.strength||0),x:spot.point?.[0]??0,y:spot.point?.[1]??0,point:spot.point};
+  const hit={side:spot.side,knock,die:i,strength:dieClamp(thrown?.strength||0),x:spot.point?.[0]??0,y:spot.point?.[1]??0,point:spot.edge?null:spot.point};
   const run=()=>{if(typeof hitReport==='function')hitReport(impact,hit);},land=()=>{if(typeof landReportImpact==='function')landReportImpact(impact);};
   dieImpacts[i]={run,land,ms:spot.ms,timer:setTimeout(()=>{dieImpacts[i]=null;run();},spot.ms)};
   sides.push({side:spot.side,knock});

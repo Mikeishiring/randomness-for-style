@@ -24,12 +24,12 @@ assert.ok(calls.at(-1)[1].axis[0]>0);assert.equal(calls.at(-1)[1].axis[2],0);sen
 // Recent reversal sets throw direction, not total distance from the grab.
 send('pointerdown');send('pointermove',{clientX:150},300);send('pointermove',{clientX:120},20);send('pointerup',{clientX:100},10);send('click');assert.equal(calls.at(-1)[1].direction,-1);
 // Letting go with the face the die already shows chose nothing, so it still rolls: a click that slipped rolls
-// like a click, and a swipe too gentle to be a flick is thrown from the hand.
+// like a click, and so does a swipe too gentle to be a flick: both are thrown at the page.
 shown=3;const beforeSlip=calls.length,slipChoices=choices.length,slipGrabs=grabs;
 send('pointerdown');send('pointermove',{clientX:90,clientY:104},60);assert.equal(grabs,slipGrabs+1,'the drag picks the die up');send('pointerup',{clientX:90,clientY:104},140);send('click');
 assert.equal(calls.length,beforeSlip+1);assert.equal(calls.at(-1)[1],undefined,'a slipped click rolls like a click');assert.equal(choices.length,slipChoices);
 send('pointerdown');send('pointermove',{clientX:110},60);send('pointermove',{clientX:125},40);send('pointerup',{clientX:130},20);send('click');
-const gentle=calls.at(-1)[1];assert.equal(calls.length,beforeSlip+2);assert.equal(gentle.guided,true);assert.equal(gentle.flick,undefined,'a gentle swipe is a roll, not a flick');assert.equal(gentle.direction,1);assert.ok(gentle.velocity[0]>0);assert.equal(choices.length,slipChoices);shown=null;
+assert.equal(calls.length,beforeSlip+2);assert.equal(calls.at(-1)[1],undefined,'a gentle swipe is thrown at the page like a click, not from the hand');assert.equal(choices.length,slipChoices);shown=null;
 // Holding after a fast movement chooses instead of throwing.
 const priorCalls=calls.length;send('pointerdown');send('pointermove',{clientX:150},20);send('pointerup',{clientX:150},160);send('click');assert.equal(calls.length,priorCalls);assert.equal(choices.length,2);
 // Escape, capture loss and multiple pointers never commit.

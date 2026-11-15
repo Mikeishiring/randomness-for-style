@@ -253,51 +253,60 @@ function sampleDiePlan(plan,t){
 // How far the die is from its tray on screen, in pixels, through a throw. This rides on top of the simulated
 // tumble, which stays on the spot: the die keeps its speed in the air, loses some at every landing and while it
 // slides, turns back at the edges of the arena, and once it has come to rest it is brought home to its tray.
-const DIE_TRAVEL={keep:.62,slide:4.2,bounce:.55,pause:170,home:440};
-function dieTravel(plan,{from=[0,0],velocity=null,target=null,bounds=null,rebound=false}={}){
- const times=plan.kind==='physics'?plan.frames.map(frame=>frame.t):Array.from({length:67},(_,n)=>n/66),duration=plan.duration,size=plan.size||116;
+const DIE_TRAVEL={keep:.62,slide:4.2,bounce:.55,strike:.6,pause:260,reach:340,leave:240};
+// strike: a click throw, {spot,side}: the die is at the spot, against the page's edge, late in its first flight, and
+// bounces back to its tray as it comes to rest. velocity and reach: a throw from the hand, going the way the hand
+// went and as far as reach when nothing is in its way. wall: the page, which a thrown die strikes and turns back from.
+function dieTravel(plan,{from=[0,0],velocity=null,reach=null,strike=null,wall=null,bounds=null}={}){
+ const times=plan.kind==='physics'?plan.frames.map(frame=>frame.t):Array.from({length:67},(_,n)=>n/66),duration=plan.duration;
  const touching=times.map(t=>(sampleDiePlan(plan,t).air??0)<1.5),contacts=plan.contacts||[];
- const run=(v,limits)=>{
-  let x=from[0],y=from[1],vx=v[0],vy=v[1],next=0;const path=[{t:0,x,y}];
+ const run=(v,limits,block)=>{
+  let x=from[0],y=from[1],vx=v[0],vy=v[1],next=0,struck=null;const path=[{t:0,x,y}];
   for(let n=1;n<times.length;n++){
    const dt=(times[n]-times[n-1])*duration/1000;
    while(next<contacts.length&&contacts[next]<=times[n]){vx*=DIE_TRAVEL.keep;vy*=DIE_TRAVEL.keep;next++;}
    if(touching[n]){const k=Math.exp(-DIE_TRAVEL.slide*dt);vx*=k;vy*=k;}
-   x+=vx*dt;y+=vy*dt;
+   const px=x,py=y;x+=vx*dt;y+=vy*dt;
+   // Reaching the page from outside, the die stops at the edge it came to and turns back.
+   if(block&&x>block.left&&x<block.right&&y>block.top&&y<block.bottom){
+    let side=null;
+    if(px<=block.left){x=block.left;vx=-Math.abs(vx)*DIE_TRAVEL.bounce;side='left';}
+    else if(px>=block.right){x=block.right;vx=Math.abs(vx)*DIE_TRAVEL.bounce;side='right';}
+    else if(py<=block.top){y=block.top;vy=-Math.abs(vy)*DIE_TRAVEL.bounce;side='top';}
+    else if(py>=block.bottom){y=block.bottom;vy=Math.abs(vy)*DIE_TRAVEL.bounce;side='bottom';}
+    if(side&&!struck)struck={ms:times[n]*duration,x,y,side};
+   }
    if(limits){
     if(x<limits[0]){x=limits[0];vx=Math.abs(vx)*DIE_TRAVEL.bounce;}else if(x>limits[2]){x=limits[2];vx=-Math.abs(vx)*DIE_TRAVEL.bounce;}
     if(y<limits[1]){y=limits[1];vy=Math.abs(vy)*DIE_TRAVEL.bounce;}else if(y>limits[3]){y=limits[3];vy=-Math.abs(vy)*DIE_TRAVEL.bounce;}
    }
    path.push({t:times[n]*duration,x,y});
   }
-  return path;
+  return {path,struck};
  };
- // Thrown at the page by a click: there by its first landing, then back to its tray as it bounces to rest. It
- // marks the spot it struck without sitting on what it changed.
- if(target&&rebound&&contacts.length){
-  const hit=contacts[0],home=hit+(1-hit)*.92,pin=(n,lo,hi)=>bounds?Math.min(hi,Math.max(lo,n)):n;
-  const tx=pin(target[0],bounds?.[0],bounds?.[2]),ty=pin(target[1],bounds?.[1],bounds?.[3]);
-  const path=times.map(t=>{
-   if(t<=hit){const p=hit>0?t/hit:1;return {t:t*duration,x:from[0]+(tx-from[0])*p,y:from[1]+(ty-from[1])*p};}
-   const s=Math.min(1,(t-hit)/(home-hit)),ease=s*s*(3-2*s);
-   return {t:t*duration,x:tx*(1-ease),y:ty*(1-ease)};
+ if(strike&&contacts.length){
+  const k=contacts[0]*DIE_TRAVEL.strike,home=k+(1-k)*.8,pin=(n,lo,hi)=>bounds?Math.min(hi,Math.max(lo,n)):n;
+  const tx=pin(strike.spot[0],bounds?.[0],bounds?.[2]),ty=pin(strike.spot[1],bounds?.[1],bounds?.[3]);
+  const path=[...new Set([...times,k])].sort((p,q)=>p-q).map(t=>{
+   if(t<=k){const p=k>0?t/k:1;return {t:t*duration,x:from[0]+(tx-from[0])*p,y:from[1]+(ty-from[1])*p};}
+   const left=(1-Math.min(1,(t-k)/(home-k)))**2;
+   return {t:t*duration,x:tx*left,y:ty*left};
   });
-  return {path,duration,rest:[0,0],restAt:duration};
+  return {path,duration,rest:[0,0],restAt:duration,strike:{ms:k*duration,x:tx,y:ty,side:strike.side}};
  }
+ // From the hand: the way the hand went, and as far as the hand asked for.
  let v=velocity||[0,0];
- // Thrown at a spot: the speed that brings the die to rest exactly there.
- if(target){const reach=run([1,0],null).at(-1).x-from[0];if(reach>1e-6)v=[(target[0]-from[0])/reach,(target[1]-from[1])/reach];}
- const path=run(v,bounds),rest=path.at(-1),far=Math.hypot(rest.x,rest.y);
- // Home again: a pause where it stopped, then a short hop back onto its tray.
- let total=duration;
+ if(reach!=null){const speed=Math.hypot(v[0],v[1]),unit=run([1,0],null,null).path.at(-1).x-from[0];v=speed>1e-6&&unit>1e-6?[v[0]/speed*reach/unit,v[1]/speed*reach/unit]:[0,0];}
+ const {path,struck}=run(v,bounds,wall),rest=path.at(-1),far=Math.hypot(rest.x,rest.y);
+ // Home again: where it stopped a pointer comes for it, picks it up, carries it to its tray and lets go.
+ let total=duration,hand=null;
  if(far>4){
-  const lift=Math.min(size*.42,far*.16),start=duration+DIE_TRAVEL.pause;path.push({t:start,x:rest.x,y:rest.y});
-  // The hop never lifts the die past the top of its room: a tray at the top of a phone screen is hopped to flat.
-  const roof=bounds?Math.min(bounds[1],rest.y,0):-Infinity;
-  for(let n=1;n<=24;n++){const p=n/24,ease=p<.5?4*p*p*p:1-(-2*p+2)**3/2;path.push({t:start+p*DIE_TRAVEL.home,x:rest.x*(1-ease),y:Math.max(roof,rest.y*(1-ease)-4*lift*p*(1-p))});}
-  total=start+DIE_TRAVEL.home;
+  const grab=duration+DIE_TRAVEL.pause+DIE_TRAVEL.reach,carry=Math.min(720,340+far*.5);path.push({t:grab,x:rest.x,y:rest.y});
+  for(let n=1;n<=24;n++){const p=n/24,ease=p<.5?4*p*p*p:1-(-2*p+2)**3/2;path.push({t:grab+p*carry,x:rest.x*(1-ease),y:rest.y*(1-ease)});}
+  total=grab+carry+DIE_TRAVEL.leave;path.push({t:total,x:0,y:0});
+  hand={start:duration+DIE_TRAVEL.pause,grab,drop:grab+carry};
  }
- return {path,duration:total,rest:[rest.x,rest.y],restAt:duration};
+ return {path,duration:total,rest:[rest.x,rest.y],restAt:duration,strike:struck,hand};
 }
 function sampleDieTravel(travel,ms){
  const path=travel.path;
