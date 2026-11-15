@@ -166,5 +166,36 @@ preparedThrows[0].clear();throwMisses[0].key='';prepCount=0;prepGuard=0;makeDieP
 prepareThrows(0);while(prepIdle.length&&prepGuard++<60)prepIdle.shift()(prepSlice);
 assert.equal(preparedThrows[0].size,6);assert.equal(prepCount,6*THROW_RETRIES,'the hop is kept once the retries are spent');
 makeDiePlan=prepReal;delete globalThis.requestIdleCallback;
-console.log('PASS: 96 exact face-up orientations/CSS matrices; 300 simulated throws that bounce on the tray, never sink into it and land flat on the chosen face near home; stable face markup; flicks livelier than clicks; a tray that gives with each impact; 200 page strikes in mid-air that never pass the edge; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion; a die carried with the pointer; throws that travel to a spot, turn back at the edges and come home; idle preparation that retries a missed search before keeping the scripted hop.');
+// A click throw at the page is there by its first landing and back on its tray by the end, never resting on the page.
+{const plan=makeDiePlan({q:dieLanding(0),x:0,y:0},3,Math.random,116,18,{direction:1,strength:.25,axis:[0,0,1]},null,null),bounds=[-150,-300,1250,560],target=[420,180];
+ const back=dieTravel(plan,{target,rebound:true,bounds}),hit=plan.contacts[0]*plan.duration,at=sampleDieTravel(back,hit);
+ assert.ok(Math.hypot(at[0]-target[0],at[1]-target[1])<12,'it is on the spot when it first lands: '+at.map(Math.round));
+ assert.deepEqual(back.rest,[0,0]);assert.equal(back.duration,plan.duration,'with no hop home afterwards');
+ const end=sampleDieTravel(back,plan.duration);assert.ok(Math.hypot(end[0],end[1])<.5,'and home when it comes to rest');
+ const late=sampleDieTravel(back,hit+(plan.duration-hit)*.6);assert.ok(Math.hypot(late[0],late[1])<Math.hypot(...target)*.5,'most of the way back well before it stops');
+ for(const point of back.path)assert.ok(point.x>=bounds[0]-1e-6&&point.x<=bounds[2]+1e-6&&point.y>=bounds[1]-1e-6&&point.y<=bounds[3]+1e-6);
+ const stay=dieTravel(plan,{target,bounds});assert.ok(Math.hypot(stay.rest[0]-target[0],stay.rest[1]-target[1])<2,'a throw that is not a rebound still rests where it was sent');
+ assert.equal(dieOnPage([400,100],{page:{left:120,top:-200,right:1000,bottom:560}}),true);assert.equal(dieOnPage([40,100],{page:{left:120,top:-200,right:1000,bottom:560}}),false);assert.equal(dieOnPage(null,{page:null}),false);}
+// A clicked die is thrown to a spot drawn ahead of the click: mostly on the page, sometimes on the table beside it.
+{const arena={bounds:[-150,-300,1250,560],page:{left:120,top:-200,right:1000,bottom:560},origin:[120,-200]};
+ const inside=p=>p[0]>=arena.page.left&&p[0]<=arena.page.right&&p[1]>=arena.page.top&&p[1]<=arena.page.bottom;
+ let on=0,off=0;
+ for(let n=0;n<400;n++){
+  const p=dieAim(0,arena);inside(p)?on++:off++;
+  assert.ok(p[0]>=arena.bounds[0]&&p[0]<=arena.bounds[2]&&p[1]>=arena.bounds[1]&&p[1]<=arena.bounds[3],'every spot is on screen');
+  if(inside(p))continue;
+  assert.ok(Math.hypot(p[0],p[1])>=116*1.1,'a throw beside the page still goes somewhere');
+  assert.ok(p[0]<arena.page.left-30||p[0]>arena.page.right+30||p[1]<arena.page.top-30||p[1]>arena.page.bottom+30,'and comes to rest clear of the page edge');
+ }
+ assert.ok(on>150&&off>80,'most throws land on the page, some beside it: '+on+' on, '+off+' off');
+ {const short={bounds:[-150,-300,1250,560],page:{left:120,top:-200,right:1000,bottom:300},origin:[120,-200]};
+  for(let n=0;n<300;n++){const p=dieAimBeside(0,short);assert.ok(p,'a short page leaves room below it');for(let k=1;k<=16;k++){const x=p[0]*k/16,y=p[1]*k/16;assert.ok(!(x>short.page.left&&x<short.page.right&&y>short.page.top&&y<short.page.bottom),'and a throw beside the page never passes over it');}}}
+ for(let n=0;n<100;n++)assert.ok(inside(dieAim(0,arena,Math.random,true)),'a throw that asks for the page gets it');
+ const full={bounds:[-150,-300,500,560],page:{left:-160,top:-310,right:510,bottom:570},origin:[-160,-310]};
+ for(let n=0;n<50;n++){const p=dieAim(0,full);assert.ok(p&&p[0]>=full.page.left&&p[0]<=full.page.right,'with no room beside the page every throw lands on it');}
+ dieNextAims[0]=null;const drawn=dieNextAim(0,arena);assert.equal(dieNextAim(0,arena),drawn,'the next spot is drawn once and kept until it is thrown');
+ assert.notEqual(dieNextAim(0,full),drawn,'and drawn again when the room changes');
+ const roll=dieTossGesture(0,arena,null,[-100,300]);assert.ok(roll.axis[0]<0&&roll.axis[2]<0&&roll.direction===-1,'a die thrown beside the page rolls the way it goes');
+ const toPage=dieTossGesture(0,arena,null,[400,100]);assert.equal(toPage.direction,1,'and one thrown at the page rolls toward it');dieNextAims[0]=null;}
+console.log('PASS: 96 exact face-up orientations/CSS matrices; 300 simulated throws that bounce on the tray, never sink into it and land flat on the chosen face near home; stable face markup; flicks livelier than clicks; a tray that gives with each impact; 200 page strikes in mid-air that never pass the edge; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion; a die carried with the pointer; throws that travel to a spot, turn back at the edges and come home; click throws aimed mostly at the page and sometimes beside it, the ones at the page striking it and bouncing home; idle preparation that retries a missed search before keeping the scripted hop.');
 `,context);

@@ -160,7 +160,6 @@ body{font-family:var(--sans);overflow-x:clip}
 .prompt-row[data-empty=true]{visibility:hidden}
 .prompt-line{margin:0;padding:0 4px;border:0;border-radius:4px;background:none;font:14px/1.45 var(--sans);color:var(--muted);text-wrap:balance;cursor:pointer}
 .prompt-line b{font-weight:650;color:var(--ink);white-space:nowrap}
-.prompt-line b[data-changed]{text-decoration:underline 2px var(--accent);text-underline-offset:3px}
 .prompt-line:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 @media(hover:hover) and (pointer:fine){.prompt-line:hover{color:var(--ink)}.prompt-line:hover .prompt-line-label{text-decoration:underline dotted;text-underline-offset:3px}}
 .prompt-full{position:absolute;left:50%;top:calc(100% + 8px);translate:-50% 0;width:min(460px,calc(100vw - 32px));max-height:min(360px,60vh);overflow:auto;z-index:30;padding:14px 16px;border:1px solid #b8c1ac;border-radius:10px;background:#fcfbf6;box-shadow:0 12px 36px #25301c20,0 2px 6px #25301c0e;font:12.5px/1.65 var(--mono);color:var(--ink);text-align:left;white-space:pre-wrap}
@@ -524,3 +523,27 @@ html[data-passes=false] :is(#experiment-next,#refinement-rail,#keep){display:non
 [data-carrying=true] .report-frame,#report-view:has(.before-after[data-dragging]) .report-frame{pointer-events:none}
 /* The carried scene: the die and its shadow, with the same view of them wherever on screen they are. */
 .die-carry{position:absolute;inset:0;display:grid;place-items:center;perspective:1100px}
+/* The sentence above the page is the walkthrough: what the plain page is, then the same report with each ingredient a die adds. */
+.prompt-line{font-size:16px;color:var(--ink)}
+.prompt-row{min-height:calc(16px*1.45*2)}
+.prompt-lead{display:block}
+.prompt-push{font-size:14px;color:var(--muted)}
+.prompt-row[data-half=true] .prompt-line{cursor:default;pointer-events:none}
+@media(max-width:860px){.prompt-row,.prompt-row[data-pending=true]{min-height:calc(16px*1.45*3)}}
+.prompt-phrase{display:inline-block}
+/* The waiting die's face is named in its gap until that die is thrown. A word a throw adds drops in when the die lands. */
+.prompt-gap.prompt-held{width:auto;height:auto;margin:0 .1em;padding:.02em .5em;vertical-align:baseline;color:var(--muted);white-space:nowrap}
+.prompt-line b[data-fill],.prompt-line .prompt-held[data-fill]{animation:gap-fill 460ms cubic-bezier(.23,1,.32,1) var(--fill-delay,260ms) backwards}
+.prompt-line b[data-fill]~b[data-fill]{animation-delay:var(--fill-delay,260ms)}
+.prompt-note{display:block;margin-top:2px;font-size:13px;color:var(--muted)}
+@media(prefers-reduced-motion:reduce){.prompt-line .prompt-held[data-fill]{animation:none!important}}
+/* Before and After sit above the page, clear of both reports' headings. */
+.ba-tag{clip-path:inset(-40px calc((1 - var(--ba))*100%) 0 0)}
+.ba-tag.ba-after{clip-path:inset(-40px 0 0 calc(var(--ba)*100%))}
+.ba-tag b,.before-after[data-active] .ba-tag b{top:-27px;left:0}
+.ba-tag.ba-after b,.before-after[data-active] .ba-tag.ba-after b{left:auto;right:0}
+/* "Throw again" between the two small dice needs no pointer. */
+.die-call[data-side=between]:after{display:none}
+@media(max-width:860px){.die-call[data-side=between]{font-size:13px;padding:7px 11px}}
+/* Beside the report the dice stop above the dock, so their names never sit under Reset and Compare. */
+@media(min-width:861px){[data-view=dice] .die{margin-bottom:calc(var(--dock-room,96px) + 14px)}}

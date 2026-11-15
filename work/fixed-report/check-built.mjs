@@ -23,4 +23,8 @@ assert.equal(context.built.NEWER_BASELINE.steps.length,4);
 assert.equal(context.built.NEWER_EXPERIMENT.runs.length,36);
 assert.equal(context.built.NEWER_EXPERIMENT.plain.html,read('../simple-fable/runs/plain-1.html'));
 for(const run of context.built.NEWER_EXPERIMENT.runs){assert.equal(run.steps.length,4);assert.notEqual(run.steps[0].html,context.built.EXPERIMENT.runs.find(old=>old.id===run.id).steps[0].html);assert.ok(run.steps.every(step=>step.file.startsWith('newer-')));}
-console.log('PASS: self-contained bundle; 36 original, stronger and newer-model trajectories, shared prompt-track one-shots, the newer model\'s own one-shots, all three plain trajectories, syntax, unique controls, dice sound with a toggle.');
+// The app's scripts share one scope in the bundle: two functions with one name would silently replace each other.
+{const owners=new Map();
+ for(const file of ['dice-math.js','dice.js','dice-interaction.js','dice-sound.js','report-handoff.js','prompt-peek.js','play.js','demo.js'])for(const match of read(file).matchAll(/^(?:async )?function (\w+)\(/gm)){assert.ok(!owners.has(match[1]),match[1]+' is declared in both '+owners.get(match[1])+' and '+file);owners.set(match[1],file);}
+ assert.ok(owners.size>150);}
+console.log('PASS: self-contained bundle; 36 original, stronger and newer-model trajectories, shared prompt-track one-shots, the newer model\'s own one-shots, all three plain trajectories, syntax, unique controls, dice sound with a toggle, no function declared twice across the scripts.');
