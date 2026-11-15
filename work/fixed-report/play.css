@@ -535,7 +535,6 @@ html[data-passes=false] :is(#experiment-next,#refinement-rail,#keep){display:non
 .prompt-gap.prompt-held{width:auto;height:auto;margin:0 .1em;padding:.02em .5em;vertical-align:baseline;color:var(--muted);white-space:nowrap}
 .prompt-line b[data-fill],.prompt-line .prompt-held[data-fill]{animation:gap-fill 460ms cubic-bezier(.23,1,.32,1) var(--fill-delay,260ms) backwards}
 .prompt-line b[data-fill]~b[data-fill]{animation-delay:var(--fill-delay,260ms)}
-.prompt-note{display:block;margin-top:2px;font-size:13px;color:var(--muted)}
 @media(prefers-reduced-motion:reduce){.prompt-line .prompt-held[data-fill]{animation:none!important}}
 /* Before and After sit above the page, clear of both reports' headings. */
 .ba-tag{clip-path:inset(-40px calc((1 - var(--ba))*100%) 0 0)}
@@ -547,3 +546,15 @@ html[data-passes=false] :is(#experiment-next,#refinement-rail,#keep){display:non
 @media(max-width:860px){.die-call[data-side=between]{font-size:13px;padding:7px 11px}}
 /* Beside the report the dice stop above the dock, so their names never sit under Reset and Compare. */
 @media(min-width:861px){[data-view=dice] .die{margin-bottom:calc(var(--dock-room,96px) + 14px)}}
+/* The sentence above the page is the headline: big enough to be read before the report, the dice's words marked in it. */
+.prompt-line{font-size:var(--headline);line-height:1.3;font-weight:500;letter-spacing:-.01em}
+.prompt-row{--headline:23px;min-height:calc(var(--headline)*1.3*2 + 4px)}
+.prompt-row[data-pending=true] .prompt-line{font-size:var(--headline)}
+.prompt-line b{font-weight:750;background:linear-gradient(transparent 60%,#f2b73370 0);padding:0 .12em;margin:0 -.04em}
+.prompt-push{font-weight:400;letter-spacing:0}
+@media(max-width:860px){.prompt-row{--headline:19px}.prompt-row,.prompt-row[data-pending=true]{min-height:calc(var(--headline)*1.3*3 + 4px)}}
+/* Watch demo sits in the corner of the dock, with Compare beside it once a pair has made a page. */
+.dock-end{grid-area:compare;justify-self:end;display:flex;align-items:center;gap:8px}
+@media(max-width:860px){.stage-bar{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"reset next compare"}}
+/* The pointer that fetches a die: drawn on the die it carries, never hit-testable. */
+.die-hand{position:absolute;left:50%;top:50%;width:0;height:0;z-index:3;opacity:0;pointer-events:none}

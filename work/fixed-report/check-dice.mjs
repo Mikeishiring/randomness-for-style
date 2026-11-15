@@ -139,19 +139,23 @@ const invitation={kind:'invitation',from:{q:dieLanding(a),x:0,y:0},size:104,dura
 assert.ok(Math.abs(sampleDiePlan(invitation,.25).y)>0);near(sampleDiePlan(invitation,1).y,0);
 motion.matches=true;const beforeReduced={...dieStates[0].pose};moveDieGrab(0,beforeReduced,104);assert.notEqual(dieTopFace(dieStates[0].pose.q),dieTopFace(beforeReduced.q));settleDieGrab(0);assert.equal(dieStates[0].running,null);
 assert.ok(soundCalls.length>0&&soundCalls.every(call=>call[0]==='play'),'every throw schedules its contact sounds');
-// A thrown die travels across the screen on top of its tumble. Thrown at a spot it comes to rest there, feels
-// the page where it first lands on it, stays inside the arena however hard it is thrown, and ends on its tray.
+// A die thrown from the hand travels on top of its tumble: the way the hand went and as far as the hand asked,
+// inside the arena however hard it is thrown, turning back from the page, and carried home by a pointer.
 for(let n=0;n<40;n++){
- const plan=makeDiePlan({q:dieLanding(n%6),x:0,y:0},(n+2)%6,random,116,18,{direction:1,strength:.25,axis:[-.3,0,.95]},null),target=[260+n*9,120+n*4];
- const toss=dieTravel(plan,{target,bounds:[-90,-60,900,640]});
- near(toss.path[0].x,0);near(toss.rest[0],target[0]);near(toss.rest[1],target[1]);
- assert.ok(toss.duration>plan.duration,'coming home takes a moment after the tumble ends');
+ const plan=makeDiePlan({q:dieLanding(n%6),x:0,y:0},(n+2)%6,random,116,18,{direction:1,strength:.25,axis:[-.3,0,.95]},null),reach=120+n*9,bounds=[-90,-60,900,640];
+ const toss=dieTravel(plan,{velocity:[900,300],reach,bounds});
+ near(toss.path[0].x,0);assert.ok(Math.abs(Math.hypot(toss.rest[0],toss.rest[1])-reach)<.01,'it goes as far as the hand asked');assert.ok(Math.abs(toss.rest[1]*3-toss.rest[0])<.01,'the way the hand went');
+ assert.ok(toss.hand.start>=plan.duration&&toss.hand.grab>toss.hand.start&&toss.hand.drop>toss.hand.grab&&toss.duration>toss.hand.drop,'a pointer comes for it, carries it and lets go');
+ const waits=sampleDieTravel(toss,toss.hand.grab);near(waits[0],toss.rest[0]);near(waits[1],toss.rest[1]);
+ const put=sampleDieTravel(toss,toss.hand.drop);near(put[0],0);near(put[1],0);
  const home=sampleDieTravel(toss,toss.duration);near(home[0],0);near(home[1],0);
- const landing=sampleDieTravel(toss,plan.contacts[0]*plan.duration);assert.ok(landing[0]>0&&landing[0]<target[0],'the first landing is on the way there');
- const flick=dieTravel(plan,{velocity:[2600,-1800],bounds:[-90,-60,900,640]});
- assert.ok(flick.path.every(point=>point.x>=-90-1e-6&&point.x<=900+1e-6&&point.y>=-60-1e-6-116*.42),'a hard throw turns back at the edges');
- const end=sampleDieTravel(flick,flick.duration);near(end[0],0);near(end[1],0);
- const still=dieTravel(plan,{velocity:[0,0]});assert.equal(still.duration,plan.duration,'a die that goes nowhere has no way home to make');
+ const flick=dieTravel(plan,{velocity:[2600,-1800],reach:760,bounds});
+ assert.ok(flick.path.every(point=>point.x>=-90-1e-6&&point.x<=900+1e-6&&point.y>=-60-1e-6&&point.y<=640+1e-6),'a hard throw turns back at the edges and is never lifted past them');
+ const still=dieTravel(plan,{velocity:[0,0],reach:0});assert.equal(still.duration,plan.duration,'a die that goes nowhere has no way home to make');assert.equal(still.hand,null);
+ const wall={left:150,top:-400,right:900,bottom:600},struck=dieTravel(plan,{velocity:[1000,0],reach:400,wall,bounds});
+ assert.equal(struck.strike?.side,'left','thrown at the page it strikes the edge it came to');near(struck.strike.x,150);
+ assert.ok(struck.path.every(point=>point.x<=150+1e-6)&&struck.rest[0]<150,'and turns back without going onto it');
+ assert.equal(dieTravel(plan,{velocity:[1000,0],reach:100,wall,bounds}).strike,null,'a throw that stops short of the page does not strike it');
 }
 {const from={q:dieLanding(2),x:0,y:0,g:[40,10]},pose=dieHoldPose(from,300,200,116,{bounds:[-50,-50,200,150]});assert.deepEqual(pose.g,[200,150],'a held die stops at the edge of the arena');near(pose.x,0);}
 // Idle preparation does not settle for the scripted hop: a search that ran out of time is tried again on a
@@ -166,36 +170,33 @@ preparedThrows[0].clear();throwMisses[0].key='';prepCount=0;prepGuard=0;makeDieP
 prepareThrows(0);while(prepIdle.length&&prepGuard++<60)prepIdle.shift()(prepSlice);
 assert.equal(preparedThrows[0].size,6);assert.equal(prepCount,6*THROW_RETRIES,'the hop is kept once the retries are spent');
 makeDiePlan=prepReal;delete globalThis.requestIdleCallback;
-// A click throw at the page is there by its first landing and back on its tray by the end, never resting on the page.
-{const plan=makeDiePlan({q:dieLanding(0),x:0,y:0},3,Math.random,116,18,{direction:1,strength:.25,axis:[0,0,1]},null,null),bounds=[-150,-300,1250,560],target=[420,180];
- const back=dieTravel(plan,{target,rebound:true,bounds}),hit=plan.contacts[0]*plan.duration,at=sampleDieTravel(back,hit);
- assert.ok(Math.hypot(at[0]-target[0],at[1]-target[1])<12,'it is on the spot when it first lands: '+at.map(Math.round));
- assert.deepEqual(back.rest,[0,0]);assert.equal(back.duration,plan.duration,'with no hop home afterwards');
- const end=sampleDieTravel(back,plan.duration);assert.ok(Math.hypot(end[0],end[1])<.5,'and home when it comes to rest');
- const late=sampleDieTravel(back,hit+(plan.duration-hit)*.6);assert.ok(Math.hypot(late[0],late[1])<Math.hypot(...target)*.5,'most of the way back well before it stops');
- for(const point of back.path)assert.ok(point.x>=bounds[0]-1e-6&&point.x<=bounds[2]+1e-6&&point.y>=bounds[1]-1e-6&&point.y<=bounds[3]+1e-6);
- const stay=dieTravel(plan,{target,bounds});assert.ok(Math.hypot(stay.rest[0]-target[0],stay.rest[1]-target[1])<2,'a throw that is not a rebound still rests where it was sent');
- assert.equal(dieOnPage([400,100],{page:{left:120,top:-200,right:1000,bottom:560}}),true);assert.equal(dieOnPage([40,100],{page:{left:120,top:-200,right:1000,bottom:560}}),false);assert.equal(dieOnPage(null,{page:null}),false);}
-// A clicked die is thrown to a spot drawn ahead of the click: mostly on the page, sometimes on the table beside it.
+// A click throw strikes the edge of the page in the air and is back on its tray by the end, never going past the edge.
+{const plan=makeDiePlan({q:dieLanding(0),x:0,y:0},3,Math.random,116,18,{direction:1,strength:.25,axis:[0,0,1]},null,null),bounds=[-150,-300,1250,560],strike={spot:[64,30],side:'left'};
+ const back=dieTravel(plan,{strike,bounds}),hit=back.strike.ms,at=sampleDieTravel(back,hit);
+ assert.ok(hit>0&&hit<plan.contacts[0]*plan.duration,'it strikes in the air, before it first lands');
+ near(at[0],64);near(at[1],30);assert.equal(back.strike.side,'left');
+ assert.deepEqual(back.rest,[0,0]);assert.equal(back.duration,plan.duration,'with nothing to do afterwards');assert.equal(back.hand,undefined,'and no pointer has to fetch it');
+ const end=sampleDieTravel(back,plan.duration);assert.ok(Math.hypot(end[0],end[1])<.5,'home when it comes to rest');
+ const late=sampleDieTravel(back,hit+(plan.duration-hit)*.6);assert.ok(Math.hypot(late[0],late[1])<Math.hypot(64,30)*.5,'most of the way back well before it stops');
+ for(const point of back.path)assert.ok(point.x<=64+1e-6&&point.x>=-1e-6,'it never goes past the edge');}
+// A clicked die is thrown at the nearest edge of the page, to a spot drawn ahead of the click.
 {const arena={bounds:[-150,-300,1250,560],page:{left:120,top:-200,right:1000,bottom:560},origin:[120,-200]};
- const inside=p=>p[0]>=arena.page.left&&p[0]<=arena.page.right&&p[1]>=arena.page.top&&p[1]<=arena.page.bottom;
- let on=0,off=0;
- for(let n=0;n<400;n++){
-  const p=dieAim(0,arena);inside(p)?on++:off++;
-  assert.ok(p[0]>=arena.bounds[0]&&p[0]<=arena.bounds[2]&&p[1]>=arena.bounds[1]&&p[1]<=arena.bounds[3],'every spot is on screen');
-  if(inside(p))continue;
-  assert.ok(Math.hypot(p[0],p[1])>=116*1.1,'a throw beside the page still goes somewhere');
-  assert.ok(p[0]<arena.page.left-30||p[0]>arena.page.right+30||p[1]<arena.page.top-30||p[1]>arena.page.bottom+30,'and comes to rest clear of the page edge');
- }
- assert.ok(on>150&&off>80,'most throws land on the page, some beside it: '+on+' on, '+off+' off');
- {const short={bounds:[-150,-300,1250,560],page:{left:120,top:-200,right:1000,bottom:300},origin:[120,-200]};
-  for(let n=0;n<300;n++){const p=dieAimBeside(0,short);assert.ok(p,'a short page leaves room below it');for(let k=1;k<=16;k++){const x=p[0]*k/16,y=p[1]*k/16;assert.ok(!(x>short.page.left&&x<short.page.right&&y>short.page.top&&y<short.page.bottom),'and a throw beside the page never passes over it');}}}
- for(let n=0;n<100;n++)assert.ok(inside(dieAim(0,arena,Math.random,true)),'a throw that asks for the page gets it');
- const full={bounds:[-150,-300,500,560],page:{left:-160,top:-310,right:510,bottom:570},origin:[-160,-310]};
- for(let n=0;n<50;n++){const p=dieAim(0,full);assert.ok(p&&p[0]>=full.page.left&&p[0]<=full.page.right,'with no room beside the page every throw lands on it');}
+ for(let n=0;n<200;n++){const aim=dieAim(0,arena);assert.equal(aim.side,'left');assert.ok(aim.spot[0]>0&&aim.spot[0]<120,'short of the edge by half a die');assert.ok(Math.abs(aim.spot[1])<=116,'near its own height');}
+ const right={bounds:[-1250,-300,150,560],page:{left:-1000,top:-200,right:-120,bottom:560},origin:[-1000,-200]};
+ {const aim=dieAim(1,right);assert.equal(aim.side,'right');assert.ok(aim.spot[0]<0&&aim.spot[0]>-120);}
+ const phone={bounds:[-60,-60,300,700],page:{left:-70,top:150,right:310,bottom:700},origin:[-70,150]};
+ for(let n=0;n<50;n++){const aim=dieAim(0,phone);assert.equal(aim.side,'top','above the page the die strikes its top edge');assert.ok(aim.spot[1]>0&&aim.spot[1]<150&&aim.spot[0]>phone.page.left&&aim.spot[0]<phone.page.right);}
+ const over={bounds:[-150,-300,500,560],page:{left:-160,top:-310,right:510,bottom:570},origin:[-160,-310]};
+ assert.equal(dieAim(0,over),null,'a die sitting over the page has no edge to be thrown at');
  dieNextAims[0]=null;const drawn=dieNextAim(0,arena);assert.equal(dieNextAim(0,arena),drawn,'the next spot is drawn once and kept until it is thrown');
- assert.notEqual(dieNextAim(0,full),drawn,'and drawn again when the room changes');
- const roll=dieTossGesture(0,arena,null,[-100,300]);assert.ok(roll.axis[0]<0&&roll.axis[2]<0&&roll.direction===-1,'a die thrown beside the page rolls the way it goes');
- const toPage=dieTossGesture(0,arena,null,[400,100]);assert.equal(toPage.direction,1,'and one thrown at the page rolls toward it');dieNextAims[0]=null;}
-console.log('PASS: 96 exact face-up orientations/CSS matrices; 300 simulated throws that bounce on the tray, never sink into it and land flat on the chosen face near home; stable face markup; flicks livelier than clicks; a tray that gives with each impact; 200 page strikes in mid-air that never pass the edge; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion; a die carried with the pointer; throws that travel to a spot, turn back at the edges and come home; click throws aimed mostly at the page and sometimes beside it, the ones at the page striking it and bouncing home; idle preparation that retries a missed search before keeping the scripted hop.');
+ assert.notEqual(dieNextAim(0,phone),drawn,'and drawn again when the room changes');
+ const roll=dieTossGesture(0,arena,null,[-100,300]);assert.ok(roll.axis[0]<0&&roll.axis[2]<0&&roll.direction===-1,'a thrown die rolls the way it goes');
+ const toPage=dieTossGesture(0,arena,null,[400,100]);assert.equal(toPage.direction,1);const plain={strength:.5};assert.equal(dieTossGesture(0,arena,plain,null),plain,'with nowhere to go it tumbles as asked');dieNextAims[0]=null;
+ // From the hand: as far as the hand was moving, and a flick toward the page always reaches it.
+ const block=dieBlock(arena,100);near(block.left,120-100*DIE_REACH);
+ near(dieReach([0,0],[300,0],block,true),block.left+40);near(dieReach([0,0],[-300,0],block,true),90);near(dieReach([0,0],[300,0],block,false),90);
+ near(dieReach([0,0],[1500,0],block,true),450);near(dieReach([0,0],[0,9000],null,true),760);
+ const journey={strike:{ms:120,x:64,y:30,side:'left'}},felt=dieImpactSpot(0,{contacts:[.3],duration:1000},journey,arena);
+ assert.deepEqual([felt.ms,felt.side,felt.edge,felt.point],[120,'left',true,[0,230]],'the page feels the strike on its edge, when it happens');}
+console.log('PASS: 96 exact face-up orientations/CSS matrices; 300 simulated throws that bounce on the tray, never sink into it and land flat on the chosen face near home; stable face markup; flicks livelier than clicks; a tray that gives with each impact; 200 page strikes in mid-air that never pass the edge; mid-air retargeting; stale callbacks; completion after both land; cancellation and reduced motion; a die carried with the pointer; throws that travel to a spot, turn back at the edges and come home; click throws that strike the nearest edge of the page in the air and bounce home; throws from the hand that go as far as the hand asked, turn back from the page and are carried home by a pointer; idle preparation that retries a missed search before keeping the scripted hop.');
 `,context);

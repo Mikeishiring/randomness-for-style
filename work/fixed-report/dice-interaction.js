@@ -63,7 +63,6 @@ function bindDieInteraction(button,index){
   // Only recent motion counts. Dragging far and holding still chooses a face.
   const recent=pointer.samples.filter(sample=>now-sample.t<=100),first=recent[0];
   const dt=first?Math.max(16,now-first.t):1,vx=first?(event.clientX-first.x)/dt:0,vy=first?(event.clientY-first.y)/dt:0,speed=Math.hypot(vx,vy);
-  const travel=Math.hypot(event.clientX-pointer.x,event.clientY-pointer.y);
   if(wasDragging)moveDieGrab(index,pointer.from,event.clientX-pointer.x,event.clientY-pointer.y);
   reset(!wasDragging&&!inside);
   if(wasDragging){
@@ -75,11 +74,8 @@ function bindDieInteraction(button,index){
    else{
     const face=dieTopFace(dieStates[index].pose.q);
     // Let go without turning a new face up, nothing was chosen, so it is still a roll: a click that slipped
-    // rolls like a click, and a swipe too gentle to be a flick is thrown from the hand at its own speed.
-    if(typeof dieShowsFace==='function'&&dieShowsFace(index,face)){
-     if(travel<18&&speed<.2)roll(index);
-     else roll(index,{direction:Math.sign(vx)||1,strength:0,axis:speed>.05?[-vy/speed,0,vx/speed]:undefined,...release});
-    }
+    // and a swipe too gentle to be a flick are both thrown at the page, like a click.
+    if(typeof dieShowsFace==='function'&&dieShowsFace(index,face))roll(index);
     else{dieTick(index,'set');if(typeof dropDie==='function')dropDie(index,face,release);else chooseDieFace(index,face);}
    }
   }else if(!inside)suppressPointerClick=true;

@@ -94,7 +94,7 @@ function showStory(){
 // The dice are thrown in from either side when ingredients are added and roll back out on reset.
 // The slide spans the tumble's flight and bounces, so each die stops spinning as it arrives.
 // The two throws that add an ingredient always land on the page, where what they change can be seen.
-const DICE_THROW={first:{direction:1,strength:.5,page:true},second:{direction:-1,strength:.25,page:true},enter:[{direction:1,strength:.8},{direction:-1,strength:.8}],exit:[{direction:-1,strength:.55},{direction:1,strength:.55}]};
+const DICE_THROW={first:{direction:1,strength:.5},second:{direction:-1,strength:.25},enter:[{direction:1,strength:.8},{direction:-1,strength:.8}],exit:[{direction:-1,strength:.55},{direction:1,strength:.55}]};
 const LABEL_LAND={roll:250,enter:330};
 // The second die comes in beside the page as the first one changes it.
 const SECOND_DIE_WAIT=250;
@@ -147,7 +147,6 @@ const pointer={custom:null,dieHintUsed:false,key:''};
 function ingredientLine(first,second){return `Combine ${first} and ${second} into a distinct visual identity.`;}
 // What the visitor is looking at before any die is thrown.
 const PROMPT_LEAD=['You asked AI for a report.','It looks like everyone else\u2019s.'];
-const PROMPT_NOTE='Saved AI results, not generated live.';
 function pointerSpec(){
  // Nothing floats beside the page: the tag on the die and the sentence above the page carry the walkthrough.
  // The demo still points at things with the same label.
@@ -249,25 +248,23 @@ function renderPromptLine(){
   line.setAttribute('aria-label',PROMPT_LEAD.join(' ')+' Add randomness: throw the die.');
   return;
  }
- // These are saved results; the page says so beside the claim, not only in About the experiment.
- const note=()=>part('span',PROMPT_NOTE,'prompt-note');
  // One die thrown: its ingredient is in. The second gap stays open and names the face the waiting die shows,
  // because the saved page on screen was made with it. A word a throw brings drops in; nothing is underlined.
  if(state.b===null){
-  line.replaceChildren(part('span','The same data, with '),part('b',state.a,'',state.changed===0||state.fresh===0?'fill':''),part('span',' and '),part('span',state.held,'prompt-gap prompt-held',state.fresh===0?'fill':''),note());
-  line.setAttribute('aria-label','The same data, with '+state.a+' and, until the second die is thrown, the face it shows: '+state.held+'. '+PROMPT_NOTE);
+  line.replaceChildren(part('span','Same data, redesigned with '),part('b',state.a,'',state.changed===0||state.fresh===0?'fill':''),part('span',' and '),part('span',state.held,'prompt-gap prompt-held',state.fresh===0?'fill':''));
+  line.setAttribute('aria-label','Same data, redesigned with '+state.a+' and, until the second die is thrown, the face it shows: '+state.held+'.');
   return;
  }
- const parts=[part('span','The same data, with '),part('b',state.a,'',state.changed===0||state.fresh===0?'fill':''),part('span',' and '),part('b',state.b,'',state.changed===1||state.fresh!==null?'fill':''),part('span','.')];
+ const parts=[part('span','Same data, redesigned with '),part('b',state.a,'',state.changed===0||state.fresh===0?'fill':''),part('span',' and '),part('b',state.b,'',state.changed===1||state.fresh!==null?'fill':''),part('span','.')];
  // After a push, a second line says what was asked: the same sentence each time, so only the count changes.
  if(state.pushes>0){
   const push=part('span','','prompt-push');
   push.append(part('span','Then asked, '+PUSH_TIMES[state.pushes]+': ','prompt-line-label'),part('span',state.ask.replace(/[.!?]$/,'')+'\u2026'));
   if(state.same)push.append(part('em',' This pass changed nothing.'));
   parts.push(push);
- }else parts.push(note());
+ }
  line.replaceChildren(...parts);
- line.setAttribute('aria-label','The same data, with '+state.a+' and '+state.b+'.'+(state.pushes>0?' Then asked, '+PUSH_TIMES[state.pushes]+': '+state.ask+(state.same?' This pass changed nothing.':''):' '+PROMPT_NOTE)+' Show the whole prompt.');
+ line.setAttribute('aria-label','Same data, redesigned with '+state.a+' and '+state.b+'.'+(state.pushes>0?' Then asked, '+PUSH_TIMES[state.pushes]+': '+state.ask+(state.same?' This pass changed nothing.':''):'')+' Show the whole prompt.');
 }
 function togglePromptLine(open){
  const line=$('#prompt-line'),panel=$('#prompt-full'),show=open??panel.hidden;
