@@ -612,6 +612,15 @@ html[data-passes=true] .found-map{display:none}
 @media(prefers-reduced-motion:reduce){.found-dot{animation:none!important;transition:none}}
 /* On narrow screens the tokens in the headline name the dice, so the small dice carry no second label. */
 @media(max-width:860px){html:not([data-journey=original]) .die>strong{display:none}}
+/* One short account of the experiment sits under the count of what has been found. */
+.atlas-about{max-width:640px;margin:2px 2px 10px;font:15px/1.55 var(--sans);color:#4c554c}
+/* The before handle is a solid ink grip, plain against the paper and against any page. Once both dice are in it
+   leans into the page now and then, until it has been pulled once. */
+.ba-knob{width:44px;height:44px;margin:-22px 0 0 -22px;background:var(--ink);color:#fffdf8;box-shadow:0 0 0 2.5px #fffdf8,0 12px 22px -10px #1d261eb3}
+.before-after[data-dragging] .ba-knob{box-shadow:0 0 0 2.5px #fffdf8,0 16px 26px -10px #1d261ecc}
+.before-after[data-invite]:not([data-active]):not([data-dragging]) .ba-knob{animation:ba-invite 5.6s cubic-bezier(.45,0,.55,1) 2.6s infinite}
+@keyframes ba-invite{0%,76%,100%{translate:0 0}85%{translate:16px 0}93%{translate:-2px 0}}
+@media(prefers-reduced-motion:reduce){.before-after[data-invite] .ba-knob{animation:none!important}}
 </style></head>
 <body>
 <noscript>Enable JavaScript to roll the dice and compare reports.</noscript>
@@ -659,8 +668,8 @@ html[data-passes=true] .found-map{display:none}
    </section>
    <section id="plain-lab" class="result" aria-labelledby="plain-title" hidden><h2 id="plain-title" class="sr-only" tabindex="-1">Without ingredients</h2><div id="plain-report"></div></section>
   </div>
-  <section id="atlas" class="atlas" aria-labelledby="atlas-title"><h2 class="atlas-heading"><button type="button" id="atlas-toggle" class="atlas-toggle" aria-expanded="false" aria-controls="atlas-body"><span id="atlas-title">36 combinations</span><span class="atlas-chevron" aria-hidden="true"></span></button></h2><div id="atlas-body" class="atlas-body" hidden><header><select id="atlas-ingredient" aria-label="Browse pairings for the first ingredient"></select></header><div id="matrix" class="matrix" role="group" aria-label="Choose one of 36 ingredient combinations"></div></div></section>
-  <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>AI design has a look, and most of us can now spot it. This is a test of whether a little randomness breaks the habit.</p><p>The brief never changes: one weekly report, the same numbers. The dice add two ingredients nobody would pair on purpose. Then the model is told three times to criticise its page and try again. The page you see is the try worth keeping, and it is rarely the last. Show every pass brings back the rest.</p><p>Nothing is generated live. Every page was saved from a real run, and every run used two ingredients. So after your first throw the page already borrows the face the second die is showing, named in the dashed gap. The stronger prompt starts over from the same first draft. The newer model repeats the whole thing a generation later. More passes do not always make a better page.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Recorded run"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button><button type="button" id="method-newer" aria-pressed="false">Newer model</button></div>
+  <section id="atlas" class="atlas" aria-labelledby="atlas-title"><h2 class="atlas-heading"><button type="button" id="atlas-toggle" class="atlas-toggle" aria-expanded="false" aria-controls="atlas-body"><span id="atlas-title">36 combinations</span><span class="atlas-chevron" aria-hidden="true"></span></button></h2><p class="atlas-about">AI design has a look, and most of us can now spot it. So one report was made 36 times, each with two ingredients nobody would pair on purpose. The numbers never change. Only the dice do.</p><div id="atlas-body" class="atlas-body" hidden><header><select id="atlas-ingredient" aria-label="Browse pairings for the first ingredient"></select></header><div id="matrix" class="matrix" role="group" aria-label="Choose one of 36 ingredient combinations"></div></div></section>
+  <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>The brief never changes: one weekly report, the same numbers. After the dice, the model is told three times to criticise its page and try again. The page you see is the try worth keeping, and it is rarely the last. Show every pass brings back the rest.</p><p>Nothing is generated live. Every page was saved from a real run, and every run used two ingredients. So after your first throw the page already borrows the face the second die is showing, named in the dashed gap. The stronger prompt starts over from the same first draft. The newer model repeats the whole thing a generation later. More passes do not always make a better page.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Recorded run"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button><button type="button" id="method-newer" aria-pressed="false">Newer model</button></div>
     <p id="method-note" class="method-note">Both start from this one-shot.</p></div><select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">No ingredients</option><option value="other" id="compare-other">Original prompt</option></select><div class="export-actions"><button id="passes-toggle" type="button" class="text-button" aria-pressed="false">Show every pass</button><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Refine brief alone →</button><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
  </main>
  <div class="page-footer">
@@ -2311,7 +2320,7 @@ function showReports(container,entries){
 // Before and after: the original report, with no ingredients, sits under the current page. The knob in the
 // middle of the page wipes it back in from the left as far as it is dragged, and a "Before" tag shows only
 // on what it reveals. The position holds across rolls and refinements: only the after side changes.
-const beforeAfter={value:0,item:null,section:null,tween:null,hinted:false,hinting:false,drag:null};
+const beforeAfter={value:0,item:null,section:null,tween:null,hinted:false,hinting:false,drag:null,used:false};
 function beforeItem(){
  if(view!=='dice'||introMode||comparing)return null;
  return plainItem();
@@ -2347,10 +2356,10 @@ function quietBeforeAfterHint(){
  if(!beforeAfter.hinting)return;
  beforeAfter.hinting=false;if(beforeAfter.value>0)beforeAfter.hinted=true;
  stopBeforeAfterTween();paintBeforeAfter(0);
- $('#before-after').querySelector?.('.ba-knob')?.getAnimations?.().forEach(animation=>animation.cancel());
+ $('#before-after').querySelector?.('.ba-knob')?.getAnimations?.().filter(animation=>!animation.animationName).forEach(animation=>animation.cancel());
 }
 // Taking hold of the slider keeps it where the hint had it and ends the hints for good.
-function takeBeforeAfter(){beforeAfter.hinting=false;beforeAfter.hinted=true;stopBeforeAfterTween();markReady();}
+function takeBeforeAfter(){beforeAfter.hinting=false;beforeAfter.hinted=true;beforeAfter.used=true;$('#before-after').toggleAttribute?.('data-invite',false);stopBeforeAfterTween();markReady();}
 // Glide to a value; shape(t) maps progress to position for the hints.
 function tweenBeforeAfter(to,duration=360,shape=null,delay=0){
  stopBeforeAfterTween();
@@ -2367,6 +2376,8 @@ function renderBeforeAfter(){
  // A fresh start puts the slider away; side-by-side comparison only hides it, keeping its place.
  if(introMode)paintBeforeAfter(0);else if(item)paintBeforeAfter(beforeAfter.value);else releaseBeforeSection();
  box.hidden=!item;
+ // Once both dice are in, the handle asks to be pulled, now and then, until the visitor has pulled it once.
+ box.toggleAttribute?.('data-invite',!!item&&!secondWaits&&!beforeAfter.used);
 }
 // The first time a roll's page lands it is left alone to be looked at. Then the original is wiped in from the
 // left and away again, once: the same figures in two designs teach the mechanism without a word, and the

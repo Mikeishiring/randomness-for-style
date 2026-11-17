@@ -470,7 +470,7 @@ function showReports(container,entries){
 // Before and after: the original report, with no ingredients, sits under the current page. The knob in the
 // middle of the page wipes it back in from the left as far as it is dragged, and a "Before" tag shows only
 // on what it reveals. The position holds across rolls and refinements: only the after side changes.
-const beforeAfter={value:0,item:null,section:null,tween:null,hinted:false,hinting:false,drag:null};
+const beforeAfter={value:0,item:null,section:null,tween:null,hinted:false,hinting:false,drag:null,used:false};
 function beforeItem(){
  if(view!=='dice'||introMode||comparing)return null;
  return plainItem();
@@ -506,10 +506,10 @@ function quietBeforeAfterHint(){
  if(!beforeAfter.hinting)return;
  beforeAfter.hinting=false;if(beforeAfter.value>0)beforeAfter.hinted=true;
  stopBeforeAfterTween();paintBeforeAfter(0);
- $('#before-after').querySelector?.('.ba-knob')?.getAnimations?.().forEach(animation=>animation.cancel());
+ $('#before-after').querySelector?.('.ba-knob')?.getAnimations?.().filter(animation=>!animation.animationName).forEach(animation=>animation.cancel());
 }
 // Taking hold of the slider keeps it where the hint had it and ends the hints for good.
-function takeBeforeAfter(){beforeAfter.hinting=false;beforeAfter.hinted=true;stopBeforeAfterTween();markReady();}
+function takeBeforeAfter(){beforeAfter.hinting=false;beforeAfter.hinted=true;beforeAfter.used=true;$('#before-after').toggleAttribute?.('data-invite',false);stopBeforeAfterTween();markReady();}
 // Glide to a value; shape(t) maps progress to position for the hints.
 function tweenBeforeAfter(to,duration=360,shape=null,delay=0){
  stopBeforeAfterTween();
@@ -526,6 +526,8 @@ function renderBeforeAfter(){
  // A fresh start puts the slider away; side-by-side comparison only hides it, keeping its place.
  if(introMode)paintBeforeAfter(0);else if(item)paintBeforeAfter(beforeAfter.value);else releaseBeforeSection();
  box.hidden=!item;
+ // Once both dice are in, the handle asks to be pulled, now and then, until the visitor has pulled it once.
+ box.toggleAttribute?.('data-invite',!!item&&!secondWaits&&!beforeAfter.used);
 }
 // The first time a roll's page lands it is left alone to be looked at. Then the original is wiped in from the
 // left and away again, once: the same figures in two designs teach the mechanism without a word, and the

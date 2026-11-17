@@ -579,3 +579,12 @@ html[data-passes=true] .found-map{display:none}
 @media(prefers-reduced-motion:reduce){.found-dot{animation:none!important;transition:none}}
 /* On narrow screens the tokens in the headline name the dice, so the small dice carry no second label. */
 @media(max-width:860px){html:not([data-journey=original]) .die>strong{display:none}}
+/* One short account of the experiment sits under the count of what has been found. */
+.atlas-about{max-width:640px;margin:2px 2px 10px;font:15px/1.55 var(--sans);color:#4c554c}
+/* The before handle is a solid ink grip, plain against the paper and against any page. Once both dice are in it
+   leans into the page now and then, until it has been pulled once. */
+.ba-knob{width:44px;height:44px;margin:-22px 0 0 -22px;background:var(--ink);color:#fffdf8;box-shadow:0 0 0 2.5px #fffdf8,0 12px 22px -10px #1d261eb3}
+.before-after[data-dragging] .ba-knob{box-shadow:0 0 0 2.5px #fffdf8,0 16px 26px -10px #1d261ecc}
+.before-after[data-invite]:not([data-active]):not([data-dragging]) .ba-knob{animation:ba-invite 5.6s cubic-bezier(.45,0,.55,1) 2.6s infinite}
+@keyframes ba-invite{0%,76%,100%{translate:0 0}85%{translate:16px 0}93%{translate:-2px 0}}
+@media(prefers-reduced-motion:reduce){.before-after[data-invite] .ba-knob{animation:none!important}}
