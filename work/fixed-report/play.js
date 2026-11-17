@@ -26,8 +26,8 @@ const promptPeeks=[$('#prompt'),$('#plain-prompt-details')].map(bindPromptPeek);
 let ingredientsChosen=!introMode,paintedStep=null;
 // The page shows one version of each pair, with the passes themselves out of the way (About the experiment can
 // bring them back): the one saved as the pair's best in CURATION, which is rarely the last pass. A showcase pair
-// shows its one-shot, the version it was chosen for. Before and Compare show the plain brief at that same pass,
-// and the page a visit opens on is the plain one-shot.
+// shows its one-shot, the version it was chosen for. Before and Compare always show the one plain report,
+// the plain one-shot a visit opens on, so the side without dice never changes.
 const SHOWN=4;
 let SHOWCASE=(typeof CURATION!=='undefined'&&Array.isArray(CURATION.showcase)?CURATION.showcase:[]).map(entry=>String(entry.pair??entry)).filter(id=>/^\d+-\d+$/.test(id));
 function shownStage(run){
@@ -40,7 +40,7 @@ const found=new Set();
 try{if(typeof localStorage!=='undefined')JSON.parse(localStorage.getItem('found-pairs')||'[]').forEach(id=>{if(/^\d-\d$/.test(id))found.add(id);});}catch{}
 let passes=params.get('passes')==='1';
 document.documentElement.dataset.passes=String(passes);
-function plainItem(){const steps=currentBaseline().steps;return steps[passes||introMode?0:Math.min(stage,steps.length)-1];}
+function plainItem(){return currentBaseline().steps[0];}
 // One throw adds one ingredient. After the first, the second die comes in at rest and waits to be thrown. Every
 // saved page used two ingredients, so until then the page pairs the first ingredient with the face that die
 // happens to show, and the sentence above the page says so: its second gap stays open, naming that face.

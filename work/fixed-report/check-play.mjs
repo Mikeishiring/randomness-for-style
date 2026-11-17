@@ -238,14 +238,14 @@ assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[1
 assert.equal(promptLineState().pushes,0,'and the line above the page does not narrate the passes');
 roll(1,null,[undefined,4]);assert.equal(stage,3);assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[2].html);
 assert.equal(nodes.get('#keep').hidden,true,'no question about passes that are not on show');
-comparing=true;renderResult();assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===currentBaseline().steps[2].html),'the comparison is with the same pass of the plain brief');comparing=false;renderResult();
+comparing=true;renderResult();assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===currentBaseline().steps[0].html),'the comparison is with the plain report the visit opened on, whatever pass the pair shows');comparing=false;renderResult();assert.equal(beforeItem(),currentBaseline().steps[0],'and so is the page under the before handle');
 {const kept=SHOWCASE;SHOWCASE=['1-4'];render();assert.equal(stage,1,'a showcase pair shows its one-shot, the version it was chosen for');SHOWCASE=kept;render();assert.equal(stage,3);}
 roll(1,null,[undefined,0]);assert.equal(stage,4,'a pair with no saved pick shows the last pass');
 assert.ok(found.has('1-2')&&found.has('1-4')&&found.has('1-0'),'every pair that has been on screen is kept as found');
 delete globalThis.CURATION;
 nodes.get('#passes-toggle').click();assert.equal(passes,true);assert.equal(document.documentElement.dataset.passes,'true');assert.equal(nodes.get('#passes-toggle').attrs['aria-pressed'],'true');
 `,home);
-console.log('PASS: by default the page shows the saved pick of each pair (a showcase pair its one-shot) beside the plain brief at the same pass, opens on the plain one-shot, remembers every pair found, and keeps the passes out of the way until About the experiment brings them back.');
+console.log('PASS: by default the page shows the saved pick of each pair (a showcase pair its one-shot) beside the one plain report a visit opens on, which never changes, remembers every pair found, and keeps the passes out of the way until About the experiment brings them back.');
 vm.runInContext(`
 introMode=true;stage=1;selected=currentExperiment().runs[2];render();chooseDieFace(0,5);
 assert.equal(introMode,false);assert.equal(selected.id,'5-2');assert.equal(stage,1);
