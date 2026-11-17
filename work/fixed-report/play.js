@@ -24,12 +24,23 @@ const matrixButtons=new Map();
 const matrixCells=new Map();
 const promptPeeks=[$('#prompt'),$('#plain-prompt-details')].map(bindPromptPeek);
 let ingredientsChosen=!introMode,paintedStep=null;
-// The page shows one pass of the experiment. By default that is the third refinement, with and without the
-// ingredients, and the passes themselves stay out of the way; About the experiment can bring them back.
+// The page shows one version of each pair, with the passes themselves out of the way (About the experiment can
+// bring them back): the one saved as the pair's best in CURATION, which is rarely the last pass. A showcase pair
+// shows its one-shot, the version it was chosen for. Before and Compare show the plain brief at that same pass,
+// and the page a visit opens on is the plain one-shot.
 const SHOWN=4;
+let SHOWCASE=(typeof CURATION!=='undefined'&&Array.isArray(CURATION.showcase)?CURATION.showcase:[]).map(entry=>String(entry.pair??entry)).filter(id=>/^\d+-\d+$/.test(id));
+function shownStage(run){
+ if(method!=='newer'&&SHOWCASE.includes(run.id))return 1;
+ const pick=(typeof CURATION!=='undefined'?CURATION.picks?.[method]:null)?.[run.id]?.pick;
+ return Math.min(Number.isInteger(pick)?pick:SHOWN,run.steps.length);
+}
+// Every pair a visitor has had on screen, kept between visits where the browser allows it.
+const found=new Set();
+try{if(typeof localStorage!=='undefined')JSON.parse(localStorage.getItem('found-pairs')||'[]').forEach(id=>{if(/^\d-\d$/.test(id))found.add(id);});}catch{}
 let passes=params.get('passes')==='1';
 document.documentElement.dataset.passes=String(passes);
-function plainItem(){const steps=currentBaseline().steps;return steps[passes?0:Math.min(SHOWN,steps.length)-1];}
+function plainItem(){const steps=currentBaseline().steps;return steps[passes||introMode?0:Math.min(stage,steps.length)-1];}
 // One throw adds one ingredient. After the first, the second die comes in at rest and waits to be thrown. Every
 // saved page used two ingredients, so until then the page pairs the first ingredient with the face that die
 // happens to show, and the sentence above the page says so: its second gap stays open, naming that face.
@@ -241,21 +252,25 @@ function renderPromptLine(){
  if(!state){line.replaceChildren();return;}
  const part=(tag,content,className,flag)=>{const node=document.createElement(tag);node.textContent=content;if(className)node.className=className;if(flag)node.dataset[flag]='true';return node;};
  const gap=()=>{const node=part('span','','prompt-gap');node.setAttribute('aria-hidden','true');return node;};
+ // The line is a recipe: the same data, plus what each die added, each ingredient a token in its die's colour
+ // with the picture from the face that came up.
+ const plus=()=>part('span',' + ','prompt-plus');
+ const token=(index,value,name,tag,className,fill)=>{const node=part(tag,name,className,fill?'fill':'');node.dataset.die=String(index);if(node.insertAdjacentHTML&&typeof diePicture==='function')node.insertAdjacentHTML('afterbegin',diePicture(index,value));return node;};
  if(state.pending){
   // Each sentence of the lead stays whole, so a narrow screen breaks between them.
   const lead=part('span','','prompt-lead');lead.append(...PROMPT_LEAD.flatMap((sentence,n)=>n?[' ',part('span',sentence,'prompt-phrase')]:[part('span',sentence,'prompt-phrase')]));
-  line.replaceChildren(lead,part('span','Add randomness: '),gap(),part('span',' and '),gap());
+  line.replaceChildren(lead,gap(),plus(),gap());
   line.setAttribute('aria-label',PROMPT_LEAD.join(' ')+' Add randomness: throw the die.');
   return;
  }
  // One die thrown: its ingredient is in. The second gap stays open and names the face the waiting die shows,
  // because the saved page on screen was made with it. A word a throw brings drops in; nothing is underlined.
  if(state.b===null){
-  line.replaceChildren(part('span','Same data, redesigned with '),part('b',state.a,'',state.changed===0||state.fresh===0?'fill':''),part('span',' and '),part('span',state.held,'prompt-gap prompt-held',state.fresh===0?'fill':''));
+  line.replaceChildren(part('span','Same data'),plus(),token(0,a,state.a,'b','',state.changed===0||state.fresh===0),plus(),token(1,b,state.held,'span','prompt-gap prompt-held',state.fresh===0));
   line.setAttribute('aria-label','Same data, redesigned with '+state.a+' and, until the second die is thrown, the face it shows: '+state.held+'.');
   return;
  }
- const parts=[part('span','Same data, redesigned with '),part('b',state.a,'',state.changed===0||state.fresh===0?'fill':''),part('span',' and '),part('b',state.b,'',state.changed===1||state.fresh!==null?'fill':''),part('span','.')];
+ const parts=[part('span','Same data'),plus(),token(0,a,state.a,'b','',state.changed===0||state.fresh===0),plus(),token(1,b,state.b,'b','',state.changed===1||state.fresh!==null)];
  // After a push, a second line says what was asked: the same sentence each time, so only the count changes.
  if(state.pushes>0){
   const push=part('span','','prompt-push');
@@ -292,7 +307,6 @@ let firstRollCelebrated=false;
 // The first roll of a visit is guided in: it lands on one of a few curated showcase pairs, where the one added
 // sentence most clearly makes a distinct, readable page. Every roll after that is random. The results
 // themselves are untouched; only the first draw is chosen.
-let SHOWCASE=(typeof CURATION!=='undefined'&&Array.isArray(CURATION.showcase)?CURATION.showcase:[]).map(entry=>String(entry.pair??entry)).filter(id=>/^\d+-\d+$/.test(id));
 let guidedIn=false;
 function introPair(){
  if(!guidedIn&&SHOWCASE.length)return SHOWCASE[randomIndex(SHOWCASE.length)].split('-').map(Number);
@@ -629,7 +643,7 @@ const thumbnailObserver=new ResizeObserver(entries=>entries.forEach(({target,con
 function buildMatrix(){
  const matrix=$('#matrix');matrix.replaceChildren();matrixButtons.clear();matrixCells.clear();thumbnailObserver.disconnect();
  matrix.setAttribute('aria-label',`Choose one of ${EXPERIMENT.runs.length} ingredient combinations`);
- $('#atlas-title').textContent=EXPERIMENT.runs.length+' combinations';
+ $('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
  INGREDIENTS_A.forEach((name,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=name;$('#atlas-ingredient').append(option);});
  for(const run of EXPERIMENT.runs){
   const cell=document.createElement('div'),preview=document.createElement('div'),button=document.createElement('button');
@@ -641,8 +655,22 @@ function buildMatrix(){
   cell.append(preview,button);matrix.append(cell);matrixButtons.set(run.id,button);matrixCells.set(run.id,cell);thumbnailObserver.observe(preview);
  }
 }
+// The map in the dock: six rows for the first die's faces, six columns for the second's, one dot per pair. A pair
+// that has been on screen is filled in, the one on screen now stands out. With a mouse a dot goes to its pair;
+// anywhere else on the map opens the gallery of all thirty-six.
+function renderFoundMap(){
+ const map=$('#found-map');if(!map?.append)return;
+ if(!map.children.length)for(const run of EXPERIMENT.runs){
+  const dot=document.createElement('button');dot.type='button';dot.className='found-dot';dot.dataset.pair=run.id;dot.title=run.label;dot.setAttribute('aria-label',run.label);
+  dot.addEventListener('click',event=>{event.stopPropagation?.();selectPair(currentExperiment().runs.find(item=>item.id===run.id));});map.append(dot);
+ }
+ if(!introMode&&!found.has(selected.id)){found.add(selected.id);try{if(typeof localStorage!=='undefined')localStorage.setItem('found-pairs',JSON.stringify([...found]));}catch{}}
+ for(const dot of map.children){dot.dataset.found=String(found.has(dot.dataset.pair));dot.setAttribute('aria-current',String(!introMode&&dot.dataset.pair===selected.id));}
+ map.setAttribute('aria-label',found.size+' of '+EXPERIMENT.runs.length+' combinations found');$('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
+}
+$('#found-map')?.addEventListener?.('click',()=>{if($('#atlas-toggle').getAttribute('aria-expanded')!=='true')$('#atlas-toggle').click();$('#atlas').scrollIntoView?.({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
 function render(sync=true){
- a=selected.a;b=selected.b;if(!passes)stage=SHOWN;stage=Math.min(stage,selected.steps.length);
+ a=selected.a;b=selected.b;if(!passes)stage=shownStage(selected);stage=Math.min(stage,selected.steps.length);renderFoundMap();
  const journey=introMode?'original':'ingredients',previousJourney=document.documentElement.dataset.journey;
  document.documentElement.dataset.journey=journey;$('#reset').hidden=journey==='original';
  // In the plain step the dice are away; they keep their last names so an exit never shows placeholder labels.
@@ -717,13 +745,13 @@ function warmReports(){
   const runs=currentExperiment().runs,find=(a,b)=>runs.find(run=>run.a===a&&run.b===b),items=[];
   if(introMode){
    upcoming.intro??=introPair();
-   items.push(find(...upcoming.intro)?.steps[(passes?1:SHOWN)-1]);
+   {const run=find(...upcoming.intro);if(run)items.push(run.steps[(passes?1:shownStage(run))-1]);}
   }else{
-   if(stage<4)items.push(selected.steps[stage]);
+   if(passes&&stage<4)items.push(selected.steps[stage]);
    [0,1].forEach(i=>{
     const current=i?selected.b:selected.a;
     if(upcoming.faces[i]===null||upcoming.faces[i]===current)upcoming.faces[i]=nextIngredient(i,current);
-    const values=[selected.a,selected.b];values[i]=upcoming.faces[i];items.push(find(...values)?.steps[stage-1]);
+    const values=[selected.a,selected.b];values[i]=upcoming.faces[i];const run=find(...values);if(run)items.push(run.steps[(passes?stage:shownStage(run))-1]);
    });
   }
   for(const item of items){if(!item||cache.has(item.file))continue;const section=addReport(container,item,'');section.hidden=true;cache.set(item.file,section);}
