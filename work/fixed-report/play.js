@@ -1,5 +1,8 @@
 const $=s=>document.querySelector(s);
 const params=new URLSearchParams(location.search);
+// The address stays the page's own. A link can ask for a pair or a view; once that has been read it is taken out
+// of the address, and nothing done on the page writes it back. Share builds its link from what is on screen.
+try{if(location.search)history.replaceState(null,'',location.pathname);}catch{}
 let method=params.get('model')==='newer'?'newer':params.get('prompt')==='original'?'original':'stronger';
 // Three recorded tracks: the earlier model with its two refinement prompts, and a newer-model
 // rerun of the whole experiment with identical prompts.
@@ -390,17 +393,8 @@ function nextExperimentStep(){
  else if(stage<4&&!pairKept()){const impact=reportImpactFor(()=>setAttempt(stage+1));pressRefine(impact);}
  else{fireNextButton();stage=1;comparing=false;roll();}
 }
-// Writing the address costs a few milliseconds, so it waits for an idle moment after the change that caused it
-// instead of holding up a throw. Share, and leaving the page, write it at once.
-let urlPending=null;
-function updateURL(){
- if(typeof requestIdleCallback!=='function'){writeURL();return;}
- if(urlPending===null)urlPending=requestIdleCallback(writeURL,{timeout:800});
-}
-function flushURL(){if(urlPending===null)return;if(typeof cancelIdleCallback==='function')cancelIdleCallback(urlPending);writeURL();}
-window.addEventListener('pagehide',flushURL);
-function writeURL(){
- urlPending=null;
+// What a link needs to open the page as it is now.
+function stateQuery(){
  const query=new URLSearchParams({view,pair:selected.id,stage:String(stage),plainStage:String(plainStage)});
  if(method==='newer')query.set('model','newer');else query.set('prompt',method);
  if(comparing)query.set('compare','1');
@@ -408,7 +402,7 @@ function writeURL(){
  if(passes)query.set('passes','1');
  // A link made between the two throws opens on the plain page: the second die has not been thrown yet.
  if(introMode||secondWaits)query.set('start','original');
- try{history.replaceState(null,'',location.pathname+'?'+query);}catch{}
+ return String(query);
 }
 // Saved reports scroll inside sandboxed frames. A small bridge, appended after the saved
 // document, shares the reading position so a new step or a comparison opens at the same place.
@@ -740,7 +734,7 @@ function render(sync=true){
  // The gallery is folded away until it is wanted, so a throw does not pay to keep it up to date.
  if(!$('#atlas-body').hidden)syncMatrix();
  $('#atlas-ingredient').value=String(a);
- renderResult();renderKeep();if(sync)syncDice3D();updateURL();
+ renderResult();renderKeep();if(sync)syncDice3D();
  const entering=previousJourney!==journey&&journey!=='original'&&view==='dice';
  // Beat order: the press, then the page or dice, then the timeline, then the next label.
  updatePointer(entering?900:paintedStep===null?500:760);
@@ -853,7 +847,7 @@ function chooseKept(value){
  keep.pick=value;
  if(value===0){if(comparing){comparing=false;renderResult();}tweenBeforeAfter(1);}
  else{if(beforeAfter.value>=.99)paintBeforeAfter(0);setAttempt(value);}
- renderKeep();renderRail();updateURL();
+ renderKeep();renderRail();
 }
 function randomIndex(length){
  const values=new Uint32Array(1),limit=0x100000000-(0x100000000%length);do{crypto.getRandomValues(values)}while(values[0]>=limit);return values[0]%length;
@@ -899,8 +893,8 @@ function roll(index,gesture=null,forced=null){
 async function copyText(text,pre,status){
  try{await navigator.clipboard.writeText(text);status.textContent='Copied.';}catch{pre.hidden=false;pre.textContent=text;const details=pre.closest?.('details');if(details)details.open=true;const range=document.createRange();range.selectNodeContents(pre);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);status.textContent='Text selected. Press Ctrl+C or use Copy.';}
 }
-$('#compare').addEventListener('click',()=>{if(introMode)return;comparing=!comparing;renderResult();updateURL();});
-$('#compare-target').addEventListener('change',event=>{comparison=event.target.value==='other'?'other':'plain';renderResult();updateURL();});
+$('#compare').addEventListener('click',()=>{if(introMode)return;comparing=!comparing;renderResult();});
+$('#compare-target').addEventListener('change',event=>{comparison=event.target.value==='other'?'other':'plain';renderResult();});
 function changeMethod(next){settlePresentation();method=next;if(next!=='newer')promptTrack=next;promptPeeks.forEach(peek=>peek.close());selected=currentExperiment().runs.find(run=>run.id===selected.id);render();if(view==='plain')renderPlain();}
 $('#method-original').addEventListener('click',()=>changeMethod('original'));
 $('#method-stronger').addEventListener('click',()=>changeMethod('stronger'));
@@ -926,12 +920,14 @@ $('#refinement-prompt').textContent=EXPERIMENT.refinementPrompt;
 const exportPrompt=document.createElement('pre');exportPrompt.hidden=true;$('#export-status').after(exportPrompt);
 $('#copy-plain').addEventListener('click',()=>copyText(EXPERIMENT.plain.fullPrompt,exportPrompt,$('#export-status')));
 // A link to a pair goes by that pair's own small page, which carries its picture for previews and forwards here
-// with the same address. Before both dice are in there is no pair to show, and the link is the page itself.
+// with what the page is showing. Before both dice are in there is no pair to show, and the link is the page itself.
 function shareLink(){
- if(introMode||secondWaits||view!=='dice')return location.href;
- try{return new URL('p/'+selected.id+'.html'+location.search,location.href).href;}catch{return location.href;}
+ const page=location.href.split(/[?#]/)[0];
+ if(view!=='dice')return page+'?'+stateQuery();
+ if(introMode||secondWaits)return page;
+ try{return new URL('p/'+selected.id+'.html?'+stateQuery(),page).href;}catch{return page+'?'+stateQuery();}
 }
-$('#copy-link').addEventListener('click',async()=>{flushURL();try{await navigator.clipboard.writeText(shareLink());$('#share-status').textContent='Copied';}catch{$('#share-status').textContent='Copy the address to share this roll.';}});
+$('#copy-link').addEventListener('click',async()=>{const link=shareLink();try{await navigator.clipboard.writeText(link);$('#share-status').textContent='Copied';}catch{$('#share-status').textContent='Copy this link: '+link;}});
 $('#copy-refinement').addEventListener('click',()=>copyText(view==='plain'?currentBaseline().protocol.refinementPrompt:currentExperiment().refinementPrompt,$('#refinement-prompt'),$('#export-status')));
 function renderPlain(){
  const baseline=currentBaseline(),item=baseline.steps[plainStage-1];showReports($('#plain-report'),[{item,label:''}]);
@@ -940,7 +936,7 @@ function renderPlain(){
  showPrompt($('#plain-prompt'),item.prompt);$('#plain-prompt-title').textContent=plainStage===1?'One-shot prompt':'Refinement prompt';$('#plain-critique-text').textContent=item.critique;$('#plain-critique').hidden=!item.critique;
  $('#plain-copy').textContent=plainStage===1?'Copy with data':'Copy prompt';
  $('#plain-attempt-note').hidden=plainStage===1||item.html!==baseline.steps[plainStage-2].html;
- $('#plain-copy-status').textContent='';updateURL();
+ $('#plain-copy-status').textContent='';
 }
 function selectView(next,focus=false){
  settlePresentation();
@@ -950,7 +946,7 @@ function selectView(next,focus=false){
  ['#plain-lab','#plain-controls'].forEach(id=>$(id).hidden=view!=='plain');
  if(view==='plain')renderPlain();else{render();}
  if(focus)$(view==='plain'?'#plain-title':'#pair-title').focus({preventScroll:false});
- updateURL();
+ 
 }
 $('#view-plain').addEventListener('click',()=>selectView('plain',true));
 $('#add-ingredients').addEventListener('click',()=>selectView('dice',true));
