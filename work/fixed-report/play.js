@@ -68,6 +68,8 @@ function updateActionText(node,text,animate){
  animation.onfinish=()=>{if(actionAnimations.get(node)===animation)actionAnimations.delete(node);};
 }
 function syncRailMarker(animate=false){
+ // With the passes out of the way the track is not on the page, and measuring it would lay the whole page out.
+ if(!passes)return;
  const button=$('#stage-'+(introMode?0:stage)),marker=$('#rail-marker');
  const target=button.getBoundingClientRect?.(),track=$('#rail-stops').getBoundingClientRect?.();
  if(!target?.width||!track)return;
@@ -381,7 +383,17 @@ function nextExperimentStep(){
  else if(stage<4&&!pairKept()){const impact=reportImpactFor(()=>setAttempt(stage+1));pressRefine(impact);}
  else{fireNextButton();stage=1;comparing=false;roll();}
 }
+// Writing the address costs a few milliseconds, so it waits for an idle moment after the change that caused it
+// instead of holding up a throw. Share, and leaving the page, write it at once.
+let urlPending=null;
 function updateURL(){
+ if(typeof requestIdleCallback!=='function'){writeURL();return;}
+ if(urlPending===null)urlPending=requestIdleCallback(writeURL,{timeout:800});
+}
+function flushURL(){if(urlPending===null)return;if(typeof cancelIdleCallback==='function')cancelIdleCallback(urlPending);writeURL();}
+window.addEventListener('pagehide',flushURL);
+function writeURL(){
+ urlPending=null;
  const query=new URLSearchParams({view,pair:selected.id,stage:String(stage),plainStage:String(plainStage)});
  if(method==='newer')query.set('model','newer');else query.set('prompt',method);
  if(comparing)query.set('compare','1');
@@ -412,7 +424,7 @@ window.addEventListener('message',event=>{
  if(event.data?.type==='report-height'){
   for(const container of [$('#report-view'),$('#plain-report')]){
    const cache=previewCaches.get(container);if(!cache)continue;
-   for(const section of cache.values()){const frame=section.querySelector('iframe');if(frame?.contentWindow===event.source){fitReportFrame(frame,Number(event.data.height));return;}}
+   for(const section of cache.values()){const frame=section.querySelector('iframe');if(frame?.contentWindow===event.source){fitReportFrame(frame,Number(event.data.height));if(!section.hidden)releaseReportHeight(container);return;}}
   }
   return;
  }
@@ -426,6 +438,15 @@ window.addEventListener('message',event=>{
   return;
  }
 });
+// A page shown for the first time has not measured itself yet. The space keeps the height of the page it replaces
+// until it has, so the page never drops to the default height and grows again in the middle of a throw.
+const heldHeights=new Map();
+function holdReportHeight(container,previous,frame){
+ const height=previous.querySelector('iframe')?.style?.height;
+ if(!height||frame.style?.height||!container.style)return;
+ container.style.minHeight=height;clearTimeout(heldHeights.get(container));heldHeights.set(container,setTimeout(()=>releaseReportHeight(container),1500));
+}
+function releaseReportHeight(container){if(!heldHeights.has(container))return;clearTimeout(heldHeights.get(container));heldHeights.delete(container);container.style.minHeight='';}
 function addReport(container,item,label){
  const section=document.createElement('section');section.className='frame-section';
  if(label){const title=document.createElement('h3');title.textContent=label;section.append(title);}
@@ -460,7 +481,7 @@ function showReports(container,entries){
   section.style.order=String(order);section.hidden=false;
   const frame=section.querySelector('iframe');if(frame.dataset.loaded==='true')scrollReport(frame,reportScroll.get(container)||0);
   if(entries.length===1&&!label&&previous.length===1&&previous[0]!==section){
-   handoffReport(container,previous[0],section);
+   holdReportHeight(container,previous[0],frame);handoffReport(container,previous[0],section);
    // The new page settles into place as the old one is wiped away: a small drop, not a slide.
    if(section.animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)section.animate([{transform:'translateY(-12px) scale(.985)'},{transform:'none'}],{duration:560,easing:'cubic-bezier(.23,1,.32,1)'});
   }
@@ -871,7 +892,7 @@ $('#copy-prompt').addEventListener('click',()=>copyText((introMode?currentBaseli
 $('#refinement-prompt').textContent=EXPERIMENT.refinementPrompt;
 const exportPrompt=document.createElement('pre');exportPrompt.hidden=true;$('#export-status').after(exportPrompt);
 $('#copy-plain').addEventListener('click',()=>copyText(EXPERIMENT.plain.fullPrompt,exportPrompt,$('#export-status')));
-$('#copy-link').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(location.href);$('#share-status').textContent='Copied';}catch{$('#share-status').textContent='Copy the address to share this roll.';}});
+$('#copy-link').addEventListener('click',async()=>{flushURL();try{await navigator.clipboard.writeText(location.href);$('#share-status').textContent='Copied';}catch{$('#share-status').textContent='Copy the address to share this roll.';}});
 $('#copy-refinement').addEventListener('click',()=>copyText(view==='plain'?currentBaseline().protocol.refinementPrompt:currentExperiment().refinementPrompt,$('#refinement-prompt'),$('#export-status')));
 function renderPlain(){
  const baseline=currentBaseline(),item=baseline.steps[plainStage-1];showReports($('#plain-report'),[{item,label:''}]);
