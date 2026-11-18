@@ -588,3 +588,14 @@ html[data-passes=true] .found-map{display:none}
 .before-after[data-invite]:not([data-active]):not([data-dragging]) .ba-knob{animation:ba-invite 5.6s cubic-bezier(.45,0,.55,1) 2.6s infinite}
 @keyframes ba-invite{0%,76%,100%{translate:0 0}85%{translate:16px 0}93%{translate:-2px 0}}
 @media(prefers-reduced-motion:reduce){.before-after[data-invite] .ba-knob{animation:none!important}}
+/* A token is its die: it can be pointed at and clicked even while the rest of the line is not yet a button. */
+.prompt-line [data-die]{pointer-events:auto;cursor:pointer;transition:translate 160ms var(--ease-out),box-shadow 160ms ease-out}
+@media(hover:hover) and (pointer:fine){.prompt-line [data-die]:hover{translate:0 -2px;box-shadow:0 5px 12px -6px #1d261e99}}
+.prompt-line [data-die]:active{translate:0 1px}
+/* The headline already says the data is the same, and the handle says what it reveals until it has been pulled once. */
+.ba-same,.frame-section h3 .same-data{display:none}
+.before-after[data-used] .ba-knob:after{display:none}
+/* With the passes out of the way the handle is the comparison; side by side comes back with them. */
+html[data-passes=false] #compare{display:none}
+/* On narrow screens the dice stay big enough to hold once they have been thrown. */
+@media(max-width:860px){html:not([data-journey=original]) .die-object{--size:54px;height:84px}}

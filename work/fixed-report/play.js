@@ -292,7 +292,14 @@ function togglePromptLine(open){
   panel.hidden=false;line.setAttribute('aria-expanded','true');
  }else{panel.hidden=true;line.setAttribute('aria-expanded','false');}
 }
-$('#prompt-line').addEventListener('click',()=>togglePromptLine());
+// A token is its die: resting the pointer on one lifts that die, and clicking it throws the die. Anywhere else on
+// the line opens the whole prompt.
+const promptToken=event=>{const node=event?.target?.closest?.('[data-die]');return node?Number(node.dataset.die):null;};
+$('#prompt-line').addEventListener('click',event=>{const die=promptToken(event);if(die===null){togglePromptLine();return;}delete $('#throw-'+die).dataset.hover;roll(die);});
+['pointerover','pointerout'].forEach(type=>$('#prompt-line').addEventListener(type,event=>{
+ const die=promptToken(event);if(die===null||event.pointerType==='touch')return;
+ const button=$('#throw-'+die);if(type==='pointerover'&&!dieStates[die].running)button.dataset.hover='true';else delete button.dataset.hover;
+}));
 const pointerCard=document.querySelector('.pointer-card');
 pointerCard?.addEventListener('click',()=>pointer.action?.());
 document.addEventListener('pointerdown',event=>{if(!$('#prompt-full').hidden&&!event.target?.closest?.('#prompt-row'))togglePromptLine(false);});
@@ -498,7 +505,9 @@ function beforeItem(){
 }
 function paintBeforeAfter(value){
  const box=$('#before-after'),handle=$('#ba-handle'),container=$('#report-view');
- beforeAfter.value=Math.max(0,Math.min(1,value));
+ const was=beforeAfter.value;beforeAfter.value=Math.max(0,Math.min(1,value));
+ // Pulled by hand, the divider clicks as it passes the middle and as it reaches either edge.
+ if(beforeAfter.drag&&typeof playDieTick==='function'){const now=beforeAfter.value;if(now!==was&&(now===0||now===1))playDieTick(0,'set');else if((was<.5)!==(now<.5))playDieTick(0,'face');}
  box.style.setProperty('--ba',beforeAfter.value.toFixed(4));
  box.toggleAttribute?.('data-active',beforeAfter.value>0);
  const percent=Math.round(beforeAfter.value*100);
@@ -530,7 +539,7 @@ function quietBeforeAfterHint(){
  $('#before-after').querySelector?.('.ba-knob')?.getAnimations?.().filter(animation=>!animation.animationName).forEach(animation=>animation.cancel());
 }
 // Taking hold of the slider keeps it where the hint had it and ends the hints for good.
-function takeBeforeAfter(){beforeAfter.hinting=false;beforeAfter.hinted=true;beforeAfter.used=true;$('#before-after').toggleAttribute?.('data-invite',false);stopBeforeAfterTween();markReady();}
+function takeBeforeAfter(){beforeAfter.hinting=false;beforeAfter.hinted=true;beforeAfter.used=true;$('#before-after').toggleAttribute?.('data-invite',false);$('#before-after').toggleAttribute?.('data-used',true);stopBeforeAfterTween();markReady();}
 // Glide to a value; shape(t) maps progress to position for the hints.
 function tweenBeforeAfter(to,duration=360,shape=null,delay=0){
  stopBeforeAfterTween();
@@ -681,13 +690,32 @@ function buildMatrix(){
 // The map in the dock: six rows for the first die's faces, six columns for the second's, one dot per pair. A pair
 // that has been on screen is filled in, the one on screen now stands out. With a mouse a dot goes to its pair;
 // anywhere else on the map opens the gallery of all thirty-six.
+// Finishing a row or a column of the map, every pair of one ingredient, ripples it. Finding the last of the
+// thirty-six sets the whole map off, and both dice. It follows the throw that found the pair, once the page has changed.
+const FOUND_CELEBRATE=1100;
+function celebrateFound(id){
+ const map=$('#found-map');
+ if(!map?.children||typeof setTimeout!=='function'||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const [row,column]=id.split('-').map(Number),all=found.size===EXPERIMENT.runs.length;
+ const rowDone=INGREDIENTS_B.every((_,n)=>found.has(row+'-'+n)),columnDone=INGREDIENTS_A.every((_,n)=>found.has(n+'-'+column));
+ if(!all&&!rowDone&&!columnDone)return;
+ setTimeout(()=>{
+  for(const dot of map.children){
+   const [a,b]=dot.dataset.pair.split('-').map(Number),inRow=rowDone&&a===row,inColumn=columnDone&&b===column;
+   if(!all&&!inRow&&!inColumn)continue;
+   dot.animate?.([{scale:'1'},{scale:'2.3',backgroundColor:'#c2432a',offset:.4},{scale:'1'}],{duration:520,delay:all?(a+b)*55:(inRow?b:a)*70,iterations:all?2:1,easing:'cubic-bezier(.23,1,.32,1)'});
+  }
+  if(all)[0,1].forEach(i=>{if(typeof celebrateDie==='function')celebrateDie(i);});
+  else if(typeof playDieTick==='function'){playDieTick(0,'set');setTimeout(()=>playDieTick(1,'set'),150);}
+ },FOUND_CELEBRATE);
+}
 function renderFoundMap(){
  const map=$('#found-map');if(!map?.append)return;
  if(!map.children.length)for(const run of EXPERIMENT.runs){
   const dot=document.createElement('button');dot.type='button';dot.className='found-dot';dot.dataset.pair=run.id;dot.title=run.label;dot.setAttribute('aria-label',run.label);
   dot.addEventListener('click',event=>{event.stopPropagation?.();selectPair(currentExperiment().runs.find(item=>item.id===run.id));});map.append(dot);
  }
- if(!introMode&&!found.has(selected.id)){found.add(selected.id);try{if(typeof localStorage!=='undefined')localStorage.setItem('found-pairs',JSON.stringify([...found]));}catch{}}
+ if(!introMode&&!found.has(selected.id)){found.add(selected.id);try{if(typeof localStorage!=='undefined')localStorage.setItem('found-pairs',JSON.stringify([...found]));}catch{}celebrateFound(selected.id);}
  for(const dot of map.children){dot.dataset.found=String(found.has(dot.dataset.pair));dot.setAttribute('aria-current',String(!introMode&&dot.dataset.pair===selected.id));}
  map.setAttribute('aria-label',found.size+' of '+EXPERIMENT.runs.length+' combinations found');$('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
 }
@@ -703,7 +731,7 @@ function render(sync=true){
  matrixButtons.forEach((button,id)=>{button.setAttribute('aria-pressed',String(!introMode&&id===selected.id));const run=currentExperiment().runs.find(item=>item.id===id);button.setAttribute('aria-label',run.label+' — '+attemptName(stage));});
  matrixCells.forEach((cell,id)=>{
   cell.hidden=Number(id.split('-')[0])!==a;if(cell.hidden)return;
-  const item=currentExperiment().runs.find(run=>run.id===id).steps[stage-1],frame=cell.querySelector('iframe');
+  const run=currentExperiment().runs.find(run=>run.id===id),item=run.steps[(passes?stage:shownStage(run))-1],frame=cell.querySelector('iframe');
   if(frame.dataset.file!==item.file){frame.srcdoc=item.html;frame.dataset.file=item.file;}
  });
  $('#atlas-ingredient').value=String(a);
