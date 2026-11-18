@@ -187,7 +187,7 @@ for(let pass=1;pass<=4;pass++){
 assert.ok(nodes.get('#matrix').querySelector('iframe').style.transform.includes('0.16666'));
 assert.ok(!/id="roll"|id="view-dice"|lab-switch/.test(read('play.js')+read('play.html')+read('dice.js')));
 assert.ok(!/id="expand"|id="plain-expand"|id="expanded"|attempt-select|Full size/.test(read('play.html')+read('play.js')));
-await nodes.get('#copy-link').click();assert.equal(copies.at(-1),context.location.href);assert.equal(nodes.get('#share-status').textContent,'Copied');
+await nodes.get('#copy-link').click();assert.equal(copies.at(-1),vm.runInContext('shareLink()',context),'Share copies a link built from what is on screen');assert.ok(copies.at(-1).startsWith('https://randomness-for-style.vercel.app/'),'under the page own address');assert.equal(nodes.get('#share-status').textContent,'Copied');
 await nodes.get('#copy-refinement').click();assert.equal(copies.at(-1),plainStrongerPrompt);
 nodes.get('#plain-method').events.change({target:{value:'newer'}});
 for(let pass=1;pass<=4;pass++){
@@ -210,14 +210,14 @@ vm.runInContext(`
 assert.equal(introMode,true);assert.equal(stage,1);assert.equal(nodes.get('#stage-2').disabled,true);assert.equal(nodes.get('#story-title').textContent,'This is what one prompt gets you.');assert.equal(nodes.get('#reset').hidden,true);
 assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,STRONGER_BASELINE.steps[0].html);
 assert.equal(nodes.get('#current-prompt').textContent,STRONGER_BASELINE.steps[0].prompt);
-assert.ok(history.url.includes('start=original'));assert.ok([...matrixButtons.values()].every(button=>button.attrs['aria-pressed']==='false'));
+assert.ok(stateQuery().includes('start=original'));assert.ok([...matrixButtons.values()].every(button=>button.attrs['aria-pressed']==='false'));
 setAttempt(4);assert.equal(stage,1);rollout.defer=false;const initial=selected;assert.equal(document.documentElement.dataset.ready,'false','on a first visit the controls wait');roll(1);assert.equal(introMode,true,'there is no second die to throw yet');roll();
 assert.equal(introMode,false);assert.equal(stage,1);assert.deepEqual(rollout.indices,[0]);
 assert.equal(nodes.get('#stage-2').disabled,false);
-assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);assert.ok(history.url.includes('start=original'),'until the second die is thrown a link still opens on the plain page');
+assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[0].html);assert.ok(stateQuery().includes('start=original'),'until the second die is thrown a link still opens on the plain page');
 `,home);
 assert.equal(guideTasks.size,0,'The guided path must not schedule automatic progression');
-vm.runInContext(`setAttempt(2);assert.equal(stage,2);const before=selected;roll(1);assert.equal(stage,2);assert.equal(selected.a,before.a);assert.notEqual(selected.b,before.b);assert.ok(!history.url.includes('start=original'));`,home);
+vm.runInContext(`setAttempt(2);assert.equal(stage,2);const before=selected;roll(1);assert.equal(stage,2);assert.equal(selected.a,before.a);assert.notEqual(selected.b,before.b);assert.ok(!stateQuery().includes('start=original'));`,home);
 vm.runInContext(`introMode=true;stage=1;render();selectPair(currentExperiment().runs[5]);assert.equal(introMode,false);assert.equal(selected.id,'0-5');assert.equal(stage,1);`,home);
 vm.runInContext(`
 const secureDraw=randomIndex;
