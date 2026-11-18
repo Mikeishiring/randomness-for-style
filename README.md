@@ -57,6 +57,7 @@ The recorded reports here use no personal design skills or supplied visual refer
 - A token in the headline is its die: resting the pointer on one lifts that die, and clicking it throws the die. Anywhere else on the line opens the whole prompt.
 - Pulled by hand, the before handle clicks as it passes the middle and as it reaches either edge (and buzzes on phones that support it). Its "Before" caption goes once it has been pulled.
 - Finishing a row or a column of the map, every pair of one ingredient, ripples it. Finding the last of the thirty-six sets the whole map off, with confetti at both dice.
+- **Share** copies a link to the pair on screen. It goes by that pair's own small page (`p/4-2.html`), which carries the pair's picture and name for link previews and forwards to the experiment. The pictures are captures of the page, kept in `work/fixed-report/share/`; they show the default run, so a link to another run still previews with the default picture.
 - Reports are shown whole: each frame takes its report's own height and the page scrolls through the full composition, so rhythm and whitespace can be judged. On wide screens the dice stay beside the report as it scrolls; the action and the step track stay docked at the bottom of the window. On phones the dice are big for the first throw, then fold to about half that size, still big enough to hold, and the tokens in the headline name them.
 - One orange cue at a time: the action is the only orange element once it is in play; the step track, pointer and links speak in ink, and the step track is the only progress indicator.
 - Compare with the no-ingredient result, inspect the exact prompt and critique, open **36 combinations** below the page to browse every pairing, or share a selected state.
@@ -73,7 +74,7 @@ npm test
 python -m http.server 8000 --directory site/dist
 ```
 
-Open `http://localhost:8000`. Any static web server can serve the files in `site/dist`: the page, the prompt test, and `share.jpg`, the picture a shared link shows.
+Open `http://localhost:8000`. Any static web server can serve the files in `site/dist`: the page, the prompt test, `share.jpg` (the picture a link to the page shows) and `p/`, one small page and picture per pair.
 
 ## Project structure
 

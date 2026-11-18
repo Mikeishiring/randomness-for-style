@@ -26,6 +26,7 @@
 !/site/dist/index.html
 !/site/dist/prompt-test.html
 !/site/dist/share.jpg
+!/site/dist/p/
 !/work/
 /work/*
 !/work/fixed-report/
@@ -33,6 +34,7 @@
 !/work/fixed-report/build.mjs
 !/work/fixed-report/prepare-public.mjs
 !/work/fixed-report/share.jpg
+!/work/fixed-report/share/
 !/work/fixed-report/data.mjs
 !/work/fixed-report/play.html
 !/work/fixed-report/play.css

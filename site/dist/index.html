@@ -2594,6 +2594,15 @@ function renderFoundMap(){
  map.setAttribute('aria-label',found.size+' of '+EXPERIMENT.runs.length+' combinations found');$('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
 }
 $('#found-map')?.addEventListener?.('click',()=>{if($('#atlas-toggle').getAttribute('aria-expanded')!=='true')$('#atlas-toggle').click();$('#atlas').scrollIntoView?.({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
+// The gallery shows the first die's six pairings, each at the version the page would show for it.
+function syncMatrix(){
+ matrixButtons.forEach((button,id)=>{button.setAttribute('aria-pressed',String(!introMode&&id===selected.id));const run=currentExperiment().runs.find(item=>item.id===id);button.setAttribute('aria-label',run.label+' — '+attemptName(stage));});
+ matrixCells.forEach((cell,id)=>{
+  cell.hidden=Number(id.split('-')[0])!==a;if(cell.hidden)return;
+  const run=currentExperiment().runs.find(run=>run.id===id),item=run.steps[(passes?stage:shownStage(run))-1],frame=cell.querySelector('iframe');
+  if(frame.dataset.file!==item.file){frame.srcdoc=item.html;frame.dataset.file=item.file;}
+ });
+}
 function render(sync=true){
  a=selected.a;b=selected.b;if(!passes)stage=shownStage(selected);stage=Math.min(stage,selected.steps.length);renderFoundMap();
  const journey=introMode?'original':'ingredients',previousJourney=document.documentElement.dataset.journey;
@@ -2602,12 +2611,8 @@ function render(sync=true){
  // A die that is waiting to be rolled says so; a rolled die shows its ingredient in that ingredient's type.
  if(!introMode)setIngredientLabel(0,INGREDIENTS_A[a]);else setDieCall(0);
  if(!introMode&&!secondWaits)setIngredientLabel(1,INGREDIENTS_B[b]);else setDieCall(1);
- matrixButtons.forEach((button,id)=>{button.setAttribute('aria-pressed',String(!introMode&&id===selected.id));const run=currentExperiment().runs.find(item=>item.id===id);button.setAttribute('aria-label',run.label+' — '+attemptName(stage));});
- matrixCells.forEach((cell,id)=>{
-  cell.hidden=Number(id.split('-')[0])!==a;if(cell.hidden)return;
-  const run=currentExperiment().runs.find(run=>run.id===id),item=run.steps[(passes?stage:shownStage(run))-1],frame=cell.querySelector('iframe');
-  if(frame.dataset.file!==item.file){frame.srcdoc=item.html;frame.dataset.file=item.file;}
- });
+ // The gallery is folded away until it is wanted, so a throw does not pay to keep it up to date.
+ if(!$('#atlas-body').hidden)syncMatrix();
  $('#atlas-ingredient').value=String(a);
  renderResult();renderKeep();if(sync)syncDice3D();updateURL();
  const entering=previousJourney!==journey&&journey!=='original'&&view==='dice';
@@ -2654,7 +2659,7 @@ function dropDie(index,value,release={}){
 // The gallery stays folded until it is wanted; opening it settles in from just above.
 $('#atlas-toggle').addEventListener('click',()=>{
  const toggle=$('#atlas-toggle'),body=$('#atlas-body'),open=toggle.getAttribute('aria-expanded')!=='true';
- toggle.setAttribute('aria-expanded',String(open));body.hidden=!open;
+ toggle.setAttribute('aria-expanded',String(open));body.hidden=!open;if(open)syncMatrix();
  if(open&&body.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)body.animate([{opacity:0,transform:'translateY(-8px)'},{opacity:1,transform:'none'}],{duration:320,easing:'cubic-bezier(.23,1,.32,1)'});
 });
 $('#atlas-ingredient').addEventListener('change',event=>selectPair(currentExperiment().runs.find(run=>run.a===Number(event.target.value)&&run.b===b)));
@@ -2794,7 +2799,13 @@ $('#copy-prompt').addEventListener('click',()=>copyText((introMode?currentBaseli
 $('#refinement-prompt').textContent=EXPERIMENT.refinementPrompt;
 const exportPrompt=document.createElement('pre');exportPrompt.hidden=true;$('#export-status').after(exportPrompt);
 $('#copy-plain').addEventListener('click',()=>copyText(EXPERIMENT.plain.fullPrompt,exportPrompt,$('#export-status')));
-$('#copy-link').addEventListener('click',async()=>{flushURL();try{await navigator.clipboard.writeText(location.href);$('#share-status').textContent='Copied';}catch{$('#share-status').textContent='Copy the address to share this roll.';}});
+// A link to a pair goes by that pair's own small page, which carries its picture for previews and forwards here
+// with the same address. Before both dice are in there is no pair to show, and the link is the page itself.
+function shareLink(){
+ if(introMode||secondWaits||view!=='dice')return location.href;
+ try{return new URL('p/'+selected.id+'.html'+location.search,location.href).href;}catch{return location.href;}
+}
+$('#copy-link').addEventListener('click',async()=>{flushURL();try{await navigator.clipboard.writeText(shareLink());$('#share-status').textContent='Copied';}catch{$('#share-status').textContent='Copy the address to share this roll.';}});
 $('#copy-refinement').addEventListener('click',()=>copyText(view==='plain'?currentBaseline().protocol.refinementPrompt:currentExperiment().refinementPrompt,$('#refinement-prompt'),$('#export-status')));
 function renderPlain(){
  const baseline=currentBaseline(),item=baseline.steps[plainStage-1];showReports($('#plain-report'),[{item,label:''}]);
