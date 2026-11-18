@@ -24,12 +24,23 @@ const matrixButtons=new Map();
 const matrixCells=new Map();
 const promptPeeks=[$('#prompt'),$('#plain-prompt-details')].map(bindPromptPeek);
 let ingredientsChosen=!introMode,paintedStep=null;
-// The page shows one pass of the experiment. By default that is the third refinement, with and without the
-// ingredients, and the passes themselves stay out of the way; About the experiment can bring them back.
+// The page shows one version of each pair, with the passes themselves out of the way (About the experiment can
+// bring them back): the one saved as the pair's best in CURATION, which is rarely the last pass. A showcase pair
+// shows its one-shot, the version it was chosen for. Before and Compare always show the one plain report,
+// the plain one-shot a visit opens on, so the side without dice never changes.
 const SHOWN=4;
+let SHOWCASE=(typeof CURATION!=='undefined'&&Array.isArray(CURATION.showcase)?CURATION.showcase:[]).map(entry=>String(entry.pair??entry)).filter(id=>/^\d+-\d+$/.test(id));
+function shownStage(run){
+ if(method!=='newer'&&SHOWCASE.includes(run.id))return 1;
+ const pick=(typeof CURATION!=='undefined'?CURATION.picks?.[method]:null)?.[run.id]?.pick;
+ return Math.min(Number.isInteger(pick)?pick:SHOWN,run.steps.length);
+}
+// Every pair a visitor has had on screen, kept between visits where the browser allows it.
+const found=new Set();
+try{if(typeof localStorage!=='undefined')JSON.parse(localStorage.getItem('found-pairs')||'[]').forEach(id=>{if(/^\d-\d$/.test(id))found.add(id);});}catch{}
 let passes=params.get('passes')==='1';
 document.documentElement.dataset.passes=String(passes);
-function plainItem(){const steps=currentBaseline().steps;return steps[passes?0:Math.min(SHOWN,steps.length)-1];}
+function plainItem(){return currentBaseline().steps[0];}
 // One throw adds one ingredient. After the first, the second die comes in at rest and waits to be thrown. Every
 // saved page used two ingredients, so until then the page pairs the first ingredient with the face that die
 // happens to show, and the sentence above the page says so: its second gap stays open, naming that face.
@@ -57,6 +68,8 @@ function updateActionText(node,text,animate){
  animation.onfinish=()=>{if(actionAnimations.get(node)===animation)actionAnimations.delete(node);};
 }
 function syncRailMarker(animate=false){
+ // With the passes out of the way the track is not on the page, and measuring it would lay the whole page out.
+ if(!passes)return;
  const button=$('#stage-'+(introMode?0:stage)),marker=$('#rail-marker');
  const target=button.getBoundingClientRect?.(),track=$('#rail-stops').getBoundingClientRect?.();
  if(!target?.width||!track)return;
@@ -241,21 +254,25 @@ function renderPromptLine(){
  if(!state){line.replaceChildren();return;}
  const part=(tag,content,className,flag)=>{const node=document.createElement(tag);node.textContent=content;if(className)node.className=className;if(flag)node.dataset[flag]='true';return node;};
  const gap=()=>{const node=part('span','','prompt-gap');node.setAttribute('aria-hidden','true');return node;};
+ // The line is a recipe: the same data, plus what each die added, each ingredient a token in its die's colour
+ // with the picture from the face that came up.
+ const plus=()=>part('span',' + ','prompt-plus');
+ const token=(index,value,name,tag,className,fill)=>{const node=part(tag,name,className,fill?'fill':'');node.dataset.die=String(index);if(node.insertAdjacentHTML&&typeof diePicture==='function')node.insertAdjacentHTML('afterbegin',diePicture(index,value));return node;};
  if(state.pending){
   // Each sentence of the lead stays whole, so a narrow screen breaks between them.
   const lead=part('span','','prompt-lead');lead.append(...PROMPT_LEAD.flatMap((sentence,n)=>n?[' ',part('span',sentence,'prompt-phrase')]:[part('span',sentence,'prompt-phrase')]));
-  line.replaceChildren(lead,part('span','Add randomness: '),gap(),part('span',' and '),gap());
+  line.replaceChildren(lead,gap(),plus(),gap());
   line.setAttribute('aria-label',PROMPT_LEAD.join(' ')+' Add randomness: throw the die.');
   return;
  }
  // One die thrown: its ingredient is in. The second gap stays open and names the face the waiting die shows,
  // because the saved page on screen was made with it. A word a throw brings drops in; nothing is underlined.
  if(state.b===null){
-  line.replaceChildren(part('span','Same data, redesigned with '),part('b',state.a,'',state.changed===0||state.fresh===0?'fill':''),part('span',' and '),part('span',state.held,'prompt-gap prompt-held',state.fresh===0?'fill':''));
+  line.replaceChildren(part('span','Same data'),plus(),token(0,a,state.a,'b','',state.changed===0||state.fresh===0),plus(),token(1,b,state.held,'span','prompt-gap prompt-held',state.fresh===0));
   line.setAttribute('aria-label','Same data, redesigned with '+state.a+' and, until the second die is thrown, the face it shows: '+state.held+'.');
   return;
  }
- const parts=[part('span','Same data, redesigned with '),part('b',state.a,'',state.changed===0||state.fresh===0?'fill':''),part('span',' and '),part('b',state.b,'',state.changed===1||state.fresh!==null?'fill':''),part('span','.')];
+ const parts=[part('span','Same data'),plus(),token(0,a,state.a,'b','',state.changed===0||state.fresh===0),plus(),token(1,b,state.b,'b','',state.changed===1||state.fresh!==null)];
  // After a push, a second line says what was asked: the same sentence each time, so only the count changes.
  if(state.pushes>0){
   const push=part('span','','prompt-push');
@@ -275,7 +292,14 @@ function togglePromptLine(open){
   panel.hidden=false;line.setAttribute('aria-expanded','true');
  }else{panel.hidden=true;line.setAttribute('aria-expanded','false');}
 }
-$('#prompt-line').addEventListener('click',()=>togglePromptLine());
+// A token is its die: resting the pointer on one lifts that die, and clicking it throws the die. Anywhere else on
+// the line opens the whole prompt.
+const promptToken=event=>{const node=event?.target?.closest?.('[data-die]');return node?Number(node.dataset.die):null;};
+$('#prompt-line').addEventListener('click',event=>{const die=promptToken(event);if(die===null){togglePromptLine();return;}delete $('#throw-'+die).dataset.hover;roll(die);});
+['pointerover','pointerout'].forEach(type=>$('#prompt-line').addEventListener(type,event=>{
+ const die=promptToken(event);if(die===null||event.pointerType==='touch')return;
+ const button=$('#throw-'+die);if(type==='pointerover'&&!dieStates[die].running)button.dataset.hover='true';else delete button.dataset.hover;
+}));
 const pointerCard=document.querySelector('.pointer-card');
 pointerCard?.addEventListener('click',()=>pointer.action?.());
 document.addEventListener('pointerdown',event=>{if(!$('#prompt-full').hidden&&!event.target?.closest?.('#prompt-row'))togglePromptLine(false);});
@@ -292,7 +316,6 @@ let firstRollCelebrated=false;
 // The first roll of a visit is guided in: it lands on one of a few curated showcase pairs, where the one added
 // sentence most clearly makes a distinct, readable page. Every roll after that is random. The results
 // themselves are untouched; only the first draw is chosen.
-let SHOWCASE=(typeof CURATION!=='undefined'&&Array.isArray(CURATION.showcase)?CURATION.showcase:[]).map(entry=>String(entry.pair??entry)).filter(id=>/^\d+-\d+$/.test(id));
 let guidedIn=false;
 function introPair(){
  if(!guidedIn&&SHOWCASE.length)return SHOWCASE[randomIndex(SHOWCASE.length)].split('-').map(Number);
@@ -367,7 +390,17 @@ function nextExperimentStep(){
  else if(stage<4&&!pairKept()){const impact=reportImpactFor(()=>setAttempt(stage+1));pressRefine(impact);}
  else{fireNextButton();stage=1;comparing=false;roll();}
 }
+// Writing the address costs a few milliseconds, so it waits for an idle moment after the change that caused it
+// instead of holding up a throw. Share, and leaving the page, write it at once.
+let urlPending=null;
 function updateURL(){
+ if(typeof requestIdleCallback!=='function'){writeURL();return;}
+ if(urlPending===null)urlPending=requestIdleCallback(writeURL,{timeout:800});
+}
+function flushURL(){if(urlPending===null)return;if(typeof cancelIdleCallback==='function')cancelIdleCallback(urlPending);writeURL();}
+window.addEventListener('pagehide',flushURL);
+function writeURL(){
+ urlPending=null;
  const query=new URLSearchParams({view,pair:selected.id,stage:String(stage),plainStage:String(plainStage)});
  if(method==='newer')query.set('model','newer');else query.set('prompt',method);
  if(comparing)query.set('compare','1');
@@ -398,7 +431,7 @@ window.addEventListener('message',event=>{
  if(event.data?.type==='report-height'){
   for(const container of [$('#report-view'),$('#plain-report')]){
    const cache=previewCaches.get(container);if(!cache)continue;
-   for(const section of cache.values()){const frame=section.querySelector('iframe');if(frame?.contentWindow===event.source){fitReportFrame(frame,Number(event.data.height));return;}}
+   for(const section of cache.values()){const frame=section.querySelector('iframe');if(frame?.contentWindow===event.source){fitReportFrame(frame,Number(event.data.height));if(!section.hidden)releaseReportHeight(container);return;}}
   }
   return;
  }
@@ -412,6 +445,15 @@ window.addEventListener('message',event=>{
   return;
  }
 });
+// A page shown for the first time has not measured itself yet. The space keeps the height of the page it replaces
+// until it has, so the page never drops to the default height and grows again in the middle of a throw.
+const heldHeights=new Map();
+function holdReportHeight(container,previous,frame){
+ const height=previous.querySelector('iframe')?.style?.height;
+ if(!height||frame.style?.height||!container.style)return;
+ container.style.minHeight=height;clearTimeout(heldHeights.get(container));heldHeights.set(container,setTimeout(()=>releaseReportHeight(container),1500));
+}
+function releaseReportHeight(container){if(!heldHeights.has(container))return;clearTimeout(heldHeights.get(container));heldHeights.delete(container);container.style.minHeight='';}
 function addReport(container,item,label){
  const section=document.createElement('section');section.className='frame-section';
  if(label){const title=document.createElement('h3');title.textContent=label;section.append(title);}
@@ -446,7 +488,7 @@ function showReports(container,entries){
   section.style.order=String(order);section.hidden=false;
   const frame=section.querySelector('iframe');if(frame.dataset.loaded==='true')scrollReport(frame,reportScroll.get(container)||0);
   if(entries.length===1&&!label&&previous.length===1&&previous[0]!==section){
-   handoffReport(container,previous[0],section);
+   holdReportHeight(container,previous[0],frame);handoffReport(container,previous[0],section);
    // The new page settles into place as the old one is wiped away: a small drop, not a slide.
    if(section.animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)section.animate([{transform:'translateY(-12px) scale(.985)'},{transform:'none'}],{duration:560,easing:'cubic-bezier(.23,1,.32,1)'});
   }
@@ -456,14 +498,16 @@ function showReports(container,entries){
 // Before and after: the original report, with no ingredients, sits under the current page. The knob in the
 // middle of the page wipes it back in from the left as far as it is dragged, and a "Before" tag shows only
 // on what it reveals. The position holds across rolls and refinements: only the after side changes.
-const beforeAfter={value:0,item:null,section:null,tween:null,hinted:false,hinting:false,drag:null};
+const beforeAfter={value:0,item:null,section:null,tween:null,hinted:false,hinting:false,drag:null,used:false};
 function beforeItem(){
  if(view!=='dice'||introMode||comparing)return null;
  return plainItem();
 }
 function paintBeforeAfter(value){
  const box=$('#before-after'),handle=$('#ba-handle'),container=$('#report-view');
- beforeAfter.value=Math.max(0,Math.min(1,value));
+ const was=beforeAfter.value;beforeAfter.value=Math.max(0,Math.min(1,value));
+ // Pulled by hand, the divider clicks as it passes the middle and as it reaches either edge.
+ if(beforeAfter.drag&&typeof playDieTick==='function'){const now=beforeAfter.value;if(now!==was&&(now===0||now===1))playDieTick(0,'set');else if((was<.5)!==(now<.5))playDieTick(0,'face');}
  box.style.setProperty('--ba',beforeAfter.value.toFixed(4));
  box.toggleAttribute?.('data-active',beforeAfter.value>0);
  const percent=Math.round(beforeAfter.value*100);
@@ -492,10 +536,10 @@ function quietBeforeAfterHint(){
  if(!beforeAfter.hinting)return;
  beforeAfter.hinting=false;if(beforeAfter.value>0)beforeAfter.hinted=true;
  stopBeforeAfterTween();paintBeforeAfter(0);
- $('#before-after').querySelector?.('.ba-knob')?.getAnimations?.().forEach(animation=>animation.cancel());
+ $('#before-after').querySelector?.('.ba-knob')?.getAnimations?.().filter(animation=>!animation.animationName).forEach(animation=>animation.cancel());
 }
 // Taking hold of the slider keeps it where the hint had it and ends the hints for good.
-function takeBeforeAfter(){beforeAfter.hinting=false;beforeAfter.hinted=true;stopBeforeAfterTween();markReady();}
+function takeBeforeAfter(){beforeAfter.hinting=false;beforeAfter.hinted=true;beforeAfter.used=true;$('#before-after').toggleAttribute?.('data-invite',false);$('#before-after').toggleAttribute?.('data-used',true);stopBeforeAfterTween();markReady();}
 // Glide to a value; shape(t) maps progress to position for the hints.
 function tweenBeforeAfter(to,duration=360,shape=null,delay=0){
  stopBeforeAfterTween();
@@ -512,6 +556,8 @@ function renderBeforeAfter(){
  // A fresh start puts the slider away; side-by-side comparison only hides it, keeping its place.
  if(introMode)paintBeforeAfter(0);else if(item)paintBeforeAfter(beforeAfter.value);else releaseBeforeSection();
  box.hidden=!item;
+ // Once both dice are in, the handle asks to be pulled, now and then, until the visitor has pulled it once.
+ box.toggleAttribute?.('data-invite',!!item&&!secondWaits&&!beforeAfter.used);
 }
 // The first time a roll's page lands it is left alone to be looked at. Then the original is wiped in from the
 // left and away again, once: the same figures in two designs teach the mechanism without a word, and the
@@ -629,7 +675,7 @@ const thumbnailObserver=new ResizeObserver(entries=>entries.forEach(({target,con
 function buildMatrix(){
  const matrix=$('#matrix');matrix.replaceChildren();matrixButtons.clear();matrixCells.clear();thumbnailObserver.disconnect();
  matrix.setAttribute('aria-label',`Choose one of ${EXPERIMENT.runs.length} ingredient combinations`);
- $('#atlas-title').textContent=EXPERIMENT.runs.length+' combinations';
+ $('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
  INGREDIENTS_A.forEach((name,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=name;$('#atlas-ingredient').append(option);});
  for(const run of EXPERIMENT.runs){
   const cell=document.createElement('div'),preview=document.createElement('div'),button=document.createElement('button');
@@ -641,8 +687,41 @@ function buildMatrix(){
   cell.append(preview,button);matrix.append(cell);matrixButtons.set(run.id,button);matrixCells.set(run.id,cell);thumbnailObserver.observe(preview);
  }
 }
+// The map in the dock: six rows for the first die's faces, six columns for the second's, one dot per pair. A pair
+// that has been on screen is filled in, the one on screen now stands out. With a mouse a dot goes to its pair;
+// anywhere else on the map opens the gallery of all thirty-six.
+// Finishing a row or a column of the map, every pair of one ingredient, ripples it. Finding the last of the
+// thirty-six sets the whole map off, and both dice. It follows the throw that found the pair, once the page has changed.
+const FOUND_CELEBRATE=1100;
+function celebrateFound(id){
+ const map=$('#found-map');
+ if(!map?.children||typeof setTimeout!=='function'||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const [row,column]=id.split('-').map(Number),all=found.size===EXPERIMENT.runs.length;
+ const rowDone=INGREDIENTS_B.every((_,n)=>found.has(row+'-'+n)),columnDone=INGREDIENTS_A.every((_,n)=>found.has(n+'-'+column));
+ if(!all&&!rowDone&&!columnDone)return;
+ setTimeout(()=>{
+  for(const dot of map.children){
+   const [a,b]=dot.dataset.pair.split('-').map(Number),inRow=rowDone&&a===row,inColumn=columnDone&&b===column;
+   if(!all&&!inRow&&!inColumn)continue;
+   dot.animate?.([{scale:'1'},{scale:'2.3',backgroundColor:'#c2432a',offset:.4},{scale:'1'}],{duration:520,delay:all?(a+b)*55:(inRow?b:a)*70,iterations:all?2:1,easing:'cubic-bezier(.23,1,.32,1)'});
+  }
+  if(all)[0,1].forEach(i=>{if(typeof celebrateDie==='function')celebrateDie(i);});
+  else if(typeof playDieTick==='function'){playDieTick(0,'set');setTimeout(()=>playDieTick(1,'set'),150);}
+ },FOUND_CELEBRATE);
+}
+function renderFoundMap(){
+ const map=$('#found-map');if(!map?.append)return;
+ if(!map.children.length)for(const run of EXPERIMENT.runs){
+  const dot=document.createElement('button');dot.type='button';dot.className='found-dot';dot.dataset.pair=run.id;dot.title=run.label;dot.setAttribute('aria-label',run.label);
+  dot.addEventListener('click',event=>{event.stopPropagation?.();selectPair(currentExperiment().runs.find(item=>item.id===run.id));});map.append(dot);
+ }
+ if(!introMode&&!found.has(selected.id)){found.add(selected.id);try{if(typeof localStorage!=='undefined')localStorage.setItem('found-pairs',JSON.stringify([...found]));}catch{}celebrateFound(selected.id);}
+ for(const dot of map.children){dot.dataset.found=String(found.has(dot.dataset.pair));dot.setAttribute('aria-current',String(!introMode&&dot.dataset.pair===selected.id));}
+ map.setAttribute('aria-label',found.size+' of '+EXPERIMENT.runs.length+' combinations found');$('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
+}
+$('#found-map')?.addEventListener?.('click',()=>{if($('#atlas-toggle').getAttribute('aria-expanded')!=='true')$('#atlas-toggle').click();$('#atlas').scrollIntoView?.({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
 function render(sync=true){
- a=selected.a;b=selected.b;if(!passes)stage=SHOWN;stage=Math.min(stage,selected.steps.length);
+ a=selected.a;b=selected.b;if(!passes)stage=shownStage(selected);stage=Math.min(stage,selected.steps.length);renderFoundMap();
  const journey=introMode?'original':'ingredients',previousJourney=document.documentElement.dataset.journey;
  document.documentElement.dataset.journey=journey;$('#reset').hidden=journey==='original';
  // In the plain step the dice are away; they keep their last names so an exit never shows placeholder labels.
@@ -652,7 +731,7 @@ function render(sync=true){
  matrixButtons.forEach((button,id)=>{button.setAttribute('aria-pressed',String(!introMode&&id===selected.id));const run=currentExperiment().runs.find(item=>item.id===id);button.setAttribute('aria-label',run.label+' — '+attemptName(stage));});
  matrixCells.forEach((cell,id)=>{
   cell.hidden=Number(id.split('-')[0])!==a;if(cell.hidden)return;
-  const item=currentExperiment().runs.find(run=>run.id===id).steps[stage-1],frame=cell.querySelector('iframe');
+  const run=currentExperiment().runs.find(run=>run.id===id),item=run.steps[(passes?stage:shownStage(run))-1],frame=cell.querySelector('iframe');
   if(frame.dataset.file!==item.file){frame.srcdoc=item.html;frame.dataset.file=item.file;}
  });
  $('#atlas-ingredient').value=String(a);
@@ -717,13 +796,13 @@ function warmReports(){
   const runs=currentExperiment().runs,find=(a,b)=>runs.find(run=>run.a===a&&run.b===b),items=[];
   if(introMode){
    upcoming.intro??=introPair();
-   items.push(find(...upcoming.intro)?.steps[(passes?1:SHOWN)-1]);
+   {const run=find(...upcoming.intro);if(run)items.push(run.steps[(passes?1:shownStage(run))-1]);}
   }else{
-   if(stage<4)items.push(selected.steps[stage]);
+   if(passes&&stage<4)items.push(selected.steps[stage]);
    [0,1].forEach(i=>{
     const current=i?selected.b:selected.a;
     if(upcoming.faces[i]===null||upcoming.faces[i]===current)upcoming.faces[i]=nextIngredient(i,current);
-    const values=[selected.a,selected.b];values[i]=upcoming.faces[i];items.push(find(...values)?.steps[stage-1]);
+    const values=[selected.a,selected.b];values[i]=upcoming.faces[i];const run=find(...values);if(run)items.push(run.steps[(passes?stage:shownStage(run))-1]);
    });
   }
   for(const item of items){if(!item||cache.has(item.file))continue;const section=addReport(container,item,'');section.hidden=true;cache.set(item.file,section);}
@@ -841,7 +920,7 @@ $('#copy-prompt').addEventListener('click',()=>copyText((introMode?currentBaseli
 $('#refinement-prompt').textContent=EXPERIMENT.refinementPrompt;
 const exportPrompt=document.createElement('pre');exportPrompt.hidden=true;$('#export-status').after(exportPrompt);
 $('#copy-plain').addEventListener('click',()=>copyText(EXPERIMENT.plain.fullPrompt,exportPrompt,$('#export-status')));
-$('#copy-link').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(location.href);$('#share-status').textContent='Copied';}catch{$('#share-status').textContent='Copy the address to share this roll.';}});
+$('#copy-link').addEventListener('click',async()=>{flushURL();try{await navigator.clipboard.writeText(location.href);$('#share-status').textContent='Copied';}catch{$('#share-status').textContent='Copy the address to share this roll.';}});
 $('#copy-refinement').addEventListener('click',()=>copyText(view==='plain'?currentBaseline().protocol.refinementPrompt:currentExperiment().refinementPrompt,$('#refinement-prompt'),$('#export-status')));
 function renderPlain(){
  const baseline=currentBaseline(),item=baseline.steps[plainStage-1];showReports($('#plain-report'),[{item,label:''}]);

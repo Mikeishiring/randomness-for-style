@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f5f3ec">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='6' width='52' height='52' rx='13' fill='%231d261e'/%3E%3Ccircle cx='21' cy='21' r='5.5' fill='%23f4f1e8'/%3E%3Ccircle cx='32' cy='32' r='5.5' fill='%23f06b48'/%3E%3Ccircle cx='43' cy='43' r='5.5' fill='%23f4f1e8'/%3E%3C/svg%3E">
 <title>Randomness for Style</title>
 <link rel="canonical" href="https://randomness-for-style.vercel.app/">
 <meta name="description" content="Explore how randomness can help you avoid AI slop—the familiar patterns we recognize in AI-generated design. Roll two ingredients, then refine.">
@@ -12,7 +13,12 @@
 <meta property="og:title" content="Randomness for Style">
 <meta property="og:description" content="Explore how randomness can help you avoid AI slop—the familiar patterns we recognize in AI-generated design. Roll two ingredients, then refine.">
 <meta property="og:url" content="https://randomness-for-style.vercel.app/">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://randomness-for-style.vercel.app/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A weekly report redesigned with Motorsport and Fast food, a die on either side.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://randomness-for-style.vercel.app/share.jpg">
 <meta name="twitter:title" content="Randomness for Style">
 <meta name="twitter:description" content="Explore how randomness can help you avoid AI slop—the familiar patterns we recognize in AI-generated design. Roll two ingredients, then refine.">
 <style>:root{--paper:#f5f3ec;--ink:#293b2a;--muted:#65705e;--line:#d7d9cd;--accent:#aa3d28}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--paper);color:var(--ink);font:14px Arial,sans-serif}button,a,summary{-webkit-tap-highlight-color:transparent}button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}button:disabled{cursor:default}button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:4px}a{color:inherit;text-underline-offset:4px}.shell{max-width:1390px;margin:auto;padding:25px 44px}h1{font:500 clamp(27px,3.2vw,39px)/1.06 Arial,sans-serif;letter-spacing:-1.7px;margin:28px 0 32px}.text-button{border:0;background:none;padding:10px 0;min-height:40px;font-size:12px;text-decoration:none;text-underline-offset:4px}.workbench{display:grid;grid-template-columns:minmax(320px,.85fr) minmax(0,1.4fr);gap:52px;align-items:start}.controls{padding-top:28px;min-width:0}.dice{display:grid;grid-template-columns:1fr 1fr;gap:30px}.die{min-width:0;text-align:center}.die-top{font-size:11px;color:var(--muted)}.die>strong{display:block;font-size:21px;font-weight:500;letter-spacing:-.6px;line-height:1.2;min-height:50px;padding:7px 0}.roll{display:flex;justify-content:center;align-items:center;gap:18px;background:var(--ink);color:var(--paper);width:100%;max-width:255px;min-height:48px;border:0;border-radius:4px;margin:14px auto 28px;font-size:13px}.roll span{display:inline-block;font-size:22px;transition:transform 160ms ease-out}.roll:active{transform:translateY(1px)}.refinement{border-top:1px solid var(--line);padding-top:15px}#compare[aria-pressed=true]{font-weight:700;text-decoration:underline}.notes{margin-top:13px;border-bottom:1px solid var(--line);font-size:12px}.notes>summary{min-height:44px;padding:13px 0;cursor:pointer}.notes p{line-height:1.6;margin:0 0 13px;color:#53604c}.notes h3{font:600 12px Arial;margin:13px 0 10px}.notes strong{font-weight:600;color:var(--ink)}.result{min-width:0}.report-frame{display:block;border:1px solid #d5d4c7;width:100%;height:850px;background:#eee8dc}.frame-section{min-width:0}.frame-section h3{font:500 11px Arial;margin:0 0 10px}#report-view.comparing{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.atlas{border-top:1px solid var(--line);margin-top:32px;padding:23px 0 29px}.atlas>header{display:flex;justify-content:space-between;align-items:baseline;gap:20px;max-width:950px;margin:0 auto 17px}.atlas h2{font:500 15px Arial;margin:0}.atlas header>span{font-size:11px;color:var(--muted)}.matrix{display:grid;grid-template-columns:90px repeat(5,minmax(0,1fr));gap:10px;max-width:950px;min-width:520px;margin:auto}.corner{font:9px monospace;color:var(--muted)}.matrix-cell{aspect-ratio:4/3;position:relative;overflow:hidden;min-width:0;border:1px solid var(--line);border-radius:2px;background:#eaece3;padding:0}.matrix-cell iframe{position:absolute;left:0;top:0;display:block;width:840px;height:1100px;border:0;transform-origin:top left;pointer-events:none;user-select:none}.matrix-cell[aria-pressed=true]{outline:2px solid var(--ink);outline-offset:2px}.matrix-cell[aria-pressed=true]:after{content:'✓';position:absolute;bottom:0;right:0;background:var(--ink);color:white;width:20px;height:20px;font:12px/20px Arial}.matrix-cell.empty{display:grid;place-items:center;background:transparent;border-style:dotted;color:#a7afa0;font-size:20px}.matrix-cell.empty:before{content:'·'}.brief{border-top:1px solid var(--line);margin-top:0}.brief>summary{padding:18px 0;min-height:50px;font-size:13px;cursor:pointer}.brief-body{max-width:900px;padding:8px 0 24px}.brief h2{font:500 25px/1.1 Arial;letter-spacing:-.8px;margin:8px 0 18px}.brief p{font-size:13px;line-height:1.7;max-width:760px}.brief-body details{border-top:1px solid var(--line)}.brief-body summary{padding:13px 0;cursor:pointer;font-size:12px}.brief pre{font:12px/1.7 monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:#e7eadf;padding:20px;margin:0 0 12px}.brief .method{font-size:11px;color:var(--muted);margin-top:23px}footer{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);padding:15px 0;font-size:11px}footer a{min-height:35px;padding:8px 0;text-decoration:none}dialog{border:0;padding:22px;width:calc(100vw - 56px);max-width:1080px;max-height:94vh;overflow:auto;background:var(--paper);color:var(--ink)}dialog::backdrop{background:#17201699}dialog>header{display:flex;justify-content:space-between;align-items:center;gap:20px;position:sticky;top:-22px;background:var(--paper);z-index:2;padding:5px 0 13px}dialog h2{font:500 17px Arial;margin:0}.sr-only{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;padding:0}
@@ -591,6 +597,47 @@ html[data-passes=false] :is(#experiment-next,#refinement-rail,#keep){display:non
 @media(max-width:860px){.stage-bar{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"reset next compare"}}
 /* The pointer that fetches a die: drawn on the die it carries, never hit-testable. */
 .die-hand{position:absolute;left:50%;top:50%;width:0;height:0;z-index:3;opacity:0;pointer-events:none}
+/* The headline is a recipe: the same data, plus one token per die, in that die's colour and with its picture. */
+.prompt-plus{color:var(--muted);font-weight:400}
+.prompt-line b,.prompt-gap.prompt-held{display:inline-flex;align-items:center;gap:.42em;vertical-align:middle;margin:0;padding:.14em .56em .14em .46em;border-radius:9px;background:#1d261e;color:#fffdf8;font-weight:650;letter-spacing:0}
+.prompt-line b[data-die="1"]{background:#c2432a}
+.prompt-gap.prompt-held{background:transparent;border:1.5px dashed #c2432a;color:#a8361f;font-weight:500}
+.prompt-line svg{flex:none;width:1.05em;height:1.05em}
+.prompt-row[data-pending=true] .prompt-gap{width:4.6em;height:1.5em;border-radius:9px;vertical-align:middle}
+/* The map of what has been found sits in the middle of the dock, where the action is when every pass is shown. */
+.found-map{grid-area:bar;justify-self:center;display:grid;grid-template-columns:repeat(6,10px);padding:5px;border-radius:9px;cursor:pointer}
+.found-dot{width:10px;height:10px;padding:1.5px;border:0;border-radius:3.5px;background:#d3cebe content-box;cursor:pointer;transition:background-color 220ms ease-out,scale 160ms ease-out}
+.found-dot[data-found=true]{background-color:#2c362e;animation:found-pop 460ms cubic-bezier(.23,1,.32,1)}
+.found-dot[aria-current=true]{background-color:var(--accent);padding:0;border-radius:3px}
+@keyframes found-pop{from{scale:2.4;background-color:var(--accent)}}
+[data-journey=original] .found-map,html[data-ready=false] .found-map{visibility:hidden}
+html[data-passes=true] .found-map{display:none}
+@media(hover:hover) and (pointer:fine){.found-map:hover{background:#ebe7da}.found-dot:hover{scale:1.7}}
+@media(pointer:coarse){.found-dot{pointer-events:none}}
+@media(max-width:860px){.found-map{grid-area:next}}
+@media(prefers-reduced-motion:reduce){.found-dot{animation:none!important;transition:none}}
+/* On narrow screens the tokens in the headline name the dice, so the small dice carry no second label. */
+@media(max-width:860px){html:not([data-journey=original]) .die>strong{display:none}}
+/* One short account of the experiment sits under the count of what has been found. */
+.atlas-about{max-width:640px;margin:2px 2px 10px;font:15px/1.55 var(--sans);color:#4c554c}
+/* The before handle is a solid ink grip, plain against the paper and against any page. Once both dice are in it
+   leans into the page now and then, until it has been pulled once. */
+.ba-knob{width:44px;height:44px;margin:-22px 0 0 -22px;background:var(--ink);color:#fffdf8;box-shadow:0 0 0 2.5px #fffdf8,0 12px 22px -10px #1d261eb3}
+.before-after[data-dragging] .ba-knob{box-shadow:0 0 0 2.5px #fffdf8,0 16px 26px -10px #1d261ecc}
+.before-after[data-invite]:not([data-active]):not([data-dragging]) .ba-knob{animation:ba-invite 5.6s cubic-bezier(.45,0,.55,1) 2.6s infinite}
+@keyframes ba-invite{0%,76%,100%{translate:0 0}85%{translate:16px 0}93%{translate:-2px 0}}
+@media(prefers-reduced-motion:reduce){.before-after[data-invite] .ba-knob{animation:none!important}}
+/* A token is its die: it can be pointed at and clicked even while the rest of the line is not yet a button. */
+.prompt-line [data-die]{pointer-events:auto;cursor:pointer;transition:translate 160ms var(--ease-out),box-shadow 160ms ease-out}
+@media(hover:hover) and (pointer:fine){.prompt-line [data-die]:hover{translate:0 -2px;box-shadow:0 5px 12px -6px #1d261e99}}
+.prompt-line [data-die]:active{translate:0 1px}
+/* The headline already says the data is the same, and the handle says what it reveals until it has been pulled once. */
+.ba-same,.frame-section h3 .same-data{display:none}
+.before-after[data-used] .ba-knob:after{display:none}
+/* With the passes out of the way the handle is the comparison; side by side comes back with them. */
+html[data-passes=false] #compare{display:none}
+/* On narrow screens the dice stay big enough to hold once they have been thrown. */
+@media(max-width:860px){html:not([data-journey=original]) .die-object{--size:54px;height:84px}}
 </style></head>
 <body>
 <noscript>Enable JavaScript to roll the dice and compare reports.</noscript>
@@ -615,6 +662,7 @@ html[data-passes=false] :is(#experiment-next,#refinement-rail,#keep){display:non
    <div id="stage-bar" class="stage-bar">
     <button type="button" id="reset" class="reset" aria-label="Start over with no ingredients"><span aria-hidden="true">↺</span> Reset</button>
     <button type="button" id="experiment-next" class="experiment-next" data-action="roll"><span id="next-label">Add randomness</span><span id="next-cue" class="next-cue" aria-hidden="true">→</span></button>
+    <div id="found-map" class="found-map" role="group" aria-label="Combinations found"></div>
     <span class="dock-end"><button type="button" id="compare" title="Compare with no ingredients" aria-pressed="false" aria-label="Compare with no ingredients" aria-controls="report-view compare-target">Compare</button><button type="button" id="demo-toggle" class="demo-toggle" aria-pressed="false"><span class="demo-glyph" aria-hidden="true"></span><span id="demo-label">Watch demo</span></button></span>
    </div>
    <nav id="refinement-rail" class="chapters" aria-label="Experiment steps">
@@ -637,8 +685,8 @@ html[data-passes=false] :is(#experiment-next,#refinement-rail,#keep){display:non
    </section>
    <section id="plain-lab" class="result" aria-labelledby="plain-title" hidden><h2 id="plain-title" class="sr-only" tabindex="-1">Without ingredients</h2><div id="plain-report"></div></section>
   </div>
-  <section id="atlas" class="atlas" aria-labelledby="atlas-title"><h2 class="atlas-heading"><button type="button" id="atlas-toggle" class="atlas-toggle" aria-expanded="false" aria-controls="atlas-body"><span id="atlas-title">36 combinations</span><span class="atlas-chevron" aria-hidden="true"></span></button></h2><div id="atlas-body" class="atlas-body" hidden><header><select id="atlas-ingredient" aria-label="Browse pairings for the first ingredient"></select></header><div id="matrix" class="matrix" role="group" aria-label="Choose one of 36 ingredient combinations"></div></div></section>
-  <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>AI design has a look, and most of us can now spot it. This is a test of whether a little randomness breaks the habit.</p><p>The brief never changes: one weekly report, the same numbers. The dice add two ingredients nobody would pair on purpose. Then the model is told three times to criticise its page and try again. You are looking at the third try, with and without the dice. Show every pass brings back the earlier ones.</p><p>Nothing is generated live. Every page was saved from a real run, and every run used two ingredients. So after your first throw the page already borrows the face the second die is showing, named in the dashed gap. The stronger prompt starts over from the same first draft. The newer model repeats the whole thing a generation later. More passes do not always make a better page.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Recorded run"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button><button type="button" id="method-newer" aria-pressed="false">Newer model</button></div>
+  <section id="atlas" class="atlas" aria-labelledby="atlas-title"><h2 class="atlas-heading"><button type="button" id="atlas-toggle" class="atlas-toggle" aria-expanded="false" aria-controls="atlas-body"><span id="atlas-title">36 combinations</span><span class="atlas-chevron" aria-hidden="true"></span></button></h2><p class="atlas-about">AI design has a look, and most of us can now spot it. So one report was made 36 times, each with two ingredients nobody would pair on purpose. The numbers never change. Only the dice do.</p><div id="atlas-body" class="atlas-body" hidden><header><select id="atlas-ingredient" aria-label="Browse pairings for the first ingredient"></select></header><div id="matrix" class="matrix" role="group" aria-label="Choose one of 36 ingredient combinations"></div></div></section>
+  <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>The brief never changes: one weekly report, the same numbers. After the dice, the model is told three times to criticise its page and try again. The page you see is the try worth keeping, and it is rarely the last. Show every pass brings back the rest.</p><p>Nothing is generated live. Every page was saved from a real run, and every run used two ingredients. So after your first throw the page already borrows the face the second die is showing, named in the dashed gap. The stronger prompt starts over from the same first draft. The newer model repeats the whole thing a generation later. More passes do not always make a better page.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Recorded run"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button><button type="button" id="method-newer" aria-pressed="false">Newer model</button></div>
     <p id="method-note" class="method-note">Both start from this one-shot.</p></div><select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">No ingredients</option><option value="other" id="compare-other">Original prompt</option></select><div class="export-actions"><button id="passes-toggle" type="button" class="text-button" aria-pressed="false">Show every pass</button><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Refine brief alone →</button><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
  </main>
  <div class="page-footer">
@@ -1490,8 +1538,15 @@ const DIE_MATERIALS=[
 ];
 try{diceSoundEnabled=localStorage.getItem('design-dice-sound')!=='off';}catch{/* File storage can be unavailable. */}
 function updateSoundButton(){const button=document.querySelector('#sound-toggle');button.textContent=diceSoundEnabled?'Sound on':'Sound off';button.setAttribute('aria-pressed',String(diceSoundEnabled));}
+// Opening the audio device takes Chrome over a tenth of a second. It is opened while the page is idle, ahead of
+// the first press, so that press is not held up; it stays suspended and silent until a visitor acts.
+function warmDiceAudio(){
+ if(!diceSoundEnabled||diceAudioContext)return;
+ try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;diceAudioContext=new Audio();diceRoomInput(diceAudioContext);}catch{}
+}
 function initDiceSound(){
  const button=document.querySelector('#sound-toggle');updateSoundButton();
+ if(typeof requestIdleCallback==='function')requestIdleCallback(warmDiceAudio,{timeout:4000});
  if(!(window.AudioContext||window.webkitAudioContext)){button.disabled=true;button.textContent='Sound unavailable';button.setAttribute('aria-pressed','false');return;}
  button.addEventListener('click',()=>{diceSoundEnabled=!diceSoundEnabled;updateSoundButton();try{localStorage.setItem('design-dice-sound',diceSoundEnabled?'on':'off');}catch{}
   if(diceSoundEnabled)primeDiceAudio();else [0,1,2].forEach(cancelDieSound);
@@ -1843,12 +1898,23 @@ const matrixButtons=new Map();
 const matrixCells=new Map();
 const promptPeeks=[$('#prompt'),$('#plain-prompt-details')].map(bindPromptPeek);
 let ingredientsChosen=!introMode,paintedStep=null;
-// The page shows one pass of the experiment. By default that is the third refinement, with and without the
-// ingredients, and the passes themselves stay out of the way; About the experiment can bring them back.
+// The page shows one version of each pair, with the passes themselves out of the way (About the experiment can
+// bring them back): the one saved as the pair's best in CURATION, which is rarely the last pass. A showcase pair
+// shows its one-shot, the version it was chosen for. Before and Compare always show the one plain report,
+// the plain one-shot a visit opens on, so the side without dice never changes.
 const SHOWN=4;
+let SHOWCASE=(typeof CURATION!=='undefined'&&Array.isArray(CURATION.showcase)?CURATION.showcase:[]).map(entry=>String(entry.pair??entry)).filter(id=>/^\d+-\d+$/.test(id));
+function shownStage(run){
+ if(method!=='newer'&&SHOWCASE.includes(run.id))return 1;
+ const pick=(typeof CURATION!=='undefined'?CURATION.picks?.[method]:null)?.[run.id]?.pick;
+ return Math.min(Number.isInteger(pick)?pick:SHOWN,run.steps.length);
+}
+// Every pair a visitor has had on screen, kept between visits where the browser allows it.
+const found=new Set();
+try{if(typeof localStorage!=='undefined')JSON.parse(localStorage.getItem('found-pairs')||'[]').forEach(id=>{if(/^\d-\d$/.test(id))found.add(id);});}catch{}
 let passes=params.get('passes')==='1';
 document.documentElement.dataset.passes=String(passes);
-function plainItem(){const steps=currentBaseline().steps;return steps[passes?0:Math.min(SHOWN,steps.length)-1];}
+function plainItem(){return currentBaseline().steps[0];}
 // One throw adds one ingredient. After the first, the second die comes in at rest and waits to be thrown. Every
 // saved page used two ingredients, so until then the page pairs the first ingredient with the face that die
 // happens to show, and the sentence above the page says so: its second gap stays open, naming that face.
@@ -1876,6 +1942,8 @@ function updateActionText(node,text,animate){
  animation.onfinish=()=>{if(actionAnimations.get(node)===animation)actionAnimations.delete(node);};
 }
 function syncRailMarker(animate=false){
+ // With the passes out of the way the track is not on the page, and measuring it would lay the whole page out.
+ if(!passes)return;
  const button=$('#stage-'+(introMode?0:stage)),marker=$('#rail-marker');
  const target=button.getBoundingClientRect?.(),track=$('#rail-stops').getBoundingClientRect?.();
  if(!target?.width||!track)return;
@@ -2060,21 +2128,25 @@ function renderPromptLine(){
  if(!state){line.replaceChildren();return;}
  const part=(tag,content,className,flag)=>{const node=document.createElement(tag);node.textContent=content;if(className)node.className=className;if(flag)node.dataset[flag]='true';return node;};
  const gap=()=>{const node=part('span','','prompt-gap');node.setAttribute('aria-hidden','true');return node;};
+ // The line is a recipe: the same data, plus what each die added, each ingredient a token in its die's colour
+ // with the picture from the face that came up.
+ const plus=()=>part('span',' + ','prompt-plus');
+ const token=(index,value,name,tag,className,fill)=>{const node=part(tag,name,className,fill?'fill':'');node.dataset.die=String(index);if(node.insertAdjacentHTML&&typeof diePicture==='function')node.insertAdjacentHTML('afterbegin',diePicture(index,value));return node;};
  if(state.pending){
   // Each sentence of the lead stays whole, so a narrow screen breaks between them.
   const lead=part('span','','prompt-lead');lead.append(...PROMPT_LEAD.flatMap((sentence,n)=>n?[' ',part('span',sentence,'prompt-phrase')]:[part('span',sentence,'prompt-phrase')]));
-  line.replaceChildren(lead,part('span','Add randomness: '),gap(),part('span',' and '),gap());
+  line.replaceChildren(lead,gap(),plus(),gap());
   line.setAttribute('aria-label',PROMPT_LEAD.join(' ')+' Add randomness: throw the die.');
   return;
  }
  // One die thrown: its ingredient is in. The second gap stays open and names the face the waiting die shows,
  // because the saved page on screen was made with it. A word a throw brings drops in; nothing is underlined.
  if(state.b===null){
-  line.replaceChildren(part('span','Same data, redesigned with '),part('b',state.a,'',state.changed===0||state.fresh===0?'fill':''),part('span',' and '),part('span',state.held,'prompt-gap prompt-held',state.fresh===0?'fill':''));
+  line.replaceChildren(part('span','Same data'),plus(),token(0,a,state.a,'b','',state.changed===0||state.fresh===0),plus(),token(1,b,state.held,'span','prompt-gap prompt-held',state.fresh===0));
   line.setAttribute('aria-label','Same data, redesigned with '+state.a+' and, until the second die is thrown, the face it shows: '+state.held+'.');
   return;
  }
- const parts=[part('span','Same data, redesigned with '),part('b',state.a,'',state.changed===0||state.fresh===0?'fill':''),part('span',' and '),part('b',state.b,'',state.changed===1||state.fresh!==null?'fill':''),part('span','.')];
+ const parts=[part('span','Same data'),plus(),token(0,a,state.a,'b','',state.changed===0||state.fresh===0),plus(),token(1,b,state.b,'b','',state.changed===1||state.fresh!==null)];
  // After a push, a second line says what was asked: the same sentence each time, so only the count changes.
  if(state.pushes>0){
   const push=part('span','','prompt-push');
@@ -2094,7 +2166,14 @@ function togglePromptLine(open){
   panel.hidden=false;line.setAttribute('aria-expanded','true');
  }else{panel.hidden=true;line.setAttribute('aria-expanded','false');}
 }
-$('#prompt-line').addEventListener('click',()=>togglePromptLine());
+// A token is its die: resting the pointer on one lifts that die, and clicking it throws the die. Anywhere else on
+// the line opens the whole prompt.
+const promptToken=event=>{const node=event?.target?.closest?.('[data-die]');return node?Number(node.dataset.die):null;};
+$('#prompt-line').addEventListener('click',event=>{const die=promptToken(event);if(die===null){togglePromptLine();return;}delete $('#throw-'+die).dataset.hover;roll(die);});
+['pointerover','pointerout'].forEach(type=>$('#prompt-line').addEventListener(type,event=>{
+ const die=promptToken(event);if(die===null||event.pointerType==='touch')return;
+ const button=$('#throw-'+die);if(type==='pointerover'&&!dieStates[die].running)button.dataset.hover='true';else delete button.dataset.hover;
+}));
 const pointerCard=document.querySelector('.pointer-card');
 pointerCard?.addEventListener('click',()=>pointer.action?.());
 document.addEventListener('pointerdown',event=>{if(!$('#prompt-full').hidden&&!event.target?.closest?.('#prompt-row'))togglePromptLine(false);});
@@ -2111,7 +2190,6 @@ let firstRollCelebrated=false;
 // The first roll of a visit is guided in: it lands on one of a few curated showcase pairs, where the one added
 // sentence most clearly makes a distinct, readable page. Every roll after that is random. The results
 // themselves are untouched; only the first draw is chosen.
-let SHOWCASE=(typeof CURATION!=='undefined'&&Array.isArray(CURATION.showcase)?CURATION.showcase:[]).map(entry=>String(entry.pair??entry)).filter(id=>/^\d+-\d+$/.test(id));
 let guidedIn=false;
 function introPair(){
  if(!guidedIn&&SHOWCASE.length)return SHOWCASE[randomIndex(SHOWCASE.length)].split('-').map(Number);
@@ -2186,7 +2264,17 @@ function nextExperimentStep(){
  else if(stage<4&&!pairKept()){const impact=reportImpactFor(()=>setAttempt(stage+1));pressRefine(impact);}
  else{fireNextButton();stage=1;comparing=false;roll();}
 }
+// Writing the address costs a few milliseconds, so it waits for an idle moment after the change that caused it
+// instead of holding up a throw. Share, and leaving the page, write it at once.
+let urlPending=null;
 function updateURL(){
+ if(typeof requestIdleCallback!=='function'){writeURL();return;}
+ if(urlPending===null)urlPending=requestIdleCallback(writeURL,{timeout:800});
+}
+function flushURL(){if(urlPending===null)return;if(typeof cancelIdleCallback==='function')cancelIdleCallback(urlPending);writeURL();}
+window.addEventListener('pagehide',flushURL);
+function writeURL(){
+ urlPending=null;
  const query=new URLSearchParams({view,pair:selected.id,stage:String(stage),plainStage:String(plainStage)});
  if(method==='newer')query.set('model','newer');else query.set('prompt',method);
  if(comparing)query.set('compare','1');
@@ -2217,7 +2305,7 @@ window.addEventListener('message',event=>{
  if(event.data?.type==='report-height'){
   for(const container of [$('#report-view'),$('#plain-report')]){
    const cache=previewCaches.get(container);if(!cache)continue;
-   for(const section of cache.values()){const frame=section.querySelector('iframe');if(frame?.contentWindow===event.source){fitReportFrame(frame,Number(event.data.height));return;}}
+   for(const section of cache.values()){const frame=section.querySelector('iframe');if(frame?.contentWindow===event.source){fitReportFrame(frame,Number(event.data.height));if(!section.hidden)releaseReportHeight(container);return;}}
   }
   return;
  }
@@ -2231,6 +2319,15 @@ window.addEventListener('message',event=>{
   return;
  }
 });
+// A page shown for the first time has not measured itself yet. The space keeps the height of the page it replaces
+// until it has, so the page never drops to the default height and grows again in the middle of a throw.
+const heldHeights=new Map();
+function holdReportHeight(container,previous,frame){
+ const height=previous.querySelector('iframe')?.style?.height;
+ if(!height||frame.style?.height||!container.style)return;
+ container.style.minHeight=height;clearTimeout(heldHeights.get(container));heldHeights.set(container,setTimeout(()=>releaseReportHeight(container),1500));
+}
+function releaseReportHeight(container){if(!heldHeights.has(container))return;clearTimeout(heldHeights.get(container));heldHeights.delete(container);container.style.minHeight='';}
 function addReport(container,item,label){
  const section=document.createElement('section');section.className='frame-section';
  if(label){const title=document.createElement('h3');title.textContent=label;section.append(title);}
@@ -2265,7 +2362,7 @@ function showReports(container,entries){
   section.style.order=String(order);section.hidden=false;
   const frame=section.querySelector('iframe');if(frame.dataset.loaded==='true')scrollReport(frame,reportScroll.get(container)||0);
   if(entries.length===1&&!label&&previous.length===1&&previous[0]!==section){
-   handoffReport(container,previous[0],section);
+   holdReportHeight(container,previous[0],frame);handoffReport(container,previous[0],section);
    // The new page settles into place as the old one is wiped away: a small drop, not a slide.
    if(section.animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)section.animate([{transform:'translateY(-12px) scale(.985)'},{transform:'none'}],{duration:560,easing:'cubic-bezier(.23,1,.32,1)'});
   }
@@ -2275,14 +2372,16 @@ function showReports(container,entries){
 // Before and after: the original report, with no ingredients, sits under the current page. The knob in the
 // middle of the page wipes it back in from the left as far as it is dragged, and a "Before" tag shows only
 // on what it reveals. The position holds across rolls and refinements: only the after side changes.
-const beforeAfter={value:0,item:null,section:null,tween:null,hinted:false,hinting:false,drag:null};
+const beforeAfter={value:0,item:null,section:null,tween:null,hinted:false,hinting:false,drag:null,used:false};
 function beforeItem(){
  if(view!=='dice'||introMode||comparing)return null;
  return plainItem();
 }
 function paintBeforeAfter(value){
  const box=$('#before-after'),handle=$('#ba-handle'),container=$('#report-view');
- beforeAfter.value=Math.max(0,Math.min(1,value));
+ const was=beforeAfter.value;beforeAfter.value=Math.max(0,Math.min(1,value));
+ // Pulled by hand, the divider clicks as it passes the middle and as it reaches either edge.
+ if(beforeAfter.drag&&typeof playDieTick==='function'){const now=beforeAfter.value;if(now!==was&&(now===0||now===1))playDieTick(0,'set');else if((was<.5)!==(now<.5))playDieTick(0,'face');}
  box.style.setProperty('--ba',beforeAfter.value.toFixed(4));
  box.toggleAttribute?.('data-active',beforeAfter.value>0);
  const percent=Math.round(beforeAfter.value*100);
@@ -2311,10 +2410,10 @@ function quietBeforeAfterHint(){
  if(!beforeAfter.hinting)return;
  beforeAfter.hinting=false;if(beforeAfter.value>0)beforeAfter.hinted=true;
  stopBeforeAfterTween();paintBeforeAfter(0);
- $('#before-after').querySelector?.('.ba-knob')?.getAnimations?.().forEach(animation=>animation.cancel());
+ $('#before-after').querySelector?.('.ba-knob')?.getAnimations?.().filter(animation=>!animation.animationName).forEach(animation=>animation.cancel());
 }
 // Taking hold of the slider keeps it where the hint had it and ends the hints for good.
-function takeBeforeAfter(){beforeAfter.hinting=false;beforeAfter.hinted=true;stopBeforeAfterTween();markReady();}
+function takeBeforeAfter(){beforeAfter.hinting=false;beforeAfter.hinted=true;beforeAfter.used=true;$('#before-after').toggleAttribute?.('data-invite',false);$('#before-after').toggleAttribute?.('data-used',true);stopBeforeAfterTween();markReady();}
 // Glide to a value; shape(t) maps progress to position for the hints.
 function tweenBeforeAfter(to,duration=360,shape=null,delay=0){
  stopBeforeAfterTween();
@@ -2331,6 +2430,8 @@ function renderBeforeAfter(){
  // A fresh start puts the slider away; side-by-side comparison only hides it, keeping its place.
  if(introMode)paintBeforeAfter(0);else if(item)paintBeforeAfter(beforeAfter.value);else releaseBeforeSection();
  box.hidden=!item;
+ // Once both dice are in, the handle asks to be pulled, now and then, until the visitor has pulled it once.
+ box.toggleAttribute?.('data-invite',!!item&&!secondWaits&&!beforeAfter.used);
 }
 // The first time a roll's page lands it is left alone to be looked at. Then the original is wiped in from the
 // left and away again, once: the same figures in two designs teach the mechanism without a word, and the
@@ -2448,7 +2549,7 @@ const thumbnailObserver=new ResizeObserver(entries=>entries.forEach(({target,con
 function buildMatrix(){
  const matrix=$('#matrix');matrix.replaceChildren();matrixButtons.clear();matrixCells.clear();thumbnailObserver.disconnect();
  matrix.setAttribute('aria-label',`Choose one of ${EXPERIMENT.runs.length} ingredient combinations`);
- $('#atlas-title').textContent=EXPERIMENT.runs.length+' combinations';
+ $('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
  INGREDIENTS_A.forEach((name,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=name;$('#atlas-ingredient').append(option);});
  for(const run of EXPERIMENT.runs){
   const cell=document.createElement('div'),preview=document.createElement('div'),button=document.createElement('button');
@@ -2460,8 +2561,41 @@ function buildMatrix(){
   cell.append(preview,button);matrix.append(cell);matrixButtons.set(run.id,button);matrixCells.set(run.id,cell);thumbnailObserver.observe(preview);
  }
 }
+// The map in the dock: six rows for the first die's faces, six columns for the second's, one dot per pair. A pair
+// that has been on screen is filled in, the one on screen now stands out. With a mouse a dot goes to its pair;
+// anywhere else on the map opens the gallery of all thirty-six.
+// Finishing a row or a column of the map, every pair of one ingredient, ripples it. Finding the last of the
+// thirty-six sets the whole map off, and both dice. It follows the throw that found the pair, once the page has changed.
+const FOUND_CELEBRATE=1100;
+function celebrateFound(id){
+ const map=$('#found-map');
+ if(!map?.children||typeof setTimeout!=='function'||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const [row,column]=id.split('-').map(Number),all=found.size===EXPERIMENT.runs.length;
+ const rowDone=INGREDIENTS_B.every((_,n)=>found.has(row+'-'+n)),columnDone=INGREDIENTS_A.every((_,n)=>found.has(n+'-'+column));
+ if(!all&&!rowDone&&!columnDone)return;
+ setTimeout(()=>{
+  for(const dot of map.children){
+   const [a,b]=dot.dataset.pair.split('-').map(Number),inRow=rowDone&&a===row,inColumn=columnDone&&b===column;
+   if(!all&&!inRow&&!inColumn)continue;
+   dot.animate?.([{scale:'1'},{scale:'2.3',backgroundColor:'#c2432a',offset:.4},{scale:'1'}],{duration:520,delay:all?(a+b)*55:(inRow?b:a)*70,iterations:all?2:1,easing:'cubic-bezier(.23,1,.32,1)'});
+  }
+  if(all)[0,1].forEach(i=>{if(typeof celebrateDie==='function')celebrateDie(i);});
+  else if(typeof playDieTick==='function'){playDieTick(0,'set');setTimeout(()=>playDieTick(1,'set'),150);}
+ },FOUND_CELEBRATE);
+}
+function renderFoundMap(){
+ const map=$('#found-map');if(!map?.append)return;
+ if(!map.children.length)for(const run of EXPERIMENT.runs){
+  const dot=document.createElement('button');dot.type='button';dot.className='found-dot';dot.dataset.pair=run.id;dot.title=run.label;dot.setAttribute('aria-label',run.label);
+  dot.addEventListener('click',event=>{event.stopPropagation?.();selectPair(currentExperiment().runs.find(item=>item.id===run.id));});map.append(dot);
+ }
+ if(!introMode&&!found.has(selected.id)){found.add(selected.id);try{if(typeof localStorage!=='undefined')localStorage.setItem('found-pairs',JSON.stringify([...found]));}catch{}celebrateFound(selected.id);}
+ for(const dot of map.children){dot.dataset.found=String(found.has(dot.dataset.pair));dot.setAttribute('aria-current',String(!introMode&&dot.dataset.pair===selected.id));}
+ map.setAttribute('aria-label',found.size+' of '+EXPERIMENT.runs.length+' combinations found');$('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
+}
+$('#found-map')?.addEventListener?.('click',()=>{if($('#atlas-toggle').getAttribute('aria-expanded')!=='true')$('#atlas-toggle').click();$('#atlas').scrollIntoView?.({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
 function render(sync=true){
- a=selected.a;b=selected.b;if(!passes)stage=SHOWN;stage=Math.min(stage,selected.steps.length);
+ a=selected.a;b=selected.b;if(!passes)stage=shownStage(selected);stage=Math.min(stage,selected.steps.length);renderFoundMap();
  const journey=introMode?'original':'ingredients',previousJourney=document.documentElement.dataset.journey;
  document.documentElement.dataset.journey=journey;$('#reset').hidden=journey==='original';
  // In the plain step the dice are away; they keep their last names so an exit never shows placeholder labels.
@@ -2471,7 +2605,7 @@ function render(sync=true){
  matrixButtons.forEach((button,id)=>{button.setAttribute('aria-pressed',String(!introMode&&id===selected.id));const run=currentExperiment().runs.find(item=>item.id===id);button.setAttribute('aria-label',run.label+' — '+attemptName(stage));});
  matrixCells.forEach((cell,id)=>{
   cell.hidden=Number(id.split('-')[0])!==a;if(cell.hidden)return;
-  const item=currentExperiment().runs.find(run=>run.id===id).steps[stage-1],frame=cell.querySelector('iframe');
+  const run=currentExperiment().runs.find(run=>run.id===id),item=run.steps[(passes?stage:shownStage(run))-1],frame=cell.querySelector('iframe');
   if(frame.dataset.file!==item.file){frame.srcdoc=item.html;frame.dataset.file=item.file;}
  });
  $('#atlas-ingredient').value=String(a);
@@ -2536,13 +2670,13 @@ function warmReports(){
   const runs=currentExperiment().runs,find=(a,b)=>runs.find(run=>run.a===a&&run.b===b),items=[];
   if(introMode){
    upcoming.intro??=introPair();
-   items.push(find(...upcoming.intro)?.steps[(passes?1:SHOWN)-1]);
+   {const run=find(...upcoming.intro);if(run)items.push(run.steps[(passes?1:shownStage(run))-1]);}
   }else{
-   if(stage<4)items.push(selected.steps[stage]);
+   if(passes&&stage<4)items.push(selected.steps[stage]);
    [0,1].forEach(i=>{
     const current=i?selected.b:selected.a;
     if(upcoming.faces[i]===null||upcoming.faces[i]===current)upcoming.faces[i]=nextIngredient(i,current);
-    const values=[selected.a,selected.b];values[i]=upcoming.faces[i];items.push(find(...values)?.steps[stage-1]);
+    const values=[selected.a,selected.b];values[i]=upcoming.faces[i];const run=find(...values);if(run)items.push(run.steps[(passes?stage:shownStage(run))-1]);
    });
   }
   for(const item of items){if(!item||cache.has(item.file))continue;const section=addReport(container,item,'');section.hidden=true;cache.set(item.file,section);}
@@ -2660,7 +2794,7 @@ $('#copy-prompt').addEventListener('click',()=>copyText((introMode?currentBaseli
 $('#refinement-prompt').textContent=EXPERIMENT.refinementPrompt;
 const exportPrompt=document.createElement('pre');exportPrompt.hidden=true;$('#export-status').after(exportPrompt);
 $('#copy-plain').addEventListener('click',()=>copyText(EXPERIMENT.plain.fullPrompt,exportPrompt,$('#export-status')));
-$('#copy-link').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(location.href);$('#share-status').textContent='Copied';}catch{$('#share-status').textContent='Copy the address to share this roll.';}});
+$('#copy-link').addEventListener('click',async()=>{flushURL();try{await navigator.clipboard.writeText(location.href);$('#share-status').textContent='Copied';}catch{$('#share-status').textContent='Copy the address to share this roll.';}});
 $('#copy-refinement').addEventListener('click',()=>copyText(view==='plain'?currentBaseline().protocol.refinementPrompt:currentExperiment().refinementPrompt,$('#refinement-prompt'),$('#export-status')));
 function renderPlain(){
  const baseline=currentBaseline(),item=baseline.steps[plainStage-1];showReports($('#plain-report'),[{item,label:''}]);
@@ -2793,10 +2927,10 @@ async function runDemo(){
   next.click();
   await demoWait(hold);if(!live())return;
  }
- // 4. Compare the third pass with the plain page, side by side, then return. Phones hide Compare
- // (the slider does that job there), so the demo skips this beat.
+ // 4. Pull the handle at the page's edge: the plain report comes back in from the left, with the same figures.
+ // Then let it go back. With every pass on show the demo uses Compare instead, side by side.
  demoHover(null);
- const compareButton=$('#compare'),comparable=!!compareButton.offsetParent;
+ const compareButton=$('#compare'),comparable=passes&&!!compareButton.offsetParent,knob=$('#ba-handle'),pullable=!comparable&&!!knob.offsetParent;
  if(comparable){
   await demoMoveTo(compareButton,[.5,.62]);if(!live())return;demoHover(compareButton);
   await demoWait(DEMO_BEATS.hover);if(!live())return;
@@ -2806,8 +2940,22 @@ async function runDemo(){
   await demoMoveTo(compareButton,[.5,.62]);if(!live())return;
   await demoPress(compareButton);if(!live())return;compareButton.click();
  }
+ if(pullable){
+  quietBeforeAfterHint();beforeAfter.hinted=true;markReady();
+  await demoMoveTo(knob,[.5,.5]);if(!live())return;demoHover(knob);
+  await demoWait(DEMO_BEATS.hover);if(!live())return;
+  demoCursor.classList.add('pressing');
+  // The divider follows the cursor, wherever the cursor is.
+  const page=$('#report-view').getBoundingClientRect(),y=demo.y;let following=true;
+  const follow=()=>{if(!following||!live())return;paintBeforeAfter((new DOMMatrix(getComputedStyle(demoCursor).transform).m41-page.left)/page.width);requestAnimationFrame(follow);};
+  requestAnimationFrame(follow);
+  await demoMoveToPoint(page.left+page.width*.58,y);if(!live()){following=false;return;}
+  await demoWait(DEMO_BEATS.readCompare);if(!live()){following=false;return;}
+  await demoMoveToPoint(page.left,y);following=false;if(!live())return;
+  paintBeforeAfter(0);demoCursor.classList.remove('pressing');demoHover(null);
+ }
  // 5. Step aside, hand over, and point at what to try next.
- await demoRestBeside(comparable?compareButton:passes?next:$('#throw-1'),demoNarrow()?0:90,demoNarrow()?56:0);if(!live())return;
+ await demoRestBeside(comparable?compareButton:passes?next:pullable?knob:$('#throw-1'),demoNarrow()?0:pullable?-70:90,demoNarrow()?56:pullable?60:0);if(!live())return;
  await demoWait(DEMO_BEATS.handover);if(!live())return;
  demo.running=false;demo.token++;showDemoCursor(false);renderDemoToggle();
  if(innerWidth>860)showPointer($('#throw-0 .cube'),'Your turn.','Roll a die, or drag it to choose a face.','above');

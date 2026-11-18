@@ -228,18 +228,24 @@ randomIndex=secureDraw;
 `,home);
 console.log('PASS: plain-first home, shared later-stage bypass, original prompt identity, a first throw that adds one ingredient and changes the page while the second die comes in at rest and unnamed, a second-die roll that changes it again, a five-step story headline without timers, reset to the plain page, subsequent independent rolls and gallery bypass.');
 vm.runInContext(`
-// With the passes out of the way (the default), the page shows the third refinement, with and without the dice.
+// With the passes out of the way (the default), the page shows the version saved as each pair's best, a showcase
+// pair its one-shot, and the plain brief at the same pass. A visit opens on the plain one-shot.
 passes=false;if(!introMode)showBrief();render();
-assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,currentBaseline().steps[3].html,'the plain page is the third refinement of the brief alone');
-roll(0,null,[1,2]);assert.equal(introMode,false);assert.equal(stage,4);
-assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[3].html,'the first throw shows the third refinement of the pair');
+assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,currentBaseline().steps[0].html,'the page a visit opens on is the plain one-shot');
+globalThis.CURATION={picks:{[method]:{'1-2':{pick:2},'1-4':{pick:3}}}};
+roll(0,null,[1,2]);assert.equal(introMode,false);assert.equal(stage,2);
+assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[1].html,'the first throw shows the version saved as the best of its pair');
 assert.equal(promptLineState().pushes,0,'and the line above the page does not narrate the passes');
-roll(1,null,[undefined,4]);assert.equal(stage,4);assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[3].html);
+roll(1,null,[undefined,4]);assert.equal(stage,3);assert.equal(visibleFrames(nodes.get('#report-view'))[0].srcdoc,selected.steps[2].html);
 assert.equal(nodes.get('#keep').hidden,true,'no question about passes that are not on show');
-comparing=true;renderResult();assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===currentBaseline().steps[3].html),'the comparison is with the same pass of the plain brief');comparing=false;renderResult();
+comparing=true;renderResult();assert.ok(visibleFrames(nodes.get('#report-view')).some(frame=>frame.srcdoc===currentBaseline().steps[0].html),'the comparison is with the plain report the visit opened on, whatever pass the pair shows');comparing=false;renderResult();assert.equal(beforeItem(),currentBaseline().steps[0],'and so is the page under the before handle');
+{const kept=SHOWCASE;SHOWCASE=['1-4'];render();assert.equal(stage,1,'a showcase pair shows its one-shot, the version it was chosen for');SHOWCASE=kept;render();assert.equal(stage,3);}
+roll(1,null,[undefined,0]);assert.equal(stage,4,'a pair with no saved pick shows the last pass');
+assert.ok(found.has('1-2')&&found.has('1-4')&&found.has('1-0'),'every pair that has been on screen is kept as found');
+delete globalThis.CURATION;
 nodes.get('#passes-toggle').click();assert.equal(passes,true);assert.equal(document.documentElement.dataset.passes,'true');assert.equal(nodes.get('#passes-toggle').attrs['aria-pressed'],'true');
 `,home);
-console.log('PASS: by default the page shows the third refinement with and without the dice, compares like with like, and keeps the passes out of the way until About the experiment brings them back.');
+console.log('PASS: by default the page shows the saved pick of each pair (a showcase pair its one-shot) beside the one plain report a visit opens on, which never changes, remembers every pair found, and keeps the passes out of the way until About the experiment brings them back.');
 vm.runInContext(`
 introMode=true;stage=1;selected=currentExperiment().runs[2];render();chooseDieFace(0,5);
 assert.equal(introMode,false);assert.equal(selected.id,'5-2');assert.equal(stage,1);
@@ -271,7 +277,7 @@ assert.equal(pointerSpec(),null,'nothing floats beside the plain page');assert.d
 {renderPromptLine();const line=nodes.get('#prompt-line');assert.equal(line.children.filter(child=>child.className==='prompt-gap').length,2);assert.equal(nodes.get('#prompt-row').dataset.pending,'true');line.click();assert.notEqual(nodes.get('#prompt-full').hidden,false,'and does not open while it is being filled');}
 roll(0,null,[3,0]);assert.equal(introMode,false);assert.equal(pointerSpec(),null,'after a roll nothing floats beside the action');
 assert.deepEqual({...promptLineState()},{a:'Bureaucracy',b:null,held:'Tech',changed:null,pushes:0,same:false,ask:'',fresh:0},'one throw fills one gap');
-{renderPromptLine();const row=nodes.get('#prompt-row'),line=nodes.get('#prompt-line');assert.equal(row.dataset.half,'true');{const open=line.children.filter(child=>String(child.className).startsWith('prompt-gap'));assert.equal(open.length,1,'the second gap stays open');assert.equal(open[0].className,'prompt-gap prompt-held');assert.equal(open[0].textContent,'Tech','and names the face the waiting die shows, which the page on screen was made with');assert.ok(selected.steps[0].prompt.includes(ingredientLine('Bureaucracy','Tech')));}assert.equal(line.children[0].textContent,'Same data, redesigned with ');assert.equal(line.children.filter(child=>child.tagName==='b').map(child=>child.textContent).join(),'Bureaucracy');line.click();assert.notEqual(nodes.get('#prompt-full').hidden,false,'and the line does not open until both are in');}
+{renderPromptLine();const row=nodes.get('#prompt-row'),line=nodes.get('#prompt-line');assert.equal(row.dataset.half,'true');{const open=line.children.filter(child=>String(child.className).startsWith('prompt-gap'));assert.equal(open.length,1,'the second gap stays open');assert.equal(open[0].className,'prompt-gap prompt-held');assert.equal(open[0].textContent,'Tech','and names the face the waiting die shows, which the page on screen was made with');assert.ok(selected.steps[0].prompt.includes(ingredientLine('Bureaucracy','Tech')));}assert.equal(line.children[0].textContent,'Same data');assert.equal(line.children.filter(child=>child.className==='prompt-plus').length,2,'the line is a recipe: the data plus one token per die');assert.equal(line.children.filter(child=>child.tagName==='b').map(child=>child.textContent).join(),'Bureaucracy');line.click();assert.notEqual(nodes.get('#prompt-full').hidden,false,'and the line does not open until both are in');}
 assert.ok(selected.steps[0].prompt.includes(ingredientLine('Bureaucracy','Tech')),'the page shown is a saved pair: the first ingredient with the face the second die shows');
 roll(0,null,[2]);assert.equal(promptLineState().a,'Weather');assert.equal(promptLineState().changed,0,'the die that changed is marked');assert.equal(promptLineState().b,null,'throwing the first die again leaves the second gap open');
 roll(1,null,[undefined,4]);assert.equal(promptLineState().b,'Luxury hotel');assert.equal(promptLineState().fresh,1,'the second throw fills the second gap');renderPromptLine();assert.equal(nodes.get('#prompt-row').dataset.half,'false');assert.ok(nodes.get('#prompt-line').children.every(child=>!child.dataset.changed),'a changed word drops in; nothing is underlined');assert.ok(nodes.get('#prompt-line').children.every(child=>child.className!=='prompt-note'),'no line under the sentence');

@@ -558,3 +558,44 @@ html[data-passes=false] :is(#experiment-next,#refinement-rail,#keep){display:non
 @media(max-width:860px){.stage-bar{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"reset next compare"}}
 /* The pointer that fetches a die: drawn on the die it carries, never hit-testable. */
 .die-hand{position:absolute;left:50%;top:50%;width:0;height:0;z-index:3;opacity:0;pointer-events:none}
+/* The headline is a recipe: the same data, plus one token per die, in that die's colour and with its picture. */
+.prompt-plus{color:var(--muted);font-weight:400}
+.prompt-line b,.prompt-gap.prompt-held{display:inline-flex;align-items:center;gap:.42em;vertical-align:middle;margin:0;padding:.14em .56em .14em .46em;border-radius:9px;background:#1d261e;color:#fffdf8;font-weight:650;letter-spacing:0}
+.prompt-line b[data-die="1"]{background:#c2432a}
+.prompt-gap.prompt-held{background:transparent;border:1.5px dashed #c2432a;color:#a8361f;font-weight:500}
+.prompt-line svg{flex:none;width:1.05em;height:1.05em}
+.prompt-row[data-pending=true] .prompt-gap{width:4.6em;height:1.5em;border-radius:9px;vertical-align:middle}
+/* The map of what has been found sits in the middle of the dock, where the action is when every pass is shown. */
+.found-map{grid-area:bar;justify-self:center;display:grid;grid-template-columns:repeat(6,10px);padding:5px;border-radius:9px;cursor:pointer}
+.found-dot{width:10px;height:10px;padding:1.5px;border:0;border-radius:3.5px;background:#d3cebe content-box;cursor:pointer;transition:background-color 220ms ease-out,scale 160ms ease-out}
+.found-dot[data-found=true]{background-color:#2c362e;animation:found-pop 460ms cubic-bezier(.23,1,.32,1)}
+.found-dot[aria-current=true]{background-color:var(--accent);padding:0;border-radius:3px}
+@keyframes found-pop{from{scale:2.4;background-color:var(--accent)}}
+[data-journey=original] .found-map,html[data-ready=false] .found-map{visibility:hidden}
+html[data-passes=true] .found-map{display:none}
+@media(hover:hover) and (pointer:fine){.found-map:hover{background:#ebe7da}.found-dot:hover{scale:1.7}}
+@media(pointer:coarse){.found-dot{pointer-events:none}}
+@media(max-width:860px){.found-map{grid-area:next}}
+@media(prefers-reduced-motion:reduce){.found-dot{animation:none!important;transition:none}}
+/* On narrow screens the tokens in the headline name the dice, so the small dice carry no second label. */
+@media(max-width:860px){html:not([data-journey=original]) .die>strong{display:none}}
+/* One short account of the experiment sits under the count of what has been found. */
+.atlas-about{max-width:640px;margin:2px 2px 10px;font:15px/1.55 var(--sans);color:#4c554c}
+/* The before handle is a solid ink grip, plain against the paper and against any page. Once both dice are in it
+   leans into the page now and then, until it has been pulled once. */
+.ba-knob{width:44px;height:44px;margin:-22px 0 0 -22px;background:var(--ink);color:#fffdf8;box-shadow:0 0 0 2.5px #fffdf8,0 12px 22px -10px #1d261eb3}
+.before-after[data-dragging] .ba-knob{box-shadow:0 0 0 2.5px #fffdf8,0 16px 26px -10px #1d261ecc}
+.before-after[data-invite]:not([data-active]):not([data-dragging]) .ba-knob{animation:ba-invite 5.6s cubic-bezier(.45,0,.55,1) 2.6s infinite}
+@keyframes ba-invite{0%,76%,100%{translate:0 0}85%{translate:16px 0}93%{translate:-2px 0}}
+@media(prefers-reduced-motion:reduce){.before-after[data-invite] .ba-knob{animation:none!important}}
+/* A token is its die: it can be pointed at and clicked even while the rest of the line is not yet a button. */
+.prompt-line [data-die]{pointer-events:auto;cursor:pointer;transition:translate 160ms var(--ease-out),box-shadow 160ms ease-out}
+@media(hover:hover) and (pointer:fine){.prompt-line [data-die]:hover{translate:0 -2px;box-shadow:0 5px 12px -6px #1d261e99}}
+.prompt-line [data-die]:active{translate:0 1px}
+/* The headline already says the data is the same, and the handle says what it reveals until it has been pulled once. */
+.ba-same,.frame-section h3 .same-data{display:none}
+.before-after[data-used] .ba-knob:after{display:none}
+/* With the passes out of the way the handle is the comparison; side by side comes back with them. */
+html[data-passes=false] #compare{display:none}
+/* On narrow screens the dice stay big enough to hold once they have been thrown. */
+@media(max-width:860px){html:not([data-journey=original]) .die-object{--size:54px;height:84px}}

@@ -11,8 +11,15 @@ const DIE_MATERIALS=[
 ];
 try{diceSoundEnabled=localStorage.getItem('design-dice-sound')!=='off';}catch{/* File storage can be unavailable. */}
 function updateSoundButton(){const button=document.querySelector('#sound-toggle');button.textContent=diceSoundEnabled?'Sound on':'Sound off';button.setAttribute('aria-pressed',String(diceSoundEnabled));}
+// Opening the audio device takes Chrome over a tenth of a second. It is opened while the page is idle, ahead of
+// the first press, so that press is not held up; it stays suspended and silent until a visitor acts.
+function warmDiceAudio(){
+ if(!diceSoundEnabled||diceAudioContext)return;
+ try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;diceAudioContext=new Audio();diceRoomInput(diceAudioContext);}catch{}
+}
 function initDiceSound(){
  const button=document.querySelector('#sound-toggle');updateSoundButton();
+ if(typeof requestIdleCallback==='function')requestIdleCallback(warmDiceAudio,{timeout:4000});
  if(!(window.AudioContext||window.webkitAudioContext)){button.disabled=true;button.textContent='Sound unavailable';button.setAttribute('aria-pressed','false');return;}
  button.addEventListener('click',()=>{diceSoundEnabled=!diceSoundEnabled;updateSoundButton();try{localStorage.setItem('design-dice-sound',diceSoundEnabled?'on':'off');}catch{}
   if(diceSoundEnabled)primeDiceAudio();else [0,1,2].forEach(cancelDieSound);

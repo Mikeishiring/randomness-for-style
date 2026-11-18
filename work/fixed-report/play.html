@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f5f3ec">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='6' width='52' height='52' rx='13' fill='%231d261e'/%3E%3Ccircle cx='21' cy='21' r='5.5' fill='%23f4f1e8'/%3E%3Ccircle cx='32' cy='32' r='5.5' fill='%23f06b48'/%3E%3Ccircle cx='43' cy='43' r='5.5' fill='%23f4f1e8'/%3E%3C/svg%3E">
 <title>Randomness for Style</title>
 <link rel="canonical" href="https://randomness-for-style.vercel.app/">
 <meta name="description" content="Explore how randomness can help you avoid AI slop—the familiar patterns we recognize in AI-generated design. Roll two ingredients, then refine.">
@@ -12,7 +13,12 @@
 <meta property="og:title" content="Randomness for Style">
 <meta property="og:description" content="Explore how randomness can help you avoid AI slop—the familiar patterns we recognize in AI-generated design. Roll two ingredients, then refine.">
 <meta property="og:url" content="https://randomness-for-style.vercel.app/">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://randomness-for-style.vercel.app/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A weekly report redesigned with Motorsport and Fast food, a die on either side.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://randomness-for-style.vercel.app/share.jpg">
 <meta name="twitter:title" content="Randomness for Style">
 <meta name="twitter:description" content="Explore how randomness can help you avoid AI slop—the familiar patterns we recognize in AI-generated design. Roll two ingredients, then refine.">
 <style>/* SHELL_CSS */</style></head>
@@ -39,6 +45,7 @@
    <div id="stage-bar" class="stage-bar">
     <button type="button" id="reset" class="reset" aria-label="Start over with no ingredients"><span aria-hidden="true">↺</span> Reset</button>
     <button type="button" id="experiment-next" class="experiment-next" data-action="roll"><span id="next-label">Add randomness</span><span id="next-cue" class="next-cue" aria-hidden="true">→</span></button>
+    <div id="found-map" class="found-map" role="group" aria-label="Combinations found"></div>
     <span class="dock-end"><button type="button" id="compare" title="Compare with no ingredients" aria-pressed="false" aria-label="Compare with no ingredients" aria-controls="report-view compare-target">Compare</button><button type="button" id="demo-toggle" class="demo-toggle" aria-pressed="false"><span class="demo-glyph" aria-hidden="true"></span><span id="demo-label">Watch demo</span></button></span>
    </div>
    <nav id="refinement-rail" class="chapters" aria-label="Experiment steps">
@@ -61,8 +68,8 @@
    </section>
    <section id="plain-lab" class="result" aria-labelledby="plain-title" hidden><h2 id="plain-title" class="sr-only" tabindex="-1">Without ingredients</h2><div id="plain-report"></div></section>
   </div>
-  <section id="atlas" class="atlas" aria-labelledby="atlas-title"><h2 class="atlas-heading"><button type="button" id="atlas-toggle" class="atlas-toggle" aria-expanded="false" aria-controls="atlas-body"><span id="atlas-title">36 combinations</span><span class="atlas-chevron" aria-hidden="true"></span></button></h2><div id="atlas-body" class="atlas-body" hidden><header><select id="atlas-ingredient" aria-label="Browse pairings for the first ingredient"></select></header><div id="matrix" class="matrix" role="group" aria-label="Choose one of 36 ingredient combinations"></div></div></section>
-  <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>AI design has a look, and most of us can now spot it. This is a test of whether a little randomness breaks the habit.</p><p>The brief never changes: one weekly report, the same numbers. The dice add two ingredients nobody would pair on purpose. Then the model is told three times to criticise its page and try again. You are looking at the third try, with and without the dice. Show every pass brings back the earlier ones.</p><p>Nothing is generated live. Every page was saved from a real run, and every run used two ingredients. So after your first throw the page already borrows the face the second die is showing, named in the dashed gap. The stronger prompt starts over from the same first draft. The newer model repeats the whole thing a generation later. More passes do not always make a better page.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Recorded run"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button><button type="button" id="method-newer" aria-pressed="false">Newer model</button></div>
+  <section id="atlas" class="atlas" aria-labelledby="atlas-title"><h2 class="atlas-heading"><button type="button" id="atlas-toggle" class="atlas-toggle" aria-expanded="false" aria-controls="atlas-body"><span id="atlas-title">36 combinations</span><span class="atlas-chevron" aria-hidden="true"></span></button></h2><p class="atlas-about">AI design has a look, and most of us can now spot it. So one report was made 36 times, each with two ingredients nobody would pair on purpose. The numbers never change. Only the dice do.</p><div id="atlas-body" class="atlas-body" hidden><header><select id="atlas-ingredient" aria-label="Browse pairings for the first ingredient"></select></header><div id="matrix" class="matrix" role="group" aria-label="Choose one of 36 ingredient combinations"></div></div></section>
+  <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>The brief never changes: one weekly report, the same numbers. After the dice, the model is told three times to criticise its page and try again. The page you see is the try worth keeping, and it is rarely the last. Show every pass brings back the rest.</p><p>Nothing is generated live. Every page was saved from a real run, and every run used two ingredients. So after your first throw the page already borrows the face the second die is showing, named in the dashed gap. The stronger prompt starts over from the same first draft. The newer model repeats the whole thing a generation later. More passes do not always make a better page.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Recorded run"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button><button type="button" id="method-newer" aria-pressed="false">Newer model</button></div>
     <p id="method-note" class="method-note">Both start from this one-shot.</p></div><select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">No ingredients</option><option value="other" id="compare-other">Original prompt</option></select><div class="export-actions"><button id="passes-toggle" type="button" class="text-button" aria-pressed="false">Show every pass</button><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Refine brief alone →</button><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
  </main>
  <div class="page-footer">

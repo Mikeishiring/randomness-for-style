@@ -102,10 +102,10 @@ async function runDemo(){
   next.click();
   await demoWait(hold);if(!live())return;
  }
- // 4. Compare the third pass with the plain page, side by side, then return. Phones hide Compare
- // (the slider does that job there), so the demo skips this beat.
+ // 4. Pull the handle at the page's edge: the plain report comes back in from the left, with the same figures.
+ // Then let it go back. With every pass on show the demo uses Compare instead, side by side.
  demoHover(null);
- const compareButton=$('#compare'),comparable=!!compareButton.offsetParent;
+ const compareButton=$('#compare'),comparable=passes&&!!compareButton.offsetParent,knob=$('#ba-handle'),pullable=!comparable&&!!knob.offsetParent;
  if(comparable){
   await demoMoveTo(compareButton,[.5,.62]);if(!live())return;demoHover(compareButton);
   await demoWait(DEMO_BEATS.hover);if(!live())return;
@@ -115,8 +115,22 @@ async function runDemo(){
   await demoMoveTo(compareButton,[.5,.62]);if(!live())return;
   await demoPress(compareButton);if(!live())return;compareButton.click();
  }
+ if(pullable){
+  quietBeforeAfterHint();beforeAfter.hinted=true;markReady();
+  await demoMoveTo(knob,[.5,.5]);if(!live())return;demoHover(knob);
+  await demoWait(DEMO_BEATS.hover);if(!live())return;
+  demoCursor.classList.add('pressing');
+  // The divider follows the cursor, wherever the cursor is.
+  const page=$('#report-view').getBoundingClientRect(),y=demo.y;let following=true;
+  const follow=()=>{if(!following||!live())return;paintBeforeAfter((new DOMMatrix(getComputedStyle(demoCursor).transform).m41-page.left)/page.width);requestAnimationFrame(follow);};
+  requestAnimationFrame(follow);
+  await demoMoveToPoint(page.left+page.width*.58,y);if(!live()){following=false;return;}
+  await demoWait(DEMO_BEATS.readCompare);if(!live()){following=false;return;}
+  await demoMoveToPoint(page.left,y);following=false;if(!live())return;
+  paintBeforeAfter(0);demoCursor.classList.remove('pressing');demoHover(null);
+ }
  // 5. Step aside, hand over, and point at what to try next.
- await demoRestBeside(comparable?compareButton:passes?next:$('#throw-1'),demoNarrow()?0:90,demoNarrow()?56:0);if(!live())return;
+ await demoRestBeside(comparable?compareButton:passes?next:pullable?knob:$('#throw-1'),demoNarrow()?0:pullable?-70:90,demoNarrow()?56:pullable?60:0);if(!live())return;
  await demoWait(DEMO_BEATS.handover);if(!live())return;
  demo.running=false;demo.token++;showDemoCursor(false);renderDemoToggle();
  if(innerWidth>860)showPointer($('#throw-0 .cube'),'Your turn.','Roll a die, or drag it to choose a face.','above');

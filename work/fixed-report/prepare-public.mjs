@@ -1,4 +1,4 @@
-import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync,copyFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 
@@ -31,4 +31,6 @@ assert.ok(html.includes('<title>Randomness for Style</title>'));
 new vm.Script(script);
 mkdirSync(new URL('site/dist/',root),{recursive:true});
 writeFileSync(new URL('site/dist/index.html',root),html);
+// The picture a shared link shows: a capture of the page itself, kept beside its source.
+copyFileSync(new URL('work/fixed-report/share.jpg',root),new URL('site/dist/share.jpg',root));
 console.log('Public build ready: 36 combinations; no personal names, contact details, local paths, author metadata or archive links in page and export payload.');
