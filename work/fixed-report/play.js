@@ -715,7 +715,6 @@ const thumbnailObserver=new ResizeObserver(entries=>entries.forEach(({target,con
 function buildMatrix(){
  const matrix=$('#matrix');matrix.replaceChildren();matrixButtons.clear();matrixCells.clear();thumbnailObserver.disconnect();
  matrix.setAttribute('aria-label',`Choose one of ${EXPERIMENT.runs.length} ingredient combinations`);
- $('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
  INGREDIENTS_A.forEach((name,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=name;$('#atlas-ingredient').append(option);});
  for(const run of EXPERIMENT.runs){
   const cell=document.createElement('div'),preview=document.createElement('div'),button=document.createElement('button');
@@ -757,9 +756,9 @@ function renderFoundMap(){
  }
  if(!introMode&&!found.has(selected.id)){found.add(selected.id);try{if(typeof localStorage!=='undefined')localStorage.setItem('found-pairs',JSON.stringify([...found]));}catch{}celebrateFound(selected.id);}
  for(const dot of map.children){dot.dataset.found=String(found.has(dot.dataset.pair));dot.setAttribute('aria-current',String(!introMode&&dot.dataset.pair===selected.id));}
- map.setAttribute('aria-label',found.size+' of '+EXPERIMENT.runs.length+' combinations found');$('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
+ map.setAttribute('aria-label',found.size+' of '+EXPERIMENT.runs.length+' combinations found');
 }
-$('#found-map')?.addEventListener?.('click',()=>{if($('#atlas-toggle').getAttribute('aria-expanded')!=='true')$('#atlas-toggle').click();$('#atlas').scrollIntoView?.({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
+$('#found-map')?.addEventListener?.('click',()=>{const open=$('#atlas-body').hidden;setAtlasOpen(open);if(open)$('#atlas').scrollIntoView?.({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
 // The gallery shows the first die's six pairings, each at the version the page would show for it.
 function syncMatrix(){
  matrixButtons.forEach((button,id)=>{button.setAttribute('aria-pressed',String(!introMode&&id===selected.id));const run=currentExperiment().runs.find(item=>item.id===id);button.setAttribute('aria-label',run.label+' — '+attemptName(stage));});
@@ -822,12 +821,13 @@ function dropDie(index,value,release={}){
  awaitReady(!introducing);
  quietRefine();
 }
-// The gallery stays folded until it is wanted; opening it settles in from just above.
-$('#atlas-toggle').addEventListener('click',()=>{
- const toggle=$('#atlas-toggle'),body=$('#atlas-body'),open=toggle.getAttribute('aria-expanded')!=='true';
- toggle.setAttribute('aria-expanded',String(open));body.hidden=!open;if(open)syncMatrix();
+// The gallery has no heading of its own: it stays out of the page until the map asks for it, and the map folds it away
+// again. Opening it settles in from just above.
+function setAtlasOpen(open){
+ const body=$('#atlas-body');
+ body.hidden=!open;if(open)syncMatrix();
  if(open&&body.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)body.animate([{opacity:0,transform:'translateY(-8px)'},{opacity:1,transform:'none'}],{duration:320,easing:'cubic-bezier(.23,1,.32,1)'});
-});
+}
 $('#atlas-ingredient').addEventListener('change',event=>selectPair(currentExperiment().runs.find(run=>run.a===Number(event.target.value)&&run.b===b)));
 // Loading a report is most of what a page change costs. While the page is idle, the pages a visitor is
 // likely to see next are loaded out of sight: this pair's next refinement, and the pair each die will roll

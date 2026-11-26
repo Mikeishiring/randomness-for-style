@@ -622,6 +622,7 @@ html[data-passes=true] .found-map{display:none}
 /* On narrow screens the tokens in the headline name the dice, so the small dice carry no second label. */
 @media(max-width:860px){html:not([data-journey=original]) .die>strong{display:none}}
 /* One short account of the experiment sits under the count of what has been found. */
+.atlas:has(>.atlas-body[hidden]){margin:0;padding:0}
 .atlas-about{max-width:640px;margin:2px 2px 10px;font:15px/1.55 var(--sans);color:#4c554c}
 /* The before handle is a solid ink grip, plain against the paper and against any page. Once both dice are in it
    leans into the page now and then, until it has been pulled once. */
@@ -688,8 +689,8 @@ html[data-passes=false] #compare{display:none}
    </section>
    <section id="plain-lab" class="result" aria-labelledby="plain-title" hidden><h2 id="plain-title" class="sr-only" tabindex="-1">Without ingredients</h2><div id="plain-report"></div></section>
   </div>
-  <section id="atlas" class="atlas" aria-labelledby="atlas-title"><h2 class="atlas-heading"><button type="button" id="atlas-toggle" class="atlas-toggle" aria-expanded="false" aria-controls="atlas-body"><span id="atlas-title">36 combinations</span><span class="atlas-chevron" aria-hidden="true"></span></button></h2><p class="atlas-about">AI design has a look, and most of us can now spot it. So one report was made 36 times, each with two ingredients nobody would pair on purpose. The numbers never change. Only the dice do.</p><div id="atlas-body" class="atlas-body" hidden><header><select id="atlas-ingredient" aria-label="Browse pairings for the first ingredient"></select></header><div id="matrix" class="matrix" role="group" aria-label="Choose one of 36 ingredient combinations"></div></div></section>
-  <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>A lot of what we call AI slop is just repetition, aka pattern recognition. We’re all working with the same colleague (Claude, Codex). We’re seeing more work, and more of the same work. My colleagues wouldn’t call my work Mike slop unless my work was absolutely everywhere and they were seeing the lower-effort end of it. A way around this is randomness. Not always better, but definitely different. This is my approach, and this experiment is my attempt to prove it. Models will change, so will weights, and so will how much randomness shows between one piece of work and the next. But adding more randomness will always scale, though again, not always for the better.</p><p>The brief never changes: one weekly report, the same numbers. After the dice, the model is told three times to criticise its page and try again. The page you see is the try worth keeping, and it is rarely the last. Show every pass brings back the rest.</p><p>Nothing is generated live. Every page was saved from a real run, and every run used two ingredients. So after your first throw the page already borrows the face the second die is showing, named in the dashed gap. The stronger prompt starts over from the same first draft. The newer model repeats the whole thing a generation later. More passes do not always make a better page.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Recorded run"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button><button type="button" id="method-newer" aria-pressed="false">Newer model</button></div>
+  <section id="atlas" class="atlas" aria-label="All 36 pairs"><div id="atlas-body" class="atlas-body" hidden><header><select id="atlas-ingredient" aria-label="Browse pairings for the first ingredient"></select></header><div id="matrix" class="matrix" role="group" aria-label="Choose one of 36 ingredient combinations"></div></div></section>
+  <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>A lot of what we call AI slop is just repetition, aka pattern recognition. We’re all working with the same colleagues (Claude, Codex). We’re seeing more work, and more of the same work. My colleagues wouldn’t call my work Mike slop unless it was absolutely everywhere and they were seeing the lower-effort end of it. A way around this is randomness: not always better, but definitely different. This is my approach, and this experiment is my attempt to prove it. Models will change, and so will their weights and how much randomness shows from one piece of work to the next. Adding more randomness will always scale, though, again, not always for the better.</p><p>The brief never changes: one weekly report, the same numbers. After the dice, the model is told three times to criticise its page and try again. The page you see is the try worth keeping, and it is rarely the last. Show every pass brings back the rest.</p><p>Nothing is generated live. Every page was saved from a real run, and every run used two ingredients. So after your first throw the page already borrows the face the second die is showing, named in the dashed gap. The stronger prompt starts over from the same first draft. The newer model repeats the whole thing a generation later. More passes do not always make a better page.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Recorded run"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button><button type="button" id="method-newer" aria-pressed="false">Newer model</button></div>
     <p id="method-note" class="method-note">Both start from this one-shot.</p></div><section class="repeat" aria-labelledby="repeat-title"><h3 id="repeat-title">Repeat it</h3><ol><li>Copy a prompt: this page's from Prompt ↗, or the brief alone with Copy brief + data.</li><li>Paste it into a new chat with no design skills or references. Keep the first page.</li><li>In the same chat, send the refinement prompt three times, unchanged.</li><li>Save every version. Results will vary.</li></ol></section><select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">No ingredients</option><option value="other" id="compare-other">Original prompt</option></select><div class="export-actions"><button id="passes-toggle" type="button" class="text-button" aria-pressed="false">Show every pass</button><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Refine brief alone →</button><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
  </main>
  <div class="page-footer">
@@ -2592,7 +2593,6 @@ const thumbnailObserver=new ResizeObserver(entries=>entries.forEach(({target,con
 function buildMatrix(){
  const matrix=$('#matrix');matrix.replaceChildren();matrixButtons.clear();matrixCells.clear();thumbnailObserver.disconnect();
  matrix.setAttribute('aria-label',`Choose one of ${EXPERIMENT.runs.length} ingredient combinations`);
- $('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
  INGREDIENTS_A.forEach((name,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=name;$('#atlas-ingredient').append(option);});
  for(const run of EXPERIMENT.runs){
   const cell=document.createElement('div'),preview=document.createElement('div'),button=document.createElement('button');
@@ -2634,9 +2634,9 @@ function renderFoundMap(){
  }
  if(!introMode&&!found.has(selected.id)){found.add(selected.id);try{if(typeof localStorage!=='undefined')localStorage.setItem('found-pairs',JSON.stringify([...found]));}catch{}celebrateFound(selected.id);}
  for(const dot of map.children){dot.dataset.found=String(found.has(dot.dataset.pair));dot.setAttribute('aria-current',String(!introMode&&dot.dataset.pair===selected.id));}
- map.setAttribute('aria-label',found.size+' of '+EXPERIMENT.runs.length+' combinations found');$('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
+ map.setAttribute('aria-label',found.size+' of '+EXPERIMENT.runs.length+' combinations found');
 }
-$('#found-map')?.addEventListener?.('click',()=>{if($('#atlas-toggle').getAttribute('aria-expanded')!=='true')$('#atlas-toggle').click();$('#atlas').scrollIntoView?.({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
+$('#found-map')?.addEventListener?.('click',()=>{const open=$('#atlas-body').hidden;setAtlasOpen(open);if(open)$('#atlas').scrollIntoView?.({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
 // The gallery shows the first die's six pairings, each at the version the page would show for it.
 function syncMatrix(){
  matrixButtons.forEach((button,id)=>{button.setAttribute('aria-pressed',String(!introMode&&id===selected.id));const run=currentExperiment().runs.find(item=>item.id===id);button.setAttribute('aria-label',run.label+' — '+attemptName(stage));});
@@ -2699,12 +2699,13 @@ function dropDie(index,value,release={}){
  awaitReady(!introducing);
  quietRefine();
 }
-// The gallery stays folded until it is wanted; opening it settles in from just above.
-$('#atlas-toggle').addEventListener('click',()=>{
- const toggle=$('#atlas-toggle'),body=$('#atlas-body'),open=toggle.getAttribute('aria-expanded')!=='true';
- toggle.setAttribute('aria-expanded',String(open));body.hidden=!open;if(open)syncMatrix();
+// The gallery has no heading of its own: it stays out of the page until the map asks for it, and the map folds it away
+// again. Opening it settles in from just above.
+function setAtlasOpen(open){
+ const body=$('#atlas-body');
+ body.hidden=!open;if(open)syncMatrix();
  if(open&&body.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)body.animate([{opacity:0,transform:'translateY(-8px)'},{opacity:1,transform:'none'}],{duration:320,easing:'cubic-bezier(.23,1,.32,1)'});
-});
+}
 $('#atlas-ingredient').addEventListener('change',event=>selectPair(currentExperiment().runs.find(run=>run.a===Number(event.target.value)&&run.b===b)));
 // Loading a report is most of what a page change costs. While the page is idle, the pages a visitor is
 // likely to see next are loaded out of sight: this pair's next refinement, and the pair each die will roll
