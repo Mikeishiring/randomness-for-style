@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-boot>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -640,6 +640,12 @@ html[data-passes=true] .found-map{display:none}
 .before-after[data-used] .ba-knob:after{display:none}
 /* With the passes out of the way the handle is the comparison; side by side comes back with them. */
 html[data-passes=false] #compare{display:none}
+/* The page script, with every saved report in it, arrives last. On a slow connection the
+   markup would otherwise paint first as controls that do nothing yet, then jump when the
+   first report renders. The shell stays hidden until that first render; if the script
+   never runs, it shows after 20 seconds instead of staying blank. */
+html[data-boot] .shell{visibility:hidden;animation:boot-reveal 0s 20s forwards}
+@keyframes boot-reveal{to{visibility:visible}}
 /* On narrow screens the dice stay big enough to hold once they have been thrown. */
 @media(max-width:860px){html:not([data-journey=original]) .die-object{--size:54px;height:84px}}
 </style></head>
@@ -2889,7 +2895,7 @@ function changePlainAttempt(delta){const next=plainStage+delta;if(currentBaselin
 $('#plain-attempt-prev').addEventListener('click',()=>changePlainAttempt(-1));
 $('#plain-attempt-next').addEventListener('click',()=>changePlainAttempt(1));
 $('#plain-copy').addEventListener('click',()=>copyText(currentBaseline().steps[plainStage-1].fullPrompt,$('#plain-prompt'),$('#plain-copy-status')));
-initDice3D();if(typeof initDiceSound==='function')initDiceSound();buildMatrix();render();selectView(view);warmReports();
+initDice3D();if(typeof initDiceSound==='function')initDiceSound();buildMatrix();render();selectView(view);delete document.documentElement.dataset.boot;warmReports();
 
 // Authored demo: a cursor runs the story once on the real controls. Every state it reaches is the
 // real page state, so any visitor input takes over at once from exactly what is on screen.

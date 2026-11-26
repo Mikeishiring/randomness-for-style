@@ -1000,4 +1000,4 @@ function changePlainAttempt(delta){const next=plainStage+delta;if(currentBaselin
 $('#plain-attempt-prev').addEventListener('click',()=>changePlainAttempt(-1));
 $('#plain-attempt-next').addEventListener('click',()=>changePlainAttempt(1));
 $('#plain-copy').addEventListener('click',()=>copyText(currentBaseline().steps[plainStage-1].fullPrompt,$('#plain-prompt'),$('#plain-copy-status')));
-initDice3D();if(typeof initDiceSound==='function')initDiceSound();buildMatrix();render();selectView(view);warmReports();
+initDice3D();if(typeof initDiceSound==='function')initDiceSound();buildMatrix();render();selectView(view);delete document.documentElement.dataset.boot;warmReports();
