@@ -259,6 +259,7 @@ body{font-family:var(--sans);overflow-x:clip}
 .matrix-select[aria-pressed=true]{background:#ece8dd}
 .matrix-select[aria-pressed=true]>span:first-child:before{content:'✓';color:var(--accent);margin-right:8px}
 .brief{margin-top:16px}.brief-body{max-width:740px;padding-bottom:18px}.brief-body>p{font-size:13px;line-height:1.6;margin:6px 0 16px}
+.repeat{margin:18px 0 6px}.repeat h3{font:600 13px var(--sans);margin:0 0 6px}.repeat ol{margin:0 0 4px;padding-left:18px;font-size:13px;line-height:1.6}
 .export-actions{display:flex;gap:24px;flex-wrap:wrap}.brief-body [role=status]:empty{display:none}
 .method-options{max-width:320px;margin:18px 0}.method-options .method-note{margin-bottom:0}
 .method-switch{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border:1px solid #cbd0c1;border-radius:6px;margin-bottom:10px;overflow:hidden}
@@ -533,7 +534,9 @@ html[data-passes=false] :is(#experiment-next,#refinement-rail,#keep){display:non
 .prompt-phrase{display:inline-block}
 /* The waiting die's face is named in its gap until that die is thrown. A word a throw adds drops in when the die lands. */
 .prompt-gap.prompt-held{width:auto;height:auto;margin:0 .1em;padding:.02em .5em;vertical-align:baseline;color:var(--muted);white-space:nowrap}
-.prompt-line b[data-fill],.prompt-line .prompt-held[data-fill]{animation:gap-fill 460ms cubic-bezier(.23,1,.32,1) var(--fill-delay,260ms) backwards}
+.prompt-line b[data-fill]{animation:gap-fill 460ms cubic-bezier(.23,1,.32,1) var(--fill-delay,260ms) backwards}
+.prompt-line .prompt-held[data-fill]{animation:held-arrive 580ms cubic-bezier(.23,1,.32,1) var(--held-delay,var(--fill-delay,260ms)) backwards}
+@keyframes held-arrive{0%{opacity:0;transform:translateY(-8px) scale(.9);box-shadow:0 0 0 0 #c2432a00}46%{opacity:1;transform:translateY(0) scale(1.035);box-shadow:0 0 0 0 #c2432a5c}100%{opacity:1;transform:none;box-shadow:0 0 0 9px #c2432a00}}
 .prompt-line b[data-fill]~b[data-fill]{animation-delay:var(--fill-delay,260ms)}
 @media(prefers-reduced-motion:reduce){.prompt-line .prompt-held[data-fill]{animation:none!important}}
 /* Before and After sit above the page, clear of both reports' headings. */
@@ -580,6 +583,7 @@ html[data-passes=true] .found-map{display:none}
 /* On narrow screens the tokens in the headline name the dice, so the small dice carry no second label. */
 @media(max-width:860px){html:not([data-journey=original]) .die>strong{display:none}}
 /* One short account of the experiment sits under the count of what has been found. */
+.atlas:has(>.atlas-body[hidden]){margin:0;padding:0}
 .atlas-about{max-width:640px;margin:2px 2px 10px;font:15px/1.55 var(--sans);color:#4c554c}
 /* The before handle is a solid ink grip, plain against the paper and against any page. Once both dice are in it
    leans into the page now and then, until it has been pulled once. */
