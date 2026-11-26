@@ -112,14 +112,28 @@ function showStory(){
 // The two throws that add an ingredient always land on the page, where what they change can be seen.
 const DICE_THROW={first:{direction:1,strength:.5},second:{direction:-1,strength:.25},enter:[{direction:1,strength:.8},{direction:-1,strength:.8}],exit:[{direction:-1,strength:.55},{direction:1,strength:.55}]};
 const LABEL_LAND={roll:250,enter:330};
-// The second die comes in beside the page as the first one changes it.
-const SECOND_DIE_WAIT=250;
+// The second die comes in beside the page as the red wipe crosses it, then sets down onto its coaster.
+const SECOND_DIE_WAIT=250,SECOND_DIE_STAGGER=180;
+let secondDieWait=SECOND_DIE_WAIT,dieCallAnimation=null;
 // The invitation to throw again waits until the second throw's page has landed and its die is home.
 const AGAIN_WAIT=2600;
 // When a thrown die first lands, in milliseconds from now; null when nothing is in the air.
 function dieLandsIn(i){return typeof dieLandingMs==='function'?dieLandingMs(i):null;}
 // The word a throw adds to the sentence arrives when its die lands, not before.
 function holdPromptFill(ms){$('#prompt-line').style?.setProperty?.('--fill-delay',Math.round(ms??260)+'ms');}
+// Sync the second die's arrival, the dashed recipe pill pulse, and the "Now throw me" tag to the first throw's strike.
+function syncSecondDieEntrance(landing){
+ secondDieWait=Math.round((landing??SECOND_DIE_WAIT)+SECOND_DIE_STAGGER);
+ $('#prompt-line').style?.setProperty?.('--held-delay',Math.round(secondDieWait+320)+'ms');
+ if(view==='dice'&&secondWaits){
+  moveDice(true,[1],secondDieWait);
+  const chip=$('#die-call');
+  if(chip&&!chip.hidden&&chip.dataset.for==='1'&&chip.animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+   dieCallAnimation?.cancel();
+   dieCallAnimation=chip.animate([{opacity:0},{opacity:1}],{duration:260,delay:secondDieWait+540,easing:'ease-out',fill:'backwards'});
+  }
+ }
+}
 let diceStageAnimations=[];
 const labelAnimations=new Map();
 function landLabels(indices,delay){
@@ -144,7 +158,39 @@ function moveDice(entering,which=[0,1],wait=0){
   moved=true;
   const away=i?Math.max(180,innerWidth-rect.left+24):-Math.max(180,rect.right+24);
   if(entering){
-   diceStageAnimations.push(object.animate([{transform:`translateX(${away}px)`},{transform:'translateX(0)'}],{duration:560,delay:(which.length>1?i*50:0)+wait,easing:'cubic-bezier(.2,.8,.25,1)',fill:'backwards'}));
+   const delay=(which.length>1?i*50:0)+wait;
+   if(which.length===1&&i===1){
+    // Glide in from the right slightly aloft, then set down onto the felt coaster with a gentle tilt and cushion dip.
+    diceStageAnimations.push(object.animate([
+     {transform:`translate3d(${away}px,-16px,0)`,opacity:0},
+     {transform:`translate3d(${Math.round(away*.26)}px,-14px,0)`,opacity:1,offset:.28,easing:'cubic-bezier(.22,.85,.3,1)'},
+     {transform:'translate3d(-5px,0,0)',opacity:1,offset:.76,easing:'cubic-bezier(.25,.9,.35,1)'},
+     {transform:'translate3d(0,0,0)',opacity:1}
+    ],{duration:620,delay,easing:'cubic-bezier(.2,.85,.25,1)',fill:'backwards'}));
+    const grip=die.querySelector('.die-grip'),shadow=die.querySelector('.die-shadow'),ground=die.querySelector('.die-ground');
+    if(grip?.animate)diceStageAnimations.push(grip.animate([
+     {transform:'translate3d(0,-20px,0) rotateZ(-9deg) scale(1.04)'},
+     {transform:'translate3d(0,-12px,0) rotateZ(-5deg) scale(1.02)',offset:.42,easing:'cubic-bezier(.4,0,.7,1)'},
+     {transform:'translate3d(0,3px,0) rotateZ(2.6deg) scale(.985)',offset:.74,easing:'cubic-bezier(.2,.8,.3,1)'},
+     {transform:'translate3d(0,-4px,0) rotateZ(-1.1deg) scale(1.005)',offset:.88,easing:'ease-out'},
+     {transform:'none'}
+    ],{duration:640,delay,fill:'backwards'}));
+    if(shadow?.animate)diceStageAnimations.push(shadow.animate([
+     {scale:'.72',opacity:'.45'},
+     {scale:'.8',opacity:'.62',offset:.42},
+     {scale:'1.05',opacity:'1',offset:.74},
+     {scale:'.94',opacity:'.86',offset:.88},
+     {scale:'1',opacity:'1'}
+    ],{duration:640,delay,fill:'backwards'}));
+    if(ground?.animate)diceStageAnimations.push(ground.animate([
+     {scale:'.92',opacity:'.4'},
+     {scale:'1',opacity:'1',offset:.45},
+     {scale:'.965 .94',opacity:'1',offset:.76},
+     {scale:'1',opacity:'1'}
+    ],{duration:640,delay,fill:'backwards'}));
+   }else{
+    diceStageAnimations.push(object.animate([{transform:`translateX(${away}px)`},{transform:'translateX(0)'}],{duration:560,delay,easing:'cubic-bezier(.2,.8,.25,1)',fill:'backwards'}));
+   }
   }else{
    const exit=object.animate([{transform:'translateX(0)'},{transform:`translateX(${away}px)`}],{duration:460,delay:i*40,easing:'cubic-bezier(.55,0,.75,.2)',fill:'forwards'});
    diceStageAnimations.push(exit,label.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease-in',fill:'forwards'}));
@@ -195,8 +241,8 @@ function updateDieCall(){
  // The whole tag stays on screen.
  x=Math.max(8-box.left,Math.min(x,innerWidth-box.left-own.width-8));y=Math.max(8-box.top,y);
  chip.style.left=Math.round(x)+'px';chip.style.top=Math.round(y)+'px';
- // The tag reaches the second die once that die has slid into place.
- if(moved&&(index===1||again)&&chip.animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)chip.animate([{opacity:0},{opacity:1}],{duration:260,delay:again?AGAIN_WAIT:SECOND_DIE_WAIT+520,easing:'ease-out',fill:'backwards'});
+ // The tag reaches the second die once that die has set down into place.
+ if(moved&&(index===1||again)&&chip.animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches){dieCallAnimation?.cancel();dieCallAnimation=chip.animate([{opacity:0},{opacity:1}],{duration:260,delay:again?AGAIN_WAIT:secondDieWait+540,easing:'ease-out',fill:'backwards'});}
 }
 // The label arrives in the order the eye should travel: a dot lands on the target, the leader draws out
 // from it, then the card settles at the end of the line. It waits for the change it follows to finish.
@@ -772,7 +818,7 @@ function dropDie(index,value,release={}){
  tumbleDice([index],values,()=>{syncDice3D();},{...release,drop:true,guided:true},impact);
  // The second die is not thrown on the first roll: it arrives at rest, unnamed.
  if(introducing)syncDice3D();
- {const landing=dieLandsIn(index);holdPromptFill(landing);landLabels([index],landing??LABEL_LAND.roll);}
+ {const landing=dieLandsIn(index);holdPromptFill(landing);landLabels([index],landing??LABEL_LAND.roll);if(introducing)syncSecondDieEntrance(landing);}
  awaitReady(!introducing);
  quietRefine();
 }
@@ -885,7 +931,7 @@ function roll(index,gesture=null,forced=null){
  // The second die is not thrown on the first roll: it arrives at rest, unnamed.
  if(introduce)syncDice3D();
  // The name under the die and the word in the sentence arrive when the die lands, not before it.
- {const landing=dieLandsIn(indices[0]);holdPromptFill(landing);landLabels(indices,landing??LABEL_LAND.roll);}
+ {const landing=dieLandsIn(indices[0]);holdPromptFill(landing);landLabels(indices,landing??LABEL_LAND.roll);if(introduce)syncSecondDieEntrance(landing);}
  // The first result is left alone to be looked at; anything a visitor does after it brings the controls at once.
  awaitReady(!introduce||forced!=null);
  quietRefine();

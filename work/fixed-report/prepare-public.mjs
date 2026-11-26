@@ -10,7 +10,9 @@ const script=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)][0][1];
 const payload=script.slice(0,script.indexOf('// All six ingredients'));
 const context=vm.createContext({});
 vm.runInContext(payload+';globalThis.experiment={EXPERIMENT,BASELINE,STRONGER_EXPERIMENT,STRONGER_BASELINE,NEWER_EXPERIMENT,NEWER_BASELINE};',context);
-const publicText=html+'\n'+JSON.stringify(context.experiment);
+// The author's framing in About the experiment uses two phrases on purpose: "Mike slop", and "(Claude, Codex)" as everyone's
+// shared colleague, not as the makers of these pages. Any other name or model mention still stops publication.
+const publicText=(html+'\n'+JSON.stringify(context.experiment)).replaceAll('Mike slop','').replaceAll('(Claude, Codex)','');
 const identifyingPatterns=[
  /\b(?:micha(?:el)?|mike|williamson)\b|mikeishiring|michaelwilliamsonthe/i,
  /file:\/\/\/|[A-Z]:[\\/](?:Users|home)|\.codex[\\/]|Documents[\\/]Codex/i,

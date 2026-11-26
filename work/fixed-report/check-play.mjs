@@ -197,7 +197,7 @@ for(let pass=1;pass<=4;pass++){
 }
 await nodes.get('#copy-refinement').click();assert.equal(copies.at(-1),newer.baseline.protocol.refinementPrompt);
 nodes.get('#plain-method').events.change({target:{value:'stronger'}});
-assert.ok(!/Astra|Codex|Download HTML|Download experiment|Generation setup|generation-wrapper/.test(read('play.html')));
+assert.ok(!/Astra|Codex|Download HTML|Download experiment|Generation setup|generation-wrapper/.test(read('play.html').replaceAll('(Claude, Codex)','')));
 console.log('PASS: all three recorded tracks and baselines, independent dice, all 432 ingredient stage views, exact prompts and share links, shared prompt-track one-shots, the newer model beside the earlier one, stable comparison order and stage retention. '+(completedStronger?'All saved stronger outputs checked.':'Stronger fixtures used while generation is pending.')+' '+(completedNewer?'All saved newer-model outputs checked.':'Newer-model fixtures used while generation is pending.'));
 
 // The shareable home entry begins with the real, unmodified plain one-shot.
