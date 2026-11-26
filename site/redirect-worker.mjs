@@ -5,7 +5,7 @@ export default {
     return new Response(null, {
       status: 308,
       headers: {
-        Location: 'https://randomness-for-style.vercel.app/',
+        Location: 'https://mikeishiring.com/blog/randomness-for-style/',
         'Cache-Control': 'public, max-age=300',
       },
     });

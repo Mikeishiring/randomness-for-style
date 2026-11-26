@@ -2,7 +2,7 @@
 
 A playable experiment in how randomness can help you avoid AI slop—the familiar patterns we recognize in AI-generated design. Combine two unexpected ingredients, then refine the result while keeping the brief fixed.
 
-[Try the live site](https://randomness-for-style.vercel.app/)
+[Try the live site](https://mikeishiring.com/blog/randomness-for-style/)
 
 ## Why this exists
 
@@ -95,5 +95,7 @@ The protocol files document the generation method and its limitations. To repeat
 `npm test` checks report and prompt integrity, all 36 combinations and their stages, dice geometry, gestures, the guided path, disclosures and bundled JavaScript. `npm run check:security` scans tracked or staged files for credential patterns, local paths and forbidden account/configuration files. CI runs a checksum-pinned Gitleaks scan across the repository history, rebuilds the public files and checks for differences.
 
 Vercel's GitHub connection deploys from the repository root: the root `vercel.json` serves the committed `site/dist` without a build command, so every branch gets a preview and a push to the project's production branch publishes `site/dist` as it is committed. Deploying `site` as the project root works the same way through `site/vercel.json`.
+
+The page's public home is `https://mikeishiring.com/blog/randomness-for-style/`, a copy of `site/dist` hosted there with its links re-addressed. Both `vercel.json` files redirect every address on the Vercel project to the same path under that home, so older links keep working; the Vercel deployment is still what a branch preview builds. After a change merges here, refresh the hosted copy for it to go live.
 
 Local credentials, service account state, working notes and deployment logs are excluded from version control. Some untouched generated reports overflow their own frames on small screens; the viewer adapts to mobile widths.
