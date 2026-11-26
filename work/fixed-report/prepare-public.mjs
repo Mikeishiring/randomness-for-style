@@ -6,10 +6,10 @@ const root=new URL('../../',import.meta.url);
 const source=readFileSync(new URL('outputs/index.html',root),'utf8');
 // The public page is the complete current experiment, with no links to earlier studies.
 const html=source;
-const script=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)][0][1];
+const [script,reportsScript]=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(match=>match[1]);
 const payload=script.slice(0,script.indexOf('// All six ingredients'));
 const context=vm.createContext({});
-vm.runInContext(payload+';globalThis.experiment={EXPERIMENT,BASELINE,STRONGER_EXPERIMENT,STRONGER_BASELINE,NEWER_EXPERIMENT,NEWER_BASELINE};',context);
+vm.runInContext(payload+';'+reportsScript+';globalThis.experiment={EXPERIMENT,BASELINE,STRONGER_EXPERIMENT,STRONGER_BASELINE,NEWER_EXPERIMENT,NEWER_BASELINE};',context);
 // The author's framing in About the experiment uses two phrases on purpose: "Mike slop", and "(Claude, Codex)" as everyone's
 // shared colleague, not as the makers of these pages. Any other name or model mention still stops publication.
 const publicText=(html+'\n'+JSON.stringify(context.experiment)).replaceAll('Mike slop','').replaceAll('(Claude, Codex)','');
@@ -30,7 +30,7 @@ assert.equal(context.experiment.NEWER_EXPERIMENT.runs.length,36);
 assert.ok(context.experiment.NEWER_EXPERIMENT.runs.every(run=>run.steps.length===4));
 assert.equal(context.experiment.NEWER_BASELINE.steps.length,4);
 assert.ok(html.includes('<title>Randomness for Style</title>'));
-new vm.Script(script);
+new vm.Script(script);new vm.Script(reportsScript);
 mkdirSync(new URL('site/dist/',root),{recursive:true});
 writeFileSync(new URL('site/dist/index.html',root),html);
 // The picture a shared link shows: a capture of the page itself, kept beside its source.

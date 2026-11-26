@@ -96,7 +96,7 @@ const storyBeats=[
  ['And again.','More distinct, or just more?']
 ];
 function storyFor(value){
- if(value>1&&selected.steps[value-1].html===selected.steps[value-2].html)return ['No change this pass.','The same prompt ran again; the model kept the last result.'];
+ if(value>1&&sameReport(selected.steps[value-1],selected.steps[value-2]))return ['No change this pass.','The same prompt ran again; the model kept the last result.'];
  return storyBeats[value];
 }
 function showStory(){
@@ -293,7 +293,7 @@ function promptLineState(){
  // On the plain page the sentence is already there, with its two gaps: each die fills one.
  if(introMode)return {pending:true};
  const pushes=passes?stage-1:0;
- return {a:INGREDIENTS_A[a],b:secondWaits?null:INGREDIENTS_B[b],held:secondWaits?INGREDIENTS_B[b]:null,changed:lastEvent?.kind==='swap'||lastEvent?.kind==='choose'?lastEvent.index:null,pushes,same:pushes>0&&selected.steps[stage-1].html===selected.steps[stage-2].html,ask:pushes>0?pushAsk():'',fresh:lastEvent?.kind==='pair'?0:lastEvent?.kind==='second'?1:null};
+ return {a:INGREDIENTS_A[a],b:secondWaits?null:INGREDIENTS_B[b],held:secondWaits?INGREDIENTS_B[b]:null,changed:lastEvent?.kind==='swap'||lastEvent?.kind==='choose'?lastEvent.index:null,pushes,same:pushes>0&&sameReport(selected.steps[stage-1],selected.steps[stage-2]),ask:pushes>0?pushAsk():'',fresh:lastEvent?.kind==='pair'?0:lastEvent?.kind==='second'?1:null};
 }
 let promptLineKey='';
 function renderPromptLine(){
@@ -494,10 +494,14 @@ function holdReportHeight(container,previous,frame){
  container.style.minHeight=height;clearTimeout(heldHeights.get(container));heldHeights.set(container,setTimeout(()=>releaseReportHeight(container),1500));
 }
 function releaseReportHeight(container){if(!heldHeights.has(container))return;clearTimeout(heldHeights.get(container));heldHeights.delete(container);container.style.minHeight='';}
+// A pair's report may not have arrived yet (report-store.js); the frame fills in once it has, and the
+// page it replaces stays until then, as it does while any new report loads.
+function withReport(item,use){if(typeof item.html==='string'||typeof reportWaiters==='undefined')use(item.html);else reportWaiters.push(()=>use(item.html));}
+function sameReport(x,y){return typeof x?.html==='string'&&x.html===y?.html;}
 function addReport(container,item,label){
  const section=document.createElement('section');section.className='frame-section';
  if(label){const title=document.createElement('h3');title.textContent=label;section.append(title);}
- const frame=document.createElement('iframe');frame.title=label||selected.label;frame.className='report-frame';frame.setAttribute('sandbox','allow-scripts');frame.addEventListener('load',()=>frame.dataset.loaded='true');frame.srcdoc=item.html+REPORT_SCROLL_BRIDGE;
+ const frame=document.createElement('iframe');frame.title=label||selected.label;frame.className='report-frame';frame.setAttribute('sandbox','allow-scripts');frame.addEventListener('load',()=>frame.dataset.loaded='true');withReport(item,html=>{frame.srcdoc=html+REPORT_SCROLL_BRIDGE;});
  section.append(frame);container.append(section);reportFrameWidths?.observe(frame);
  return section;
 }
@@ -675,6 +679,9 @@ function renderRail(){
  updateActionText($('#next-label'),label,animate);updateActionText($('#next-cue'),cue,animate);
  showStory();syncRailMarker(animate);paintedStep=value;
 }
+function renderCritique(current=introMode?plainItem():selected.steps[stage-1]){$('#current-critique').textContent=current.critique||'';$('#critique').hidden=!current.critique;}
+// A pass's critique travels with its report; once they arrive, the one on screen is filled in.
+if(typeof reportWaiters!=='undefined')reportWaiters.push(()=>renderCritique());
 function renderResult(){
  quietBeforeAfterHint();stopBeforeAfterTween();releaseBeforeSection();
  const container=$('#report-view');container.classList.toggle('comparing',comparing);
@@ -707,7 +714,7 @@ function renderResult(){
  showPrompt($('#current-prompt'),current.prompt,!introMode&&stage===1?`Combine ${INGREDIENTS_A[a]} and ${INGREDIENTS_B[b]} into a distinct visual identity.`:'');
  $('#prompt-title').textContent=introMode?'Prompt, no ingredients':stage===1?'One-shot prompt':'Refinement prompt';
  $('#copy-prompt').textContent=stage===1?'Copy with data':'Copy prompt';
- $('#current-critique').textContent=current.critique||'';$('#critique').hidden=!current.critique;
+ renderCritique(current);
  $('#copy-status').textContent='';$('#share-status').textContent='';
  $('#refinement-prompt').textContent=currentExperiment().refinementPrompt;
 }
@@ -765,7 +772,7 @@ function syncMatrix(){
  matrixCells.forEach((cell,id)=>{
   cell.hidden=Number(id.split('-')[0])!==a;if(cell.hidden)return;
   const run=currentExperiment().runs.find(run=>run.id===id),item=run.steps[(passes?stage:shownStage(run))-1],frame=cell.querySelector('iframe');
-  if(frame.dataset.file!==item.file){frame.srcdoc=item.html;frame.dataset.file=item.file;}
+  if(frame.dataset.file!==item.file){frame.dataset.file=item.file;withReport(item,html=>{if(frame.dataset.file===item.file)frame.srcdoc=html;});}
  });
 }
 function render(sync=true){
@@ -878,7 +885,7 @@ function renderKeep(){
   for(const version of keepVersions()){
    const button=document.createElement('button'),thumb=document.createElement('span'),frame=document.createElement('iframe'),name=document.createElement('span');
    button.type='button';button.className='keep-version';button.dataset.stage=String(version.stage);
-   thumb.className='keep-thumb';frame.title=version.label;frame.setAttribute('sandbox','allow-scripts');frame.setAttribute('aria-hidden','true');frame.tabIndex=-1;frame.loading='lazy';frame.srcdoc=version.item.html;
+   thumb.className='keep-thumb';frame.title=version.label;frame.setAttribute('sandbox','allow-scripts');frame.setAttribute('aria-hidden','true');frame.tabIndex=-1;frame.loading='lazy';withReport(version.item,html=>{frame.srcdoc=html;});
    name.className='keep-name';name.textContent=version.label;
    thumb.append(frame);button.append(thumb,name);list.append(button);thumbnailObserver.observe?.(thumb);
    button.addEventListener('click',()=>chooseKept(version.stage));

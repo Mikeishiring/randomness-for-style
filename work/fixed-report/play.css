@@ -607,5 +607,8 @@ html[data-passes=false] #compare{display:none}
    never runs, it shows after 20 seconds instead of staying blank. */
 html[data-boot] .shell{visibility:hidden;animation:boot-reveal 0s 20s forwards}
 @keyframes boot-reveal{to{visibility:visible}}
+/* On a phone the report runs almost to the screen's edge, so a knob centred on that edge was cut off.
+   It stays a hand's width inside the report at either end; the wipe itself still reaches the edge. */
+@media(max-width:560px){.ba-knob{left:clamp(14px,calc(var(--ba)*100%),calc(100% - 14px))}}
 /* On narrow screens the dice stay big enough to hold once they have been thrown. */
 @media(max-width:860px){html:not([data-journey=original]) .die-object{--size:54px;height:84px}}
