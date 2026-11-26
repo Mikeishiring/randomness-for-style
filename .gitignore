@@ -49,6 +49,7 @@
 !/work/fixed-report/dice-interaction.js
 !/work/fixed-report/prompt-peek.js
 !/work/fixed-report/report-handoff.js
+!/work/fixed-report/report-store.js
 !/work/fixed-report/check-built.mjs
 !/work/fixed-report/check-play.mjs
 !/work/fixed-report/check-dice.mjs
