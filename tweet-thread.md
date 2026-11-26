@@ -1,6 +1,6 @@
 # Tweet thread drafts — Randomness for Style
 
-Drafts only, nothing posted. Live demo: https://randomness-for-style.vercel.app/
+Drafts only, nothing posted. Live demo: https://mikeishiring.com/blog/randomness-for-style/
 Useful deep links: `?pair=0-2` Cthulhu × Fast food · `?pair=3-1` Bureaucracy × Disco · `?pair=4-3` Motorsport × Opera · `?model=newer` shows the newer-model rerun · `&stage=4` jumps to the third refinement.
 
 ---
@@ -19,7 +19,7 @@ Useful deep links: `?pair=0-2` Cthulhu × Fast food · `?pair=3-1` Bureaucracy �
 
 6. Then the same harsh critique prompt, three times in a row: commit harder to both ingredients, keep the report readable. Every attempt is saved, including the passes where it looked at its own page and changed nothing. All the prompts are inspectable.
 
-   https://randomness-for-style.vercel.app/
+   https://mikeishiring.com/blog/randomness-for-style/
 
 7. The dice are wildly overbuilt. Pick one up, carry it, throw it at the page: it bounces, hits the edge, and the new design wipes in from where it struck. Real physics, re-run out of sight until it lands on the face it already picked.
 
@@ -27,7 +27,7 @@ Useful deep links: `?pair=0-2` Cthulhu × Fast food · `?pair=3-1` Bureaucracy �
 
 9. Also on the page: the whole experiment rerun on a model one generation newer, identical prompts, dice and all. Flip between generations and judge for yourself whether taste converged.
 
-   https://randomness-for-style.vercel.app/?model=newer
+   https://mikeishiring.com/blog/randomness-for-style/?model=newer
 
 ---
 
@@ -35,7 +35,7 @@ Useful deep links: `?pair=0-2` Cthulhu × Fast food · `?pair=3-1` Bureaucracy �
 
 1. I built a slot machine for taste. Two dice you can actually throw: pick one up, flick it at a weekly report, and the page redesigns itself from where the die hit. Cthulhu × Fast food. Bureaucracy × Disco. 36 combinations.
 
-   https://randomness-for-style.vercel.app/
+   https://mikeishiring.com/blog/randomness-for-style/
 
 2. The control group is the same report with no dice: tidy, sensible, forgettable. Everyone who asks a model for a report gets roughly this page, because the model is applying its own definition of good. That sameness is what people call AI slop.
 
@@ -47,7 +47,7 @@ Useful deep links: `?pair=0-2` Cthulhu × Fast food · `?pair=3-1` Bureaucracy �
 
 6. The general point: what the model knows about you is poison or antidote. Context can pull the work toward you, or lock you into your own rut. Randomness is the cheap way out of the rut. The model is already non-deterministic; add some randomness of your own.
 
-7. Also on the page: the identical experiment rerun on a model one generation newer, so you can check whether the newer model's taste converged or diverged. https://randomness-for-style.vercel.app/?model=newer
+7. Also on the page: the identical experiment rerun on a model one generation newer, so you can check whether the newer model's taste converged or diverged. https://mikeishiring.com/blog/randomness-for-style/?model=newer
 
 ---
 
@@ -55,7 +55,7 @@ Useful deep links: `?pair=0-2` Cthulhu × Fast food · `?pair=3-1` Bureaucracy �
 
 1. Ask a model for a report, get The Report. Everyone does. That sameness is AI slop: the model's stock template showing through everyone's work.
 
-2. So I throw dice at it, literally. Each roll adds one sentence to the prompt, "Combine Cthulhu and Fast food into a distinct visual identity," then three rounds of "critique harshly, commit harder." All 36 combinations saved: https://randomness-for-style.vercel.app/
+2. So I throw dice at it, literally. Each roll adds one sentence to the prompt, "Combine Cthulhu and Fast food into a distinct visual identity," then three rounds of "critique harshly, commit harder." All 36 combinations saved: https://mikeishiring.com/blog/randomness-for-style/
 
 3. If I'm going to ship slop, it's going to be my own slop.
 

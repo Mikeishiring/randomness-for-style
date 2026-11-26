@@ -2,5 +2,12 @@
   "framework": null,
   "buildCommand": "",
   "installCommand": "",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "destination": "https://mikeishiring.com/blog/randomness-for-style/:path*",
+      "permanent": true
+    }
+  ]
 }
