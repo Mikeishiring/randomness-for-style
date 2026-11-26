@@ -298,6 +298,7 @@ body{font-family:var(--sans);overflow-x:clip}
 .matrix-select[aria-pressed=true]{background:#ece8dd}
 .matrix-select[aria-pressed=true]>span:first-child:before{content:'✓';color:var(--accent);margin-right:8px}
 .brief{margin-top:16px}.brief-body{max-width:740px;padding-bottom:18px}.brief-body>p{font-size:13px;line-height:1.6;margin:6px 0 16px}
+.repeat{margin:18px 0 6px}.repeat h3{font:600 13px var(--sans);margin:0 0 6px}.repeat ol{margin:0 0 4px;padding-left:18px;font-size:13px;line-height:1.6}
 .export-actions{display:flex;gap:24px;flex-wrap:wrap}.brief-body [role=status]:empty{display:none}
 .method-options{max-width:320px;margin:18px 0}.method-options .method-note{margin-bottom:0}
 .method-switch{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border:1px solid #cbd0c1;border-radius:6px;margin-bottom:10px;overflow:hidden}
@@ -572,7 +573,9 @@ html[data-passes=false] :is(#experiment-next,#refinement-rail,#keep){display:non
 .prompt-phrase{display:inline-block}
 /* The waiting die's face is named in its gap until that die is thrown. A word a throw adds drops in when the die lands. */
 .prompt-gap.prompt-held{width:auto;height:auto;margin:0 .1em;padding:.02em .5em;vertical-align:baseline;color:var(--muted);white-space:nowrap}
-.prompt-line b[data-fill],.prompt-line .prompt-held[data-fill]{animation:gap-fill 460ms cubic-bezier(.23,1,.32,1) var(--fill-delay,260ms) backwards}
+.prompt-line b[data-fill]{animation:gap-fill 460ms cubic-bezier(.23,1,.32,1) var(--fill-delay,260ms) backwards}
+.prompt-line .prompt-held[data-fill]{animation:held-arrive 580ms cubic-bezier(.23,1,.32,1) var(--held-delay,var(--fill-delay,260ms)) backwards}
+@keyframes held-arrive{0%{opacity:0;transform:translateY(-8px) scale(.9);box-shadow:0 0 0 0 #c2432a00}46%{opacity:1;transform:translateY(0) scale(1.035);box-shadow:0 0 0 0 #c2432a5c}100%{opacity:1;transform:none;box-shadow:0 0 0 9px #c2432a00}}
 .prompt-line b[data-fill]~b[data-fill]{animation-delay:var(--fill-delay,260ms)}
 @media(prefers-reduced-motion:reduce){.prompt-line .prompt-held[data-fill]{animation:none!important}}
 /* Before and After sit above the page, clear of both reports' headings. */
@@ -619,6 +622,7 @@ html[data-passes=true] .found-map{display:none}
 /* On narrow screens the tokens in the headline name the dice, so the small dice carry no second label. */
 @media(max-width:860px){html:not([data-journey=original]) .die>strong{display:none}}
 /* One short account of the experiment sits under the count of what has been found. */
+.atlas:has(>.atlas-body[hidden]){margin:0;padding:0}
 .atlas-about{max-width:640px;margin:2px 2px 10px;font:15px/1.55 var(--sans);color:#4c554c}
 /* The before handle is a solid ink grip, plain against the paper and against any page. Once both dice are in it
    leans into the page now and then, until it has been pulled once. */
@@ -691,9 +695,9 @@ html[data-boot] .shell{visibility:hidden;animation:boot-reveal 0s 20s forwards}
    </section>
    <section id="plain-lab" class="result" aria-labelledby="plain-title" hidden><h2 id="plain-title" class="sr-only" tabindex="-1">Without ingredients</h2><div id="plain-report"></div></section>
   </div>
-  <section id="atlas" class="atlas" aria-labelledby="atlas-title"><h2 class="atlas-heading"><button type="button" id="atlas-toggle" class="atlas-toggle" aria-expanded="false" aria-controls="atlas-body"><span id="atlas-title">36 combinations</span><span class="atlas-chevron" aria-hidden="true"></span></button></h2><p class="atlas-about">AI design has a look, and most of us can now spot it. So one report was made 36 times, each with two ingredients nobody would pair on purpose. The numbers never change. Only the dice do.</p><div id="atlas-body" class="atlas-body" hidden><header><select id="atlas-ingredient" aria-label="Browse pairings for the first ingredient"></select></header><div id="matrix" class="matrix" role="group" aria-label="Choose one of 36 ingredient combinations"></div></div></section>
-  <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>The brief never changes: one weekly report, the same numbers. After the dice, the model is told three times to criticise its page and try again. The page you see is the try worth keeping, and it is rarely the last. Show every pass brings back the rest.</p><p>Nothing is generated live. Every page was saved from a real run, and every run used two ingredients. So after your first throw the page already borrows the face the second die is showing, named in the dashed gap. The stronger prompt starts over from the same first draft. The newer model repeats the whole thing a generation later. More passes do not always make a better page.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Recorded run"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button><button type="button" id="method-newer" aria-pressed="false">Newer model</button></div>
-    <p id="method-note" class="method-note">Both start from this one-shot.</p></div><select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">No ingredients</option><option value="other" id="compare-other">Original prompt</option></select><div class="export-actions"><button id="passes-toggle" type="button" class="text-button" aria-pressed="false">Show every pass</button><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Refine brief alone →</button><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
+  <section id="atlas" class="atlas" aria-label="All 36 pairs"><div id="atlas-body" class="atlas-body" hidden><header><select id="atlas-ingredient" aria-label="Browse pairings for the first ingredient"></select></header><div id="matrix" class="matrix" role="group" aria-label="Choose one of 36 ingredient combinations"></div></div></section>
+  <details class="brief" id="brief"><summary>About the experiment</summary><div class="brief-body"><p>A lot of what we call AI slop is just repetition, aka pattern recognition. We’re all working with the same colleagues (Claude, Codex). We’re seeing more work, and more of the same work. My colleagues wouldn’t call my work Mike slop unless it was absolutely everywhere and they were seeing the lower-effort end of it. A way around this is randomness: not always better, but definitely different. This is my approach, and this experiment is my attempt to prove it. Models will change, and so will their weights and how much randomness shows from one piece of work to the next. Adding more randomness will always scale, though, again, not always for the better.</p><p>The brief never changes: one weekly report, the same numbers. After the dice, the model is told three times to criticise its page and try again. The page you see is the try worth keeping, and it is rarely the last. Show every pass brings back the rest.</p><p>Nothing is generated live. Every page was saved from a real run, and every run used two ingredients. So after your first throw the page already borrows the face the second die is showing, named in the dashed gap. The stronger prompt starts over from the same first draft. The newer model repeats the whole thing a generation later. More passes do not always make a better page.</p><div class="method-options"><div class="method-switch" role="group" aria-label="Recorded run"><button type="button" id="method-original" aria-pressed="false">Original prompt</button><button type="button" id="method-stronger" aria-pressed="true">Stronger prompt</button><button type="button" id="method-newer" aria-pressed="false">Newer model</button></div>
+    <p id="method-note" class="method-note">Both start from this one-shot.</p></div><section class="repeat" aria-labelledby="repeat-title"><h3 id="repeat-title">Repeat it</h3><ol><li>Copy a prompt: this page's from Prompt ↗, or the brief alone with Copy brief + data.</li><li>Paste it into a new chat with no design skills or references. Keep the first page.</li><li>In the same chat, send the refinement prompt three times, unchanged.</li><li>Save every version. Results will vary.</li></ol></section><select id="compare-target" class="comparison-target" aria-label="Compare against" hidden><option value="plain">No ingredients</option><option value="other" id="compare-other">Original prompt</option></select><div class="export-actions"><button id="passes-toggle" type="button" class="text-button" aria-pressed="false">Show every pass</button><button id="view-plain" type="button" class="text-button" aria-controls="plain-lab">Refine brief alone →</button><button id="copy-plain" type="button" class="text-button">Copy brief + data</button><button id="copy-refinement" type="button" class="text-button">Copy refinement prompt</button><a href="prompt-test.html" class="text-button">The prompt test ↗</a></div><p id="export-status" role="status"></p><pre id="refinement-prompt" hidden></pre></div></details>
  </main>
  <div class="page-footer">
   <div id="experiment-tools" class="experiment-tools">
@@ -1574,6 +1578,17 @@ function diceNoiseBuffer(context){
  if(!diceNoise){diceNoise=context.createBuffer(1,Math.ceil(context.sampleRate*.6),context.sampleRate);const samples=diceNoise.getChannelData(0);for(let i=0;i<samples.length;i++)samples[i]=Math.random()*2-1;}
  return diceNoise;
 }
+// Every voice meets in one output, lifted so short clicks carry on laptop and phone speakers, with a limiter so
+// the loudest landing and the knock on the page never clip.
+let diceMaster=null;
+function diceOutput(context){
+ if(diceMaster?.context===context)return diceMaster.input;
+ const gain=context.createGain(),limiter=context.createDynamicsCompressor();
+ gain.gain.value=2.6;
+ limiter.threshold.value=-6;limiter.knee.value=4;limiter.ratio.value=12;limiter.attack.value=.002;limiter.release.value=.12;
+ gain.connect(limiter);limiter.connect(context.destination);
+ diceMaster={context,input:gain};return gain;
+}
 // A small room: a short, soft tail shared by every voice, so hits sound like they happen on a table
 // in a space rather than inside the speaker.
 let diceRoom=null;
@@ -1581,13 +1596,13 @@ function diceRoomInput(context){
  if(diceRoom?.context===context)return diceRoom.input;
  const convolver=context.createConvolver(),wet=context.createGain(),length=Math.ceil(context.sampleRate*.3),impulse=context.createBuffer(2,length,context.sampleRate);
  for(let channel=0;channel<2;channel++){const samples=impulse.getChannelData(channel);for(let i=0;i<length;i++)samples[i]=(Math.random()*2-1)*(1-i/length)**3.4;}
- convolver.buffer=impulse;wet.gain.value=.13;convolver.connect(wet);wet.connect(context.destination);
+ convolver.buffer=impulse;wet.gain.value=.13;convolver.connect(wet);wet.connect(diceOutput(context));
  diceRoom={context,input:convolver};return convolver;
 }
 // One voice: a set of sources into a shared panner, released together.
 function diceVoice(context,index,pan){
  const panner=context.createStereoPanner(),voice={sources:[],nodes:[panner],out:panner,end:0};
- panner.pan.value=Math.max(-1,Math.min(1,pan));panner.connect(context.destination);panner.connect(diceRoomInput(context));
+ panner.pan.value=Math.max(-1,Math.min(1,pan));panner.connect(diceOutput(context));panner.connect(diceRoomInput(context));
  diceVoices[index].add(voice);return voice;
 }
 function finishVoice(voice,index){
@@ -1992,14 +2007,28 @@ function showStory(){
 // The two throws that add an ingredient always land on the page, where what they change can be seen.
 const DICE_THROW={first:{direction:1,strength:.5},second:{direction:-1,strength:.25},enter:[{direction:1,strength:.8},{direction:-1,strength:.8}],exit:[{direction:-1,strength:.55},{direction:1,strength:.55}]};
 const LABEL_LAND={roll:250,enter:330};
-// The second die comes in beside the page as the first one changes it.
-const SECOND_DIE_WAIT=250;
+// The second die comes in beside the page as the red wipe crosses it, then sets down onto its coaster.
+const SECOND_DIE_WAIT=250,SECOND_DIE_STAGGER=180;
+let secondDieWait=SECOND_DIE_WAIT,dieCallAnimation=null;
 // The invitation to throw again waits until the second throw's page has landed and its die is home.
 const AGAIN_WAIT=2600;
 // When a thrown die first lands, in milliseconds from now; null when nothing is in the air.
 function dieLandsIn(i){return typeof dieLandingMs==='function'?dieLandingMs(i):null;}
 // The word a throw adds to the sentence arrives when its die lands, not before.
 function holdPromptFill(ms){$('#prompt-line').style?.setProperty?.('--fill-delay',Math.round(ms??260)+'ms');}
+// Sync the second die's arrival, the dashed recipe pill pulse, and the "Now throw me" tag to the first throw's strike.
+function syncSecondDieEntrance(landing){
+ secondDieWait=Math.round((landing??SECOND_DIE_WAIT)+SECOND_DIE_STAGGER);
+ $('#prompt-line').style?.setProperty?.('--held-delay',Math.round(secondDieWait+320)+'ms');
+ if(view==='dice'&&secondWaits){
+  moveDice(true,[1],secondDieWait);
+  const chip=$('#die-call');
+  if(chip&&!chip.hidden&&chip.dataset.for==='1'&&chip.animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+   dieCallAnimation?.cancel();
+   dieCallAnimation=chip.animate([{opacity:0},{opacity:1}],{duration:260,delay:secondDieWait+540,easing:'ease-out',fill:'backwards'});
+  }
+ }
+}
 let diceStageAnimations=[];
 const labelAnimations=new Map();
 function landLabels(indices,delay){
@@ -2024,7 +2053,39 @@ function moveDice(entering,which=[0,1],wait=0){
   moved=true;
   const away=i?Math.max(180,innerWidth-rect.left+24):-Math.max(180,rect.right+24);
   if(entering){
-   diceStageAnimations.push(object.animate([{transform:`translateX(${away}px)`},{transform:'translateX(0)'}],{duration:560,delay:(which.length>1?i*50:0)+wait,easing:'cubic-bezier(.2,.8,.25,1)',fill:'backwards'}));
+   const delay=(which.length>1?i*50:0)+wait;
+   if(which.length===1&&i===1){
+    // Glide in from the right slightly aloft, then set down onto the felt coaster with a gentle tilt and cushion dip.
+    diceStageAnimations.push(object.animate([
+     {transform:`translate3d(${away}px,-16px,0)`,opacity:0},
+     {transform:`translate3d(${Math.round(away*.26)}px,-14px,0)`,opacity:1,offset:.28,easing:'cubic-bezier(.22,.85,.3,1)'},
+     {transform:'translate3d(-5px,0,0)',opacity:1,offset:.76,easing:'cubic-bezier(.25,.9,.35,1)'},
+     {transform:'translate3d(0,0,0)',opacity:1}
+    ],{duration:620,delay,easing:'cubic-bezier(.2,.85,.25,1)',fill:'backwards'}));
+    const grip=die.querySelector('.die-grip'),shadow=die.querySelector('.die-shadow'),ground=die.querySelector('.die-ground');
+    if(grip?.animate)diceStageAnimations.push(grip.animate([
+     {transform:'translate3d(0,-20px,0) rotateZ(-9deg) scale(1.04)'},
+     {transform:'translate3d(0,-12px,0) rotateZ(-5deg) scale(1.02)',offset:.42,easing:'cubic-bezier(.4,0,.7,1)'},
+     {transform:'translate3d(0,3px,0) rotateZ(2.6deg) scale(.985)',offset:.74,easing:'cubic-bezier(.2,.8,.3,1)'},
+     {transform:'translate3d(0,-4px,0) rotateZ(-1.1deg) scale(1.005)',offset:.88,easing:'ease-out'},
+     {transform:'none'}
+    ],{duration:640,delay,fill:'backwards'}));
+    if(shadow?.animate)diceStageAnimations.push(shadow.animate([
+     {scale:'.72',opacity:'.45'},
+     {scale:'.8',opacity:'.62',offset:.42},
+     {scale:'1.05',opacity:'1',offset:.74},
+     {scale:'.94',opacity:'.86',offset:.88},
+     {scale:'1',opacity:'1'}
+    ],{duration:640,delay,fill:'backwards'}));
+    if(ground?.animate)diceStageAnimations.push(ground.animate([
+     {scale:'.92',opacity:'.4'},
+     {scale:'1',opacity:'1',offset:.45},
+     {scale:'.965 .94',opacity:'1',offset:.76},
+     {scale:'1',opacity:'1'}
+    ],{duration:640,delay,fill:'backwards'}));
+   }else{
+    diceStageAnimations.push(object.animate([{transform:`translateX(${away}px)`},{transform:'translateX(0)'}],{duration:560,delay,easing:'cubic-bezier(.2,.8,.25,1)',fill:'backwards'}));
+   }
   }else{
    const exit=object.animate([{transform:'translateX(0)'},{transform:`translateX(${away}px)`}],{duration:460,delay:i*40,easing:'cubic-bezier(.55,0,.75,.2)',fill:'forwards'});
    diceStageAnimations.push(exit,label.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease-in',fill:'forwards'}));
@@ -2075,8 +2136,8 @@ function updateDieCall(){
  // The whole tag stays on screen.
  x=Math.max(8-box.left,Math.min(x,innerWidth-box.left-own.width-8));y=Math.max(8-box.top,y);
  chip.style.left=Math.round(x)+'px';chip.style.top=Math.round(y)+'px';
- // The tag reaches the second die once that die has slid into place.
- if(moved&&(index===1||again)&&chip.animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches)chip.animate([{opacity:0},{opacity:1}],{duration:260,delay:again?AGAIN_WAIT:SECOND_DIE_WAIT+520,easing:'ease-out',fill:'backwards'});
+ // The tag reaches the second die once that die has set down into place.
+ if(moved&&(index===1||again)&&chip.animate&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches){dieCallAnimation?.cancel();dieCallAnimation=chip.animate([{opacity:0},{opacity:1}],{duration:260,delay:again?AGAIN_WAIT:secondDieWait+540,easing:'ease-out',fill:'backwards'});}
 }
 // The label arrives in the order the eye should travel: a dot lands on the target, the leader draws out
 // from it, then the card settles at the end of the line. It waits for the change it follows to finish.
@@ -2549,7 +2610,6 @@ const thumbnailObserver=new ResizeObserver(entries=>entries.forEach(({target,con
 function buildMatrix(){
  const matrix=$('#matrix');matrix.replaceChildren();matrixButtons.clear();matrixCells.clear();thumbnailObserver.disconnect();
  matrix.setAttribute('aria-label',`Choose one of ${EXPERIMENT.runs.length} ingredient combinations`);
- $('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
  INGREDIENTS_A.forEach((name,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=name;$('#atlas-ingredient').append(option);});
  for(const run of EXPERIMENT.runs){
   const cell=document.createElement('div'),preview=document.createElement('div'),button=document.createElement('button');
@@ -2591,9 +2651,9 @@ function renderFoundMap(){
  }
  if(!introMode&&!found.has(selected.id)){found.add(selected.id);try{if(typeof localStorage!=='undefined')localStorage.setItem('found-pairs',JSON.stringify([...found]));}catch{}celebrateFound(selected.id);}
  for(const dot of map.children){dot.dataset.found=String(found.has(dot.dataset.pair));dot.setAttribute('aria-current',String(!introMode&&dot.dataset.pair===selected.id));}
- map.setAttribute('aria-label',found.size+' of '+EXPERIMENT.runs.length+' combinations found');$('#atlas-title').textContent=found.size?found.size+' of '+EXPERIMENT.runs.length+' found':EXPERIMENT.runs.length+' combinations';
+ map.setAttribute('aria-label',found.size+' of '+EXPERIMENT.runs.length+' combinations found');
 }
-$('#found-map')?.addEventListener?.('click',()=>{if($('#atlas-toggle').getAttribute('aria-expanded')!=='true')$('#atlas-toggle').click();$('#atlas').scrollIntoView?.({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
+$('#found-map')?.addEventListener?.('click',()=>{const open=$('#atlas-body').hidden;setAtlasOpen(open);if(open)$('#atlas').scrollIntoView?.({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
 // The gallery shows the first die's six pairings, each at the version the page would show for it.
 function syncMatrix(){
  matrixButtons.forEach((button,id)=>{button.setAttribute('aria-pressed',String(!introMode&&id===selected.id));const run=currentExperiment().runs.find(item=>item.id===id);button.setAttribute('aria-label',run.label+' — '+attemptName(stage));});
@@ -2652,16 +2712,17 @@ function dropDie(index,value,release={}){
  tumbleDice([index],values,()=>{syncDice3D();},{...release,drop:true,guided:true},impact);
  // The second die is not thrown on the first roll: it arrives at rest, unnamed.
  if(introducing)syncDice3D();
- {const landing=dieLandsIn(index);holdPromptFill(landing);landLabels([index],landing??LABEL_LAND.roll);}
+ {const landing=dieLandsIn(index);holdPromptFill(landing);landLabels([index],landing??LABEL_LAND.roll);if(introducing)syncSecondDieEntrance(landing);}
  awaitReady(!introducing);
  quietRefine();
 }
-// The gallery stays folded until it is wanted; opening it settles in from just above.
-$('#atlas-toggle').addEventListener('click',()=>{
- const toggle=$('#atlas-toggle'),body=$('#atlas-body'),open=toggle.getAttribute('aria-expanded')!=='true';
- toggle.setAttribute('aria-expanded',String(open));body.hidden=!open;if(open)syncMatrix();
+// The gallery has no heading of its own: it stays out of the page until the map asks for it, and the map folds it away
+// again. Opening it settles in from just above.
+function setAtlasOpen(open){
+ const body=$('#atlas-body');
+ body.hidden=!open;if(open)syncMatrix();
  if(open&&body.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)body.animate([{opacity:0,transform:'translateY(-8px)'},{opacity:1,transform:'none'}],{duration:320,easing:'cubic-bezier(.23,1,.32,1)'});
-});
+}
 $('#atlas-ingredient').addEventListener('change',event=>selectPair(currentExperiment().runs.find(run=>run.a===Number(event.target.value)&&run.b===b)));
 // Loading a report is most of what a page change costs. While the page is idle, the pages a visitor is
 // likely to see next are loaded out of sight: this pair's next refinement, and the pair each die will roll
@@ -2765,7 +2826,7 @@ function roll(index,gesture=null,forced=null){
  // The second die is not thrown on the first roll: it arrives at rest, unnamed.
  if(introduce)syncDice3D();
  // The name under the die and the word in the sentence arrive when the die lands, not before it.
- {const landing=dieLandsIn(indices[0]);holdPromptFill(landing);landLabels(indices,landing??LABEL_LAND.roll);}
+ {const landing=dieLandsIn(indices[0]);holdPromptFill(landing);landLabels(indices,landing??LABEL_LAND.roll);if(introduce)syncSecondDieEntrance(landing);}
  // The first result is left alone to be looked at; anything a visitor does after it brings the controls at once.
  awaitReady(!introduce||forced!=null);
  quietRefine();

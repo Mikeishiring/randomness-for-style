@@ -22,6 +22,7 @@ class AudioContext{
  createOscillator(){return new AudioNode('tone')}
  createStereoPanner(){return new AudioNode('pan')}
  createConvolver(){return new AudioNode('room')}
+ createDynamicsCompressor(){const node=new AudioNode('limiter');for(const key of ['threshold','knee','ratio','attack','release'])node[key]=parameter();return node;}
 }
 const context=vm.createContext({assert,window:{AudioContext},navigator:{vibrate:pattern=>{buzzes.push(pattern);return true}},document:{hidden:false,querySelector:()=>button},localStorage:{getItem:key=>storage.get(key)??null,setItem:(key,value)=>storage.set(key,value)},performance:{now:()=>100},setTimeout:(fn,delay)=>{const id=++nextTimer;timers.set(id,{fn,delay});return id},clearTimeout:id=>timers.delete(id),button,contexts,nodes});
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
