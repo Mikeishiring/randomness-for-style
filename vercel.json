@@ -5,8 +5,13 @@
   "outputDirectory": "site/dist",
   "redirects": [
     {
-      "source": "/:path*",
-      "destination": "https://mikeishiring.com/blog/randomness-for-style/:path*",
+      "source": "/",
+      "destination": "https://mikeishiring.com/blog/randomness-for-style/",
+      "permanent": true
+    },
+    {
+      "source": "/:path+",
+      "destination": "https://mikeishiring.com/blog/randomness-for-style/:path+",
       "permanent": true
     }
   ]
