@@ -1572,6 +1572,17 @@ function diceNoiseBuffer(context){
  if(!diceNoise){diceNoise=context.createBuffer(1,Math.ceil(context.sampleRate*.6),context.sampleRate);const samples=diceNoise.getChannelData(0);for(let i=0;i<samples.length;i++)samples[i]=Math.random()*2-1;}
  return diceNoise;
 }
+// Every voice meets in one output, lifted so short clicks carry on laptop and phone speakers, with a limiter so
+// the loudest landing and the knock on the page never clip.
+let diceMaster=null;
+function diceOutput(context){
+ if(diceMaster?.context===context)return diceMaster.input;
+ const gain=context.createGain(),limiter=context.createDynamicsCompressor();
+ gain.gain.value=2.6;
+ limiter.threshold.value=-6;limiter.knee.value=4;limiter.ratio.value=12;limiter.attack.value=.002;limiter.release.value=.12;
+ gain.connect(limiter);limiter.connect(context.destination);
+ diceMaster={context,input:gain};return gain;
+}
 // A small room: a short, soft tail shared by every voice, so hits sound like they happen on a table
 // in a space rather than inside the speaker.
 let diceRoom=null;
@@ -1579,13 +1590,13 @@ function diceRoomInput(context){
  if(diceRoom?.context===context)return diceRoom.input;
  const convolver=context.createConvolver(),wet=context.createGain(),length=Math.ceil(context.sampleRate*.3),impulse=context.createBuffer(2,length,context.sampleRate);
  for(let channel=0;channel<2;channel++){const samples=impulse.getChannelData(channel);for(let i=0;i<length;i++)samples[i]=(Math.random()*2-1)*(1-i/length)**3.4;}
- convolver.buffer=impulse;wet.gain.value=.13;convolver.connect(wet);wet.connect(context.destination);
+ convolver.buffer=impulse;wet.gain.value=.13;convolver.connect(wet);wet.connect(diceOutput(context));
  diceRoom={context,input:convolver};return convolver;
 }
 // One voice: a set of sources into a shared panner, released together.
 function diceVoice(context,index,pan){
  const panner=context.createStereoPanner(),voice={sources:[],nodes:[panner],out:panner,end:0};
- panner.pan.value=Math.max(-1,Math.min(1,pan));panner.connect(context.destination);panner.connect(diceRoomInput(context));
+ panner.pan.value=Math.max(-1,Math.min(1,pan));panner.connect(diceOutput(context));panner.connect(diceRoomInput(context));
  diceVoices[index].add(voice);return voice;
 }
 function finishVoice(voice,index){
